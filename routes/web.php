@@ -130,6 +130,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::resource('covid_sample', 'CovidSampleController');
 
 	Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
+		Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
+		Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
 
 		Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
 		Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');

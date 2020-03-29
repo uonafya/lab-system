@@ -6,6 +6,11 @@ use App\CovidWorksheet;
 use App\CovidSample;
 use App\Lookup;
 use App\MiscCovid;
+use App\Misc;
+use App\MiscViral;
+
+use Excel;
+
 use Illuminate\Http\Request;
 
 class CovidWorksheetController extends Controller
@@ -286,7 +291,7 @@ class CovidWorksheetController extends Controller
         if($worksheet->machine_type == 2)
         {
             $date_tested = $request->input('daterun');
-            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+            $datetested = MiscCovid::worksheet_date($date_tested, $worksheet->created_at);
 
             // config(['excel.import.heading' => false]);
             $data = Excel::load($file, function($reader){
@@ -411,7 +416,7 @@ class CovidWorksheetController extends Controller
 
 
 
-    
+
 
     public function get_worksheets($worksheet_id=NULL)
     {

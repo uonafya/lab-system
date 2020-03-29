@@ -19,7 +19,7 @@
         <div>
 
 
-        <form method="POST" action="{{ url('covid_worksheet/set_sampletype') }}" class="form-horizontal">
+        <form method="POST" action="{{ url('covid_worksheet/create') }}" class="form-horizontal">
             @csrf
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2">
