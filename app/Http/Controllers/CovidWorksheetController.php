@@ -181,10 +181,15 @@ class CovidWorksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $vars = $reque->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
+        $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
+        
+        $samples = $data['samples'];
+        $sample_ids = $samples->pluck('id');
+
+        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         if($worksheet->combined){
             $new_limit = $limit - $data['count'];
@@ -216,10 +221,6 @@ class CovidWorksheetController extends Controller
                 return back();            
             }
         }
-        $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id');
-
-        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         return redirect()->route('covid_worksheet.print', ['worksheet' => $worksheet->id]);
     }
