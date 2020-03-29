@@ -104,8 +104,6 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'residence', 'default_val' => $sample->patient->residence ?? null, 'label' => 'Area of Residence'])
 
-
-
                     </div>
                 </div>
             </div>

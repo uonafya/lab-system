@@ -12,6 +12,7 @@ use App\User;
 use App\Sample;
 use App\Viralsample;
 
+use Carbon\Carbon;
 use Excel;
 
 use Illuminate\Http\Request;
@@ -231,16 +232,20 @@ class CovidWorksheetController extends Controller
     public function show(CovidWorksheet $covidWorksheet, $print=false)
     {
         $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
+        if($covidWorksheet->combined) $samples->merge($covidWorksheet->other_samples());
 
         $data = ['worksheet' => $covidWorksheet, 'samples' => $samples, 'i' => 0, 'covid' => true];
 
         if($print) $data['print'] = true;
 
-        if($covidWorksheet->machine_type == 1){
-            return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
+        if($Viralworksheet->machine_type == 1){
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
+        }
+        else if($Viralworksheet->machine_type == 3){
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
         }
         else{
-            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
     }
 
@@ -292,8 +297,7 @@ class CovidWorksheetController extends Controller
     public function cancel(CovidWorksheet $worksheet)
     {
         if($worksheet->status_id != 1){
-            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
-            session(['toast_error' => 1]);
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet is not eligible to be cancelled.']);
             return back();
         }
         $worksheet->sample()->update(['worksheet_id' => null, 'result' => null]);
@@ -301,6 +305,10 @@ class CovidWorksheetController extends Controller
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
         $worksheet->save();
+
+        if($worksheet->combined){
+            $worksheet->update_other_samples(['worksheet_id' => null, 'result' => null]);
+        }
 
         session(['toast_message' => 'The worksheet has been cancelled.']);
         return redirect("/covid_worksheet");
@@ -331,7 +339,7 @@ class CovidWorksheetController extends Controller
 
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        $path = $request->upload->store('public/results/eid'); 
+        $path = $request->upload->store('public/results/covid'); 
         $today = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
@@ -387,6 +395,60 @@ class CovidWorksheetController extends Controller
                 }
 
                 if($bool && $value[5] == "RESULT") break;
+            }
+        }
+        // C8800
+        else if($worksheet->machine_type == 3){
+            $handle = fopen($file, "r");
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                if(!isset($value[1])) break;
+                $sample_id = $value[1];
+                $interpretation = $value[6];
+                $result_array = MiscViral::sample_result($interpretation);
+
+                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                if(!is_numeric($sample_id)){
+                    $control = $value[4];
+                    if($control == 'HxV H (+) C'){
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];                        
+                    }
+                    else if($control == 'HxV L (+) C'){
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
+                    }
+                    else if($control == '(-) C'){
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units']; 
+                    }
+                }
+
+                $datetested = $today;
+
+                try {
+                    $dt = Carbon::parse($value[12]);
+                    $date_tested = $dt->toDateString();                    
+                    $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);
+                } catch (Exception $e) {
+                    $datetested = $today;
+                }
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+
+                $sample_id = (int) $sample_id;
+                $sample = CovidSample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                $sample->save();
             }
         }
         else
