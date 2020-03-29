@@ -202,6 +202,7 @@
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
                                     <th rowspan="2">Facility</th>
+                                    <th rowspan="2">Identifier</th>
                                     <th colspan="4">Date</th>
                                     <th rowspan="2">Entered By</th>
                                     <th rowspan="2">Received By</th>
@@ -222,7 +223,8 @@
                                 @foreach($samples as $sample)
                                     <tr>
                                         <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->name }} </td>
+                                        <td> {{ $sample->facilityname }} </td>
+                                        <td> {{ $sample->identifier }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
