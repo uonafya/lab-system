@@ -107,8 +107,7 @@ class CovidWorksheetController extends Controller
     {
         $data = Lookup::worksheet_lookups();
         $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
-            ->whereRaw(" (
-                id IN 
+            ->whereRaw(" id IN 
                 (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 )
                 ")
             ->withTrashed()
