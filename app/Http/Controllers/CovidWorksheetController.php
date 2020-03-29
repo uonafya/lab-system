@@ -166,7 +166,7 @@ class CovidWorksheetController extends Controller
         $data['combined'] = $combined;
         $data['entered_by'] = $entered_by;
         $data['sampletype'] = $sampletype;
-        // dd($data);
+        dd($data);
         return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');
     }
 
