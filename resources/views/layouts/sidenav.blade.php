@@ -192,11 +192,7 @@
                 <hr />
                 <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
                 <hr />
-                <li><a href="{{ url('covid_worksheet/create/3/22') }}">Create C8800 Worksheet(24)</a></li>
-                <hr />
-                <li><a href="{{ url('covid_worksheet/create/3/46') }}">Create C8800 Worksheet(48)</a></li>
-                <hr />
-                <li><a href="{{ url('covid_worksheet/create/3/94') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
 
             @endif
