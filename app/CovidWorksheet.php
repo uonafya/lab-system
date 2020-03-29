@@ -11,7 +11,7 @@ class CovidWorksheet extends BaseModel
 
     public function sample()
     {
-    	return $this->hasMany('App\CovidSample', 'sample_id');
+    	return $this->hasMany('App\CovidSample', 'worksheet_id');
     }
 
     public function runner()
