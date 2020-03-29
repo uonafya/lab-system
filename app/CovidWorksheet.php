@@ -67,7 +67,7 @@ class CovidWorksheet extends BaseModel
 			$class = Viralsample::class;			
 		}
 		$dateuploaded = $this->dateuploaded;
-		$samples = $class::where(['worksheet_id' => $worksheet_id])
+		$samples = $class::where(['worksheet_id' => $this->id])
 			->when($this->status_id == 1, function($query){
 				return $query->whereNull('datetested');
 			})
@@ -90,7 +90,7 @@ class CovidWorksheet extends BaseModel
 			$class = Viralsample::class;			
 		}
 		$dateuploaded = $this->dateuploaded;
-		$class::where(['worksheet_id' => $worksheet_id])
+		$class::where(['worksheet_id' => $this->id])
 			->when($this->status_id == 1, function($query){
 				return $query->whereNull('datetested');
 			})
