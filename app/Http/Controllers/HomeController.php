@@ -349,7 +349,8 @@ class HomeController extends Controller
         $model = self::get_classname();
 
         return $model::selectRaw("count(id) as total")
-            ->where('lab_id', '=', env('APP_LAB'))
+            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            // ->where('lab_id', '=', env('APP_LAB'))
             ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
@@ -430,7 +431,7 @@ class HomeController extends Controller
             $param = Carbon::now()->subDays($days)->toDateString();
         }
         else{
-            $days = Carbon::now()->dayOfWeek;
+            $days = Carbon::now()->dayOfWeek+1;
             $param = Carbon::now()->subDays($days)->toDateString();
         }
         return $param;

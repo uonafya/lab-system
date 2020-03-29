@@ -31,6 +31,11 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\CovidWorksheet', 'worksheet_id');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab');
+    }
+
     public function calc_age()
     {
         $this->age = $this->datecollected->diffInYears($this->patient->dob);

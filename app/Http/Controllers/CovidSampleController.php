@@ -254,6 +254,13 @@ class CovidSampleController extends Controller
         }
     }
 
+    public function result(CovidSample $covidSample)
+    {
+        $data = Lookup::covid_form();
+        $data['samples'] = [$covidSample];
+        return view('exports.mpdf_covi_samples', $data);
+    }
+
 
     public function cities(Request $request)
     {
