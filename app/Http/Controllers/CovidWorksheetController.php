@@ -200,26 +200,25 @@ class CovidWorksheetController extends Controller
             if(!$new_data || !$new_data['create']){
                 $worksheet->delete();
                 session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
-                return back();            
+                return redirect('covid_worksheet');            
             }
 
-            $samples = $new_data['samples'];
-            $sample_ids = $samples->pluck('id')->toArray();
-            dd($sample_ids);
-            $class::whereIn('id', $sample_ids)
+            $new_samples = $new_data['samples'];
+            $new_sample_ids = $new_samples->pluck('id')->toArray();
+            $class::whereIn('id', $new_sample_ids)
                 ->whereNull('worksheet_id')->whereNull('result')
                 ->update(['worksheet_id' => $worksheet->id, 'updated_at' => now()]);
-        
-            $samples = $data['samples'];
-            $sample_ids = $samples->pluck('id')->toArray();
-            CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
         }else{
             if(!$data || !$data['create']){
                 $worksheet->delete();
                 session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
-                return back();            
+                return redirect('covid_worksheet');            
             }
         }
+        
+        $samples = $data['samples'];
+        $sample_ids = $samples->pluck('id')->toArray();
+        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         return redirect()->route('covid_worksheet.print', ['worksheet' => $worksheet->id]);
     }
