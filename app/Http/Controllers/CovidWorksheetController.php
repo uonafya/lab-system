@@ -178,6 +178,8 @@ class CovidWorksheetController extends Controller
      */
     public function store(Request $request)
     {
+
+        dd($request->all());
         $worksheet = new CovidWorksheet;
         $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'sampletype']));
         $worksheet->createdby = auth()->user()->id;
