@@ -236,10 +236,10 @@ class CovidWorksheetController extends Controller
 
         if($print) $data['print'] = true;
 
-        if($Viralworksheet->machine_type == 1){
+        if($covidWorksheet->machine_type == 1){
             return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
         }
-        else if($Viralworksheet->machine_type == 3){
+        else if($covidWorksheet->machine_type == 3){
             return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
         }
         else{
