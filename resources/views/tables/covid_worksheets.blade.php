@@ -159,9 +159,9 @@
                                     <td> {{ $worksheet->my_date_format('datereviewed') }} </td>
                                     <td> 
                                         @if($worksheet->combined == 1)
-                                            <b>EID</b>
-                                        @if($worksheet->combined == 2)
-                                            <b>Viralload</b>
+                                            <b>EID ({{ $worksheet->other_samples()->count() }})</b>
+                                        @elseif($worksheet->combined == 2)
+                                            <b>Viralload ({{ $worksheet->other_samples()->count() }})</b>
                                         @endif 
                                     </td>
                                     <td> 
