@@ -194,7 +194,7 @@ class CovidWorksheetController extends Controller
                 $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
                 $class = Sample::class;
             }else{
-                $new_data = MiscViral::get_worksheet_samples($machine_type, false, $sampletype, $new_limit, $entered_by);  
+                $new_data = MiscViral::get_worksheet_samples($machine_type, false, $sampletype, $new_limit, $request->input('entered_by'));  
                 $class = Viralsample::class;              
             }
             if(!$new_data || !$new_data['create']){
