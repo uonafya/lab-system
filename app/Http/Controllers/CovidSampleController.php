@@ -28,7 +28,8 @@ class CovidSampleController extends Controller
         if($type == 2) $date_column = "covid_samples.datedispatched";
 
         $samples = CovidSample::select(['covid_samples.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_samples.facility_id')
+            ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_patients.facility_id')
             ->leftJoin('users as u', 'u.id', '=', 'covid_samples.user_id')
             ->leftJoin('users as r', 'r.id', '=', 'covid_samples.received_by')
             ->when($facility_id, function($query) use ($facility_id){
