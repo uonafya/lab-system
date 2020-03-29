@@ -669,6 +669,7 @@ class Nat
         {
             $ccc = rtrim($data[0]);
             $p = \App\Viralpatient::where('patient', $ccc)->first();
+            if(!$p) continue;
             $p->ovf = 1;
             $p->save();
         }
