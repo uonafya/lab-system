@@ -9,6 +9,8 @@ use App\MiscCovid;
 use App\Misc;
 use App\MiscViral;
 use App\User;
+use App\Sample;
+use App\Viralsample;
 
 use Excel;
 
@@ -151,7 +153,7 @@ class CovidWorksheetController extends Controller
             }else{
                 $new_data = MiscViral::get_worksheet_samples($machine_type, false, $sampletype, $new_limit, $entered_by);                
             }
-            if($new_data['count']){
+            if($new_data && $new_data['count']){
                 $data['count'] += $new_data['count'];
                 // $data['samples'] = array_merge($data['samples'], $new_data['samples']);
                 $data['samples'] = $data['samples']->merge($new_data['samples']);
@@ -171,17 +173,42 @@ class CovidWorksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new CovidWorksheet;
-        $worksheet->fill($request->except('_token', 'limit'));
+        $worksheet->fill($request->except(['_token', 'limit' 'entered_by', 'sampletype']));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
-        if(!$data || !$data['create']){
-            $worksheet->delete();
-            session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
-            return back();            
+        if($worksheet->combined){
+            $new_limit = $limit - $data['count'];
+            if($combined == 1){
+                $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
+                $class = Sample::class;
+            }else{
+                $new_data = MiscViral::get_worksheet_samples($machine_type, false, $sampletype, $new_limit, $entered_by);  
+                $class = Viralsample::class;              
+            }
+            if(!$new_data || !$new_data['create']){
+                $worksheet->delete();
+                session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
+                return back();            
+            }
+            $samples = $data['samples'];
+            $sample_ids = $samples->pluck('id');
+            $ss = $class::whereIn('id', $sample_ids);
+
+            foreach ($ss as $s) {
+                $s->worksheet->id = $worksheet->id;
+                $s->save();
+            }
+
+        }else{
+            if(!$data || !$data['create']){
+                $worksheet->delete();
+                session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
+                return back();            
+            }
         }
         $samples = $data['samples'];
         $sample_ids = $samples->pluck('id');
