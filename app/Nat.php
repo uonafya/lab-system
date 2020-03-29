@@ -661,4 +661,17 @@ class Nat
 
 	}
 
+	public static function ovf()
+	{
+		$file = public_path('ccc.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            $ccc = rtrim($data[0]);
+            $p = \App\Viralpatient::where('patient', $ccc)->first();
+            $p->ovf = 1;
+            $p->save();
+        }
+	}
+
 }

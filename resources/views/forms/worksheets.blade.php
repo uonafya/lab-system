@@ -34,7 +34,7 @@
                 </div>
 
                 @if(isset($covid))            
-                <form method="POST" action="/covid_worksheet" class="form-horizontal" target="_blank">
+                <form method="POST" action="/covid_worksheet" class="form-horizontal">
                 @else
                 <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
                 @endif
