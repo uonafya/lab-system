@@ -20,6 +20,7 @@ class CreateCovidTravelsTable extends Migration
             $table->string('city', 35)->nullable();
             $table->string('country', 35)->nullable();
             $table->integer('city_id')->nullable();
+            $table->integer('duration_visited')->nullable();
 
 
             $table->tinyInteger('synched')->default(0)->nullable();
