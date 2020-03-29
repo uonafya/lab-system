@@ -57,7 +57,7 @@
                                 </div>
                             </div>
 
-                            @include('partial.select', ['model' => null, 'prop' => 'machine_type', 'label' => 'Worksheet Sample Type (Required for VL)', 'items' => $worksheet_sampletypes, ])
+                            @include('partial.select', ['model' => null, 'prop' => 'sampletype', 'label' => 'Worksheet Sample Type (Required for VL)', 'items' => $worksheet_sampletypes, ])
 
 
                             <div class="form-group">

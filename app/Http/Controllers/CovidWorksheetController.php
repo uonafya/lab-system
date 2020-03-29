@@ -166,7 +166,6 @@ class CovidWorksheetController extends Controller
         $data['combined'] = $combined;
         $data['entered_by'] = $entered_by;
         $data['sampletype'] = $sampletype;
-        dd($data);
         return view('forms.worksheets', $data)->with('pageTitle', 'Create Worksheet');
     }
 
@@ -178,8 +177,6 @@ class CovidWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-
-        dd($request->all());
         $worksheet = new CovidWorksheet;
         $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'sampletype']));
         $worksheet->createdby = auth()->user()->id;
