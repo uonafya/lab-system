@@ -207,9 +207,9 @@ class CovidWorksheetController extends Controller
             $sample_ids = $samples->pluck('id');
             CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
-            $samples = $data['samples'];
+            $samples = $new_data['samples'];
             $sample_ids = $samples->pluck('id');
-            $class::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+            $class::whereIn('id', $sample_ids)->whereNull('worksheet_id')->update(['worksheet_id' => $worksheet->id]);
         }else{
             if(!$data || !$data['create']){
                 $worksheet->delete();
