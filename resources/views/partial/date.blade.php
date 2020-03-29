@@ -8,7 +8,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group date {{ $class ?? 'date-normal' }}">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" value="{{ $model->$prop2->$prop ?? $model->$prop ?? '' }}" id="{{ $prop }}" name="{{ $prop }}" 
+                                    <input type="text" value="{{ $default_val ?? $model->$prop ?? '' }}" id="{{ $prop }}" name="{{ $prop }}" 
                                     @if(isset($required) && $required)
                                         required  class="form-control requirable"
                                     @else

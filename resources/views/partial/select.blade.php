@@ -2,7 +2,7 @@
 					if(!isset($prop2)) $prop2 = 'name';
 				?>
 
-				<div class="form-group">
+				<div class="form-group {{ $form_class ?? '' }} " {!! $row_attr ?? null !!}>
                     <label class="col-sm-4 control-label">  {{ $label }}
                         @if(isset($required) && $required)
                             <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -15,11 +15,5 @@
 								<option value="{{ $item->id }}" @if((isset($model) && $model->$prop == $item->id) || (isset($default_val) && $default_val == $item->id)) selected @endif> {{ $item->$prop2 }} </option>
 							@endforeach							
 						</select>
-					</div>
-
-					@error($prop)
-						<span class="alert alert-danger" role="alert">
-							<strong>{{ $message }}</strong>
-						</span>
-					@enderror				
+					</div>			
 				</div>

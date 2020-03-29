@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CovidPatient;
 use App\CovidSample;
 use App\CovidTravel;
 use App\City;
@@ -100,7 +101,7 @@ class CovidSampleController extends Controller
      */
     public function create()
     {
-        $data = Lookup::viralsample_form();
+        $data = Lookup::covid_form();
         return view('forms.covidsamples', $data)->with('pageTitle', 'Add Sample');        
     }
 
@@ -112,13 +113,16 @@ class CovidSampleController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        $data = Lookup::covid_arrays();
+
+        $patient = new CovidPatient;
+        $patient->fill($request->only($data['patient']));
+        $patient->current_health_status = $request->input('health_status');
+        $patient->save();
 
         $sample = new CovidSample;
-        $sample->fill($request->except(['_token', 'method', 'travel']));
-        // $sample->calc_age();
-        // $sample->user_id = auth()->user()->id;
-        // if($sample->datereceived) $sample->received_by = auth()->user()->id;
+        $sample->fill($request->only($data['sample']));
+        $sample->patient_id = $patient->id;
         $sample->save();
 
         $travels = $request->input('travel');
@@ -157,8 +161,8 @@ class CovidSampleController extends Controller
      */
     public function edit(CovidSample $covidSample)
     {
-        $data = Lookup::viralsample_form();
-        $covidSample->load(['facility']);
+        $data = Lookup::covid_form();
+        $covidSample->load(['patient.facility']);
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
@@ -172,10 +176,16 @@ class CovidSampleController extends Controller
      */
     public function update(Request $request, CovidSample $covidSample)
     {
-        $covidSample->fill($request->except(['_token', 'method', 'travel']));
-        // $covidSample->calc_age();
-        // if($covidSample->isDirty('datereceived') && !$covidSample->received_by) $covidSample->received_by = auth()->user()->id;
+        $data = Lookup::covid_arrays();
+
+        $covidSample->fill($request->only($data['sample']));
         $covidSample->pre_update();
+
+
+        $patient = $covidSample->patient;
+        $patient->fill($request->only($data['patient']));
+        $patient->current_health_status = $request->input('health_status');
+        $patient->pre_update();
 
         $travels = $request->input('travel');
         if($travels){
