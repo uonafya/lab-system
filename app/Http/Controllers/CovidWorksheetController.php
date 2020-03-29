@@ -8,6 +8,7 @@ use App\Lookup;
 use App\MiscCovid;
 use App\Misc;
 use App\MiscViral;
+use App\User;
 
 use Excel;
 
