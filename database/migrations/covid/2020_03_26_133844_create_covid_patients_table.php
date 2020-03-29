@@ -15,7 +15,7 @@ class CreateCovidPatientsTable extends Migration
     {
         Schema::create('covid_patients', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('original_patient_id')->index()->nullable();
+            $table->integer('national_patient_id')->index()->nullable();
             $table->integer('facility_id')->nullable();
             $table->integer('case_id')->nullable();
             $table->tinyInteger('identifier_type')->nullable();

@@ -20,7 +20,7 @@
 					<td> {{ ($key+1) }} </td>
 					<td> {{ $sample->id }} </td>
 					<td> {{ $sample->patient }} </td>
-					<td> {{ $sample->facility->name }} </td>
+					<td> {{ $sample->name }} </td>
 					<td> {{ $sample->run }} </td>
 					@if($sample->parentid)
 						<td> {{ $sample->parentid ?? null }} </td>

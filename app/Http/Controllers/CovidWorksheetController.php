@@ -97,14 +97,40 @@ class CovidWorksheetController extends Controller
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');        
     }
 
+    public function set_details_form()
+    {
+        $data = Lookup::worksheet_lookups();
+        $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+            ->whereRaw(" (
+                id IN 
+                (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 )
+                ")
+            ->withTrashed()
+            ->get();
+
+        return view('forms.covid_worksheet', $data)->with('pageTitle', 'Set Worksheet Details');
+    }
+
+
+    public function set_details(Request $request)
+    {
+        $combined = $request->input('combined');
+        $machine_type = $request->input('machine_type');
+        $limit = $request->input('limit', 0);
+        $entered_by = $request->input('entered_by');
+        // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
+
+        return $this->create($sampletype, $machine_type, $calibration, $limit, $entered_by);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2, $limit=null)
+    public function create($machine_type, $limit, $combined=0, $entered_by)
     {
-        $data = MiscCovid::get_worksheet_samples($machine_type, $limit);
+        $data = MiscCovid::get_worksheet_samples($machine_type, $limit, $entered_by);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
             return back();
@@ -225,6 +251,167 @@ class CovidWorksheetController extends Controller
         session(['toast_message' => 'The worksheet has been cancelled.']);
         return redirect("/covid_worksheet");
     }
+
+
+
+    public function upload(CovidWorksheet $worksheet)
+    {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
+        $worksheet->load(['creator']);
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
+    }
+
+    public function save_results(Request $request, CovidWorksheet $worksheet)
+    {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
+
+        $cancelled = false;
+        if($worksheet->status_id == 4) $cancelled =  true;
+
+        $worksheet->fill($request->except(['_token', 'upload']));
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/results/eid'); 
+        $today = $datetested = date("Y-m-d");
+        $positive_control = $negative_control = null;
+
+        $sample_array = $doubles = [];
+
+        if($worksheet->machine_type == 2)
+        {
+            $date_tested = $request->input('daterun');
+            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+
+            // config(['excel.import.heading' => false]);
+            $data = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+
+            $check = array();
+
+            $bool = false;
+            $positive_control = $negative_control = "Passed";
+
+            foreach ($data as $key => $value) {
+                if($value[5] == "RESULT"){
+                    $bool = true;
+                    continue;
+                }
+
+                if($bool){
+                    $sample_id = $value[1];
+                    $interpretation = $value[5];
+                    $error = $value[10];
+
+
+                    Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                    $data_array = Misc::sample_result($interpretation, $error);
+
+                    if($sample_id == "HIV_NEG") $negative_control = $data_array;
+                    if($sample_id == "HIV_HIPOS") $positive_control = $data_array;
+
+                    $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $today]);
+                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                    // Sample::where($search)->update($data_array);
+
+                    $sample_id = (int) $sample_id;
+                    $sample = Sample::find($sample_id);
+                    if(!$sample) continue;
+
+                    $sample->fill($data_array);
+                    if($cancelled) $sample->worksheet_id = $worksheet->id;
+                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
+                    $sample->save();
+                }
+
+                if($bool && $value[5] == "RESULT") break;
+            }
+        }
+        else
+        {
+            $handle = fopen($file, "r");
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $interpretation = rtrim($data[8]);
+                $control = rtrim($data[5]);
+
+                $error = $data[10];
+
+                $date_tested=date("Y-m-d", strtotime($data[3]));
+
+                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+
+                $data_array = Misc::sample_result($interpretation, $error);
+
+                if($control == "NC") $negative_control = $data_array;
+
+                if($control == "LPC" || $control == "PC") $positive_control = $data_array;
+
+                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
+
+                $sample_id = (int) trim($data[4]);  
+
+                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                // $sample_id = substr($sample_id, 0, -1);
+                $sample = Sample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
+                $sample->save();
+
+            }
+            fclose($handle);
+        }
+
+        if($doubles){
+            session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
+            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
+        
+            Excel::create($file, function($excel) use($doubles){
+                $excel->sheet('Sheetname', function($sheet) use($doubles) {
+                    $sheet->fromArray($doubles);
+                });
+            })->download('csv');
+        }
+
+        // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
+        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
+        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
+
+        $worksheet->neg_control_interpretation = $negative_control['interpretation'];
+        $worksheet->neg_control_result = $negative_control['result'];
+
+        $worksheet->pos_control_interpretation = $positive_control['interpretation'];
+        $worksheet->pos_control_result = $positive_control['result'];
+        $worksheet->daterun = $datetested;
+        $worksheet->uploadedby = auth()->user()->id;
+        $worksheet->save();
+
+        Misc::requeue($worksheet->id, $worksheet->daterun);
+        session(['toast_message' => "The worksheet has been updated with the results."]);
+
+        return redirect('worksheet/approve/' . $worksheet->id);
+    }
+
+
+
+
+
+
+    
 
     public function get_worksheets($worksheet_id=NULL)
     {

@@ -15,9 +15,14 @@ class CreateCovidWorksheetsTable extends Migration
     {
         Schema::create('covid_worksheets', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('original_worksheet_id')->unsigned()->nullable()->index();
+            $table->integer('national_worksheet_id')->unsigned()->nullable()->index();
             $table->tinyInteger('machine_type')->unsigned();
             $table->tinyInteger('lab_id')->unsigned();
+
+            // 0 for no
+            // 1 for with EID
+            // 2 for with VL
+            $table->tinyInteger('combined')->unsigned()->default(0);
 
             // 1 is in process
             // 2 is tested, results uploaded awaiting approval
