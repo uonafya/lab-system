@@ -184,6 +184,8 @@ class CovidWorksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
+        dd($request->all())
+
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
