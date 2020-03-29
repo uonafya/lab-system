@@ -103,7 +103,7 @@ class CovidWorksheetController extends Controller
         $data['myurl'] = url('covid_worksheet/index/' . $state . '/');
         $data['link_extra'] = 'covid_';
 
-        return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');        
+        return view('tables.covid_worksheets', $data)->with('pageTitle', 'Worksheets');        
     }
 
     public function set_details_form()
@@ -207,12 +207,8 @@ class CovidWorksheetController extends Controller
             }
             $samples = $data['samples'];
             $sample_ids = $samples->pluck('id');
-            $ss = $class::whereIn('id', $sample_ids);
+            $class::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
-            foreach ($ss as $s) {
-                $s->worksheet->id = $worksheet->id;
-                $s->save();
-            }
 
         }else{
             if(!$data || !$data['create']){
