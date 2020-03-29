@@ -198,12 +198,7 @@ class BaseModel extends Model
     }
 
     public function getDeleteFormAttribute()
-    {
-        /*$a = explode('\\', get_class($this));
-        $c = end($a);
-        $r = snake_case($c);
-        $f = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $c));*/
-        
+    {        
         $form = "<form action='" . $this->view_url . "' method='POST'>";
         $form .= csrf_field() . method_field('DELETE');
         // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";

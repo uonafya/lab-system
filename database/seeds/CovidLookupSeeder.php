@@ -12,6 +12,24 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
 
+		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
+		DB::statement("
+			CREATE TABLE `nationalities` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('nationalities')->insert([
+			['id' => 1, 'name' => 'Kenyan'],
+			['id' => 2, 'name' => 'African'],
+			['id' => 3, 'name' => 'European'],
+			['id' => 4, 'name' => 'Asian'],
+			['id' => 5, 'name' => 'American'],
+			['id' => 6, 'name' => 'Other'],
+		]);
+
 		DB::statement("DROP TABLE IF EXISTS `identifier_types`;");
 		DB::statement("
 			CREATE TABLE `identifier_types` (

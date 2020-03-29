@@ -181,4 +181,38 @@ class ViewModel extends Model
         if($this->$value) return "Yes";
         return '';
     }
+
+    public function getRouteNameAttribute()
+    {
+        $a = explode('\\', get_class($this));
+        $c = end($a);
+        $c =  snake_case($c);
+
+        return str_replace('_view', '', $c);
+    }
+
+    public function getViewUrlAttribute()
+    {
+        return url($this->route_name . '/' . $this->id);
+    }
+
+    public function getViewLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id) . "'> View </a>";
+    }
+
+    public function getEditLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id . '/edit') . "'> Edit </a>";
+    }
+
+    public function getDeleteFormAttribute()
+    {        
+        $form = "<form action='" . $this->view_url . "' method='POST'>";
+        $form .= csrf_field() . method_field('DELETE');
+        // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= "<button class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= '</form>';
+        return $form;
+    }
 }
