@@ -185,11 +185,6 @@ class CovidWorksheetController extends Controller
         extract($vars);
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
-        
-        $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id');
-
-        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
         if($worksheet->combined){
             $new_limit = $limit - $data['count'];
@@ -205,6 +200,11 @@ class CovidWorksheetController extends Controller
                 session(['toast_message' => "The worksheet could not be created.", 'toast_error' => 1]);
                 return back();            
             }
+        
+            $samples = $data['samples'];
+            $sample_ids = $samples->pluck('id');
+            CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+
             $samples = $data['samples'];
             $sample_ids = $samples->pluck('id');
             $class::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
