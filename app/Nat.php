@@ -389,7 +389,7 @@ class Nat
 		$sql .= '(SELECT v.id, v.facility_id, v.ovf, v.rcategory ';
 		$sql .= 'FROM viralsamples_view v ';
 		$sql .= 'RIGHT JOIN ';
-		$sql .= '(SELECT ID, patient_id, v.ovf, max(datetested) as maxdate ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
 		$sql .= "WHERE ( datetested between '2019-01-01' and '2019-12-31' ) ";
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
@@ -401,7 +401,7 @@ class Nat
 		}
 
 		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
-		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'AND facility_id != 7148 ';
 		$sql .= 'GROUP BY patient_id) gv ';
 		$sql .= 'ON v.id=gv.id) tb ';
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
