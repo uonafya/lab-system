@@ -198,7 +198,7 @@ class CovidSampleController extends Controller
                     $travel = new CovidTravel;
                 }
                 $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_visited = $travels['city_visited'][$i];
+                $travel->city_id = $travels['city_id'][$i];
                 $travel->duration_visited = $travels['duration_visited'][$i];
                 $travel->sample_id = $covidSample->id;
                 $travel->pre_update();
