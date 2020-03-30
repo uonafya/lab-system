@@ -159,7 +159,7 @@ class WorksheetController extends Controller
             return back();            
         }
         $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id');
+        $sample_ids = $samples->pluck('id')->toArray();
 
         Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 

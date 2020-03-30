@@ -379,6 +379,89 @@ class Nat
 		self::email_csv('national_fine_age_suppression', $data);
 	}
 
+
+
+
+	public static function get_county_ovf_ages_current_query($suppressed=true, $ages=null)
+	{
+    	$sql = 'SELECT f.county_id, ovf, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.ovf, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, v.ovf, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		if($ages){
+			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
+			else{
+				$sql .= "AND age > {$ages[0]} AND age < {$ages[1]} ";
+			}
+		}
+
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+		else{
+			$sql .= 'WHERE rcategory IN (3,4) ';
+		}
+		$sql .= 'GROUP BY f.county_id, v.ovf  ';
+		$sql .= 'ORDER BY f.county_id, v.ovf  ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_county_ovf_fine_ages()
+	{
+		$data = [];
+		$ages = [];
+		$i=0;
+
+		while(true){
+			$f = $i;
+			$i += 4;
+			if($i > 20) break;
+			if($i == 84) $i = 100;
+			$s = $i;
+			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
+			if($i >= 100) break;
+			$i++;
+		}
+		$ages['a_all_ages'] = [];
+
+		$counties = DB::table('countys')->get();
+
+		foreach ($ages as $key => $value) {
+			$sup = $key . '_suppressed';
+			$nonsup = $key . '_nonsuppressed';
+			$$sup = self::get_county_ovf_ages_current_query(true, $value);
+			$$nonsup = self::get_county_ovf_ages_current_query(false, $value);
+		}
+
+		foreach ($counties as $county) {
+			$row = ['Year' => 2019, 'County' => $county->name];
+
+			foreach ($ages as $key => $value) {
+				$sup = $key . '_suppressed';
+				$nonsup = $key . '_nonsuppressed';
+
+				$row[$sup . '_non_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$sup . '_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				
+				$row[$nonsup . '_non_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$nonsup . '_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+			}
+			$data[] = $row;
+		}
+		self::email_csv('county_ovf_fine_age_suppression', $data);
+	}
+
+
 	/*
 	public static function save_gender_results()
 	{
@@ -661,4 +744,20 @@ class Nat
 
 	}
 
+	public static function ovf()
+	{
+		$file = public_path('ccc.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            $ccc = rtrim($data[0]);
+            $p = \App\Viralpatient::where('patient', $ccc)->first();
+            if(!$p) continue;
+            $p->ovf = 1;
+            $p->save();
+        }
+	}
+
+	// $file = public_path('ccc.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
+	// while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){ $i++; if($i < 19500){ continue; } $ccc = rtrim($data[0]); $rows[] = $ccc; $size++; if($size == 200){ \App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]); $rows=[]; $size=0; } }
 }

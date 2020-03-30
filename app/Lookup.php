@@ -546,6 +546,29 @@ class Lookup
         ];
     }
 
+
+    public static function covid_form()
+    {
+        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results'];
+
+        $data = [];
+
+        foreach ($tables as $key => $value) {
+            $data[$value] = DB::table($value)->get();
+        }
+        $data['amrs'] = self::$amrs;
+        $data['sms'] = self::$sms;
+        return $data;
+    }
+
+    public static function covid_arrays()
+    {
+        return [
+            'sample' => ['test_type', 'amrs_location', 'provider_identifier', 'order_no', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'comments', 'labcomment', 'sample_type', 'receivedstatus', 'rejectedreason', 'datecollected', 'datereceived'],
+            'patient' => ['identifier_type', 'identifier', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id'],
+        ];
+    }
+
 	public static function cacher()
 	{
         if(Cache::has('amrslocations')){}

@@ -23,13 +23,13 @@ class CovidSampleObserver
             }
         }
         if(!$covidSample->lab_id && $user) $covidSample->lab_id = env('APP_LAB');
-        if(!$covidSample->user_id && $user) $covidSample->user_id = $user->id ?? null;
+        if(!$covidSample->user_id && $user) $covidSample->user_id = $user->id;
         if(!$covidSample->received_by && $covidSample->datereceived && $user) $covidSample->received_by = $user->id;
-        if(($covidSample->dob && !$covidSample->age) || $covidSample->isDirty('dob')) $covidSample->calc_age();
+        if(($covidSample->patient->dob && !$covidSample->age)) $covidSample->calc_age();
 
-        if($covidSample->county && !$covidSample->county_id){
+        /*if($covidSample->county && !$covidSample->county_id){
             $covidSample->county_id = DB::table('countys')->where('name', $covidSample->county)->first()->id ?? null;
-        }
+        }*/
     }
 
     /**

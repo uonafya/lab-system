@@ -18,8 +18,8 @@
 				unset($sample->batch);
 			}
 		?>
-		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id ?? $sample->facility->name }}</b> 
-		{{ $sample->patient->patient ?? $sample->patient }}
+		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id ?? $sample->patient->facility->name ?? '' }}</b> 
+		{{ $sample->patient->patient ?? $sample->patient->identifier ?? '' }}
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
 		@endif 
