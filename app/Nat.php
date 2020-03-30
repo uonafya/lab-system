@@ -425,7 +425,7 @@ class Nat
 		while(true){
 			$f = $i;
 			$i += 4;
-			if($i > 20) break;
+			if($i > 25) break;
 			if($i == 84) $i = 100;
 			$s = $i;
 			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
