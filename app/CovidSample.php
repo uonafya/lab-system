@@ -18,7 +18,7 @@ class CovidSample extends BaseModel
 
     public function travel()
     {
-        return $this->belongsTo('App\CovidTravel', 'sample_id');
+        return $this->hasMany('App\CovidTravel', 'sample_id');
     }
 
     public function patient()
