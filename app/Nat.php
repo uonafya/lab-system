@@ -758,6 +758,34 @@ class Nat
         }
 	}
 
+	public static function ovc()
+	{
+		$file = public_path('ccc_2.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+        	if($data[0] == 'mfl_code') continue;
+            $ccc = rtrim($data[1]);
+            $code = rtrim($data[0]);
+            $p = \App\Viralpatient::select('viralpatients.*')
+            	->join('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
+            	->where(['patient' => $ccc, 'facilitycode' => $code])->first();
+            if(!$p) continue;
+            $p->ovf = 1;
+            $p->save();
+        }
+
+        $file = public_path('ccc_1.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        	$ccc = rtrim($data[0]);
+            $p = \App\Viralpatient::where('patient', $ccc)->first();
+            if(!$p) continue;
+            $p->ovf = 1;
+            $p->save();        	
+        }
+
+	}
+
 	// $file = public_path('ccc.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
 	// while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){ $i++; if($i < 19500){ continue; } $ccc = rtrim($data[0]); $rows[] = $ccc; $size++; if($size == 200){ \App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]); $rows=[]; $size=0; } }
 }
