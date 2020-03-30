@@ -18,6 +18,6 @@ class CovidTravel extends BaseModel
 
     public function city()
     {
-        return $this->belongsTo('App\City');
+        return $this->belongsTo('App\City', 'city_id');
     }
 }
