@@ -409,8 +409,8 @@ class Nat
 		else{
 			$sql .= 'WHERE rcategory IN (3,4) ';
 		}
-		$sql .= 'GROUP BY f.county_id, v.ovf  ';
-		$sql .= 'ORDER BY f.county_id, v.ovf  ';
+		$sql .= 'GROUP BY f.county_id, ovf  ';
+		$sql .= 'ORDER BY f.county_id, ovf  ';
 
 		// return $sql;
 		return collect(DB::select($sql));
