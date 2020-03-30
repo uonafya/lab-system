@@ -189,8 +189,8 @@
                                 <div class="col-sm-4">
                                     <!-- <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}"> -->
                                     <select class="form-control requirable saved_city_select" id="saved_city_select_{{ $key }}" name="travel[city_id][]" >
-                                        @if($travel->city)
-                                            <option value="{{ $travel->city_id }}"> {{ $travel->city->name }} </option>
+                                        @if($travel->town)
+                                            <option value="{{ $travel->city_id }}"> {{ $travel->town->name }} </option>
                                         @endif
                                     </select>
 
