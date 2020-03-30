@@ -758,4 +758,6 @@ class Nat
         }
 	}
 
+	// $file = public_path('ccc.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
+	// while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){ $i++; if($i < 19500){ continue; } $ccc = rtrim($data[0]); $rows[] = $ccc; $size++; if($size == 200){ \App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]); $rows=[]; $size=0; } }
 }
