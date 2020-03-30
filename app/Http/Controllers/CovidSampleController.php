@@ -258,7 +258,7 @@ class CovidSampleController extends Controller
     {
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
-        return view('exports.mpdf_covi_samples', $data);
+        return view('exports.mpdf_covid_samples', $data);
     }
 
 
