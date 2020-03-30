@@ -391,7 +391,7 @@ class Nat
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, v.ovf, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
-		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "WHERE ( datetested between '2019-01-01' and '2019-12-31' ) ";
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
