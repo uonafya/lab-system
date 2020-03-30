@@ -188,7 +188,7 @@ class CovidWorksheetController extends Controller
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
-        if($worksheet->combined){
+        if($worksheet->combined && !$data['create']){
             $new_limit = $limit - $data['count'];
             if($worksheet->combined == 1){
                 $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
