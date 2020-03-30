@@ -389,9 +389,9 @@ class Nat
 		$sql .= '(SELECT v.id, v.facility_id, v.ovf, v.rcategory ';
 		$sql .= 'FROM viralsamples_view v ';
 		$sql .= 'RIGHT JOIN ';
-		$sql .= '(SELECT ID, patient_id, v.ovf, max(datetested) as maxdate ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
-		$sql .= "WHERE ( datetested between '{$year}-01-01' and '{$year}-12-31' ) ";
+		$sql .= "WHERE ( datetested between '2019-01-01' and '2019-12-31' ) ";
 		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
@@ -401,7 +401,7 @@ class Nat
 		}
 
 		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
-		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'AND facility_id != 7148 ';
 		$sql .= 'GROUP BY patient_id) gv ';
 		$sql .= 'ON v.id=gv.id) tb ';
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
@@ -409,8 +409,8 @@ class Nat
 		else{
 			$sql .= 'WHERE rcategory IN (3,4) ';
 		}
-		$sql .= 'GROUP BY f.county_id, v.ovf  ';
-		$sql .= 'ORDER BY f.county_id, v.ovf  ';
+		$sql .= 'GROUP BY f.county_id, ovf  ';
+		$sql .= 'ORDER BY f.county_id, ovf  ';
 
 		// return $sql;
 		return collect(DB::select($sql));
@@ -425,7 +425,7 @@ class Nat
 		while(true){
 			$f = $i;
 			$i += 4;
-			if($i > 20) break;
+			if($i > 25) break;
 			if($i == 84) $i = 100;
 			$s = $i;
 			$ages['a_' . $f . '-' . $s] = [$f, ($s+1)];
@@ -450,11 +450,11 @@ class Nat
 				$sup = $key . '_suppressed';
 				$nonsup = $key . '_nonsuppressed';
 
-				$row[$sup . '_non_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
-				$row[$sup . '_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				$row[$sup . '_non_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$sup . '_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
 				
-				$row[$nonsup . '_non_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
-				$row[$nonsup . '_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				$row[$nonsup . '_non_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$nonsup . '_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
 			}
 			$data[] = $row;
 		}

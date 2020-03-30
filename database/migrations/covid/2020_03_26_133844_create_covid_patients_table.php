@@ -21,8 +21,12 @@ class CreateCovidPatientsTable extends Migration
             $table->tinyInteger('nationality')->nullable();
             $table->tinyInteger('identifier_type')->nullable();
             $table->string('identifier', 30)->index();
-            $table->string('patient_name')->nullable();
             $table->string('occupation', 80)->nullable();
+
+
+            $table->string('patient_name', 50)->nullable();
+            $table->string('email_address', 40)->nullable();
+            $table->string('phone_no', 20)->nullable();
 
             $table->tinyInteger('justification')->nullable();
 
