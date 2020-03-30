@@ -450,11 +450,11 @@ class Nat
 				$sup = $key . '_suppressed';
 				$nonsup = $key . '_nonsuppressed';
 
-				$row[$sup . '_non_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
-				$row[$sup . '_ovf'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				$row[$sup . '_non_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$sup . '_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
 				
-				$row[$nonsup . '_non_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
-				$row[$nonsup . '_ovf'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				$row[$nonsup . '_non_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$nonsup . '_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
 			}
 			$data[] = $row;
 		}
