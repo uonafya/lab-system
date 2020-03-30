@@ -778,12 +778,16 @@ class Nat
         $file = public_path('ccc_1.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
         	$ccc = rtrim($data[0]);
-            $p = \App\Viralpatient::where('patient', $ccc)->first();
-            if(!$p) continue;
-            $p->ovf = 1;
-            $p->save();        	
-        }
+        	$rows[] = $ccc;
+        	$size++;
 
+        	if($size == 200){
+        		\App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]);
+        		$rows = [];
+        		$size = 0;
+        	}    	
+        }
+        if($rows) \App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]);
 	}
 
 	// $file = public_path('ccc.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
