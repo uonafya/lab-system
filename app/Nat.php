@@ -391,8 +391,8 @@ class Nat
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
-		$sql .= "WHERE ( datetested between '2019-01-01' and '2019-12-31' ) ";
-		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		$sql .= "WHERE patient != '' AND patient != 'null' AND patient is not null ";
+		// $sql .= "AND ( datetested between '2019-01-01' and '2019-12-31' ) ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
 			else{
@@ -432,7 +432,7 @@ class Nat
 			if($i >= 100) break;
 			$i++;
 		}
-		$ages['a_all_ages'] = [];
+		$ages['a_0-24'] = [0, 24];
 
 		$counties = DB::table('countys')->get();
 
