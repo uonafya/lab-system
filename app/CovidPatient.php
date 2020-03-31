@@ -26,6 +26,11 @@ class CovidPatient extends BaseModel
         return $this->hasMany('App\CovidSample', 'patient_id');
     }
 
+    public function contact()
+    {
+        return $this->hasMany('App\CovidContact', 'patient_id');
+    }
+
     public function setHealthStatusAttribute($value)
     {
         $this->attributes['current_health_status'] = $value;

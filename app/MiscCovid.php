@@ -10,7 +10,7 @@ class MiscCovid extends Common
 {
 
 
-    public static function sample_result($target1, $target2, $flag)
+    public static function sample_result($target1, $target2, $error)
     {
         $target1 = trim(strtolower($target1));
         $target2 = trim(strtolower($target2));
@@ -42,7 +42,8 @@ class MiscCovid extends Common
             return ['result' => 3, 'interpretation' => 'Failed'];
         }
 
-        return ['result' => $result, 'interpretation' => $interpretation, 'repeatt' => 0];
+        // return ['result' => $result, 'interpretation' => $interpretation, 'repeatt' => 0];
+        return compact('result', 'interpretation', 'repeatt', 'target1', 'target2', 'error');
     }
 
 

@@ -28,6 +28,9 @@ class CreateCovidPatientsTable extends Migration
             $table->string('email_address', 40)->nullable();
             $table->string('phone_no', 20)->nullable();
 
+            $table->string('contact_email_address', 40)->nullable();
+            $table->string('contact_phone_no', 20)->nullable();
+
             $table->tinyInteger('justification')->nullable();
 
             $table->string('county', 20)->nullable();
