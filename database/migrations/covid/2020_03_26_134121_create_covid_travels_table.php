@@ -16,7 +16,7 @@ class CreateCovidTravelsTable extends Migration
         Schema::create('covid_travels', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('national_travel_id')->index()->nullable();
-            $table->integer('sample_id')->index();
+            $table->integer('patient_id')->index();
             $table->date('travel_date')->nullable();
             $table->string('city', 35)->nullable();
             $table->string('country', 35)->nullable();

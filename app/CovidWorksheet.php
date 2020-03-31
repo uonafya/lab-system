@@ -59,6 +59,14 @@ class CovidWorksheet extends BaseModel
         return $this->belongsTo('App\User', 'reviewedby2');
     }
 
+    
+
+    public function getFailedAttribute()
+    {
+        if(!in_array($this->neg_control_result, [1,6]) || !in_array($this->pos_control_result, [2,6])) return true;
+        return false;
+    }
+
 	public function other_samples($id = null){
 		if(!$this->combined) return null;
 		if($this->combined == 1){
