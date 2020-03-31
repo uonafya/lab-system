@@ -214,7 +214,7 @@
 
 
 
-                        <div class="form-group ampath-div">
+                        <div class="form-group">
                             <label class="col-sm-4 control-label">Infant Name</label>
                             <div class="col-sm-8">
                                 <input class="form-control" name="patient_name" id="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">

@@ -132,10 +132,13 @@ class SampleController extends Controller
                 $b = new Batch;
             }
 
+            $batch_details = get_object_vars($new_sample->batch);
+            unset($batch_details['id']);            
             $b = new Batch;
-            $b->fill(get_object_vars($new_sample->batch));
+            $b->fill($batch_details);
             $b->user_id = $user_id;
-            unset($b->id);
+            $b->lab_id = env('APP_LAB');
+            unset($b->creator);
             $b->pre_update();
             unset($new_sample->batch);
 

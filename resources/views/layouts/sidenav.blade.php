@@ -187,6 +187,15 @@
                     <hr />
                 @endif
             @endif
+            @if (session('testingSystem') == 'Covid')
+                <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>
+                <hr />
+                <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
+                <hr />
+                <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
+                <hr />
+
+            @endif
             @if (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
@@ -234,6 +243,12 @@
                 <a href="{{ url('viralpatient') }}">VL Patient List</a>
             </li>
             <hr />
+            @if(in_array('APP_LAB', [1, 3]))
+                <li>
+                    <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
+                </li>
+                <hr />
+            @endif
             <li>
                 <a href="{{ url('sample/create') }}">Add EID Sample</a>
             </li>
@@ -332,7 +347,7 @@
                 <hr />
             @endif
         --}}
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 7]))
+        @if(in_array(Session('testingSystem'), ['EID', 'Viralsample']) && in_array(Auth::user()->user_type_id, [0, 7]))
             <li>
                 <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
             </li>

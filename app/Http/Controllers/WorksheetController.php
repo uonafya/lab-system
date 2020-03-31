@@ -97,6 +97,7 @@ class WorksheetController extends Controller
             ->get();
         $data['worksheets'] = $worksheets;
         $data['myurl'] = url('worksheet/index/' . $state . '/');
+        $data['link_extra'] = '';
 
         return view('tables.worksheets', $data)->with('pageTitle', 'Worksheets');
     }
@@ -158,7 +159,7 @@ class WorksheetController extends Controller
             return back();            
         }
         $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id');
+        $sample_ids = $samples->pluck('id')->toArray();
 
         Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
@@ -339,7 +340,10 @@ class WorksheetController extends Controller
         $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
         // $samples = Sample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
-        $samples = Sample::where(['worksheet_id' => $worksheet->id])->get();
+        // $samples = Sample::where(['worksheet_id' => $worksheet->id])->get();
+
+        $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Sample::whereIn('id', $sample_array)->get();
 
         foreach ($samples as $key => $sample) {
             if($sample->parentid == 0) $del_samples = Sample::where('parentid', $sample->id)->get();
@@ -571,11 +575,11 @@ class WorksheetController extends Controller
 
         $s = $this->get_worksheets($worksheet->id);
 
-        $neg = $this->checknull($s->where('result', 1));
-        $pos = $this->checknull($s->where('result', 2));
-        $failed = $this->checknull($s->where('result', 3));
-        $redraw = $this->checknull($s->where('result', 5));
-        $noresult = $this->checknull($s->where('result', 0));
+        $neg = $s->where('result', 1)->first()->totals ?? 0;
+        $pos = $s->where('result', 2)->first()->totals ?? 0;
+        $failed = $s->where('result', 3)->first()->totals ?? 0;
+        $redraw = $s->where('result', 5)->first()->totals ?? 0;
+        $noresult = $s->where('result', 0)->first()->totals ?? 0;
 
         $total = $neg + $pos + $failed + $redraw + $noresult;
 
@@ -682,6 +686,40 @@ class WorksheetController extends Controller
 
             return redirect('/batch/dispatch');            
         }
+    }
+
+    public function rerun_worksheet(Worksheet $worksheet)
+    {
+        if($worksheet->status_id != 2 || !$worksheet->failed){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
+            return back();
+        }
+        $worksheet->status_id = 5;
+        $worksheet->save();
+
+        $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
+            'neg_control_result', 'pos_control_result', 
+            'neg_control_interpretation', 'pos_control_interpretation',
+            'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
+        ]);
+        $new_worksheet->save();
+
+        
+        $samples = Sample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->select('samples.*')
+                    ->join('batches', 'batches.id', '=', 'samples.batch_id')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 1;
+            $sample->pre_update();
+            $rsample = Misc::save_repeat($sample->id);
+            $rsample->worksheet_id = $new_worksheet->id;
+            $rsample->save();
+        }
+        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        return redirect($worksheet->route_name);  
     }
 
     public function mtype($machine)
@@ -792,11 +830,6 @@ class WorksheetController extends Controller
         $worksheets = Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
         $worksheets->setPath(url()->current());
         return $worksheets;
-    }
-
-    public function checknull($var)
-    {
-        return $var->first()->totals ?? 0;
     }
 
 }

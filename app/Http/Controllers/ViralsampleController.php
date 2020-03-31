@@ -600,6 +600,7 @@ class ViralsampleController extends Controller
             $viralsample->worksheet_id = null;
             $viralsample->result = null;
             $viralsample->interpretation = null;
+            $viralsample->repeatt = 0;
         }
 
         if($viralsample->receivedstatus == 1 && $viralsample->getOriginal('receivedstatus') == 2){
