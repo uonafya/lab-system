@@ -53,11 +53,9 @@
 
         @endif
 
-        @if(isset($type))
-            {{ Form::open(['url'=>'/viralworksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
-        @else
-            {{ Form::open(['url'=>'/worksheet/upload/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'files' => true]) }}
-        @endif
+        <form action="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" class="form-horizontal" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
         <input type="hidden" value="{{ auth()->user()->id }}" name="uploadedby">
         <input type="hidden" value="{{ date('Y-m-d') }}" name="dateuploaded">
@@ -188,7 +186,8 @@
             </div>
         </div>
 
-        {{ Form::close() }}
+        </form>
+
 
       </div>
     </div>

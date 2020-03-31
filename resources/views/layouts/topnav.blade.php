@@ -64,9 +64,27 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
+                    @elseif(Session('testingSystem') == 'Covid')
+                        <li class="">
+                            <a href="{{ url('home') }}">Home</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('covid_sample') }}">Samples</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('covid_worksheet') }}">Worksheets</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                        </li>
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
+                                @if(in_array('APP_LAB', [1, 3]))
+                                    <li class=""><a href="{{ url('covid_sample') }}">Covid Samples</a></li>
+                                    <li class=""><a href="{{ url('covid_sample/index/2') }}">Covid Results</a></li>
+                                @endif
+
                                 <li class="">
                                     <a href="{{ url('batch') }}">EID Samples</a>
                                 </li>
@@ -134,7 +152,7 @@
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
                                     <li class="">
-                                        @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
+                                        @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                                             <a href="{{ url('reports/kits') }}">Kits
                                             <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
                                             {{ $widgets['rejectedAllocations'] }}
@@ -189,6 +207,19 @@
                     <li class="">
                         <a href="{{ url('home') }}">Dashboard</a>
                     </li>
+                @elseif(Session('testingSystem') == 'Covid')
+                    <li class="">
+                        <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_worksheet') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                    </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">
                         <a href="{{ url('reports') }}">Report</a>
@@ -196,6 +227,15 @@
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
+                            @if(in_array('APP_LAB', [1, 3]))
+                                <li class="">
+                                    <a href="{{ url('covid_sample') }}">Covid Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('covid_sample/index/2') }}">Covid Results</a>
+                                </li>
+                            @endif
+
                             <li class="">
                                 <a href="{{ url('batch') }}">EID Samples</a>
                             </li>
@@ -290,7 +330,7 @@
                                         {{ 'https://eid.nascop.org/labPerformance' }}
                                     @endif">Nascop Dashboard</a>
                             </li>
-                            @if(env('APP_LAB') != 7 && session('testingSystem') != 'DR')
+                            @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
             <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
             {{ $widgets['rejectedAllocations'] }}

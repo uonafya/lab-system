@@ -22,11 +22,12 @@
         <div>
 
         @if(isset($sample))
-            <form method="POST" class="form-horizontal" action='{{ url("/covidsample/{$sample->id}/edit") }}' >
+            <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/{$sample->id}") }}' >
             @method('PUT')
         @else
-            <form method="POST" class="form-horizontal" action='{{ url("/covidsample/") }}'>
+            <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/") }}'>
         @endif
+            <?php $m = $sample ?? null; ?>
 
         @csrf
 
@@ -67,42 +68,17 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" name="facility_id" id="facility_id">
                                     @isset($sample)
-                                        <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
+                                        <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endisset
                                 </select>
                             </div>
                         </div>
 
-                        
-                        <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
-                            <div class="col-sm-8">
-                                <select class="form-control ampath-only" name="amrs_location">
+                        @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'required' => true, 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
 
-                                  <option></option>
-                                  @foreach ($amrs_locations as $amrs_location)
-                                      <option value="{{ $amrs_location->id }}"
-
-                                      @if (isset($sample) && $sample->amrs_location == $amrs_location->id)
-                                          selected
-                                      @endif
-
-                                      > {{ $amrs_location->name }}
-                                      </option>
-                                  @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group ampath-div">
-                            <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Provider Identifier</label>
-                            <div class="col-sm-8">
-                                <input class="form-control ampath-only" name="provider_identifier" type="text" value="{{ $sample->provider_identifier ?? '' }}">
-                            </div>
-                        </div>                        
+                        @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
                     </div>
                 </div>
@@ -114,72 +90,66 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
-                        <center>Patient Details</center>
+                        <center>Patient Information</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient/Sample Identifier
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <input class="form-control requirable" required name="patient" type="text" value="{{ $sample->patient ?? '' }}" id="patient">
-                            </div>
-                        </div>
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Birth
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date date-dob">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dob" required class="form-control requirable" value="{{ $sample->dob ?? '' }}" name="dob">
-                                </div>
-                            </div>                            
-                        </div>
+                        @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Sex
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <select class="form-control requirable" required name="sex" id="sex">
-                                    <option></option>
-                                    @foreach ($genders as $gender)
-                                        <option value="{{ $gender->id }}"
 
-                                        @if (isset($sample) && $sample->sex == $gender->id)
-                                            selected
-                                        @endif
 
-                                        > {{ $gender->gender_description }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        @include('partial.input', ['model' => $m, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Area of Residence
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <input class="form-control requirable" required name="residence" type="text" value="{{ $sample->residence ?? '' }}" id="residence">
-                            </div>
-                        </div>
+                        @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Symptoms Began Showing
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date date-normal">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="symptoms_date" required class="form-control requirable" value="{{ $sample->symptoms_date ?? '' }}" name="symptoms_date">
-                                </div>
-                            </div>                            
-                        </div>
+                        @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number'])
+
+
+                        @include('partial.date', ['model' => $m, 'prop' => 'dob', 'required' => true, 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
+
+                        @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'residence', 'default_val' => $sample->patient->residence ?? null, 'label' => 'Area of Residence'])
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
+                        <center>Clinical Information</center>
+                    </div>
+                    <div class="panel-body" style="padding-bottom: 6px;">
+
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'justification', 'label' => 'Justification', 'items' => $covid_justifications, 'default_val' => $sample->patient->justification ?? null])
+
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'test_type', 'label' => 'Test Type', 'items' => $covid_test_types, ])
+
+                        @include('partial.date', ['model' => $m, 'prop' => 'date_symptoms', 'label' => 'Date Symptoms Began Showing', 'default_val' => $sample->patient->date_symptoms ?? null,])
+
+                        @include('partial.date', ['model' => $m, 'prop' => 'date_admission', 'label' => 'Date of Admission to Hospital', 'default_val' => $sample->patient->date_admission ?? null,])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'hospital_admitted', 'default_val' => $sample->patient->hospital_admitted ?? null, 'label' => 'Hospital Admitted'])
+
+                        @include('partial.date', ['model' => $m, 'prop' => 'date_isolation', 'label' => 'Date of Isolation', 'default_val' => $sample->patient->date_isolation ?? null,])
+
+                        @include('partial.select', ['model' => $m, 'prop' => 'health_status', 'label' => 'Health Status', 'items' => $health_statuses])
+
+                        @include('partial.date', ['model' => $m, 'prop' => 'date_death', 'label' => 'Date of Death', 'default_val' => $sample->patient->date_death ?? null,])
+
+                        @include('partial.select_multiple', ['model' => $m, 'prop' => 'symptoms', 'label' => 'Symptoms', 'items' => $covid_symptoms])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'temperature', 'is_number' => true, 'label' => 'Temperature (Celcius)'])
+
+                        @include('partial.select_multiple', ['model' => $m, 'prop' => 'observed_signs', 'label' => 'Observed Signs', 'items' => $observed_signs])
+
+                        @include('partial.select_multiple', ['model' => $m, 'prop' => 'underlying_conditions', 'label' => 'Underlying Conditions', 'items' => $underlying_conditions])
 
 
 
@@ -193,28 +163,31 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
-                        <center>History of Travel</center>
+                        <center>Exposure and travel information in the 14 days prior to symptom onset (prior to reporting if asymptomatic)</center>
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'occupation', 'default_val' => $sample->patient->occupation ?? null, 'label' => 'Occupation'])
 
                         <div class="travel_item" id="first_travel_item">
                             <div class="col-sm-4">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" value="{{ $sample->travel_date ?? '' }}" name="travel[travel_date][]">
+                                    <input type="text" placeholder="Date of Travel" class="form-control requirable" disabled name="travel[travel_date][]">
                                 </div>
                             </div> 
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}">
+                                <!-- <input class="form-control requirable" disabled placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $sample->city_visited ?? '' }}"> -->
+                                <select class="form-control requirable city_select" disabled name="travel[city_id][]" ></select>
                             </div>  
                             <div class="col-sm-4">
-                                <input class="form-control requirable" placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $sample->duration_visited ?? '' }}">
+                                <input class="form-control requirable" disabled placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" >
                             </div>
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
-                        @isset(isset($sample))
-                            @foreach($sample->travel as $key => $travel)
+                        @if(isset($sample) && $sample->patient->travel)
+                            @foreach($sample->patient->travel as $key => $travel)
                                 <input type="hidden" name="travel[travel_id][]" value="{{ $travel->id }}">
                                 <div class="col-sm-4">
                                     <div class="input-group date date-normal">
@@ -223,7 +196,13 @@
                                     </div>
                                 </div> 
                                 <div class="col-sm-4">
-                                    <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}">
+                                    <!-- <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}"> -->
+                                    <select class="form-control requirable saved_city_select" id="saved_city_select_{{ $key }}" name="travel[city_id][]" >
+                                        @if($travel->town)
+                                            <option value="{{ $travel->city_id }}"> {{ $travel->town->name }} </option>
+                                        @endif
+                                    </select>
+
                                 </div>  
                                 <div class="col-sm-4">
                                     <input class="form-control requirable" required placeholder="Duration Visited (In Days)" number="number" name="travel[duration_visited][]" type="text" value="{{ $travel->duration_visited ?? '' }}">
@@ -251,61 +230,25 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Collection
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="input-group date date-normal">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
-                                </div>
-                            </div>                            
-                        </div> 
+                        @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'sample_type', 'label' => 'Sample Type', 'items' => $covid_sample_types, ])
+
+                        @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datecollected', 'label' => 'Date of Collection',])
 
                         @if(auth()->user()->user_type_id != 5)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-normal">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
-                                    </div>
-                                </div>                            
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Received Status
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+                            @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Received',])
 
-                                        <option></option>
-                                        @foreach ($receivedstatuses as $receivedstatus)
-                                            <option value="{{ $receivedstatus->id }}"
+                            @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'receivedstatus', 'label' => 'Received Status', 'items' => $receivedstatus, ])
 
-                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
-                                                selected
-                                            @endif
+                            @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
-                                            > {{ $receivedstatus->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="rejection" >
+                            {{--<div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
                                 <div class="col-sm-8">
                                         <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
 
                                         <option></option>
-                                        @foreach ($rejectedreasons as $rejectedreason)
+                                        @foreach ($viralrejectedreasons as $rejectedreason)
                                             <option value="{{ $rejectedreason->id }}"
 
                                             @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
@@ -318,18 +261,13 @@
 
                                     </select>
                                 </div>
-                            </div>
+                            </div>--}}
                         @endif
                         
                         @if(auth()->user()->user_type_id == 5)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Entered By
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by"  type="text" value="{{ $sample->entered_by ?? '' }}">
-                                </div>
-                            </div>
+
+                            @include('partial.input', ['model' => $m, 'prop' => 'entered_by', 'label' => 'Entered By'])
+
                         @endif
 
                     </div>
@@ -403,6 +341,7 @@
         // $(".date :not(.date-dob, .date-dispatched)").datepicker({
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility('.saved_city_select', "{{ url('/city/search') }}", 3, "Search for city", false);
 
     @endcomponent
 
@@ -499,8 +438,20 @@
                 event.preventDefault();
                 // $(".travel_item :first").clone().appendTo("#travel_container");
                 $("#first_travel_item").clone().appendTo("#travel_container");
+
+                var rand = Math.floor(Math.random() * 1000);
+                var id = 'select_city_'+rand;
+
+                $('#travel_container select').last().attr('id', id);
+
                 $('#travel_container .travel_item').last().show().removeAttr('id');
                 $('#travel_container input').attr("required", "required");
+                $('#travel_container input').removeAttr("disabled");
+                // $('#travel_container select').removeAttr("disabled");
+
+                $('#travel_container select').attr("required", "required");
+                $('#travel_container select').removeAttr("disabled");
+
 
                 $(".date-normal").datepicker({
                     startView: 0,
@@ -512,6 +463,10 @@
                     endDate: new Date(),
                     format: "yyyy-mm-dd"
                 });
+
+                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
+                set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
+                // set_select_facility(id, "{{ url('/city/search') }}", 3, "Search for city", false);
             });
 
             $('#remove_travel').click(function(event){

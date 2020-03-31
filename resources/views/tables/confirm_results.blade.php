@@ -14,7 +14,12 @@
                     Worksheet Summary 
                     
                     <div class="panel-tools">
-                        <a href="{{ url('/worksheet/cancel_upload/' . $worksheet->id) }} ">
+                        @if($worksheet->failed)
+                            <a href="{{ url($worksheet->route_name . '/rerun_worksheet/' . $worksheet->id) }} ">
+                                <button class="btn btn-danger">Rerun Worksheet</button>
+                            </a>
+                        @endif
+                        <a href="{{ url($worksheet->route_name . '/cancel_upload/' . $worksheet->id) }} ">
                             <button class="btn btn-danger">Cancel Upload</button>
                         </a>
                     </div>
@@ -44,7 +49,7 @@
                     Confirm Results
                 </div>
                 <div class="panel-body">
-                    <form  method="post" action="{{ url('worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
+                    <form  method="post" action="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
                         {{ method_field('PUT') }} {{ csrf_field() }}
 
                         <table class="table table-striped table-bordered table-hover" >
@@ -153,19 +158,13 @@
                                     <tr>
                                         <td> 
                                             {!! $sample->patient->hyperlink !!} 
-
                                         </td>
                                         <td> {{ $sample->id }}  </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
-                                            @if( $class == 'noneditable' )
-                                                @foreach($results as $result)
-                                                    @if($sample->result == $result->id)
-                                                        {!! $result->name_colour !!}
-                                                    @endif
-                                                @endforeach
-
+                                            @if( $class == 'noneditable' || isset($covid))
+                                                {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}
                                             @else
                                             <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
                                             <input type="hidden" name="batches[]" value="{{ $sample->batch_id }}" class="{{ $class }}">
@@ -191,6 +190,9 @@
                                                 @endforeach
 
                                             @else
+                                                @if(isset($covid))
+                                                    <input type="hidden" name="samples[]" value="{{ $sample->id }}" class="{{ $class }}">
+                                                @endif
                                                 <select name="actions[]" class="{{ $class }}">
                                                     @foreach($actions as $action)
                                                         <option value="{{$action->id}}"
@@ -210,8 +212,8 @@
                                             <td> {{ $sample->approver->full_name ?? '' }} </td>
                                         @endif
                                         <td> 
-                                            <a href="{{ url('sample/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
-                                            <a href="{{ url('sample/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
+                                            <a href="{{ url($sample->route_name . '/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
+                                            <a href="{{ url($sample->route_name . '/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
                                         </td>
                                     </tr>
 

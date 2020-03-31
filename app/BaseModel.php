@@ -45,12 +45,15 @@ class BaseModel extends Model
     public function getHyperlinkAttribute()
     {
         $user = auth()->user();
-        $c = get_class($this);
-        $c = strtolower($c);
-        $c = str_replace_first('app\\', '', $c);
+        /*$c = get_class($this);
+        // $c = strtolower($c);
+        $c = str_replace_first('App\\', '', $c);
+        $c = snake_case($c);*/
+
+        $c = $this->route_name;
 
         $url = url($c . '/' . $this->id);
-        if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
+        // if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
         if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
 
         if(str_contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
@@ -68,18 +71,17 @@ class BaseModel extends Model
     public function get_link($attr)
     {
         $user = auth()->user();
-        $c = get_class($this);
-        $c = strtolower($c);
-        $c = str_replace_first('app\\', '', $c);
+        $c = $this->route_name;
 
         $pre = '';
         if(str_contains($c, 'viral')) $pre = 'viral';
         if(str_contains($c, 'dr')) $pre = 'dr_';
+        if(str_contains($c, 'covid')) $pre = 'covid_';
         $user = auth()->user();
 
         if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
         else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
-        else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        // else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
@@ -169,5 +171,39 @@ class BaseModel extends Model
         else{
             $this->pre_update();
         }
+    }
+
+    public function getRouteNameAttribute()
+    {
+        $a = explode('\\', get_class($this));
+        $c = end($a);
+        $c =  snake_case($c);
+
+        return str_replace('_view', '', $c);
+    }
+
+    public function getViewUrlAttribute()
+    {
+        return url($this->route_name . '/' . $this->id);
+    }
+
+    public function getViewLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id) . "'> View </a>";
+    }
+
+    public function getEditLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id . '/edit') . "'> Edit </a>";
+    }
+
+    public function getDeleteFormAttribute()
+    {        
+        $form = "<form action='" . $this->view_url . "' method='POST'>";
+        $form .= csrf_field() . method_field('DELETE');
+        // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= "<button class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= '</form>';
+        return $form;
     }
 }
