@@ -14,6 +14,11 @@
                     Worksheet Summary
                                         
                     <div class="panel-tools">
+                        @if($worksheet->failed)
+                            <a href="{{ url($worksheet->route_name . '/rerun_worksheet/' . $worksheet->id) }} ">
+                                <button class="btn btn-danger">Rerun Worksheet</button>
+                            </a>
+                        @endif
                         <a href="{{ url('/viralworksheet/cancel_upload/' . $worksheet->id) }} ">
                             <button class="btn btn-danger">Cancel Upload</button>
                         </a>

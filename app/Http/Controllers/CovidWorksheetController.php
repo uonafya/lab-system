@@ -188,7 +188,7 @@ class CovidWorksheetController extends Controller
 
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
 
-        if($worksheet->combined){
+        if($worksheet->combined && !$data['create']){
             $new_limit = $limit - $data['count'];
             if($worksheet->combined == 1){
                 $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
@@ -314,6 +314,35 @@ class CovidWorksheetController extends Controller
         return redirect("/covid_worksheet");
     }
 
+    public function cancel_upload(CovidWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 2){
+            session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
+            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        $samples = CovidSample::where(['repeatt' => 1, 'worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $sample) {
+            $sample->remove_rerun();
+        }
+
+        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+
+        session(['toast_message' => 'The upload has been reversed.']);
+        return redirect($worksheet->route_name . "/upload/" . $worksheet->id);
+    }
+
 
 
     public function upload(CovidWorksheet $worksheet)
@@ -323,7 +352,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
         $worksheet->load(['creator']);
-        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
+        $users = User::lab_user()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -340,105 +369,38 @@ class CovidWorksheetController extends Controller
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/covid'); 
-        $today = $datetested = date("Y-m-d");
+        $today = $datemodified = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = [];
 
-        if($worksheet->machine_type == 2)
-        {
-            $date_tested = $request->input('daterun');
-            $datetested = MiscCovid::worksheet_date($date_tested, $worksheet->created_at);
-
-            // config(['excel.import.heading' => false]);
-            $data = Excel::load($file, function($reader){
-                $reader->toArray();
-            })->get();
-
-            $check = array();
-
-            $bool = false;
-            $positive_control = $negative_control = "Passed";
-
-            foreach ($data as $key => $value) {
-                if($value[5] == "RESULT"){
-                    $bool = true;
-                    continue;
-                }
-
-                if($bool){
-                    $sample_id = $value[1];
-                    $interpretation = $value[5];
-                    $error = $value[10];
-
-
-                    Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
-
-                    $data_array = Misc::sample_result($interpretation, $error);
-
-                    if($sample_id == "HIV_NEG") $negative_control = $data_array;
-                    if($sample_id == "HIV_HIPOS") $positive_control = $data_array;
-
-                    $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $today]);
-                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    // Sample::where($search)->update($data_array);
-
-                    $sample_id = (int) $sample_id;
-                    $sample = Sample::find($sample_id);
-                    if(!$sample) continue;
-
-                    $sample->fill($data_array);
-                    if($cancelled) $sample->worksheet_id = $worksheet->id;
-                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
-
-                    $sample->save();
-                }
-
-                if($bool && $value[5] == "RESULT") break;
-            }
-        }
         // C8800
-        else if($worksheet->machine_type == 3){
+        if($worksheet->machine_type == 3){
             $handle = fopen($file, "r");
             while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
                 if(!isset($value[1])) break;
+                if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
-                $interpretation = $value[6];
-                $result_array = MiscViral::sample_result($interpretation);
+                // $interpretation = $value[6];
 
-                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+                $target1 = $value[6];
+                $target1 = $value[7];
+                $flag = $value[3];
+
+                $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if($control == 'HxV H (+) C'){
-                        $hpc = $result_array['result'];
-                        $hpc_int = $result_array['interpretation'];
-                        $hpc_units = $result_array['units'];                        
+                    if(str_contains($control, ['-'])){
+                        $negative_control = $result_array;                       
+                    }else{
+                        $positive_control = $result_array; 
                     }
-                    else if($control == 'HxV L (+) C'){
-                        $lpc = $result_array['result'];
-                        $lpc_int = $result_array['interpretation'];
-                        $lpc_units = $result_array['units'];
-                    }
-                    else if($control == '(-) C'){
-                        $nc = $result_array['result'];
-                        $nc_int = $result_array['interpretation']; 
-                        $nc_units = $result_array['units']; 
-                    }
+                    continue;
                 }
 
-                $datetested = $today;
-
-                try {
-                    $dt = Carbon::parse($value[12]);
-                    $date_tested = $dt->toDateString();                    
-                    $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);
-                } catch (Exception $e) {
-                    $datetested = $today;
-                }
-
-                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+                $data_array = array_merge(compact('datemodified', 'datetested'), $result_array);
 
 
                 $sample_id = (int) $sample_id;
@@ -451,45 +413,7 @@ class CovidWorksheetController extends Controller
                 $sample->save();
             }
         }
-        else
-        {
-            $handle = fopen($file, "r");
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
-            {
-                $interpretation = rtrim($data[8]);
-                $control = rtrim($data[5]);
 
-                $error = $data[10];
-
-                $date_tested=date("Y-m-d", strtotime($data[3]));
-
-                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
-
-                $data_array = Misc::sample_result($interpretation, $error);
-
-                if($control == "NC") $negative_control = $data_array;
-
-                if($control == "LPC" || $control == "PC") $positive_control = $data_array;
-
-                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
-
-                $sample_id = (int) trim($data[4]);  
-
-                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
-
-                // $sample_id = substr($sample_id, 0, -1);
-                $sample = Sample::find($sample_id);
-                if(!$sample) continue;
-
-                $sample->fill($data_array);
-                if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
-                    
-                $sample->save();
-
-            }
-            fclose($handle);
-        }
 
         if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
@@ -502,10 +426,7 @@ class CovidWorksheetController extends Controller
             })->download('csv');
         }
 
-        // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
-        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
-        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
+        CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
         $worksheet->neg_control_interpretation = $negative_control['interpretation'];
         $worksheet->neg_control_result = $negative_control['result'];
@@ -516,16 +437,152 @@ class CovidWorksheetController extends Controller
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
-        Misc::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
 
-        return redirect('worksheet/approve/' . $worksheet->id);
+        return redirect($worksheet->route_name . '/approve/' . $worksheet->id);
     }
 
 
 
 
+    public function approve_results(CovidWorksheet $worksheet)
+    {        
+        $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
+        // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        
+        $samples = CovidSample::with(['approver', 'final_approver', 'patient'])
+                    ->where('worksheet_id', $worksheet->id) 
+                    ->where('site_entry', '!=', 2) 
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                    })
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+        $s = $this->get_worksheets($worksheet->id);
+
+        $neg = $s->where('result', 1)->first()->totals ?? 0;
+        $pos = $s->where('result', 2)->first()->totals ?? 0;
+        $failed = $s->where('result', 3)->first()->totals ?? 0;
+        $redraw = $s->where('result', 5)->first()->totals ?? 0;
+        $noresult = $s->where('result', 0)->first()->totals ?? 0;
+
+        $total = $neg + $pos + $failed + $redraw + $noresult;
+
+        $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
+
+        $data = Lookup::worksheet_approve_lookups();
+        $data['samples'] = $samples;
+        $data['subtotals'] = $subtotals;
+        $data['worksheet'] = $worksheet;
+        $data['covid'] = true;
+
+        return view('tables.confirm_results', $data)->with('pageTitle', 'Approve Results');
+    }
+
+    public function approve(Request $request, CovidWorksheet $worksheet)
+    {
+        $double_approval = Lookup::$double_approval;
+        $actions = $request->input('actions');
+        $samples = $request->input('samples');
+
+        $today = date('Y-m-d');
+        $approver = auth()->user()->id;
+
+        if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+            session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+            return redirect($worksheet->route_name);            
+        }
+
+        foreach ($samples as $key => $value) {
+
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){
+                $data = [
+                    'approvedby2' => $approver,
+                    'dateapproved2' => $today,
+                ];
+            }
+            else{
+                $data = [
+                    'approvedby' => $approver,
+                    'dateapproved' => $today,
+                ];
+            }
+
+            $data['repeatt'] = $actions[$key];
+            
+            $sample = CovidSample::find($samples[$key]);
+            $sample->fill($data);
+            if($sample->result == 3 &&  $sample->repeatt == 0){
+                $sample->result = 5;
+                $sample->labcomment = 'Failed Run';
+            }
+            $sample->pre_update();
+
+            if($sample->repeatt == 1) MiscCovid::save_repeat($sample->id);
+        }
+
+        if(in_array(env('APP_LAB'), $double_approval)){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+                $worksheet->status_id = 3;
+                $worksheet->datereviewed2 = $today;
+                $worksheet->reviewedby2 = $approver;
+                $worksheet->save();
+                session(['toast_message' => "The worksheet has been approved."]);
+            }
+            else{
+                $worksheet->datereviewed = $today;
+                $worksheet->reviewedby = $approver;
+                $worksheet->save();
+                session(['toast_message' => "The worksheet has been approved. It is awaiting the second approval before the results can be prepared for dispatch."]);
+            }
+        }
+        else{
+            $worksheet->status_id = 3;
+            $worksheet->datereviewed = $today;
+            $worksheet->reviewedby = $approver;
+            $worksheet->save();
+            session(['toast_message' => "The worksheet has been approved."]);
+        }
+        return redirect($worksheet->route_name);    
+    }
+
+
+
+    public function rerun_worksheet(CovidWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 2 || !$worksheet->failed){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
+            return back();
+        }
+        $worksheet->status_id = 5;
+        $worksheet->save();
+
+        $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
+            'neg_control_result', 'pos_control_result', 
+            'neg_control_interpretation', 'pos_control_interpretation',
+            'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
+        ]);
+        $new_worksheet->save();
+
+        
+        $samples = CovidSample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 1;
+            $sample->pre_update();
+            $rsample = MiscCovid::save_repeat($sample->id);
+            $rsample->worksheet_id = $new_worksheet->id;
+            $rsample->save();
+        }
+        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        return redirect($worksheet->route_name);  
+    }
 
 
 
@@ -574,8 +631,4 @@ class CovidWorksheetController extends Controller
         return $worksheets;
     }
 
-    public function checknull($var)
-    {
-        return $var->first()->totals ?? 0;
-    }
 }

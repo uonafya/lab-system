@@ -36,6 +36,7 @@ $api->version('v1', function (Router $api) {
             $api->post('email', 'RandomController@email');
             $api->post('attachment', 'RandomController@attachment');
             $api->resource('facility', 'FacilityController');
+            $api->resource('covid_sample', 'CovidSampleController');
 
             $api->resource('batch', 'BatchController');
             $api->resource('viralbatch', 'ViralbatchController');

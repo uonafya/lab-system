@@ -68,7 +68,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" name="facility_id" id="facility_id">
                                     @isset($sample)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endisset
@@ -97,6 +97,15 @@
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+
+
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number'])
+
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'required' => true, 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
@@ -177,8 +186,8 @@
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
-                        @if(isset($sample) && $sample->travel)
-                            @foreach($sample->travel as $key => $travel)
+                        @if(isset($sample) && $sample->patient->travel)
+                            @foreach($sample->patient->travel as $key => $travel)
                                 <input type="hidden" name="travel[travel_id][]" value="{{ $travel->id }}">
                                 <div class="col-sm-4">
                                     <div class="input-group date date-normal">
@@ -189,8 +198,8 @@
                                 <div class="col-sm-4">
                                     <!-- <input class="form-control requirable" required placeholder="City Visited" name="travel[city_visited][]" type="text" value="{{ $travel->city_visited ?? '' }}"> -->
                                     <select class="form-control requirable saved_city_select" id="saved_city_select_{{ $key }}" name="travel[city_id][]" >
-                                        @if($travel->city)
-                                            <option value="{{ $travel->city_id }}"> {{ $travel->city->name }} </option>
+                                        @if($travel->town)
+                                            <option value="{{ $travel->city_id }}"> {{ $travel->town->name }} </option>
                                         @endif
                                     </select>
 

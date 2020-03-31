@@ -42,11 +42,14 @@
 			(Second Review)
 		@endif
 	</a> | 
+	@if($worksheet->failed)
+		<a href="{{ url($worksheet->route_name . '/rerun_worksheet/' . $worksheet->id) }}" title="Click to Rerun Worksheet" target='_blank'> Rerun Worksheet </a> |
+	@endif
 	<a href="{{ url('viralworksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a>
 
-@elseif($worksheet_status == 3)
+@elseif($worksheet_status == 3 || $worksheet_status == 5)
 
 	@if(env('APP_LAB') == 9 || env('APP_LAB') == 8)
 		{!! $worksheet->dump_link !!}
@@ -66,7 +69,7 @@
 	</a> |
 
 	<a href="{{ url('viralworksheet/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
-		Update (In Case of Accidental Deletion)
+		Update (In Case of Accidental Cancellation)
 	</a> |
 
 	{{ Form::open(['url' => 'viralworksheet/' . $worksheet->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following worksheet?');"]) }}
