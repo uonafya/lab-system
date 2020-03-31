@@ -53,7 +53,10 @@ class CreateCovidSamplesTable extends Migration
             $table->integer('worksheet_id')->nullable()->unsigned()->index();
 
 
-            $table->string('interpretation', 80)->nullable();
+            $table->string('target1', 30)->nullable();
+            $table->string('target2', 30)->nullable();
+            $table->string('error', 20)->nullable();
+            $table->string('interpretation', 40)->nullable();
             $table->tinyInteger('result')->unsigned()->nullable();
 
             $table->boolean('repeatt')->default(0);

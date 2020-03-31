@@ -1197,7 +1197,69 @@ class Synch
 	}
 
 
+	public static function synch_covid()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
 
+
+		$double_approval = Lookup::$double_approval; 
+
+		if(in_array(env('APP_LAB'), $double_approval)){
+			$where_query = "( receivedstatus=2 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND ((approvedby IS NOT NULL AND approvedby2 IS NOT NULL) or (dateapproved IS NOT NULL AND dateapproved2 IS NOT NULL)) ))";
+		}
+		else{
+			$where_query = "( receivedstatus=2 and repeatt=0 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
+		}
+
+		$samples = CovidSample::whereRaw($where_query)->where('synched', 0)->get();
+		$today = date('Y-m-d');
+
+		foreach ($samples as $key => $sample) {
+			if($sample->parentid) $sample = $sample->parent;
+			$sample->datedispatched = $sample->datedispatched ?? $today;
+			$sample->set_tat();
+			$sample->save();
+
+			foreach ($sample->child as $key => $child) {
+				$child->datedispatched = $child->datedispatched ?? $today;
+				$child->set_tat();
+				$child->save();
+			}
+			unset($sample->child);
+			$sample->load(['patient.travel', 'child']);
+
+			$response = $client->request('post', 'insert/covid_sample', [
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'sample' => $sample->toJson(),
+					'lab_id' => env('APP_LAB', null),
+				],
+			]);
+
+			$body = json_decode($response->getBody());
+
+			$sample->patient->synched = 1;
+			$sample->patient->datesynched = $today;
+			$sample->patient->save();
+
+			foreach ($sample->child as $key => $child) {
+				$child->synched = 1;
+				$child->datesynched = $today;
+				$child->save();
+			}
+
+			foreach ($sample->patient->travel as $key => $travel) {
+				$travel->synched = 1;
+				$travel->datesynched = $today;
+				$travel->save();
+			}
+
+		}
+	}
 
 
 

@@ -391,8 +391,8 @@ class Nat
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
-		$sql .= "WHERE ( datetested between '2019-01-01' and '2019-12-31' ) ";
-		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null ";
+		$sql .= "WHERE patient != '' AND patient != 'null' AND patient is not null ";
+		// $sql .= "AND ( datetested between '2019-01-01' and '2019-12-31' ) ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
 			else{
@@ -432,7 +432,7 @@ class Nat
 			if($i >= 100) break;
 			$i++;
 		}
-		$ages['a_all_ages'] = [];
+		$ages['a_0-24'] = [0, 24];
 
 		$counties = DB::table('countys')->get();
 
@@ -756,6 +756,38 @@ class Nat
             $p->ovf = 1;
             $p->save();
         }
+	}
+
+	public static function ovc()
+	{
+		$file = public_path('ccc_2.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+        	if($data[0] == 'mfl_code') continue;
+            $ccc = rtrim($data[1]);
+            $code = rtrim($data[0]);
+            $p = \App\Viralpatient::select('viralpatients.*')
+            	->join('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
+            	->where(['patient' => $ccc, 'facilitycode' => $code])->first();
+            if(!$p) continue;
+            $p->ovf = 1;
+            $p->save();
+        }
+
+        $file = public_path('ccc_1.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        	$ccc = rtrim($data[0]);
+        	$rows[] = $ccc;
+        	$size++;
+
+        	if($size == 200){
+        		\App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]);
+        		$rows = [];
+        		$size = 0;
+        	}    	
+        }
+        if($rows) \App\Viralpatient::whereIn('patient', $rows)->update(['ovf' => 1]);
 	}
 
 	// $file = public_path('ccc.csv'); $handle = fopen($file, "r"); $rows=[]; $size=0; $i=0;

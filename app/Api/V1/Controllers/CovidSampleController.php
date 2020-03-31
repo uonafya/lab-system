@@ -8,7 +8,7 @@ use App\CovidTravel;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
-class CovidController extends Controller
+class CovidSampleController extends Controller
 {
     
     /**

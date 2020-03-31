@@ -10,6 +10,64 @@ class MiscCovid extends Common
 {
 
 
+    public static function sample_result($target1, $target2, $error)
+    {
+        $target1 = trim(strtolower($target1));
+        $target2 = trim(strtolower($target2));
+        $repeatt = 0;
+
+        if($target1 == 'positive'){
+            $result = 2;
+            $interpretation = 'Detected';
+        }
+        else if($target2 == 'positive'){
+            $result = 3;
+            $interpretation = 'Presumed Positive. Requires Rerun.';
+            $repeatt = 1;
+        }
+        else if($target1 == 'negative' && $target1 == $target2){
+            $result = 1;
+            $interpretation = 'Negative';
+        }
+        else if(in_array($target1, ['invalid', 'negative']) && in_array($target2, ['invalid', 'negative'])){
+            $result = 3;
+            $interpretation = 'Failed';
+            $repeatt = 1;
+        }
+        else if($target1 == 'valid' && $target1 == $target2){
+            $result = 6;
+            $interpretation = 'Valid';            
+        }
+        else{
+            return ['result' => 3, 'interpretation' => 'Failed'];
+        }
+
+        // return ['result' => $result, 'interpretation' => $interpretation, 'repeatt' => 0];
+        return compact('result', 'interpretation', 'repeatt', 'target1', 'target2', 'error');
+    }
+
+
+    public static function save_repeat($sample_id)
+    {
+        $original = CovidSample::find($sample_id);
+        if($original->run == 5){
+            $original->repeatt=0;
+            $original->save();
+            return false;
+        }
+
+        $sample = $original->replicate(['national_sample_id', 'worksheet_id', 'interpretation', 'result', 'repeatt', 'datetested', 'dateapproved', 'dateapproved2', 'approvedby', 'approvedby2']); 
+        $sample->run++;
+        if($original->parentid == 0) $sample->parentid = $original->id;
+
+        $s = CovidSample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
+        
+        $sample->save();
+        return $sample;
+    }
+
+
     public static function get_worksheet_samples($machine_type, $limit, $entered_by=null)
     {
         $machines = Lookup::get_machines();

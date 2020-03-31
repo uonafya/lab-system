@@ -45,7 +45,7 @@
                             </div>
 
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="col-sm-4 control-label">Combined</label>
                                 <div class="col-sm-8">
                                     <select class="form-control" required name="combined" id="combined">
@@ -55,9 +55,9 @@
                                         <option value="2">VL</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            @include('partial.select', ['model' => null, 'prop' => 'sampletype', 'label' => 'Worksheet Sample Type (Required for VL)', 'items' => $worksheet_sampletypes, ])
+                            {{--@include('partial.select', ['model' => null, 'prop' => 'sampletype', 'label' => 'Worksheet Sample Type (Required for VL)', 'items' => $worksheet_sampletypes, ])--}}
 
 
                             <div class="form-group">

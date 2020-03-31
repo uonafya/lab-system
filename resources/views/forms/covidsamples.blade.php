@@ -186,8 +186,8 @@
                             <div class="col-sm-12"><br/><br/></div>                      
                         </div>
 
-                        @if(isset($sample) && $sample->travel)
-                            @foreach($sample->travel as $key => $travel)
+                        @if(isset($sample) && $sample->patient->travel)
+                            @foreach($sample->patient->travel as $key => $travel)
                                 <input type="hidden" name="travel[travel_id][]" value="{{ $travel->id }}">
                                 <div class="col-sm-4">
                                     <div class="input-group date date-normal">

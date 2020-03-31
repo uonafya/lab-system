@@ -11,6 +11,11 @@ class CovidPatient extends BaseModel
 
 
 
+    public function travel()
+    {
+        return $this->hasMany('App\CovidTravel', 'patient_id');
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');
@@ -19,6 +24,11 @@ class CovidPatient extends BaseModel
     public function sample()
     {
         return $this->hasMany('App\CovidSample', 'patient_id');
+    }
+
+    public function contact()
+    {
+        return $this->hasMany('App\CovidContact', 'patient_id');
     }
 
     public function setHealthStatusAttribute($value)

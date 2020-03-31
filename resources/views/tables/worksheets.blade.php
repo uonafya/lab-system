@@ -27,6 +27,9 @@
             </a> |
             <a href="{{ url($link_extra . 'worksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
+            </a> |
+            <a href="{{ url($link_extra . 'worksheet/index/5') }}" title="Failed Worksheets">
+                Failed Worksheets
             </a>
         </div>
     </div>
