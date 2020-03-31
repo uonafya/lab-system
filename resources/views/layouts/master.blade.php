@@ -192,10 +192,10 @@
             if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
             else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
             @if(!in_array(env('APP_LAB'), [8])) 
-                else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
-            @else
                 else if (current == 'Viralload'){ test = 'Covid'; text = '<strong>VIRAL LOAD</strong>'; } 
                 else if (current == 'Covid'){ test = 'EID'; text = '<strong>Covid-19</strong>'; }
+            @else
+                else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
             @endif
             else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
 
