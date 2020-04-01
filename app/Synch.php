@@ -1243,7 +1243,7 @@ class Synch
 			unset($sample->child);
 			$sample->load(['patient.travel', 'child']);
 
-			$response = $client->request('post', 'insert/covid_sample', [
+			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
