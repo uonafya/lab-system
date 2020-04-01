@@ -69,9 +69,9 @@
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control requirable" name="facility_id" id="facility_id">
-                                    @isset($sample && $sample->patient->facility)
+                                    @if(isset($sample) && $sample->patient->facility)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
-                                    @endisset
+                                    @endif
                                 </select>
                             </div>
                         </div>
