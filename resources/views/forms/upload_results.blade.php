@@ -53,7 +53,7 @@
 
         @endif
 
-        <form action="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" class="form-horizontal" enctype="multipart/form-data">
+        <form method="POST" action="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" class="form-horizontal" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
