@@ -27,6 +27,11 @@ class CovidSampleObserver
         if(!$covidSample->received_by && $covidSample->datereceived && $user) $covidSample->received_by = $user->id;
         if(($covidSample->patient->dob && !$covidSample->age)) $covidSample->calc_age();
 
+        if($covidSample->isDirty('result') && !$covidSample->worksheet_id){
+            $covidSample->dateapproved = $covidSample->dateapproved2 = date('Y-m-d');
+            $covidSample->approvedby = $covidSample->approvedby2 = $user->id;
+        }
+
         /*if($covidSample->county && !$covidSample->county_id){
             $covidSample->county_id = DB::table('countys')->where('name', $covidSample->county)->first()->id ?? null;
         }*/

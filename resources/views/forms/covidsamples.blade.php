@@ -242,6 +242,12 @@
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
+                            @if(isset($sample))
+
+                                @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
+
+                            @endif
+
                             {{--<div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>
                                 <div class="col-sm-8">

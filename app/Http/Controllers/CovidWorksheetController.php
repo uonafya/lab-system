@@ -334,7 +334,7 @@ class CovidWorksheetController extends Controller
             $sample->remove_rerun();
         }
 
-        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -400,7 +400,7 @@ class CovidWorksheetController extends Controller
                     continue;
                 }
 
-                $data_array = array_merge(compact('datemodified', 'datetested'), $result_array);
+                $data_array = array_merge(compact('datetested'), $result_array);
 
 
                 $sample_id = (int) $sample_id;
