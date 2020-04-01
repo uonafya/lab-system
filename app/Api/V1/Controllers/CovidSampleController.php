@@ -49,7 +49,7 @@ class CovidSampleController extends Controller
         $s->patient_id = $p->id;
         $s->national_sample_id = $s->id;
         unset($s->id);
-        unset($s->national_sample_id);
+        unset($s->original_sample_id);
         unset($s->cif_sample_id);
         $s->save();
 
