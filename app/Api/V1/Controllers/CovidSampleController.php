@@ -36,10 +36,8 @@ class CovidSampleController extends Controller
         }
         $patient_details = get_object_vars($sample->patient);
         $p->national_patient_id = $patient_details['id'];
-        unset($patient_details['id']);
         unset($patient_details['original_patient_id']);
         unset($patient_details['cif_patient_id']);
-        unset($patient_details['created_at']);
         $p->fill($patient_details);
         $p->save();
 
@@ -49,10 +47,8 @@ class CovidSampleController extends Controller
         $s->fill(get_object_vars($sample));
         $s->patient_id = $p->id;
         $s->national_sample_id = $sample->id;
-        unset($s->id);
         unset($s->original_sample_id);
         unset($s->cif_sample_id);
-        unset($s->created_at);
         $s->save();
 
         return response()->json([
