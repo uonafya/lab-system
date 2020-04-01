@@ -1249,7 +1249,7 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
-					'sample' => $sample->toJson(),
+					'sample' => $sample,
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
