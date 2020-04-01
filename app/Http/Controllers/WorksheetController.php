@@ -522,7 +522,7 @@ class WorksheetController extends Controller
             fclose($handle);
         }
 
-        if($doubles){
+        /*if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
@@ -531,7 +531,7 @@ class WorksheetController extends Controller
                     $sheet->fromArray($doubles);
                 });
             })->download('csv');
-        }
+        }*/
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
