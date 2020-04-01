@@ -32,6 +32,7 @@ use App\Observers\WorksheetObserver;
 use App\Observers\ViralworksheetObserver;
 
 use App\Observers\CovidPatientObserver;
+use App\Observers\CovidSampleObserver;
 
 use App\Observers\FacilityObserver;
 
