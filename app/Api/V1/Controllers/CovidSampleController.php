@@ -54,7 +54,7 @@ class CovidSampleController extends Controller
         $s->save();
 
         return response()->json([
-                'ok' => $ok,
+                'status' => 'ok',
                 'sample' => $s,
                 'patient' => $p,
                 'message' => 'The transfer was successful.',
