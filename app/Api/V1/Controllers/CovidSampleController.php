@@ -40,6 +40,7 @@ class CovidSampleController extends Controller
         unset($patient_details['original_patient_id']);
         unset($patient_details['cif_patient_id']);
         $p->fill($patient_details);
+        unset($p->cif_patient_id);
         $p->save();
 
         unset($sample->patient);
