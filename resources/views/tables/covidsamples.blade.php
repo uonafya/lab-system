@@ -247,7 +247,7 @@
                                             @endif
                                         </td>
 
-                                        <td> {{ $sample->results }} </td>
+                                        <td> {!! $sample->get_prop_name($results, 'result', 'name_colour')  !!}</td>
                                         <td>
                                             {!! $sample->edit_link !!}                                            
                                         </td>

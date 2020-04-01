@@ -10,6 +10,7 @@ use App\City;
 use App\Facility;
 use App\Lookup;
 use Excel;
+use DB;
 use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
@@ -52,13 +53,10 @@ class CovidSampleController extends Controller
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched', 1);
             })
-            ->when(true, function($query) use ($type, $date_column){
-                if($type == 2) return $query->orderBy($date_column, 'desc');
-                else if($type == 0) return $query->orderBy($date_column, 'asc');
-                else{
-                    return $query->orderBy($date_column, 'desc');
-                }
+            ->when(($type == 2), function($query) use ($date_column){
+                return $query->orderBy($date_column, 'desc');
             })
+            ->orderBy('id', 'desc')
             ->when(($user->user_type_id == 5), function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
@@ -67,6 +65,7 @@ class CovidSampleController extends Controller
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
+        $data['results'] = DB::table('results')->get();
         return view('tables.covidsamples', $data);
     }
 

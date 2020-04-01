@@ -107,6 +107,20 @@ class Synch
 			],
 		],
 
+		'covid' => [
+			/*'worksheets' => [
+				'class' => CovidWorksheet::class,
+				'update_url' => 'update/covid_worksheets',
+				'delete_url' => 'delete/covid_worksheets',
+			],*/
+			'samples' => [
+				'class' => CovidSample::class,
+				'update_url' => 'update/covid_samples',
+				'delete_url' => 'delete/covid_samples',
+			],
+
+		],
+
 		'allocations' => [
 			'allocations' => [
 				'class' => Allocation::class,
@@ -459,7 +473,7 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-		if ($type != 'allocations') {
+		if (in_array($type, ['eid', 'vl'])) {
 			$c = self::$synch_arrays[$type];
 
 			$misc_class = $c['misc_class'];
@@ -489,7 +503,7 @@ class Synch
 			// dd($column);
 			while(true){
 				$models = $update_class::where('synched', 2)
-										->when($sample, function($query){
+										->when(($sample && in_array($type, ['eid', 'vl'])), function($query){
 							                return $query->with(['batch', 'patient']);
 										})->when($allocate, function($query){
 											return $query->with(array('details' => function($childquery){
