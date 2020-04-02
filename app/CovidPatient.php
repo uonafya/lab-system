@@ -7,7 +7,7 @@ use DB;
 class CovidPatient extends BaseModel
 {
 
-	// protected $dates = ['dob', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death'];
+	protected $dates = ['dob', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death'];
 
 
 
