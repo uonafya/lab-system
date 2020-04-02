@@ -36,6 +36,7 @@ class CovidSampleController extends Controller
         }
         $patient_details = get_object_vars($sample->patient);
         $p->national_patient_id = $patient_details['id'];
+        unset($patient_details['county_id']);
         unset($patient_details['original_patient_id']);
         unset($patient_details['cif_patient_id']);
         $p->fill($patient_details);
