@@ -30,6 +30,7 @@ class CovidSampleObserver
         if($covidSample->isDirty('result') && !$covidSample->worksheet_id){
             $covidSample->dateapproved = $covidSample->dateapproved2 = date('Y-m-d');
             $covidSample->approvedby = $covidSample->approvedby2 = $user->id;
+            if(!$covidSample->datetested) $covidSample->datetested = date('Y-m-d');
         }
 
         /*if($covidSample->county && !$covidSample->county_id){
