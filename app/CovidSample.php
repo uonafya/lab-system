@@ -67,7 +67,8 @@ class CovidSample extends BaseModel
 
     public function calc_age()
     {
-        $this->age = $this->datecollected->diffInYears($this->patient->dob);
+        if($this->datecollected) $this->age = $this->datecollected->diffInYears($this->patient->dob);
+        $this->age = now()->diffInYears($this->patient->dob);
     }
 
 
