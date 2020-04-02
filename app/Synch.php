@@ -1216,7 +1216,6 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-
 		$double_approval = Lookup::$double_approval; 
 
 		if(in_array(env('APP_LAB'), $double_approval)){
@@ -1255,6 +1254,10 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+
+			$sample->synched = 1;
+			$sample->datesynched = 1;
+			$sample->save();
 
 			$sample->patient->synched = 1;
 			$sample->patient->datesynched = $today;
