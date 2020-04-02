@@ -1216,7 +1216,6 @@ class Synch
 		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
-
 		$double_approval = Lookup::$double_approval; 
 
 		if(in_array(env('APP_LAB'), $double_approval)){
@@ -1255,14 +1254,23 @@ class Synch
 			]);
 
 			$body = json_decode($response->getBody());
+			$sample_array = $body->sample;
+
+			$sample->synched = 1;
+			$sample->datesynched = $today;
+			$sample->national_sample_id = $sample_array[$sample->id];
+			$sample->save();
+
 
 			$sample->patient->synched = 1;
 			$sample->patient->datesynched = $today;
+			$sample->patient->national_patient_id = $body->patient;
 			$sample->patient->save();
 
 			foreach ($sample->child as $key => $child) {
 				$child->synched = 1;
 				$child->datesynched = $today;
+				$child->national_sample_id = $sample_array[$child->id];
 				$child->save();
 			}
 
