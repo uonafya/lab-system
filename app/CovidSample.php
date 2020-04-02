@@ -7,7 +7,7 @@ use DB;
 class CovidSample extends BaseModel
 {
 
-	protected $dates = ['datecollected', 'datereceived', 'datetested', 'datedispatched', 'dateapproved', 'dateapproved2'];
+	// protected $dates = ['datecollected', 'datereceived', 'datetested', 'datedispatched', 'dateapproved', 'dateapproved2'];
 
 	protected $casts = [
 		'symptoms' => 'array',
