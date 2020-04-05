@@ -25,7 +25,8 @@ class Viralpatient extends BaseModel
 
     public function scopeExisting($query, $facility_id, $ccc_no)
     {
-        return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_no]);
+        if($facility_id) return $query->where(['facility_id' => $facility_id, 'patient' => $ccc_no]);
+        return $query->where(['patient' => $ccc_no])->whereNull('facility_id');
     }
 
     public function setPatientPhoneNoAttribute($value)
