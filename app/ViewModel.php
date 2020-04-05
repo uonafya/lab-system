@@ -62,7 +62,8 @@ class ViewModel extends Model
         $min_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' -3 days'));
         $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +3 days'));
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient']])
-                    ->whereBetween('datecollected', [$min_date, $max_date]);
+                    // ->whereBetween('datecollected', [$min_date, $max_date])
+                    ->where(['receivedstatus' => 1, 'batch_complete' => 0]);
     }
 
     public function scopePatient($query, $facility, $patient)
@@ -179,5 +180,39 @@ class ViewModel extends Model
     {
         if($this->$value) return "Yes";
         return '';
+    }
+
+    public function getRouteNameAttribute()
+    {
+        $a = explode('\\', get_class($this));
+        $c = end($a);
+        $c =  snake_case($c);
+
+        return str_replace('_view', '', $c);
+    }
+
+    public function getViewUrlAttribute()
+    {
+        return url($this->route_name . '/' . $this->id);
+    }
+
+    public function getViewLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id) . "'> View </a>";
+    }
+
+    public function getEditLinkAttribute()
+    {
+        return "<a href='" . url($this->route_name . '/' . $this->id . '/edit') . "'> Edit </a>";
+    }
+
+    public function getDeleteFormAttribute()
+    {        
+        $form = "<form action='" . $this->view_url . "' method='POST'>";
+        $form .= csrf_field() . method_field('DELETE');
+        // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= "<button class='btn btn-sm btn-primary delete-btn'>Delete</button>";
+        $form .= '</form>';
+        return $form;
     }
 }

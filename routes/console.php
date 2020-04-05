@@ -189,6 +189,14 @@ Artisan::command('send:weekly-backlog', function(){
     $this->info($str);
 })->describe('Send out weekly backlog sms alert.');
 
+
+Artisan::command('synch:covid', function(){
+    $str = \App\Synch::synch_covid();
+    $str .= \App\Synch::synch_updates('covid');
+    $this->info($str);
+})->describe('Synch covid samples to the national database.');
+
+
 Artisan::command('synch:patients', function(){
     // if($type == 'eid') $str = \App\Synch::synch_eid_patients();
     // else { $str = \App\Synch::synch_vl_patients(); }  

@@ -48,11 +48,9 @@
 
        
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Facility 
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
+                                <label class="col-sm-3 control-label">Facility </label>
                                 <div class="col-sm-9">
-                                    <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                    <select class="form-control" name="facility_id" id="facility_id">
                                         @isset($sample)
                                         <option value="{{ $sample->patient->facility->id ?? '' }}" selected>{{ $sample->patient->facility->facilitycode ?? '' }} {{ $sample->patient->facility->name ?? '' }}</option>
                                         @endisset
@@ -72,11 +70,9 @@
                             @if(env('APP_LAB') == 7)
 
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">Nat ID
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
+                                    <label class="col-sm-3 control-label">Nat ID</label>
                                     <div class="col-sm-9">
-                                        <input class="form-control requirable" required name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
+                                        <input class="form-control" name="nat" type="text" value="{{ $sample->patient->nat ?? '' }}" id="nat" placeholder="NAT ...">
                                     </div>
                                 </div>
 

@@ -10,23 +10,26 @@
     <div class="row">
         <div class="col-md-12">
             Click To View: 
-            <a href="{{ url('worksheet/index/0') }}" title="All Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/0') }}" title="All Worksheets">
                 All Worksheets
             </a> |
-            <a href="{{ url('worksheet/index/1') }}" title="In-Process Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/1') }}" title="In-Process Worksheets">
                 In-Process Worksheets
             </a> |
-            <a href="{{ url('worksheet/index/12') }}" title="In-Process Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/12') }}" title="In-Process Worksheets">
                 In-Process Worksheets (With Reruns)
             </a> |
-            <a href="{{ url('worksheet/index/2') }}" title="Tested Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/2') }}" title="Tested Worksheets">
                 Tested Worksheets
             </a> |
-            <a href="{{ url('worksheet/index/3') }}" title="Approved Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/3') }}" title="Approved Worksheets">
                 Approved Worksheets
             </a> |
-            <a href="{{ url('worksheet/index/4') }}" title="Cancelled Worksheets">
+            <a href="{{ url($link_extra . 'worksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
+            </a> |
+            <a href="{{ url($link_extra . 'worksheet/index/5') }}" title="Failed Worksheets">
+                Failed Worksheets
             </a>
         </div>
     </div>

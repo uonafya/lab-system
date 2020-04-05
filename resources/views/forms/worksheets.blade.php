@@ -11,7 +11,8 @@
         @if($create)
 
             @if (isset($worksheet))
-                <form action="{{ url('/worksheet/' . $worksheet->id) }}" class="form-horizontal" method="POST" target="_blank">
+                <form method="POST" action="{{ $worksheet->view_url }}" class="form-horizontal" target="_blank">
+                    @csrf
                     @method('PUT')
             @else
 
@@ -22,13 +23,34 @@
                                 <center>Samples</center>
                             </div>
                             <div class="panel-body">
-                                @include('shared/samples-partial')
+                                @if(isset($covid))
+                                    @include('shared/corona-samples-partial')
+                                @else
+                                    @include('shared/samples-partial')
+                                @endif
                             </div>
                         </div>
                     </div>                
                 </div>
-            
-                <form action="{{ url('/worksheet') }}" class="form-horizontal" method="POST" target="_blank">
+
+                @if(isset($covid))            
+                <form method="POST" action="/covid_worksheet" class="form-horizontal">
+                @else
+                <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
+                @endif
+                    @csrf
+
+                @isset($combined)
+                    <input type="hidden" value="{{ $combined }}" name="combined" >
+                @endisset
+
+                @isset($sampletype)
+                    <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+                @endisset
+
+                @isset($entered_by)
+                    <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                @endisset
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
 
@@ -138,9 +160,6 @@
                                     </div>                            
                                 </div>
 
-
-
-
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Calibrator</label>
                                     <div class="col-sm-3">
@@ -153,10 +172,6 @@
                                         </div>
                                     </div>                            
                                 </div>
-
-
-
-
 
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Amplification Kit</label>
@@ -193,6 +208,7 @@
                     </div>
                 </div>
             </div>
+            
             </form>
             
         @else
@@ -219,7 +235,11 @@
                             <center>Samples</center>
                         </div>
                         <div class="panel-body">
-                            @include('shared/samples-partial')
+                            @if(isset($covid))
+                                @include('shared/corona-samples-partial')
+                            @else
+                                @include('shared/samples-partial')
+                            @endif
                         </div>
                     </div>
                 </div>                

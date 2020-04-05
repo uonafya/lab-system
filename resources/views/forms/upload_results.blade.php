@@ -53,11 +53,7 @@
 
         @endif
 
-        @if(isset($type))
-        <form action="{{ url('/viralworksheet/upload/' . $worksheet->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
-        @else
-        <form action="{{ url('/worksheet/upload/' . $worksheet->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
-        @endif
+        <form method="POST" action="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" class="form-horizontal" enctype="multipart/form-data">
 
             @csrf
             @method('PUT')
@@ -190,6 +186,7 @@
                     </div>
                 </div>
             </div>
+
         </form>
 
       </div>

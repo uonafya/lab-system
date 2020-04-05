@@ -31,6 +31,7 @@ class CreateViralsamplesTable extends Migration
             $table->tinyInteger('age_category')->unsigned()->default(0)->nullable();
             $table->tinyInteger('justification')->unsigned()->nullable();
             $table->string('other_justification', 50)->nullable();
+            $table->string('recency_number', 30)->nullable();
             $table->tinyInteger('sampletype')->unsigned()->nullable();
             $table->tinyInteger('prophylaxis')->unsigned()->nullable();
             $table->tinyInteger('regimenline')->unsigned()->nullable();

@@ -152,8 +152,8 @@
 		}
 	}
 
-	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {
-		div_name = '#' + div_name;	
+	function set_select_facility(div_name, url, minimum_length, placeholder, send_url=false) {			
+		if(!div_name.includes('#') && !div_name.includes('.')) div_name = '#' + div_name;
 		// console.log(div_name);	
 
 		$(div_name).select2({

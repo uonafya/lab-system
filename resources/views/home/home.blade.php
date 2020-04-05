@@ -246,7 +246,7 @@
 		                    </li>
 
 						@endif
-						@if(!in_array(Session('testingSystem'), ['CD4', 'DR']))
+						@if(in_array(Session('testingSystem'), ['EID', 'Viralload']))
 							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
 								<li class="list-group-item alert alert-danger" style="background-color: #d9534f">
 									<span class="badge badge-{{ $widgets['get_badge']($widgets['sample_manifest']) }}">
