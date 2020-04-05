@@ -274,7 +274,6 @@ class DrSampleController extends Controller
         $others = $request->input('other_medications_text');
         $other_medications = $request->input('other_medications');
         $others = explode(',', $others);
-        $drSample->other_medications = array_merge($other_medications, $others);
         if(is_array($others) && is_array($other_medications)) $drSample->other_medications = array_merge($other_medications, $others);
         else{
             $drSample->other_medications = $others;
