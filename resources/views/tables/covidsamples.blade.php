@@ -255,7 +255,7 @@
                                         <td>
                                             {!! $sample->edit_link !!}  |
                                             @if($sample->datedispatched)
-                                                
+                                                <a href="/covid_sample/results/{{ $sample->id }}">Result</a> |
                                             @endif                                         
                                         </td>
                                         <td> {!! $sample->delete_form !!} </td>
