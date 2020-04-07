@@ -268,4 +268,26 @@ class CovidSampleController extends Controller
             ->paginate(10);
         return $cities;
     }
+
+
+
+    public function search(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_patients.user_id='{$user->id}')";
+
+        $samples = CovidSample::select('covid_samples.id')
+            ->whereRaw("covid_samples.id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.batch_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
 }

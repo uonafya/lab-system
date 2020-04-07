@@ -126,8 +126,15 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
 		
+		Route::post('search/', 'CovidSampleController@search')->name('search');
 	});
 	Route::resource('covid_sample', 'CovidSampleController');
+
+	Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
+		
+		Route::post('search/', 'CovidPatientController@search')->name('search');
+	});
+	Route::resource('covid_patient', 'CovidPatientController');
 
 	Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 		Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
