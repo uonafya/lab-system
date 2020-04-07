@@ -8,6 +8,7 @@
 
 <div class="content">
 
+    @isset($subcounties)
     <div class="row">
         <div class="col-md-12">
             Click To View: 
@@ -187,6 +188,8 @@
         </form>
 
     @endif
+
+    @endisset
     
     <div class="row">
         <div class="col-lg-12">
@@ -197,7 +200,7 @@
                 <div class="panel-body">
                     <div class="table-responsive">
 
-                        <table class="table table-striped table-bordered table-hover @isset($datatable) data-table @endisset" >
+                        <table class="table table-striped table-bordered table-hover @isset($subcounties) data-table @endisset" >
                             <thead>
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
@@ -222,6 +225,7 @@
                             <tbody>
 
                                 @foreach($samples as $sample)
+                                    @continue($sample->repeatt == 1 && auth()->user()->is_facility())
                                     <tr>
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->facilityname }} </td>
@@ -260,9 +264,9 @@
                         </table>
                     </div>
 
-                    @empty($datatable)
+                    @isset($subcounties)
                         {{ $samples->links() }}
-                    @endempty
+                    @endisset
                 </div>
             </div>
         </div>
