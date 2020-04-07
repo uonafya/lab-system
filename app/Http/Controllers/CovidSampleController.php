@@ -150,7 +150,29 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
+        $user = auth()->user();
 
+        $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
+            ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
+            ->when(($user->user_type_id == 5), function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
+            ->when(true, function($query) use ($covidSample){
+                if($covidSample->parentid){
+                    return $query->whereRaw(" (id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
+                }else{
+                    return $query->whereRaw(" (id = {$covidSample->id} OR parentid = {$covidSample->id})");
+                }
+            })            
+            ->orderBy('run', 'desc')
+            ->paginate();
+        $myurl = url('/covid_sample/index/' . $type);
+        $myurl2 = url('/covid_sample/index/');        
+        $p = Lookup::get_partners();
+        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
+        $data['results'] = DB::table('results')->get();
+        return view('tables.covidsamples', $data);
     }
 
     /**
