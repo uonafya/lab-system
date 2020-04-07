@@ -192,6 +192,7 @@ Artisan::command('send:weekly-backlog', function(){
 
 Artisan::command('synch:covid', function(){
     $str = \App\Synch::synch_covid();
+    $str .= \App\Synch::synch_updates('covid');
     $this->info($str);
 })->describe('Synch covid samples to the national database.');
 
