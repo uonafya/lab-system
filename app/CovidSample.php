@@ -67,7 +67,8 @@ class CovidSample extends BaseModel
 
     public function calc_age()
     {
-        $this->age = $this->datecollected->diffInYears($this->patient->dob);
+        if($this->datecollected) $this->age = $this->datecollected->diffInYears($this->patient->dob);
+        $this->age = now()->diffInYears($this->patient->dob);
     }
 
 
@@ -77,9 +78,7 @@ class CovidSample extends BaseModel
         else{
             $value = strtolower($value);
             if(str_contains($value, ['neg'])) $this->attributes['result'] = 1;
-            else{
-                $this->attributes['result'] = 2;
-            }
+            else if(str_contains($value, ['pos'])) $this->attributes['result'] = 2;
         }
     }
 

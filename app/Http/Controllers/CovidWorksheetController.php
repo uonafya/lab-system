@@ -334,7 +334,7 @@ class CovidWorksheetController extends Controller
             $sample->remove_rerun();
         }
 
-        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -352,7 +352,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
         $worksheet->load(['creator']);
-        $users = User::lab_user()->get();
+        $users = User::labUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -400,7 +400,7 @@ class CovidWorksheetController extends Controller
                     continue;
                 }
 
-                $data_array = array_merge(compact('datemodified', 'datetested'), $result_array);
+                $data_array = array_merge(compact('datetested'), $result_array);
 
 
                 $sample_id = (int) $sample_id;
@@ -412,10 +412,13 @@ class CovidWorksheetController extends Controller
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
+        }else{
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
+            return back();
         }
 
 
-        if($doubles){
+        /*if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
@@ -424,7 +427,7 @@ class CovidWorksheetController extends Controller
                     $sheet->fromArray($doubles);
                 });
             })->download('csv');
-        }
+        }*/
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 

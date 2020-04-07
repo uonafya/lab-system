@@ -64,14 +64,12 @@
                         <br />
   
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Facility 
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
+                            <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" name="facility_id" id="facility_id">
-                                    @isset($sample)
+                                <select class="form-control" name="facility_id" id="facility_id">
+                                    @if(isset($sample) && $sample->patient->facility)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
-                                    @endisset
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -97,6 +95,8 @@
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
 
 
@@ -241,6 +241,12 @@
                             @include('partial.select', ['model' => $m, 'required' => true, 'prop' => 'receivedstatus', 'label' => 'Received Status', 'items' => $receivedstatus, ])
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
+
+                            @if(isset($sample))
+
+                                @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
+
+                            @endif
 
                             {{--<div class="form-group" id="rejection" >
                                 <label class="col-sm-4 control-label">Rejected Reason</label>

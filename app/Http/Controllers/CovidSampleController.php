@@ -10,6 +10,7 @@ use App\City;
 use App\Facility;
 use App\Lookup;
 use Excel;
+use DB;
 use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
@@ -50,15 +51,12 @@ class CovidSampleController extends Controller
             })
             ->when(true, function($query) use ($type){
                 if($type == 0) return $query->whereNull('datereceived');
-                else if($type == 2) return $query->whereNotNull('datedispatched', 1);
+                else if($type == 2) return $query->whereNotNull('datedispatched');
             })
-            ->when(true, function($query) use ($type, $date_column){
-                if($type == 2) return $query->orderBy($date_column, 'desc');
-                else if($type == 0) return $query->orderBy($date_column, 'asc');
-                else{
-                    return $query->orderBy($date_column, 'desc');
-                }
+            ->when(($type == 2), function($query) use ($date_column){
+                return $query->orderBy($date_column, 'desc');
             })
+            ->orderBy('id', 'desc')
             ->when(($user->user_type_id == 5), function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
@@ -67,6 +65,7 @@ class CovidSampleController extends Controller
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
+        $data['results'] = DB::table('results')->get();
         return view('tables.covidsamples', $data);
     }
 
@@ -151,7 +150,29 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
+        $user = auth()->user();
 
+        $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
+            ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
+            ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
+            ->when(($user->user_type_id == 5), function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
+            ->when(true, function($query) use ($covidSample){
+                if($covidSample->parentid){
+                    return $query->whereRaw(" (id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
+                }else{
+                    return $query->whereRaw(" (id = {$covidSample->id} OR parentid = {$covidSample->id})");
+                }
+            })            
+            ->orderBy('run', 'desc')
+            ->paginate();
+        $myurl = url('/covid_sample/index/' . $type);
+        $myurl2 = url('/covid_sample/index/');        
+        $p = Lookup::get_partners();
+        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
+        $data['results'] = DB::table('results')->get();
+        return view('tables.covidsamples', $data);
     }
 
     /**
@@ -268,5 +289,27 @@ class CovidSampleController extends Controller
         $cities = City::whereRaw("(name like '%" . $search . "%')")
             ->paginate(10);
         return $cities;
+    }
+
+
+
+    public function search(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_patients.user_id='{$user->id}')";
+
+        $samples = CovidSample::select('covid_samples.id')
+            ->whereRaw("covid_samples.id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.batch_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
     }
 }
