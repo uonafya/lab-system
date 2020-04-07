@@ -344,7 +344,7 @@
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['covid_pending_receipt']) }}">
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['covid_pending_receipt']) }}">{{ $widgets['covid_pending_receipt'] }}</span>
-		                        <a href="{{ url('covid_sample/index/1') }}">Samples Pending Approval for Testing.</a>
+		                        <a href="{{ url('covid_sample/index/0') }}">Samples Pending Approval for Testing.</a>
 		                    </li>
 
 

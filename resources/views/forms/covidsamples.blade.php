@@ -64,9 +64,7 @@
                         <br />
   
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Facility 
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
+                            <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
                                 <select class="form-control" name="facility_id" id="facility_id">
                                     @if(isset($sample) && $sample->patient->facility)
@@ -97,6 +95,8 @@
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
 
 

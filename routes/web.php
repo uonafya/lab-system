@@ -125,6 +125,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
 		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
+
+		Route::post('result/{covidSample}', 'CovidSampleController@result');
 		
 		Route::post('search/', 'CovidSampleController@search')->name('search');
 	});

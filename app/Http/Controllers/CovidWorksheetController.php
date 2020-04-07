@@ -412,10 +412,13 @@ class CovidWorksheetController extends Controller
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
+        }else{
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
+            return back();
         }
 
 
-        if($doubles){
+        /*if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
@@ -424,7 +427,7 @@ class CovidWorksheetController extends Controller
                     $sheet->fromArray($doubles);
                 });
             })->download('csv');
-        }
+        }*/
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
