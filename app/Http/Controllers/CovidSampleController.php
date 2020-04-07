@@ -51,7 +51,7 @@ class CovidSampleController extends Controller
             })
             ->when(true, function($query) use ($type){
                 if($type == 0) return $query->whereNull('datereceived');
-                else if($type == 2) return $query->whereNotNull('datedispatched', 1);
+                else if($type == 2) return $query->whereNotNull('datedispatched');
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
