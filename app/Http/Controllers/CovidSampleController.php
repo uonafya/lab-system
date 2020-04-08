@@ -241,7 +241,7 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The sample cannot be deleted.']);
             return back();
         }
-        $covidSample->travel()->delete();
+        // $covidSample->travel()->delete();
         $covidSample->delete();
         session(['toast_message' => 'The sample has been deleted.']);
         return back();
