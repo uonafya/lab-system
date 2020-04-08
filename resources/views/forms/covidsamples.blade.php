@@ -242,7 +242,7 @@
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
-                            @if(isset($sample))
+                            @if(isset($sample) && false)
 
                                 @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
 
