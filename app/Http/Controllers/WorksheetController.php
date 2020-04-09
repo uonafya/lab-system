@@ -777,7 +777,7 @@ class WorksheetController extends Controller
                 . "<a href='" . url('worksheet/print/' . $worksheet_id) . "' title='Click to Print this Worksheet' target='_blank'>Print</a> ";
 
         }
-        else if($status == 4)
+        else if($status == 4 || $status == 5)
         {
             $d = "<a href='" . url('worksheet/' . $worksheet_id) . "' title='Click to View Cancelled Worksheet Details' target='_blank'>Details</a> ";
 
