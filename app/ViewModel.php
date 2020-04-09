@@ -63,7 +63,8 @@ class ViewModel extends Model
         $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +3 days'));
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient']])
                     // ->whereBetween('datecollected', [$min_date, $max_date])
-                    ->where(['receivedstatus' => 1, 'batch_complete' => 0]);
+                    ->where(['batch_complete' => 0])
+                    ->whereRaw("(receivedstatus IS NULL OR receivedstatus = 1) ");
     }
 
     public function scopePatient($query, $facility, $patient)
