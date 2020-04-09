@@ -61,7 +61,7 @@ class ViewModel extends Model
 
         $min_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' -3 days'));
         $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +3 days'));
-        return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient', 'batch_complete' => 0]])
+        return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient'], 'batch_complete' => 0])
                     // ->whereBetween('datecollected', [$min_date, $max_date])
                     ->whereRaw("(receivedstatus IS NULL OR receivedstatus = 1) ");
     }
