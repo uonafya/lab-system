@@ -57,7 +57,6 @@ class CovidWorksheetController extends Controller
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
         $reruns = $this->get_reruns($worksheet_ids);
-        $data = Lookup::worksheet_lookups();
 
         $worksheets->transform(function($worksheet, $key) use ($samples, $reruns, $data){
             $status = $worksheet->status_id;
@@ -83,7 +82,7 @@ class CovidWorksheetController extends Controller
             $worksheet->rerun = $rerun;
             $worksheet->neg = $neg;
             $worksheet->pos = $pos;
-            $worksheet->failed = $failed;
+            $worksheet->failed_samples = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
             // $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
