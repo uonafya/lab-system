@@ -52,6 +52,7 @@ class CovidPatientController extends Controller
     public function show(CovidPatient $covidPatient)
     {
         $user = auth()->user();
+        $type = 1;
 
 
         $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
