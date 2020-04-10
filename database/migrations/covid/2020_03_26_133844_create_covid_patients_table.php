@@ -17,6 +17,7 @@ class CreateCovidPatientsTable extends Migration
             $table->increments('id');
             $table->integer('national_patient_id')->index()->nullable();
             $table->integer('facility_id')->nullable();
+            $table->smallInteger('quarantine_site_id')->nullable();
             $table->tinyInteger('county_id')->nullable();
             $table->integer('case_id')->nullable();
             $table->tinyInteger('nationality')->nullable();

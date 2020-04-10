@@ -11,6 +11,23 @@ class CovidLookupSeeder extends Seeder
      */
     public function run()
     {
+    	// ALTER TABLE `covid_patients` ADD `quarantine_site_id` smallint NULL AFTER `facility_id`;
+
+		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
+		DB::statement("
+			CREATE TABLE `quarantine_sites` (
+				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(100) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('quarantine_sites')->insert([
+			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
+			['id' => 2, 'name' => 'Kenyatta University'],
+			['id' => 3, 'name' => 'Kenya School of Government'],
+			// ['id' => , 'name' => ''],
+		]);
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
@@ -84,6 +101,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Point of entry detection'],
 			['id' => 5, 'name' => 'Repatriation'],
 			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 		]);
 
 
