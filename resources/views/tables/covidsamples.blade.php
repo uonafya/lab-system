@@ -200,7 +200,7 @@
                 <div class="panel-body">
                     <div class="table-responsive">
 
-                        <table class="table table-striped table-bordered table-hover @isset($subcounties) data-table @endisset" >
+                        <table class="table table-striped table-bordered table-hover " >
                             <thead>
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
