@@ -54,6 +54,8 @@ class CovidWorksheetController extends Controller
 
         $worksheets->setPath(url()->current());
 
+        $data = Lookup::worksheet_lookups();
+
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
         $reruns = $this->get_reruns($worksheet_ids);
@@ -91,8 +93,7 @@ class CovidWorksheetController extends Controller
 
             return $worksheet;
         });
-
-        $data = Lookup::worksheet_lookups();
+        
         $data['status_count'] = CovidWorksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
             ->orderBy('status_id', 'asc')
