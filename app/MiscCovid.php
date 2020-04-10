@@ -119,6 +119,7 @@ class MiscCovid extends Common
 
         $create = false;
         if($count == $limit) $create = true;
+        // if($count) $create = true;
         $covid = true;
 
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
