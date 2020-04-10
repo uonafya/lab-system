@@ -49,7 +49,7 @@
                 @endisset
 
                 @isset($entered_by)
-                    <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                    <input type="hidden" value="{{ $entered_by }}" name="entered_by[]" >
                 @endisset
 
 
