@@ -549,7 +549,7 @@ class Lookup
 
     public static function covid_form()
     {
-        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys'];
+        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'quarantine_sites'];
 
         $data = [];
 
@@ -565,7 +565,7 @@ class Lookup
     {
         return [
             'sample' => ['test_type', 'amrs_location', 'provider_identifier', 'order_no', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'comments', 'labcomment', 'sample_type', 'receivedstatus', 'rejectedreason', 'datecollected', 'datereceived', 'result', 'age'],
-            'patient' => ['identifier_type', 'identifier', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no'],
+            'patient' => ['identifier_type', 'identifier', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no', 'quarantine_site_id'],
         ];
     }
 
