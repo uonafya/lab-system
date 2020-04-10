@@ -249,6 +249,12 @@ class CovidWorksheetController extends Controller
         }
     }
 
+    public function find(CovidWorksheet $worksheet)
+    {
+        session(['toast_message' => 'Found 1 worksheet.']);
+        return $this->index(0, null, null, $worksheet->id);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
