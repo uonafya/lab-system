@@ -146,7 +146,7 @@
                                     <td> {!! $worksheet->status !!} </td>
                                     <td> {{ $worksheet->pos }} </td>
                                     <td> {{ $worksheet->neg }} </td>
-                                    <td> {{ $worksheet->failed }} </td>
+                                    <td> {{ $worksheet->failed_samples }} </td>
                                     <td> {{ $worksheet->redraw }} </td>
                                     <td> {{ $worksheet->noresult }} </td>
                                     <td> {{ $worksheet->sample_count }}
