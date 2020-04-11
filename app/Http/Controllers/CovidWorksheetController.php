@@ -391,7 +391,7 @@ class CovidWorksheetController extends Controller
                 // $interpretation = $value[6];
 
                 $target1 = $value[6];
-                $target1 = $value[7];
+                $target2 = $value[7];
                 $flag = $value[3];
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
