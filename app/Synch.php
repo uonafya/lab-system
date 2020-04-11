@@ -1258,7 +1258,7 @@ class Synch
 
 			$sample->synched = 1;
 			$sample->datesynched = $today;
-			$sample->national_sample_id = $sample_array[$sample->id];
+			$sample->national_sample_id = $sample_array->{'sample_' $sample->id} ?? null;
 			$sample->save();
 
 
@@ -1270,7 +1270,7 @@ class Synch
 			foreach ($sample->child as $key => $child) {
 				$child->synched = 1;
 				$child->datesynched = $today;
-				$child->national_sample_id = $sample_array[$child->id];
+				$child->national_sample_id = $sample_array->{'sample_' . $child->id} ?? null;
 				$child->save();
 			}
 
