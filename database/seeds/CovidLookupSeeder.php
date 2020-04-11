@@ -26,6 +26,11 @@ class CovidLookupSeeder extends Seeder
 			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
 			['id' => 2, 'name' => 'Kenyatta University'],
 			['id' => 3, 'name' => 'Kenya School of Government'],
+			['id' => 4, 'name' => 'Boma Hotel'],
+			['id' => 5, 'name' => 'KMTC Karen'],
+			['id' => 6, 'name' => 'Mandera'],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
 
