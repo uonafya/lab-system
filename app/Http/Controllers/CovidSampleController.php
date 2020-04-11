@@ -151,6 +151,7 @@ class CovidSampleController extends Controller
     public function show(CovidSample $covidSample)
     {
         $user = auth()->user();
+        $type=1;
 
         $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
