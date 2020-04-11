@@ -67,6 +67,7 @@ class CovidWorksheetController extends Controller
             if(($status == 2 || $status == 3) && $samples){
                 $neg = $samples->where('worksheet_id', $worksheet->id)->where('result', 1)->first()->totals ?? 0;
                 $pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 2)->first()->totals ?? 0;
+                $presumed_pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 8)->first()->totals ?? 0;
                 $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $samples->where('worksheet_id', $worksheet->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $samples->where('worksheet_id', $worksheet->id)->where('result', 0)->first()->totals ?? 0;
@@ -84,6 +85,7 @@ class CovidWorksheetController extends Controller
             $worksheet->rerun = $rerun;
             $worksheet->neg = $neg;
             $worksheet->pos = $pos;
+            $worksheet->presumed_pos = $presumed_pos;
             $worksheet->failed_samples = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;

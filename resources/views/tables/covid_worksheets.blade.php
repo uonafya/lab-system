@@ -119,13 +119,14 @@
                                 <th rowspan="2">Created By</th>
                                 <th rowspan="2">Type</th>
                                 <th rowspan="2">Status</th>
-                                <th colspan="6">Samples</th>
+                                <th colspan="7">Samples</th>
                                 <th colspan="3">Date</th>
                                 <th rowspan="2">Combined</th>
                                 <th rowspan="2">Task</th>
                             </tr>
                             <tr>
                                 <th>POS</th>
+                                <th>Presumed POS</th>
                                 <th>NEG</th>
                                 <th>Failed</th>
                                 <th>Redraw</th>
@@ -145,6 +146,7 @@
                                     <td> {!! $worksheet->machine !!} </td>
                                     <td> {!! $worksheet->status !!} </td>
                                     <td> {{ $worksheet->pos }} </td>
+                                    <td> {{ $worksheet->presumed_pos }} </td>
                                     <td> {{ $worksheet->neg }} </td>
                                     <td> {{ $worksheet->failed_samples }} </td>
                                     <td> {{ $worksheet->redraw }} </td>
