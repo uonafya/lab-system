@@ -178,6 +178,10 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
+                        @if(isset($type) && $type == 2)
+                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
+                            @csrf
+                        @endif
 
                         <table class="table table-striped table-bordered table-hover @empty($quarantine_sites) data-table @endempty " >
                             <thead>
@@ -192,7 +196,11 @@
                                     <th rowspan="2">Received</th>
                                     <th rowspan="2">Results</th>                                    
                                     <th rowspan="2">Task</th>
-                                    <th rowspan="2">Delete</th>
+                                    @if(isset($type) && $type == 2)
+                                        <th rowspan="2">Print Multiple</th>
+                                    @else
+                                        <th rowspan="2">Delete</th>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <th>Collected</th>
@@ -237,13 +245,25 @@
                                                 <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
                                             @endif                                         
                                         </td>
-                                        <td> {!! $sample->delete_form !!} </td>
+                                        @if(isset($type) && $type == 2)
+                                            <td> 
+                                                <div align="center">
+                                                    <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
+                                                </div>
+                                            </td>
+                                        @else
+                                            <td> {!! $sample->delete_form !!} </td>
+                                        @endif
                                     </tr>
-
-
                                 @endforeach
                             </tbody>
                         </table>
+
+                        @if(isset($type) && $type == 2)
+                        <button type="submit">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
                     </div>
 
                     @isset($quarantine_sites)

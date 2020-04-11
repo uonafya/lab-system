@@ -278,6 +278,14 @@ class CovidSampleController extends Controller
         return view('exports.mpdf_covid_samples', $data);
     }
 
+    public function print_multiple(Request $request)
+    {
+        $ids = $request->input('sample_ids');
+        $data = Lookup::covid_form();
+        $data['samples'] = CovidSample::whereIn('id', $ids)->get();
+        return view('exports.mpdf_covid_samples', $data);
+    }
+
 
     public function cities(Request $request)
     {
