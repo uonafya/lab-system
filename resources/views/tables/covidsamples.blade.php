@@ -72,7 +72,7 @@
 
     @if(auth()->user()->user_type_id != 5)
 
-        <form action="{{ url('covidsample/index') }}" method="POST" class="my_form">
+        <form action="{{ url('covid_sample/index') }}" method="POST" class="my_form">
             @csrf
 
             @isset($to_print)
