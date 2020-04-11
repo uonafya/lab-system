@@ -114,7 +114,7 @@
                             <select class="form-control" name="quarantine_site_id" id="quarantine_site_id">
                                 <option></option>
                                 @foreach ($quarantine_sites as $quarantine_site)
-                                    <option value="{{ $subcounty->id }}"
+                                    <option value="{{ $quarantine_site->id }}"
 
                                     @if (isset($quarantine_site_id) && $quarantine_site_id == $quarantine_site->id)
                                         selected
