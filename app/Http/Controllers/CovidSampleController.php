@@ -160,9 +160,9 @@ class CovidSampleController extends Controller
             })
             ->when(true, function($query) use ($covidSample){
                 if($covidSample->parentid){
-                    return $query->whereRaw(" (id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
+                    return $query->whereRaw(" (covid_sample_view.id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
                 }else{
-                    return $query->whereRaw(" (id = {$covidSample->id} OR parentid = {$covidSample->id})");
+                    return $query->whereRaw(" (covid_sample_view.id = {$covidSample->id} OR parentid = {$covidSample->id})");
                 }
             })            
             ->orderBy('run', 'desc')
