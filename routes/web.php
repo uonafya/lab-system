@@ -123,7 +123,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('city/search/', 'CovidSampleController@cities')->name('cities');
 
 	Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
-		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
+		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
 
 		Route::get('result/{covidSample}', 'CovidSampleController@result');

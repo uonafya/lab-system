@@ -8,7 +8,7 @@
 
 <div class="content">
 
-    @isset($subcounties)
+    @isset($quarantine_sites)
     <div class="row">
         <div class="col-md-12">
             Click To View: 
@@ -94,7 +94,7 @@
                 
                 <br />
 
-                <div class="col-md-4"> 
+                <div class="col-md-6"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
@@ -107,47 +107,26 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-4"> 
+                <div class="col-md-6"> 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Select Subcounty</label>
+                        <label class="col-sm-3 control-label">Select Quarantine Site</label>
                         <div class="col-sm-9">
-                            <select class="form-control" name="subcounty_id" id="subcounty_id">
+                            <select class="form-control" name="quarantine_site_id" id="quarantine_site_id">
                                 <option></option>
-                                @foreach ($subcounties as $subcounty)
+                                @foreach ($quarantine_sites as $quarantine_site)
                                     <option value="{{ $subcounty->id }}"
 
-                                    @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                    @if (isset($quarantine_site_id) && $quarantine_site_id == $quarantine_site->id)
                                         selected
                                     @endif
 
-                                    > {{ $subcounty->name }}
+                                    > {{ $quarantine_site->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-4"> 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Select Partner</label>
-                        <div class="col-sm-9">
-                            <select class="form-control" name="partner_id" id="partner_id">
-                                <option></option>
-                                @foreach ($partners as $partner)
-                                    <option value="{{ $partner->id }}"
-
-                                    @if (isset($partner_id) && $partner_id == $partner->id)
-                                        selected
-                                    @endif
-
-                                    > {{ $partner->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>                        
-                    </div> 
-                </div>
-            </div>
 
             <br />
 
@@ -267,7 +246,7 @@
                         </table>
                     </div>
 
-                    @isset($subcounties)
+                    @isset($quarantine_sites)
                         {{ $samples->links() }}
                     @endisset
                 </div>
