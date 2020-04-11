@@ -549,7 +549,7 @@ class Lookup
 
     public static function covid_form()
     {
-        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'quarantine_sites'];
+        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'nationalities', 'quarantine_sites'];
 
         $data = [];
 
