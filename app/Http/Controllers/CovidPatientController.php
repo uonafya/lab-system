@@ -66,7 +66,7 @@ class CovidPatientController extends Controller
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $results = DB::table('results')->get();
-        return view('tables.covidsamples', compact('samples', 'myurl', 'myurl2', 'type', 'results'));
+        return view('tables.covidsamples', compact('samples', 'myurl', 'myurl2', 'type', 'covidPatient', 'results'));
     }
 
     /**
