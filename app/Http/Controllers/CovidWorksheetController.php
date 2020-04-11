@@ -400,10 +400,10 @@ class CovidWorksheetController extends Controller
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(str_contains($control, ['-'])){
-                        $negative_control = $result_array;                       
+                    if(str_contains($control, ['+'])){
+                        $positive_control = $result_array;                       
                     }else{
-                        $positive_control = $result_array; 
+                        $negative_control = $result_array; 
                     }
                     continue;
                 }

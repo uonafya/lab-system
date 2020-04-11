@@ -61,6 +61,7 @@ class BaseModel extends Model
         $text = $this->id;
 
         if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'patient') && str_contains($c, 'covid')) $text = $this->identifier;
         if(str_contains($c, 'sample')) $text = "View Runs";
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
