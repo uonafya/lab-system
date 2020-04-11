@@ -20,7 +20,7 @@ class CovidSampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($type=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $subcounty_id=NULL, $partner_id=NULL)
+    public function index($type=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $quarantine_site_id=NULL)
     {
         // 0 - not received
         // 1 - all
@@ -35,11 +35,8 @@ class CovidSampleController extends Controller
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
-            ->when($subcounty_id, function($query) use ($subcounty_id){
-                return $query->where('district', $subcounty_id);
-            })
-            ->when($partner_id, function($query) use ($partner_id){
-                return $query->where('partner', $partner_id);
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
@@ -63,8 +60,8 @@ class CovidSampleController extends Controller
             ->paginate();
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
-        $p = Lookup::get_partners();
-        $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
+        $quarantine_sites = DB::table('quarantine_sites')->get();
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'quarantine_site_id');
         $data['results'] = DB::table('results')->get();
         return view('tables.covidsamples', $data);
     }
@@ -82,15 +79,14 @@ class CovidSampleController extends Controller
         if($date_start == '') $date_start = 0;
         if($date_end == '') $date_end = 0;
 
-        $partner_id = $request->input('partner_id', 0);
-        $subcounty_id = $request->input('subcounty_id', 0);
+        $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
         if(!$partner_id) $partner_id = 0;
-        if(!$subcounty_id) $subcounty_id = 0;
+        if(!$quarantine_site_id) $quarantine_site_id = 0;
         if(!$facility_id) $facility_id = 0;
 
-        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}");
     }
 
     /**
