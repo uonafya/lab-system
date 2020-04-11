@@ -48,6 +48,7 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
+		<?php $count++; ?>
 
 		<table id="table1" align="center">
 
