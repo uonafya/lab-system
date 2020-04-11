@@ -29,7 +29,8 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Boma Hotel'],
 			['id' => 5, 'name' => 'KMTC Karen'],
 			['id' => 6, 'name' => 'Mandera'],
-			// ['id' => , 'name' => ''],
+			['id' => 7, 'name' => "Nairobi Women's"],
+			['id' => 8, 'name' => 'LANCET'],
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
