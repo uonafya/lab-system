@@ -56,7 +56,7 @@ p.breakhere {page-break-before: always}
 					<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
-					  COVID 19 RESULT FORM</span>
+					  COVID-19 RESULT FORM</span>
 					</span>
 				</td>
 			</tr>
@@ -107,8 +107,8 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> Unique Case Identifier</strong></td>
-				<td colspan="1"> <span class="style5">{{ $sample->patient->identifier }}</span></td>
-				<td class="style4 style1 comment" colspan="3"><strong> Citizenship </strong></td>
+				<td colspan="2"> <span class="style5">{{ $sample->patient->identifier }}</span></td>
+				<td class="style4 style1 comment" colspan="2"><strong> Citizenship </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 						{{ $sample->patient->get_prop_name($nationalities, 'nationality') }}
@@ -117,7 +117,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Months)</strong></td>
+				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Years)</strong></td>
 				<td colspan="1"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
 				<td class="style4 style1 comment" colspan="3" ><strong>Area of Residence </strong></td>
 				<td colspan="1" class="comment">
@@ -178,7 +178,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						 {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
+						{{ $sample->get_prop_name($rejected_reasons, 'rejectedreason') }}
 					</td>
 
 
