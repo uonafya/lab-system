@@ -1258,7 +1258,7 @@ class Synch
 
 			$sample->synched = 1;
 			$sample->datesynched = $today;
-			$sample->national_sample_id = $sample_array->{'sample_' $sample->id} ?? null;
+			$sample->national_sample_id = $sample_array->{'sample_' . $sample->id} ?? null;
 			$sample->save();
 
 
