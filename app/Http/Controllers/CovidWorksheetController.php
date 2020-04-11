@@ -75,7 +75,7 @@ class CovidWorksheetController extends Controller
                 $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
             }
             else{
-                $neg = $pos = $failed = $redraw = $noresult = $rerun = 0;
+                $neg = $pos = $failed = $redraw = $noresult = $presumed_pos = $rerun = 0;
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
