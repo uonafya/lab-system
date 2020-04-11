@@ -82,7 +82,6 @@ class CovidSampleController extends Controller
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
-        if(!$partner_id) $partner_id = 0;
         if(!$quarantine_site_id) $quarantine_site_id = 0;
         if(!$facility_id) $facility_id = 0;
 
