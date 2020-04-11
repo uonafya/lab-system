@@ -126,6 +126,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
 
+		Route::post('print_multiple', 'CovidSampleController@print_multiple');
 		Route::get('result/{covidSample}', 'CovidSampleController@result');
 		
 		Route::post('search/', 'CovidSampleController@search')->name('search');
