@@ -69,7 +69,7 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
-			@if(env('APP_LAB') == 1)
+			@if(env('APP_LAB') == 1 && $sample->facility)
 
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
