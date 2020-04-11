@@ -62,7 +62,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr>
 				<td colspan="4" class="comment style1 style4">
-					<strong> Batch No.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? '' }} </strong> 
+					<strong> Facility.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? $sample->patient->quarantine_site->name ?? '' }} </strong> 
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
 					<strong>Testing Lab: {{ $sample->lab->name ?? '' }}</strong>
@@ -118,8 +118,8 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Years)</strong></td>
-				<td colspan="1"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong>Area of Residence </strong></td>
+				<td colspan="2"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong>Area of Residence </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 						{{ $sample->patient->residence }}			
@@ -129,8 +129,8 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Gender </strong></td>
-				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong> Health Status at time of reporting	</strong></td>
+				<td colspan="2"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Health Status at time of reporting	</strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
 						{{ $sample->get_prop_name($health_statuses, 'health_status') }}
@@ -140,21 +140,21 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment" ><strong>Date	Collected </strong></td>
-				<td class="comment" colspan="1">
+				<td class="comment" colspan="2">
 					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong> Sample Type </strong></td>
+				<td class="style4 style1 comment" colspan="2"><strong> Sample Type </strong></td>
 				<td colspan="1" > <span class="style5">{{ $sample->get_prop_name($covid_sample_types, 'sampletype') }}</span></td>
 			</tr>
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Date Received </strong></td>
-				<td colspan="1" class="comment" >
+				<td colspan="2" class="comment" >
 					<span class="style5">
 						{{ $sample->my_date_format('datereceived') }} 
 					</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong>Reason for Test </strong></td>
+				<td class="style4 style1 comment" colspan="2"><strong>Reason for Test </strong></td>
 				<td colspan="1" >
 					<span class="style5">
 						{{ $sample->patient->get_prop_name($covid_justifications, 'justification') }}					
@@ -164,10 +164,10 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Date Test Performed </strong></td>
-				<td colspan="1" class="comment" >
+				<td colspan="2" class="comment" >
 					<span class="style5">{{ $sample->my_date_format('datetested') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong> </strong></td>
+				<td class="style4 style1 comment" colspan="2"><strong> </strong></td>
 				<td colspan="1" ><span class="style5"> </span></td>
 			</tr>
 
