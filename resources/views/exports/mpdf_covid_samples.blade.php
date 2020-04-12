@@ -227,8 +227,11 @@ p.breakhere {page-break-before: always}
 				</td>
 				<td colspan="5" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
-						@if($sample->result == 2 && $sample->pcrtype < 4)
-							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
+						@if($sample->result == 2)
+							&nbsp; Kindly Carry out a Follow Up in due time
+						@endif
+						@if($sample->result == 8)
+							&nbsp; The patient should be presumed to be positive but the results were not conclusive. Carry out a follow up test as soon as possible.
 						@endif
 
 					</span>
