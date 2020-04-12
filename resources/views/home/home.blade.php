@@ -356,7 +356,7 @@
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['covid_pending_results_update']) }}">
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['covid_pending_results_update']) }}">{{ $widgets['covid_pending_results_update'] }}</span>
-		                        <a href="{{ url('covid_worksheet/index/1') }}">Pending Approval.</a>
+		                        <a href="{{ url('covid_worksheet/index/1') }}">Worksheets Pending Results Update.</a>
 		                    </li>
 
 		                @elseif(Session('testingSystem') == 'CD4')

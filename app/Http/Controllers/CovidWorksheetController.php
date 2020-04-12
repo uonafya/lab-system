@@ -54,10 +54,11 @@ class CovidWorksheetController extends Controller
 
         $worksheets->setPath(url()->current());
 
+        $data = Lookup::worksheet_lookups();
+
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
         $reruns = $this->get_reruns($worksheet_ids);
-        $data = Lookup::worksheet_lookups();
 
         $worksheets->transform(function($worksheet, $key) use ($samples, $reruns, $data){
             $status = $worksheet->status_id;
@@ -66,6 +67,7 @@ class CovidWorksheetController extends Controller
             if(($status == 2 || $status == 3) && $samples){
                 $neg = $samples->where('worksheet_id', $worksheet->id)->where('result', 1)->first()->totals ?? 0;
                 $pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 2)->first()->totals ?? 0;
+                $presumed_pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 8)->first()->totals ?? 0;
                 $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $samples->where('worksheet_id', $worksheet->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $samples->where('worksheet_id', $worksheet->id)->where('result', 0)->first()->totals ?? 0;
@@ -73,7 +75,7 @@ class CovidWorksheetController extends Controller
                 $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
             }
             else{
-                $neg = $pos = $failed = $redraw = $noresult = $rerun = 0;
+                $neg = $pos = $failed = $redraw = $noresult = $presumed_pos = $rerun = 0;
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
@@ -83,7 +85,8 @@ class CovidWorksheetController extends Controller
             $worksheet->rerun = $rerun;
             $worksheet->neg = $neg;
             $worksheet->pos = $pos;
-            $worksheet->failed = $failed;
+            $worksheet->presumed_pos = $presumed_pos;
+            $worksheet->failed_samples = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
             // $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
@@ -92,8 +95,7 @@ class CovidWorksheetController extends Controller
 
             return $worksheet;
         });
-
-        $data = Lookup::worksheet_lookups();
+        
         $data['status_count'] = CovidWorksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
             ->orderBy('status_id', 'asc')
@@ -249,6 +251,12 @@ class CovidWorksheetController extends Controller
         }
     }
 
+    public function find(CovidWorksheet $worksheet)
+    {
+        session(['toast_message' => 'Found 1 worksheet.']);
+        return $this->index(0, null, null, $worksheet->id);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -385,17 +393,17 @@ class CovidWorksheetController extends Controller
                 // $interpretation = $value[6];
 
                 $target1 = $value[6];
-                $target1 = $value[7];
+                $target2 = $value[7];
                 $flag = $value[3];
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(str_contains($control, ['-'])){
-                        $negative_control = $result_array;                       
+                    if(str_contains($control, ['+'])){
+                        $positive_control = $result_array;                       
                     }else{
-                        $positive_control = $result_array; 
+                        $negative_control = $result_array; 
                     }
                     continue;
                 }
