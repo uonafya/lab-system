@@ -8,7 +8,7 @@
 
 <div class="content">
 
-    @isset($subcounties)
+    @isset($quarantine_sites)
     <div class="row">
         <div class="col-md-12">
             Click To View: 
@@ -72,7 +72,7 @@
 
     @if(auth()->user()->user_type_id != 5)
 
-        <form action="{{ url('covidsample/index') }}" method="POST" class="my_form">
+        <form action="{{ url('covid_sample/index') }}" method="POST" class="my_form">
             @csrf
 
             @isset($to_print)
@@ -94,7 +94,7 @@
                 
                 <br />
 
-                <div class="col-md-4"> 
+                <div class="col-md-6"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
@@ -107,47 +107,26 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-4"> 
+                <div class="col-md-6"> 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Select Subcounty</label>
+                        <label class="col-sm-3 control-label">Select Quarantine Site</label>
                         <div class="col-sm-9">
-                            <select class="form-control" name="subcounty_id" id="subcounty_id">
+                            <select class="form-control" name="quarantine_site_id" id="quarantine_site_id">
                                 <option></option>
-                                @foreach ($subcounties as $subcounty)
-                                    <option value="{{ $subcounty->id }}"
+                                @foreach ($quarantine_sites as $quarantine_site)
+                                    <option value="{{ $quarantine_site->id }}"
 
-                                    @if (isset($subcounty_id) && $subcounty_id == $subcounty->id)
+                                    @if (isset($quarantine_site_id) && $quarantine_site_id == $quarantine_site->id)
                                         selected
                                     @endif
 
-                                    > {{ $subcounty->name }}
+                                    > {{ $quarantine_site->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-4"> 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Select Partner</label>
-                        <div class="col-sm-9">
-                            <select class="form-control" name="partner_id" id="partner_id">
-                                <option></option>
-                                @foreach ($partners as $partner)
-                                    <option value="{{ $partner->id }}"
-
-                                    @if (isset($partner_id) && $partner_id == $partner->id)
-                                        selected
-                                    @endif
-
-                                    > {{ $partner->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>                        
-                    </div> 
-                </div>
-            </div>
 
             <br />
 
@@ -199,8 +178,12 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
+                        @if(isset($type) && $type == 2)
+                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
+                            @csrf
+                        @endif
 
-                        <table class="table table-striped table-bordered table-hover @isset($subcounties) data-table @endisset" >
+                        <table class="table table-striped table-bordered table-hover @empty($quarantine_sites) data-table @endempty " >
                             <thead>
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
@@ -213,7 +196,11 @@
                                     <th rowspan="2">Received</th>
                                     <th rowspan="2">Results</th>                                    
                                     <th rowspan="2">Task</th>
-                                    <th rowspan="2">Delete</th>
+                                    @if(isset($type) && $type == 2)
+                                        <th rowspan="2">Print Multiple</th>
+                                    @else
+                                        <th rowspan="2">Delete</th>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <th>Collected</th>
@@ -255,19 +242,31 @@
                                         <td>
                                             {!! $sample->edit_link !!}  |
                                             @if($sample->datedispatched)
-                                                <a href="/covid_sample/results/{{ $sample->id }}">Result</a> |
+                                                <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
                                             @endif                                         
                                         </td>
-                                        <td> {!! $sample->delete_form !!} </td>
+                                        @if(isset($type) && $type == 2)
+                                            <td> 
+                                                <div align="center">
+                                                    <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
+                                                </div>
+                                            </td>
+                                        @else
+                                            <td> {!! $sample->delete_form !!} </td>
+                                        @endif
                                     </tr>
-
-
                                 @endforeach
                             </tbody>
                         </table>
+
+                        @if(isset($type) && $type == 2)
+                        <button type="submit">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
                     </div>
 
-                    @isset($subcounties)
+                    @isset($quarantine_sites)
                         {{ $samples->links() }}
                     @endisset
                 </div>

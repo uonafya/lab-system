@@ -11,6 +11,80 @@ class CovidLookupSeeder extends Seeder
      */
     public function run()
     {
+    	// ALTER TABLE `covid_patients` ADD `quarantine_site_id` smallint NULL AFTER `facility_id`;
+
+		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
+		DB::statement("
+			CREATE TABLE `quarantine_sites` (
+				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(100) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('quarantine_sites')->insert([
+			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
+			['id' => 2, 'name' => 'Kenyatta University'],
+			['id' => 3, 'name' => 'Kenya School of Government'],
+			['id' => 4, 'name' => 'Boma Hotel'],
+			['id' => 5, 'name' => 'KMTC Karen'],
+			['id' => 6, 'name' => 'Mandera'],
+			['id' => 7, 'name' => "Nairobi Women's"],
+			['id' => 8, 'name' => 'LANCET'],
+			['id' => 9, 'name' => 'KQ medical centre pride'],
+			['id' => 10, 'name' => 'Nairobi hospital'],
+			['id' => 11, 'name' => 'Nairobi West'],
+			['id' => 12, 'name' => 'Kisii teaching and referral hospital'],
+			['id' => 13, 'name' => 'NHPLS'],
+			['id' => 14, 'name' => 'Meru TRH'],
+			['id' => 15, 'name' => 'MP Shah hospital'],
+			['id' => 16, 'name' => 'KEMRI clinic'],
+			['id' => 17, 'name' => 'Lenana School'],
+			['id' => 18, 'name' => 'Moi Girls Kibra'],
+			['id' => 19, 'name' => 'MTRH'],
+			['id' => 20, 'name' => 'KMTC'],
+			['id' => 21, 'name' => 'Monarch Hotel'],
+			['id' => 22, 'name' => 'Trademark Hotel'],
+			['id' => 23, 'name' => 'Panari Hotel'],
+			['id' => 24, 'name' => 'KEWI'],
+			['id' => 25, 'name' => 'Kauwi subcounty hospital'],
+			['id' => 26, 'name' => 'Kings Premier Inn'],
+			['id' => 27, 'name' => 'Land Mark Suites'],
+			['id' => 28, 'name' => 'Nairobi School'],
+			['id' => 29, 'name' => 'MASH'],
+			['id' => 30, 'name' => '67 Hotel Syokimau'],
+			['id' => 31, 'name' => 'Kenya Comfort'],
+			['id' => 32, 'name' => 'NIC'],
+			['id' => 33, 'name' => "Nairobi Women's, Kitengela"],
+			['id' => 34, 'name' => 'Makindu Sub-County Hospital'],
+			['id' => 35, 'name' => 'Kambu Sub County Hospital'],
+			['id' => 36, 'name' => 'Iten County referal hospital'],
+			['id' => 37, 'name' => 'Coptic Hospital'],
+			['id' => 38, 'name' => 'Kisii Teaching and Referral hospital'],
+			['id' => 39, 'name' => 'Karen - KEMRI'],
+			['id' => 40, 'name' => 'EID - KEMRI'],
+			['id' => 41, 'name' => 'Mtito Andei Subcounty hospital'],
+			['id' => 42, 'name' => 'Kibwezi subcounty hospital'],
+			['id' => 43, 'name' => 'Makueni county referral hospital'],
+			['id' => 44, 'name' => 'Elgeyo Marakwet'],
+			['id' => 45, 'name' => 'Kitui Referral Hospital'],
+			['id' => 46, 'name' => 'Kitui Nursing home'],
+			['id' => 47, 'name' => 'Longisa County referral hospital'],
+			['id' => 48, 'name' => 'Siha Hospital Mpeketoni'],
+			['id' => 49, 'name' => 'Tenwek Hospital'],
+			['id' => 50, 'name' => 'Migori county referral hospital'],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+			// ['id' => , 'name' => ''],
+		]);
+
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
@@ -84,6 +158,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Point of entry detection'],
 			['id' => 5, 'name' => 'Repatriation'],
 			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 		]);
 
 

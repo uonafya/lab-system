@@ -98,6 +98,8 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+
 
 
                         @include('partial.input', ['model' => $m, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
@@ -107,7 +109,9 @@
                         @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number'])
 
 
-                        @include('partial.date', ['model' => $m, 'prop' => 'dob', 'required' => true, 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
+                        @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 

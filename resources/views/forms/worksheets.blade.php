@@ -49,7 +49,13 @@
                 @endisset
 
                 @isset($entered_by)
-                    <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                    @if(is_array($entered_by))
+                        @foreach($entered_by as $value)
+                            <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                        @endforeach
+                    @else
+                        <input type="hidden" value="{{ $entered_by }}" name="entered_by" >
+                    @endif
                 @endisset
 
 

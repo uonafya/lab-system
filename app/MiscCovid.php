@@ -21,9 +21,8 @@ class MiscCovid extends Common
             $interpretation = 'Detected';
         }
         else if($target2 == 'positive'){
-            $result = 3;
+            $result = 8;
             $interpretation = 'Presumed Positive. Requires Rerun.';
-            $repeatt = 1;
         }
         else if($target1 == 'negative' && $target1 == $target2){
             $result = 1;
@@ -119,6 +118,7 @@ class MiscCovid extends Common
 
         $create = false;
         if($count == $limit) $create = true;
+        if($count) $create = true;
         $covid = true;
 
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
