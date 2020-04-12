@@ -26,6 +26,11 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\CovidWorksheet', 'worksheet_id');
     }
 
+    public function travel()
+    {
+        return $this->hasMany('App\CovidTravel', 'sample_id');
+    }
+
 
     // Parent sample
     public function parent()
