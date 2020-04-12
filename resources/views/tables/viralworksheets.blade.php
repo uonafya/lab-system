@@ -27,6 +27,9 @@
             </a> |
             <a href="{{ url('viralworksheet/index/4') }}" title="Cancelled Worksheets">
                 Cancelled Worksheets
+            </a> |
+            <a href="{{ url('viralworksheet/index/5') }}" title="Failed Worksheets">
+                Failed Worksheets
             </a>
             @if(env('APP_LAB') == 9)
                 |

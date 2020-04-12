@@ -41,11 +41,14 @@
 			(Second Review)
 		@endif
 	</a> | 
+	@if($worksheet->failed)
+		<a href="{{ url($worksheet->route_name . '/rerun_worksheet/' . $worksheet->id) }}" title="Click to Rerun Worksheet" target='_blank'> Rerun Worksheet </a> |
+	@endif
 	<a href="{{ url($worksheet->route_name . '/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a>
 
-@elseif($worksheet->status_id == 3)
+@elseif($worksheet->status_id == 3 || $worksheet->status_id == 5)
 
 	<a href="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}" title="Click to view Samples in this Worksheet" target='_blank'>
 		View Results
@@ -61,7 +64,7 @@
 	</a> |
 
 	<a href="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
-		Update Results (In Case of Accidental Deletion)
+		Update Results (In Case of Accidental Cancellation)
 	</a> | 
 
 	{!! $worksheet->delete_form !!}

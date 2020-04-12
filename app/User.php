@@ -72,6 +72,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+
+    public function scopeLabUser($query)
+    {
+        return $query->whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org');
+    }
     
 
     /**
@@ -110,7 +116,13 @@ class User extends Authenticatable implements JWTSubject
 
     public function is_admin()
     {
-        if($this->user_type_id == 0 || $this->user_type_id == 2) return true;
+        if(in_array($this->user_type_id, [0, 2])) return true;
+        return false;
+    }
+
+    public function is_facility()
+    {
+        if(in_array($this->user_type_id, [5])) return true;
         return false;
     }
 

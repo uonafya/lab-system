@@ -63,6 +63,12 @@ class Viralworksheet extends BaseModel
     }
 
 
+    public function getFailedAttribute()
+    {
+        if(in_array('Failed', [$this->neg_control_result, $this->highpos_control_result, $this->lowpos_control_result])) return true;
+        return false;
+    }
+
 
     public function getSampleTypeNameAttribute()
     {

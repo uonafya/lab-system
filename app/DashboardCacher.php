@@ -116,6 +116,13 @@ class DashboardCacher
                 'sample_manifest' => Cache::get('eid_pending_sample_manifest'),
                 'prefix' => '',
             ]);
+        } else if (session('testingSystem') == 'Covid') {
+            self::cache_covid();
+            return array_merge($data, [
+                'covid_pending_receipt' => Cache::get('covid_pending_receipt'),
+                'covid_pending_testing' => Cache::get('covid_pending_testing'),
+                'covid_pending_results_update' => Cache::get('covid_pending_results_update'),
+            ]);
         } else if (session('testingSystem') == 'CD4') {
             return array_merge($data, [
                 'CD4samplesInQueue' => Cache::get('CD4samplesInQueue'),
@@ -312,6 +319,8 @@ class DashboardCacher
             $model = Viralworksheet::with(['creator']);
         } else if ($testingSystem == 'Eid') {
             $model = Worksheet::with(['creator']);
+        } else if ($testingSystem == 'Covid') {
+            $model = CovidWorksheet::with(['creator']);
         } else {
             $model = Cd4Worksheet::with(['creator']);
         }
@@ -460,6 +469,26 @@ class DashboardCacher
         }
         // Neutral Cache
         // if(env('APP_LAB') != 7) Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
+    }
+
+    public static function cache_covid()
+    {
+        if(Cache::has('covid_pending_receipt')) return true;
+
+        $minutes = 5;
+
+        $pending_receipt = CovidSample::selectRaw('count(id) AS my_count')
+            ->where(['lab_id' => env('APP_LAB')])
+            ->whereNull('datereceived')->first()->my_count;
+        $pending_testing = CovidSample::selectRaw('count(id) AS my_count')
+            ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+            ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
+            ->whereNull('datetested')->whereNull('worksheet_id')->first()->my_count;
+        $worksheets = self::resultsAwaitingpdate('Covid');
+
+        Cache::put('covid_pending_receipt', $pending_receipt, $minutes);
+        Cache::put('covid_pending_testing', $pending_testing, $minutes);
+        Cache::put('covid_pending_results_update', $worksheets, $minutes);
     }
 
     public static function clear_cache()

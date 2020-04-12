@@ -123,13 +123,25 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('city/search/', 'CovidSampleController@cities')->name('cities');
 
 	Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
-		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'CovidSampleController@index');
+		Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}', 'CovidSampleController@index');
 		Route::post('index', 'CovidSampleController@sample_search');
+
+		Route::post('print_multiple', 'CovidSampleController@print_multiple');
+		Route::get('result/{covidSample}', 'CovidSampleController@result');
 		
+		Route::post('search/', 'CovidSampleController@search')->name('search');
 	});
 	Route::resource('covid_sample', 'CovidSampleController');
 
+	Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
+		
+		Route::post('search/', 'CovidPatientController@search')->name('search');
+	});
+	Route::resource('covid_patient', 'CovidPatientController');
+
 	Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
+		Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
+		Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
 
 		Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
 		Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');
@@ -137,6 +149,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('print/{worksheet}', 'CovidWorksheetController@print')->name('print');
 		Route::get('labels/{worksheet}', 'CovidWorksheetController@labels')->name('labels');
 		Route::get('cancel/{worksheet}', 'CovidWorksheetController@cancel')->name('cancel');
+		Route::get('rerun_worksheet/{worksheet}', 'CovidWorksheetController@rerun_worksheet')->name('rerun_worksheet');
 		Route::get('convert/{machine_type}/{worksheet}', 'CovidWorksheetController@convert_worksheet')->name('convert');
 
 		Route::group(['middleware' => ['only_utype:1']], function () {
@@ -514,6 +527,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
 			Route::get('labels/{worksheet}', 'WorksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
+			Route::get('rerun_worksheet/{worksheet}', 'WorksheetController@rerun_worksheet')->name('rerun_worksheet');
 			Route::get('convert/{machine_type}/{worksheet}', 'WorksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
@@ -544,6 +558,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('print/{worksheet}', 'ViralworksheetController@print')->name('print');
 			Route::get('labels/{worksheet}', 'ViralworksheetController@labels')->name('labels');
 			Route::get('cancel/{worksheet}', 'ViralworksheetController@cancel')->name('cancel');
+			Route::get('rerun_worksheet/{worksheet}', 'ViralworksheetController@rerun_worksheet')->name('rerun_worksheet');
 			Route::get('convert/{worksheet}/{machine_type}/', 'ViralworksheetController@convert_worksheet')->name('convert');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {

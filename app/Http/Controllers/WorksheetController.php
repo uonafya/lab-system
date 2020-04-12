@@ -159,7 +159,7 @@ class WorksheetController extends Controller
             return back();            
         }
         $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id');
+        $sample_ids = $samples->pluck('id')->toArray();
 
         Sample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
@@ -522,7 +522,7 @@ class WorksheetController extends Controller
             fclose($handle);
         }
 
-        if($doubles){
+        /*if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
@@ -531,7 +531,7 @@ class WorksheetController extends Controller
                     $sheet->fromArray($doubles);
                 });
             })->download('csv');
-        }
+        }*/
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
@@ -575,11 +575,11 @@ class WorksheetController extends Controller
 
         $s = $this->get_worksheets($worksheet->id);
 
-        $neg = $this->checknull($s->where('result', 1));
-        $pos = $this->checknull($s->where('result', 2));
-        $failed = $this->checknull($s->where('result', 3));
-        $redraw = $this->checknull($s->where('result', 5));
-        $noresult = $this->checknull($s->where('result', 0));
+        $neg = $s->where('result', 1)->first()->totals ?? 0;
+        $pos = $s->where('result', 2)->first()->totals ?? 0;
+        $failed = $s->where('result', 3)->first()->totals ?? 0;
+        $redraw = $s->where('result', 5)->first()->totals ?? 0;
+        $noresult = $s->where('result', 0)->first()->totals ?? 0;
 
         $total = $neg + $pos + $failed + $redraw + $noresult;
 
@@ -688,6 +688,40 @@ class WorksheetController extends Controller
         }
     }
 
+    public function rerun_worksheet(Worksheet $worksheet)
+    {
+        if($worksheet->status_id != 2 || !$worksheet->failed){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
+            return back();
+        }
+        $worksheet->status_id = 5;
+        $worksheet->save();
+
+        $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
+            'neg_control_result', 'pos_control_result', 
+            'neg_control_interpretation', 'pos_control_interpretation',
+            'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
+        ]);
+        $new_worksheet->save();
+
+        
+        $samples = Sample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->select('samples.*')
+                    ->join('batches', 'batches.id', '=', 'samples.batch_id')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 1;
+            $sample->pre_update();
+            $rsample = Misc::save_repeat($sample->id);
+            $rsample->worksheet_id = $new_worksheet->id;
+            $rsample->save();
+        }
+        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        return redirect($worksheet->route_name);  
+    }
+
     public function mtype($machine)
     {
         if($machine == 1){
@@ -743,7 +777,7 @@ class WorksheetController extends Controller
                 . "<a href='" . url('worksheet/print/' . $worksheet_id) . "' title='Click to Print this Worksheet' target='_blank'>Print</a> ";
 
         }
-        else if($status == 4)
+        else if($status == 4 || $status == 5)
         {
             $d = "<a href='" . url('worksheet/' . $worksheet_id) . "' title='Click to View Cancelled Worksheet Details' target='_blank'>Details</a> ";
 
@@ -796,11 +830,6 @@ class WorksheetController extends Controller
         $worksheets = Worksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
         $worksheets->setPath(url()->current());
         return $worksheets;
-    }
-
-    public function checknull($var)
-    {
-        return $var->first()->totals ?? 0;
     }
 
 }

@@ -4,6 +4,7 @@
 			<tr>
 				<th>#</th>
 				<th>Lab ID</th>
+				<th>Type</th>
 				<th>Patient</th>
 				<th>Facility</th>
 				<th>Run</th>
@@ -19,14 +20,24 @@
 				<tr>
 					<td> {{ ($key+1) }} </td>
 					<td> {{ $sample->id }} </td>
-					<td> {{ $sample->patient }} </td>
-					<td> {{ $sample->facility->name }} </td>
+					<td>
+						@if($sample->route_name == 'covid_sample')
+							Covid-19
+						@elseif($sample->route_name == 'viralsample')
+							Viralload
+						@elseif($sample->route_name == 'sample')
+							EID
+						@endif
+					</td>
+					<td> {{ $sample->identifier ?? $sample->patient }} </td>
+					<td> {{ $sample->facilityname }} </td>
 					<td> {{ $sample->run }} </td>
-					@if($sample->parentid)
-						<td> {{ $sample->parentid ?? null }} </td>
-					@else
-						<td></td>
-					@endif
+					
+					<td>
+						@if($sample->parentid) 
+							{{ $sample->parentid }} 
+						@endif
+					</td>
 					
 					<td> {{ $sample->my_date_format('datecollected') }} </td>
 	                <td> <a href="{{ url($sample->route_name . '/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>

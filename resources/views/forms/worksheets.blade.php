@@ -34,11 +34,30 @@
                 </div>
 
                 @if(isset($covid))            
-                <form method="POST" action="/covid_worksheet" class="form-horizontal" target="_blank">
+                <form method="POST" action="/covid_worksheet" class="form-horizontal">
                 @else
                 <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
                 @endif
                     @csrf
+
+                @isset($combined)
+                    <input type="hidden" value="{{ $combined }}" name="combined" >
+                @endisset
+
+                @isset($sampletype)
+                    <input type="hidden" value="{{ $sampletype }}" name="sampletype" >
+                @endisset
+
+                @isset($entered_by)
+                    @if(is_array($entered_by))
+                        @foreach($entered_by as $value)
+                            <input type="hidden" value="{{ $value }}" name="entered_by[]" >
+                        @endforeach
+                    @else
+                        <input type="hidden" value="{{ $entered_by }}" name="entered_by" >
+                    @endif
+                @endisset
+
 
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >

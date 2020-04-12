@@ -68,4 +68,10 @@ class Worksheet extends BaseModel
     }
 
 
+    public function getFailedAttribute()
+    {
+        if(!in_array($this->neg_control_result, [1,6]) || !in_array($this->pos_control_result, [2,6])) return true;
+        return false;
+    }
+
 }

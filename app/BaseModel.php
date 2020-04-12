@@ -12,7 +12,7 @@ class BaseModel extends Model
     // protected $historyLimit = 500; 
     
     // protected $guarded = ['created_at'];
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
     // protected $hidden = [];
 
     protected static function boot()
@@ -61,6 +61,7 @@ class BaseModel extends Model
         $text = $this->id;
 
         if(str_contains($c, 'patient')) $text = $this->patient;
+        if(str_contains($c, 'patient') && str_contains($c, 'covid')) $text = $this->identifier;
         if(str_contains($c, 'sample')) $text = "View Runs";
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
@@ -71,9 +72,7 @@ class BaseModel extends Model
     public function get_link($attr)
     {
         $user = auth()->user();
-        $c = get_class($this);
-        $c = str_replace_first('App\\', '', $c);
-        $c = snake_case($c);
+        $c = $this->route_name;
 
         $pre = '';
         if(str_contains($c, 'viral')) $pre = 'viral';
@@ -82,7 +81,7 @@ class BaseModel extends Model
         $user = auth()->user();
 
         if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
-        else if(str_contains($attr, 'worksheet')) $url = url($c . '/approve/' . $this->$attr);
+        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
         // else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
@@ -179,7 +178,9 @@ class BaseModel extends Model
     {
         $a = explode('\\', get_class($this));
         $c = end($a);
-        return snake_case($c);
+        $c =  snake_case($c);
+
+        return str_replace('_view', '', $c);
     }
 
     public function getViewUrlAttribute()
@@ -198,12 +199,7 @@ class BaseModel extends Model
     }
 
     public function getDeleteFormAttribute()
-    {
-        /*$a = explode('\\', get_class($this));
-        $c = end($a);
-        $r = snake_case($c);
-        $f = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $c));*/
-        
+    {        
         $form = "<form action='" . $this->view_url . "' method='POST'>";
         $form .= csrf_field() . method_field('DELETE');
         // $form .= "<button type='submit' class='btn btn-sm btn-primary delete-btn'>Delete</button>";

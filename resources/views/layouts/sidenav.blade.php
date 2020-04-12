@@ -192,11 +192,7 @@
                 <hr />
                 <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
                 <hr />
-                <li><a href="{{ url('covid_worksheet/create/1/22') }}">Create Taqman Worksheet(24)</a></li>
-                <hr />
-                <li><a href="{{ url('covid_worksheet/create/1/46') }}">Create Taqman Worksheet(48)</a></li>
-                <hr />
-                <li><a href="{{ url('covid_worksheet/create/1/94') }}">Create Taqman Worksheet(96)</a></li>
+                <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
 
             @endif
@@ -505,6 +501,12 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
                     @endif
+                @elseif(session('testingSystem') == 'Covid')
+                    <!-- <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li> -->
+                    <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')
                     <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>
