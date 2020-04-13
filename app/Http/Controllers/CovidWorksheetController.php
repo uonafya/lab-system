@@ -384,7 +384,7 @@ class CovidWorksheetController extends Controller
         $sample_array = $doubles = [];
 
         if($worksheet->id == 15){
-            $key = 0;
+            $i  ?? null= 0;
             $samples = $worksheet->sample()->orderBy('id', 'asc')->get();
         }
 
@@ -397,7 +397,7 @@ class CovidWorksheetController extends Controller
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
 
-                if(!is_numeric($sample_id)){
+                if(!is_numeric($sample_id) && $worksheet->id != 15){
                     $s = CovidSampleView::where(['worksheet_id' => $worksheet->id, 'identifier' => $sample_id])->first();
                     $sample_id = $s->id ?? 0;
                 }
@@ -423,8 +423,9 @@ class CovidWorksheetController extends Controller
                 $data_array = array_merge(compact('datetested'), $result_array);
 
                 if($worksheet->id == 15){
-                    $sample = $samples[$key];
-                    $key++;
+                    $sample = $samples[$i] ?? null;
+                    if(!$sample) continue;
+                    $i++;
                 }else{
 
                 $sample_id = (int) $sample_id;
