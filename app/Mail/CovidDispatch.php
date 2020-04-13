@@ -31,6 +31,9 @@ class CovidDispatch extends Mailable
         $this->individual_path = storage_path('app/batches/covid/individual-results.pdf');
         $this->quarantine_site = $quarantine_site;
         $this->lab = Lab::find(env('APP_LAB'));
+        
+        if(!is_dir(storage_path('app/batches/covid'))) mkdir(storage_path('app/batches/covid/'), 0777, true);
+
 
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
