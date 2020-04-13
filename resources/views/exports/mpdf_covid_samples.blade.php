@@ -176,10 +176,11 @@ p.breakhere {page-break-before: always}
 				
 
 				@if($sample->receivedstatus == 2)
-					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						{{ $sample->get_prop_name($rejected_reasons, 'rejectedreason') }}
+						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 
 
@@ -207,18 +208,6 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			
-			@if($sample->worksheet)
-				<tr>
-					<td colspan="2"></td>
-					<td colspan="5" class="style4 style1 comment">					
-						@if($sample->worksheet->machine_type == 1)
-							HIV-1 DNA qualitative  assay on Roche CAP/CTM system
-						@elseif($sample->worksheet->machine_type == 2)
-							HIV-1 DNA qualitative  assay on Abbott M2000 system
-						@endif					
-					</td>				
-				</tr>
-			@endif
 			
 
 			<tr>
