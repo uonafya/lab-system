@@ -282,7 +282,7 @@ p.breakhere {page-break-before: always}
 				@elseif(env('APP_LAB') == 3)
 					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
 				@else
-					If you have questions or problems regarding samples, please contact the {{ $sample->lab->name }} at {{ $sample->lab->email }}
+					If you have questions or problems regarding samples, please contact the testing laboratory.
 				@endif
 
 			</span>
@@ -291,7 +291,7 @@ p.breakhere {page-break-before: always}
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4'>
+			<!-- <pagebreak sheet-size='A4'> -->
 		@else
 			<br/> <br/> <img src="https://eiddash.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
