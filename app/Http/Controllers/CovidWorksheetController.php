@@ -392,8 +392,10 @@ class CovidWorksheetController extends Controller
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
 
-                $s = CovidSampleView::where(['worksheet_id' => $worksheet->id, 'identifier' => $sample_id])->first();
-                $sample_id = $s->id ?? 0;
+                if(!is_numeric($sample_id)){
+                    $s = CovidSampleView::where(['worksheet_id' => $worksheet->id, 'identifier' => $sample_id])->first();
+                    $sample_id = $s->id ?? 0;
+                }
 
                 // $interpretation = $value[6];
 
@@ -403,7 +405,7 @@ class CovidWorksheetController extends Controller
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
-                if(!is_numeric($sample_id)){
+                /*if(!is_numeric($sample_id)){
                     $control = $value[4];
                     if(str_contains($control, ['+'])){
                         $positive_control = $result_array;                       
@@ -411,7 +413,7 @@ class CovidWorksheetController extends Controller
                         $negative_control = $result_array; 
                     }
                     continue;
-                }
+                }*/
 
                 $data_array = array_merge(compact('datetested'), $result_array);
 
