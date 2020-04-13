@@ -134,8 +134,9 @@ Artisan::command('delete:empty-batches', function(){
 
 Artisan::command('delete:pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
+    $str = \App\Common::delete_folder(storage_path('app/public/results'));
     $this->info($str);
-})->describe('Delete pdfs from hard drive.');
+})->describe('Delete pdfs and excel sheets from hard drive.');
 
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
