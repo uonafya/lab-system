@@ -384,9 +384,10 @@ class CovidWorksheetController extends Controller
         $sample_array = $doubles = [];
 
         if($worksheet->id == 15){
-            $i  ?? null= 0;
+            $i = 0;
             $samples = $worksheet->sample()->orderBy('id', 'asc')->get();
         }
+        
 
         // C8800
         if($worksheet->machine_type == 3){
