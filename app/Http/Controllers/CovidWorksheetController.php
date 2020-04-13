@@ -383,12 +383,6 @@ class CovidWorksheetController extends Controller
 
         $sample_array = $doubles = [];
 
-        if($worksheet->id == 15){
-            $i = 0;
-            $samples = $worksheet->sample()->orderBy('id', 'asc')->get();
-        }
-        
-
         // C8800
         if($worksheet->machine_type == 3){
             $handle = fopen($file, "r");
@@ -398,11 +392,6 @@ class CovidWorksheetController extends Controller
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
 
-                if(!is_numeric($sample_id) && $worksheet->id != 15){
-                    $s = CovidSampleView::where(['worksheet_id' => $worksheet->id, 'identifier' => $sample_id])->first();
-                    $sample_id = $s->id ?? 0;
-                }
-
                 // $interpretation = $value[6];
 
                 $target1 = $value[6];
@@ -411,7 +400,7 @@ class CovidWorksheetController extends Controller
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
-                /*if(!is_numeric($sample_id)){
+                if(!is_numeric($sample_id)){
                     $control = $value[4];
                     if(str_contains($control, ['+'])){
                         $positive_control = $result_array;                       
@@ -419,20 +408,13 @@ class CovidWorksheetController extends Controller
                         $negative_control = $result_array; 
                     }
                     continue;
-                }*/
+                }
 
                 $data_array = array_merge(compact('datetested'), $result_array);
-
-                if($worksheet->id == 15){
-                    $sample = $samples[$i] ?? null;
-                    if(!$sample) continue;
-                    $i++;
-                }else{
 
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
-                }
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
