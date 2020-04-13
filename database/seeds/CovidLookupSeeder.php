@@ -75,8 +75,8 @@ class CovidLookupSeeder extends Seeder
 			['id' => 48, 'name' => 'Siha Hospital Mpeketoni'],
 			['id' => 49, 'name' => 'Tenwek Hospital'],
 			['id' => 50, 'name' => 'Migori county referral hospital'],
-			// ['id' => , 'name' => ''],
-			// ['id' => , 'name' => ''],
+			['id' => 51, 'name' => 'Rapta'],
+			['id' => 52, 'name' => 'Crown Plaza'],
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
@@ -85,6 +85,8 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
+
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("
@@ -105,8 +107,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 		]);
 
-
-		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
