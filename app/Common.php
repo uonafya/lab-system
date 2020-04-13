@@ -65,10 +65,10 @@ class Common
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/csv');
 		header("Content-Disposition: attachment; filename=page-data-export.csv");
-		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		
 		$fp = fopen('php://output', 'w');
-		ob_clean();
+		// ob_clean();
 
 		$first = [];
 
@@ -80,7 +80,7 @@ class Common
 		foreach ($data as $key => $value) {
 			fputcsv($fp, $value);
 		}
-		ob_flush();
+		// ob_flush();
 		fclose($fp);
 	}
 
