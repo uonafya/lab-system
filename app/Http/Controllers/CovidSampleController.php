@@ -12,6 +12,8 @@ use App\Lookup;
 use App\MiscCovid;
 use Excel;
 use DB;
+use App\Mail\CovidDispatch;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
@@ -148,6 +150,53 @@ class CovidSampleController extends Controller
         }
         if(!$data) return back();
         return MiscCovid::csv_download($data);
+    }
+
+    public function email_multiple($request)
+    {
+        $quarantine_site_id = $request->input('quarantine_site_id', 0);
+        if(!$quarantine_site_id){
+            session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
+            return back();
+        }
+        $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
+        if($quarantine_site->email == ''){
+            session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
+            return back();            
+        }
+
+        $facility_id = $request->input('facility_id', 0);
+        $type = 2;
+
+        $date_start = $request->input('from_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        $date_column = "covid_samples.datedispatched";
+
+        $samples = CovidSample::select('covid_samples.*')
+            ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+            ->where('repeatt', 0)
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('covid_patients.facility_id', $facility_id);
+            })
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->whereNotNull('datedispatched')
+            ->orderBy($date_column, 'desc')
+            ->get();
+
+        $mail_array = explode(',', $quarantine_site->email);
+        // Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+        Mail::to(['joelkith@gmail.com'])->send(new CovidDispatch($samples, $quarantine_site));
     }
 
     /**
