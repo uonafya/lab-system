@@ -160,6 +160,7 @@
                 <div class="col-md-3">
                     <div class="form-group">              
                         <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
+                        <button class="btn btn-primary" name="submit_type" value="excel" type='email'>Email Results</button> 
                     </div>                
                 </div>
             </div>

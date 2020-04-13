@@ -75,6 +75,7 @@ class CovidSampleController extends Controller
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
         if($submit_type == 'excel') return $this->download_excel($request);
+        if($submit_type == 'email') return $this->email_multiple($request);
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
@@ -177,7 +178,7 @@ class CovidSampleController extends Controller
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
             ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('covid_patients.facility_id', $facility_id);
+                return $query->where('facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
                 return $query->where('quarantine_site_id', $quarantine_site_id);
