@@ -136,7 +136,7 @@ class CovidSampleController extends Controller
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
                 'Patient Name' => $sample->patient_name,
-                'Quarantine Site' => $sample->quarantine_site,
+                'Quarantine Site' => $sample->get_prop_name($quarantine_sites, 'quarantine_site_id'),
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($receivedstatus, 'result'),
             ];
