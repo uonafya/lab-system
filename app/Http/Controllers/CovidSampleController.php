@@ -98,7 +98,6 @@ class CovidSampleController extends Controller
         $type = $request->input('type', 1);
 
         $date_start = $request->input('from_date', 0);
-        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('to_date', 0);
 
         $date_column = "covid_sample_view.created_at";
