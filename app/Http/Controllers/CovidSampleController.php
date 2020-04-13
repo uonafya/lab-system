@@ -141,7 +141,7 @@ class CovidSampleController extends Controller
                 'Result' => $sample->get_prop_name($receivedstatus, 'result'),
             ];
         }
-        MiscCovid::csv_download($data);
+        return MiscCovid::csv_download($data);
     }
 
     /**
