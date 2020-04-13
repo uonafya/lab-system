@@ -140,7 +140,7 @@ class CovidSampleController extends Controller
                 'Date Collected' => $sample->datecollected,
                 'Date Tested' => $sample->datetested,
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
-                'Result' => $sample->get_prop_name($receivedstatus, 'result'),
+                'Result' => $sample->get_prop_name($results, 'result'),
             ];
         }
         if(!$data) return back();
