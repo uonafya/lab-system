@@ -305,6 +305,12 @@
             //     }
             // });
 
+
+            $("#quarantine_site_id").select2({
+                placeholder: "Select One",
+                allowClear: true
+            }); 
+
             $(".date").datepicker({
                 startView: 0,
                 todayBtn: "linked",
