@@ -11,8 +11,10 @@ class CovidLookupSeeder extends Seeder
      */
     public function run()
     {
-    	// ALTER TABLE `covid_patients` ADD `quarantine_site_id` smallint NULL AFTER `facility_id`;
-
+    	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
+    	// * * * * * $labexec synch:covid 2>&1
+    	// php artisan migrate:rollback --path database/migrations/covid
+    	// php artisan migrate --path database/migrations/covid
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("
 			CREATE TABLE `quarantine_sites` (
@@ -83,6 +85,26 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
+
+		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
+		DB::statement("
+			CREATE TABLE `covid_justifications` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_justifications')->insert([
+			['id' => 1, 'name' => 'Contact with confirmed case'],
+			['id' => 2, 'name' => 'Presented at health facility'],
+			['id' => 3, 'name' => 'Surveillance'],
+			['id' => 4, 'name' => 'Point of entry detection'],
+			['id' => 5, 'name' => 'Repatriation'],
+			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Surveillance and Quarantine'],
+		]);
+
 
 		return;
 
