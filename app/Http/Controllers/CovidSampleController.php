@@ -195,9 +195,16 @@ class CovidSampleController extends Controller
             ->orderBy($date_column, 'desc')
             ->get();
 
+        if(!$samples->count()){
+            session(['toast_error' => 1, 'toast_message' => 'No samples found']);
+            return back(); 
+        }
+
         $mail_array = explode(',', $quarantine_site->email);
         // Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
         Mail::to(['joelkith@gmail.com'])->send(new CovidDispatch($samples, $quarantine_site));
+        session(['toast_message' => 'The results have been sent to the quarantine site.']);
+        return back();            
     }
 
     /**
