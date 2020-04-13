@@ -383,6 +383,11 @@ class CovidWorksheetController extends Controller
 
         $sample_array = $doubles = [];
 
+        if($worksheet->id == 15){
+            $key = 0;
+            $samples = $worksheet->sample()->orderBy('id', 'asc')->get();
+        }
+
         // C8800
         if($worksheet->machine_type == 3){
             $handle = fopen($file, "r");
@@ -417,10 +422,15 @@ class CovidWorksheetController extends Controller
 
                 $data_array = array_merge(compact('datetested'), $result_array);
 
+                if($worksheet->id == 15){
+                    $sample = $samples[$key];
+                    $key++;
+                }else{
 
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
+                }
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
