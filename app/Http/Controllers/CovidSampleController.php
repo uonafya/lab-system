@@ -9,6 +9,7 @@ use App\CovidTravel;
 use App\City;
 use App\Facility;
 use App\Lookup;
+use App\MiscCovid;
 use Excel;
 use DB;
 use Illuminate\Http\Request;
@@ -53,7 +54,7 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('covid_sample_view.id', 'desc')
             ->when(($user->user_type_id == 5), function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
@@ -71,10 +72,12 @@ class CovidSampleController extends Controller
         // dd($request->all());
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
+        if($submit_type == 'excel') return $this->download_excel($request);
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
         $date_end = $request->input('to_date', 0);
+
 
         if($date_start == '') $date_start = 0;
         if($date_end == '') $date_end = 0;
@@ -86,6 +89,60 @@ class CovidSampleController extends Controller
         if(!$facility_id) $facility_id = 0;
 
         return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}");
+    }
+
+    public function download_excel($request)
+    {
+        $quarantine_site_id = $request->input('quarantine_site_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+        $type = $request->input('type', 1);
+
+        $date_start = $request->input('from_date', 0);
+        if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        $date_column = "covid_sample_view.created_at";
+        if($type == 2) $date_column = "covid_sample_view.datedispatched";
+
+        $samples = CovidSampleView::where('repeatt', 0)
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('covid_sample_view.facility_id', $facility_id);
+            })
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->when(true, function($query) use ($type){
+                if($type == 0) return $query->whereNull('datereceived');
+                else if($type == 2) return $query->whereNotNull('datedispatched');
+            })
+            ->when(($type == 2), function($query) use ($date_column){
+                return $query->orderBy($date_column, 'desc');
+            })
+            ->get();
+
+        extract(Lookup::covid_form());
+
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'Lab ID' => $sample->id,
+                'Identifier' => $sample->identifier,
+                'Patient Name' => $sample->patient_name,
+                'Quarantine Site' => $sample->quarantine_site,
+                'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
+                'Result' => $sample->get_prop_name($receivedstatus, 'result'),
+            ];
+        }
+        MiscCovid::csv_download($data);
     }
 
     /**

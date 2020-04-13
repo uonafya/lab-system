@@ -158,9 +158,9 @@
                 </div>
 
                 <div class="col-md-3">
-                    <!-- <div class="form-group">              
+                    <div class="form-group">              
                         <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
-                    </div>   -->              
+                    </div>                
                 </div>
             </div>
 
