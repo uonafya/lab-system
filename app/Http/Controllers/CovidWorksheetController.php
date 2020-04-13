@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidWorksheet;
 use App\CovidSample;
+use App\CovidSampleView;
 use App\Lookup;
 use App\MiscCovid;
 use App\Misc;
@@ -390,6 +391,10 @@ class CovidWorksheetController extends Controller
                 if(!isset($value[1])) break;
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
+
+                $s = CovidSampleView::where(['worksheet_id' => $worksheet->id, 'identifier' => $sample_id])->first();
+                $sample_id = $s->id ?? 0;
+
                 // $interpretation = $value[6];
 
                 $target1 = $value[6];
