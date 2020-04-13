@@ -115,7 +115,7 @@ class CovidWorksheetController extends Controller
             ->whereRaw(" id IN 
                 (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 )
                 ")
-            ->labUser()
+            // ->labUser()
             ->get();
 
         return view('forms.set_covidworksheet', $data)->with('pageTitle', 'Set Worksheet Details');
