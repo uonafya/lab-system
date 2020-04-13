@@ -26,11 +26,11 @@ class CovidLookupSeeder extends Seeder
 
 		DB::table('quarantine_sites')->insert([
 			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
-			['id' => 2, 'name' => 'Kenyatta University'],
-			['id' => 3, 'name' => 'Kenya School of Government'],
+			['id' => 2, 'name' => 'Kenyatta University - (KU)'],
+			['id' => 3, 'name' => 'Kenya School of Government - (KSG)'],
 			['id' => 4, 'name' => 'Boma Hotel'],
 			['id' => 5, 'name' => 'KMTC Karen'],
-			['id' => 6, 'name' => 'Mandera'],
+			['id' => 6, 'name' => 'Mandera - (MCRH)'],
 			['id' => 7, 'name' => "Nairobi Women's"],
 			['id' => 8, 'name' => 'LANCET'],
 			['id' => 9, 'name' => 'KQ medical centre pride'],
@@ -75,9 +75,9 @@ class CovidLookupSeeder extends Seeder
 			['id' => 48, 'name' => 'Siha Hospital Mpeketoni'],
 			['id' => 49, 'name' => 'Tenwek Hospital'],
 			['id' => 50, 'name' => 'Migori county referral hospital'],
-			['id' => 51, 'name' => 'Rapta'],
+			['id' => 51, 'name' => 'Rapta / Raotha / Raphta'], 
 			['id' => 52, 'name' => 'Crown Plaza'],
-			// ['id' => , 'name' => ''],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)'],
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
@@ -85,7 +85,7 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
-
+		// update covid_patients set quarantine_site_id=52 where quarantine_site_id is null and created_at > '2020-04-13';
 		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
