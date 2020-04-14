@@ -2,7 +2,6 @@
 
 namespace App;
 
-use DB;
 
 class CovidSample extends BaseModel
 {
