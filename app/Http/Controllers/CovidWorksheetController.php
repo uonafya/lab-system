@@ -415,13 +415,14 @@ class CovidWorksheetController extends Controller
                     continue;
                 }
 
-                $data_array = array_merge(compact('datetested'), $result_array);
 
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
 
-                $sample->fill($data_array);
+                $sample->datetested = $datetested;
+                $sample->fill($result_array);
+                if($worksheet->id == 22) dd($sample);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
                 $sample->save();
