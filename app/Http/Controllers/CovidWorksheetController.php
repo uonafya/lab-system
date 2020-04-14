@@ -323,6 +323,7 @@ class CovidWorksheetController extends Controller
         return redirect("/covid_worksheet");
     }
 
+
     public function cancel_upload(CovidWorksheet $worksheet)
     {
         if($worksheet->status_id != 2){
@@ -343,7 +344,7 @@ class CovidWorksheetController extends Controller
             $sample->remove_rerun();
         }
 
-        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'target1' => null, 'target2' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
