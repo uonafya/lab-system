@@ -176,10 +176,11 @@ p.breakhere {page-break-before: always}
 				
 
 				@if($sample->receivedstatus == 2)
-					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						{{ $sample->get_prop_name($rejected_reasons, 'rejectedreason') }}
+						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 
 
@@ -207,18 +208,6 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			
-			@if($sample->worksheet)
-				<tr>
-					<td colspan="2"></td>
-					<td colspan="5" class="style4 style1 comment">					
-						@if($sample->worksheet->machine_type == 1)
-							HIV-1 DNA qualitative  assay on Roche CAP/CTM system
-						@elseif($sample->worksheet->machine_type == 2)
-							HIV-1 DNA qualitative  assay on Abbott M2000 system
-						@endif					
-					</td>				
-				</tr>
-			@endif
 			
 
 			<tr>
@@ -227,8 +216,11 @@ p.breakhere {page-break-before: always}
 				</td>
 				<td colspan="5" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
-						@if($sample->result == 2 && $sample->pcrtype < 4)
-							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
+						@if($sample->result == 2)
+							&nbsp; Kindly carry out a follow up test in due time
+						@endif
+						@if($sample->result == 8)
+							&nbsp; The patient should be presumed to be positive but the results were not conclusive. Carry out a follow up test as soon as possible.
 						@endif
 
 					</span>
@@ -279,7 +271,7 @@ p.breakhere {page-break-before: always}
 				@elseif(env('APP_LAB') == 3)
 					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
 				@else
-					If you have questions or problems regarding samples, please contact the {{ $sample->lab->name }} at {{ $sample->lab->email }}
+					If you have questions or problems regarding samples, please contact the testing laboratory.
 				@endif
 
 			</span>
@@ -288,7 +280,7 @@ p.breakhere {page-break-before: always}
 
 		@if($count % 2 == 0)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4'>
+			<!-- <pagebreak sheet-size='A4'> -->
 		@else
 			<br/> <br/> <img src="https://eiddash.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif

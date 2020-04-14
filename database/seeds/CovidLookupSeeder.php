@@ -11,17 +11,111 @@ class CovidLookupSeeder extends Seeder
      */
     public function run()
     {
+<<<<<<< HEAD
+    	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
+    	// * * * * * $labexec synch:covid 2>&1
+    	// php artisan migrate:rollback --path database/migrations/covid
+    	// php artisan migrate --path database/migrations/covid
+		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
+		DB::statement("
+=======
     	// ALTER TABLE `covid_patients` ADD `quarantine_site_id` smallint NULL AFTER `facility_id`;
 
 		$drop = DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		$create = DB::statement("
+>>>>>>> 20d0be086d04d8b14d2442068a62672638340bca
 			CREATE TABLE `quarantine_sites` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				`name` varchar(100) DEFAULT NULL,
+				`email` varchar(100) DEFAULT NULL,
 				PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
+<<<<<<< HEAD
+		DB::table('quarantine_sites')->insert([
+			['id' => 1, 'name' => 'Infectious Disease Unit-KNH', 'email' => ''],
+			['id' => 2, 'name' => 'Kenyatta University - (KU)', 'email' => ''],
+			['id' => 3, 'name' => 'Kenya School of Government - (KSG)', 'email' => ''],
+			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
+			['id' => 5, 'name' => 'KMTC Karen', 'email' => 'jeprosekip@gmail.com'],
+			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => ''],
+			['id' => 7, 'name' => "Nairobi Women's", 'email' => ''],
+			['id' => 8, 'name' => 'LANCET', 'email' => ''],
+			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
+			['id' => 10, 'name' => 'Nairobi hospital', 'email' => ''],
+			['id' => 11, 'name' => 'Nairobi West', 'email' => ''],
+			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => ''],
+			['id' => 13, 'name' => 'NHPLS', 'email' => ''],
+			['id' => 14, 'name' => 'Meru TRH', 'email' => ''],
+			['id' => 15, 'name' => 'MP Shah hospital', 'email' => 'vpatel@mpshahhospital.org'],
+			['id' => 16, 'name' => 'KEMRI clinic', 'email' => ''],
+			['id' => 17, 'name' => 'Lenana School', 'email' => ''],
+			['id' => 18, 'name' => 'Moi Girls Kibra', 'email' => ''],
+			['id' => 19, 'name' => 'MTRH', 'email' => ''],
+			['id' => 20, 'name' => 'KMTC', 'email' => ''],
+			['id' => 21, 'name' => 'Monarch Hotel', 'email' => ''],
+			['id' => 22, 'name' => 'Trademark Hotel', 'email' => ''],
+			['id' => 23, 'name' => 'Panari Hotel', 'email' => ''],
+			['id' => 24, 'name' => 'KEWI', 'email' => ''],
+			['id' => 25, 'name' => 'Kauwi subcounty hospital', 'email' => ''],
+			['id' => 26, 'name' => 'Kings Premier Inn', 'email' => ''],
+			['id' => 27, 'name' => 'Land Mark Suites', 'email' => ''],
+			['id' => 28, 'name' => 'Nairobi School', 'email' => ''],
+			['id' => 29, 'name' => 'MASH', 'email' => ''],
+			['id' => 30, 'name' => '67 Hotel Syokimau', 'email' => ''],
+			['id' => 31, 'name' => 'Kenya Comfort', 'email' => ''],
+			['id' => 32, 'name' => 'NIC', 'email' => ''],
+			['id' => 33, 'name' => "Nairobi Women's, Kitengela", 'email' => ''],
+			['id' => 34, 'name' => 'Makindu Sub-County Hospital', 'email' => ''],
+			['id' => 35, 'name' => 'Kambu Sub County Hospital', 'email' => ''],
+			['id' => 36, 'name' => 'Iten County referal hospital', 'email' => ''],
+			['id' => 37, 'name' => 'Coptic Hospital', 'email' => ''],
+			['id' => 38, 'name' => 'Kisii Teaching and Referral hospital', 'email' => ''],
+			['id' => 39, 'name' => 'Karen - KEMRI', 'email' => ''],
+			['id' => 40, 'name' => 'EID - KEMRI', 'email' => ''],
+			['id' => 41, 'name' => 'Mtito Andei Subcounty hospital', 'email' => ''],
+			['id' => 42, 'name' => 'Kibwezi subcounty hospital', 'email' => ''],
+			['id' => 43, 'name' => 'Makueni county referral hospital', 'email' => ''],
+			['id' => 44, 'name' => 'Elgeyo Marakwet', 'email' => ''],
+			['id' => 45, 'name' => 'Kitui Referral Hospital', 'email' => ''],
+			['id' => 46, 'name' => 'Kitui Nursing home', 'email' => ''],
+			['id' => 47, 'name' => 'Longisa County referral hospital', 'email' => ''],
+			['id' => 48, 'name' => 'Siha Hospital Mpeketoni', 'email' => ''],
+			['id' => 49, 'name' => 'Tenwek Hospital', 'email' => ''],
+			['id' => 50, 'name' => 'Migori county referral hospital', 'email' => ''],
+			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
+			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
+			['id' => 54, 'name' => 'Sultan Hamud', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+		]);
+		return;
+
+		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
+		DB::statement("
+			CREATE TABLE `covid_justifications` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_justifications')->insert([
+			['id' => 1, 'name' => 'Contact with confirmed case'],
+			['id' => 2, 'name' => 'Presented at health facility'],
+			['id' => 3, 'name' => 'Surveillance'],
+			['id' => 4, 'name' => 'Point of entry detection'],
+			['id' => 5, 'name' => 'Repatriation'],
+			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Surveillance and Quarantine'],
+		]);
+
+=======
 		$insert = DB::table('quarantine_sites')->insert([
 			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
 			['id' => 2, 'name' => 'Kenyatta University'],
@@ -34,6 +128,7 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => ''],
 			// ['id' => , 'name' => ''],
 		]);
+>>>>>>> 20d0be086d04d8b14d2442068a62672638340bca
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("

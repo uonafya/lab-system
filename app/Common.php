@@ -57,6 +57,33 @@ class Common
 		],
 	];
 
+
+
+	public static function csv_download($data, $file_name='page-data-export')
+	{
+		if(!$data) return;
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/csv');
+		header("Content-Disposition: attachment; filename={$file_name}.csv");
+		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		
+		$fp = fopen('php://output', 'w');
+		// ob_clean();
+
+		$first = [];
+
+		foreach ($data[0] as $key => $value) {
+			$first[] = $key;
+		}
+		fputcsv($fp, $first);
+
+		foreach ($data as $key => $value) {
+			fputcsv($fp, $value);
+		}
+		// ob_flush();
+		fclose($fp);
+	}
+
     public static function test_email()
     {
         Mail::to(['joelkith@gmail.com', 'baksajoshua09@gmail.com'])->send(new TestMail());

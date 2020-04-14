@@ -118,6 +118,11 @@ class Synch
 				'update_url' => 'update/covid_samples',
 				'delete_url' => 'delete/covid_samples',
 			],
+			'patients' => [
+				'class' => CovidPatient::class,
+				'update_url' => 'update/covid_patients',
+				'delete_url' => 'delete/covid_patients',
+			],
 
 		],
 

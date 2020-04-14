@@ -158,9 +158,10 @@
                 </div>
 
                 <div class="col-md-3">
-                    <!-- <div class="form-group">              
+                    <div class="form-group">              
                         <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
-                    </div>   -->              
+                        <button class="btn btn-primary" name="submit_type" value="email" type='submit'>Email Results</button> 
+                    </div>                
                 </div>
             </div>
 
@@ -304,6 +305,12 @@
             //         $(".checks").prop('checked', false);           
             //     }
             // });
+
+
+            $("#quarantine_site_id").select2({
+                placeholder: "Select One",
+                allowClear: true
+            }); 
 
             $(".date").datepicker({
                 startView: 0,
