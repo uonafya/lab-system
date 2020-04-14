@@ -323,6 +323,7 @@ class CovidWorksheetController extends Controller
         return redirect("/covid_worksheet");
     }
 
+
     public function cancel_upload(CovidWorksheet $worksheet)
     {
         if($worksheet->status_id != 2){
