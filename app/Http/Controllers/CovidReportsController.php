@@ -22,8 +22,9 @@ class CovidReportsController extends Controller
 		$model = CovidSampleView::where('repeatt', 0);
 		$today_data = $model->whereDate('datetested', Carbon::now()->toDateString())->get();
 		$yesterday_data = $model->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$data = $this->prepareData($today_data, $yesterday_data);
-		dd($data);
+		$alldata = $model->orderBy('receivedstatus', 'desc')->get();
+		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
+		// dd($data);
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS');
 		// return back();
 	}
@@ -70,7 +71,7 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $yesterday_data)
+	private function prepareData($today_data, $yesterday_data, $alldata)
 	{
 		$data = [['DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
@@ -80,7 +81,7 @@ class CovidReportsController extends Controller
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
-		$data[] = $this->get_detailed_data($today_data, $yesterday_data);
+		$data[] = collect($this->get_detailed_data($alldata))->flatten()->toArray();
 
 		return $data;
 	}
@@ -99,35 +100,38 @@ class CovidReportsController extends Controller
 		];
 	}
 
-	private function get_detailed_data($today_data, $yesterday_data)
+	private function get_detailed_data($alldata)
 	{
-		$data = [];
-		$detail_header = ['Testing Lab', 'S/N'];
-		$positives = $this->get_excel_samples($today_data->where('result', 2));
-		$positives = $positives->push($this->get_excel_samples($yesterday_data->where('result', 2)));
-		$negatives = $this->get_excel_samples($today_data->where('result', 1));
-		$negatives = $negatives->push($this->get_excel_samples($yesterday_data->where('result', 1)));
-		
-		$data[] = ['POSITIVES'];
-		$data[] = $detail_header;
-		$data[] = $positives;
-
-		$data[] = ['NEGATIVES'];
-		$data[] = $detail_header;
-		$data[] = $negatives;
+		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number']];
+		foreach ($alldata as $key => $row) {
+			$data[] = $this->get_excel_samples($row);
+		}
 		return $data;
+		// $detail_header = ['Testing Lab', 'S/N'];
+		// $positives = $this->get_excel_samples($today_data->where('result', 2));
+		// $positives = $positives->push($this->get_excel_samples($yesterday_data->where('result', 2)));
+		// $negatives = $this->get_excel_samples($today_data->where('result', 1));
+		// $negatives = $negatives->push($this->get_excel_samples($yesterday_data->where('result', 1)));
+		
+		// $data[] = ['POSITIVES'];
+		// $data[] = $detail_header;
+		// $data[] = $positives;
+
+		// $data[] = ['NEGATIVES'];
+		// $data[] = $detail_header;
+		// $data[] = $negatives;
+		// return $data;
 	}
 
-	private function get_excel_samples($samples)
+	private function get_excel_samples($sample)
 	{
-		$data = [];
-		foreach ($samples as $key => $sample) {
-			$data[] = [
-				Lab::find(env('APP_LAB'))->labdesc,
-				$sample->order_no,
-			];
-		}
-		return collect($data);
+		return [
+			Lab::find(env('APP_LAB'))->labdesc,
+			$sample->order_no,
+			$sample->patient_name,
+			$sample->age,
+			$sample->sex,
+		];
 	}
 }
 ?>
