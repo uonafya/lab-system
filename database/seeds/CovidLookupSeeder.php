@@ -11,20 +11,12 @@ class CovidLookupSeeder extends Seeder
      */
     public function run()
     {
-<<<<<<< HEAD
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
     	// * * * * * $labexec synch:covid 2>&1
     	// php artisan migrate:rollback --path database/migrations/covid
     	// php artisan migrate --path database/migrations/covid
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
-		DB::statement("
-=======
-    	// ALTER TABLE `covid_patients` ADD `quarantine_site_id` smallint NULL AFTER `facility_id`;
-
-		$drop = DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
-		$create = DB::statement("
->>>>>>> 20d0be086d04d8b14d2442068a62672638340bca
-			CREATE TABLE `quarantine_sites` (
+		DB::statement("CREATE TABLE `quarantine_sites` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				`name` varchar(100) DEFAULT NULL,
 				`email` varchar(100) DEFAULT NULL,
@@ -32,7 +24,6 @@ class CovidLookupSeeder extends Seeder
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
-<<<<<<< HEAD
 		DB::table('quarantine_sites')->insert([
 			['id' => 1, 'name' => 'Infectious Disease Unit-KNH', 'email' => ''],
 			['id' => 2, 'name' => 'Kenyatta University - (KU)', 'email' => ''],
@@ -114,21 +105,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 6, 'name' => 'Other'],
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 		]);
-
-=======
-		$insert = DB::table('quarantine_sites')->insert([
-			['id' => 1, 'name' => 'Infectious Disease Unit-KNH'],
-			['id' => 2, 'name' => 'Kenyatta University'],
-			['id' => 3, 'name' => 'Kenya School of Government'],
-			['id' => 4, 'name' => 'Boma Hotel'],
-			['id' => 5, 'name' => 'KMTC Karen'],
-			['id' => 6, 'name' => 'Mandera'],
-			['id' => 7, 'name' => "Nairobi Women's"],
-			['id' => 8, 'name' => 'LANCET'],
-			// ['id' => , 'name' => ''],
-			// ['id' => , 'name' => ''],
-		]);
->>>>>>> 20d0be086d04d8b14d2442068a62672638340bca
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("

@@ -24,7 +24,7 @@ class CovidReportsController extends Controller
 		$yesterday_data = $model->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
 		$alldata = $model->orderBy('receivedstatus', 'desc')->get();
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
-		dd($data);
+		// dd($data);
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS');
 		// return back();
 	}
