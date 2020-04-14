@@ -10,7 +10,7 @@ class MiscCovid extends Common
 {
 
 
-    public static function sample_result($target1, $target2, $error)
+    public static function sample_result($target1, $target2, $error=null)
     {
         $target1 = trim(strtolower($target1));
         $target2 = trim(strtolower($target2));

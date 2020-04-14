@@ -401,6 +401,8 @@ class CovidWorksheetController extends Controller
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
+                if($worksheet->id == 22) dd($result_array);
+
                 MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['interpretation']);
 
                 if(!is_numeric($sample_id)){
