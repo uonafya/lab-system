@@ -25,7 +25,7 @@ class CovidReportsController extends Controller
 		// dd($alldata);
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
 		// dd($data);
-		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . date('Ymd'));
+		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . date('YmdHis'));
 		// return back();
 	}
 
@@ -111,7 +111,10 @@ class CovidReportsController extends Controller
 	private function get_detailed_data($alldata)
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
-				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence']];
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence',
+				'Facility Name (Quarantine /health facility)',
+				'Date Tested', 'Result'
+				]];
 		foreach ($alldata as $key => $row) {
 			$data[] = $this->get_excel_samples($row);
 		}
@@ -144,7 +147,10 @@ class CovidReportsController extends Controller
 			$sample->phone ?? '',
 			$sample->county ?? '',
 			$sample->subcounty ?? '',
-			$sample->residence ?? ''
+			$sample->residence ?? '',
+			$sample->hospital_admitted ?? '',
+			$sample->datetested ?? '',
+			$sample->result_name
 		];
 	}
 }
