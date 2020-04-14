@@ -35,7 +35,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 7, 'name' => "Nairobi Women's", 'email' => ''],
 			['id' => 8, 'name' => 'LANCET', 'email' => ''],
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
-			['id' => 10, 'name' => 'Nairobi hospital', 'email' => ''],
+			['id' => 10, 'name' => 'Nairobi hospital', 'email' => 'alicekanyua@nbi.hosp'],
 			['id' => 11, 'name' => 'Nairobi West', 'email' => ''],
 			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => ''],
 			['id' => 13, 'name' => 'NHPLS', 'email' => ''],
