@@ -19,14 +19,19 @@ class CovidReportsController extends Controller
 	public function generate(Request $request)
 	{
 		$yesterday = Carbon::now()->toDateString();
-		$model = CovidSampleView::where('repeatt', 0);
-		$today_data = $model->whereDate('datetested', Carbon::now()->toDateString())->get();
-		$yesterday_data = $model->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$alldata = $model->orderBy('receivedstatus', 'desc')->get();
+		$today_data = $this->get_model()->whereDate('datetested', Carbon::now()->toDateString())->get();
+		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
+		$alldata = $this->get_model()->orderBy('receivedstatus', 'desc')->get();
+		// dd($alldata);
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
 		// dd($data);
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS');
 		// return back();
+	}
+
+	private function get_model()
+	{
+		return CovidSampleView::where('repeatt', 0);
 	}
 
 	private function generateExcel($data, $title)
@@ -81,8 +86,11 @@ class CovidReportsController extends Controller
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
-		$data[] = collect($this->get_detailed_data($alldata))->flatten()->toArray();
 
+		foreach ($this->get_detailed_data($alldata) as $key => $value) {
+			$data[] = $value;
+		}
+		
 		return $data;
 	}
 
@@ -102,7 +110,8 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number']];
+		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence']];
 		foreach ($alldata as $key => $row) {
 			$data[] = $this->get_excel_samples($row);
 		}
@@ -130,7 +139,12 @@ class CovidReportsController extends Controller
 			$sample->order_no,
 			$sample->patient_name,
 			$sample->age,
-			$sample->sex,
+			$sample->patient->gender,
+			$sample->identifier,
+			$sample->phone ?? '',
+			$sample->county ?? '',
+			$sample->subcounty ?? '',
+			$sample->residence ?? ''
 		];
 	}
 }
