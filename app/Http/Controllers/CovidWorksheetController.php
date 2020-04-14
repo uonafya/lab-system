@@ -395,7 +395,6 @@ class CovidWorksheetController extends Controller
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
 
-                // $interpretation = $value[6];
 
                 $target1 = $value[6];
                 $target2 = $value[7];
@@ -403,7 +402,6 @@ class CovidWorksheetController extends Controller
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
-                // if($worksheet->id == 22) dd($result_array);
 
                 MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['interpretation']);
 
@@ -423,11 +421,9 @@ class CovidWorksheetController extends Controller
 
                 $sample->datetested = $datetested;
                 $sample->fill($result_array);
-                // if($worksheet->id == 22) dd($sample);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
-                // if($worksheet->id == 22) dd($sample);
             }
         }else{
             session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
