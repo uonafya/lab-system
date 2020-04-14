@@ -423,7 +423,7 @@ class CovidWorksheetController extends Controller
 
                 $sample->datetested = $datetested;
                 $sample->fill($result_array);
-                // if($worksheet->id == 22) dd($sample);
+                if($worksheet->id == 22) dd($sample);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
                 $sample->save();
