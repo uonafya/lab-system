@@ -23,4 +23,9 @@ class LabEquipmentTracker extends BaseModel
     public function equipment() {
     	return $this->belongsTo('App\LabEquipment', 'equipment_id');
     }
+
+    public function scopeExisting($query, $year, $month, $equipment_id)
+    {
+        return $query->where(['year' => $year, 'month' => $month, 'equipment_id' => $equipment_id]);
+    }
 }

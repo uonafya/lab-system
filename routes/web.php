@@ -165,6 +165,11 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('covid_worksheet', 'CovidWorksheetController');
 
+	Route::prefix('covidreports')->name('covid_reports.')->group(function () {
+		Route::get('/', 'CovidReportsController@index')->name('index');
+		Route::post('/', 'CovidReportsController@generate')->name('generate');
+	});
+
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
