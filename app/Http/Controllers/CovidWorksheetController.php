@@ -365,7 +365,7 @@ class CovidWorksheetController extends Controller
         $users = User::labUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
-    
+
 
     public function save_results(Request $request, CovidWorksheet $worksheet)
     {
@@ -423,9 +423,9 @@ class CovidWorksheetController extends Controller
 
                 $sample->datetested = $datetested;
                 $sample->fill($result_array);
-                if($worksheet->id == 22) dd($sample);
+                // if($worksheet->id == 22) dd($sample);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
                 // if($worksheet->id == 22) dd($sample);
             }
