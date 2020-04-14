@@ -365,6 +365,7 @@ class CovidWorksheetController extends Controller
         $users = User::labUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
+    
 
     public function save_results(Request $request, CovidWorksheet $worksheet)
     {
@@ -426,7 +427,7 @@ class CovidWorksheetController extends Controller
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
                 $sample->save();
-                if($worksheet->id == 22) dd($sample);
+                // if($worksheet->id == 22) dd($sample);
             }
         }else{
             session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
