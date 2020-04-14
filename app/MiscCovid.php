@@ -18,7 +18,7 @@ class MiscCovid extends Common
 
         if($target1 == 'positive'){
             $result = 2;
-            $interpretation = 'Detected';
+            $interpretation = 'Positive';
         }
         else if($target2 == 'positive'){
             $result = 8;

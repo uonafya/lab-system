@@ -59,12 +59,12 @@ class Common
 
 
 
-	public static function csv_download($data)
+	public static function csv_download($data, $file_name='page-data-export')
 	{
 		if(!$data) return;
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/csv');
-		header("Content-Disposition: attachment; filename=page-data-export.csv");
+		header("Content-Disposition: attachment; filename={$file_name}.csv");
 		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		
 		$fp = fopen('php://output', 'w');
