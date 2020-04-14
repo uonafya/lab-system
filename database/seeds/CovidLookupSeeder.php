@@ -79,7 +79,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
 			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 54, 'name' => 'Sultan Hamud', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
