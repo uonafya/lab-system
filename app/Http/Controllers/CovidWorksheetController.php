@@ -426,6 +426,7 @@ class CovidWorksheetController extends Controller
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
                 $sample->save();
+                if($worksheet->id == 22) dd($sample);
             }
         }else{
             session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
