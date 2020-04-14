@@ -381,7 +381,8 @@ class CovidWorksheetController extends Controller
         $today = $datemodified = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
-        $sample_array = $doubles = [];
+        $sample_array = $doubles = $wrong_worksheet = [];
+
 
         // C8800
         if($worksheet->machine_type == 3){
@@ -399,6 +400,8 @@ class CovidWorksheetController extends Controller
                 $flag = $value[3];
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
+
+                MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['interpretation']);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
@@ -418,7 +421,7 @@ class CovidWorksheetController extends Controller
 
                 $sample->fill($data_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) 
                 $sample->save();
             }
         }else{
@@ -427,16 +430,12 @@ class CovidWorksheetController extends Controller
         }
 
 
-        /*if($doubles){
+        if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
-        
-            Excel::create($file, function($excel) use($doubles){
-                $excel->sheet('Sheetname', function($sheet) use($doubles) {
-                    $sheet->fromArray($doubles);
-                });
-            })->download('csv');
-        }*/
+
+            MiscCovid::csv_download($doubles, $file);
+        }
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
