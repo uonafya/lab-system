@@ -415,7 +415,6 @@ class CovidWorksheetController extends Controller
                     continue;
                 }
 
-
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
