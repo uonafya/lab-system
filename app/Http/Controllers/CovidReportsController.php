@@ -21,7 +21,7 @@ class CovidReportsController extends Controller
 		$yesterday = Carbon::now()->toDateString();
 		$today_data = $this->get_model()->whereDate('datetested', Carbon::now()->toDateString())->get();
 		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$alldata = $this->get_model()->orderBy('receivedstatus', 'desc')->get();
+		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
 		// dd($alldata);
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
 		// dd($data);
@@ -103,8 +103,8 @@ class CovidReportsController extends Controller
 			$today_data->count(),
 			($yesterday_data->count() + $today_data->count()),
 			$yesterday_data->where('result', 2)->count(),
-			$today_data->where('result', 2)->count(),
-			($yesterday_data->where('result', 2)->count() + $today_data->where('result', 2)->count())
+			$today_data->whereIn('result', [2,8])->count(),
+			($yesterday_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
 		];
 	}
 
