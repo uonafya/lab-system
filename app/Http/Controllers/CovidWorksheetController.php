@@ -365,6 +365,7 @@ class CovidWorksheetController extends Controller
         $users = User::labUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
+    
 
     public function save_results(Request $request, CovidWorksheet $worksheet)
     {
