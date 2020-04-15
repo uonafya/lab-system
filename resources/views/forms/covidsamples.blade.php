@@ -98,7 +98,11 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                        @if(auth()->user()->quarantine_site)
+                            <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
+                        @else
+                            @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                        @endif
 
 
 
@@ -238,7 +242,7 @@
 
                         @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datecollected', 'label' => 'Date of Collection',])
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->lab_user)
 
                             @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Received',])
 
@@ -294,7 +298,7 @@
                                 <textarea  class="form-control" name="comments">{{ $sample->comments ?? '' }}</textarea>
                             </div>
                         </div>
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->lab_user)
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
                                 <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
                                     {{ $sample->labcomment ?? '' }}
@@ -340,7 +344,7 @@
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
-                @if(auth()->user()->user_type_id != 5)
+                @if(auth()->user()->lab_user)
                     datecollected: {
                         lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                     },

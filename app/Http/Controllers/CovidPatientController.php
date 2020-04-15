@@ -62,6 +62,9 @@ class CovidPatientController extends Controller
             ->when(($user->user_type_id == 5), function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })
             ->get();
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
@@ -115,12 +118,12 @@ class CovidPatientController extends Controller
         $search = $request->input('search');
         $search = addslashes($search);
         
-        $patients = CovidPatient::select('covid_patients.id', 'covid_patients.identifier AS patient', 'facilitys.name', 'facilitys.facilitycode')
-            ->leftJoin('facilitys', 'facilitys.id', '=', 'covid_patients.facility_id')
-            ->whereRaw("identifier like '" . $search . "%'")
+        $patients = CovidPatient::select('covid_patients.id', 'covid_patients.identifier AS patient', 'quarantine_sites.name')
+            ->leftJoin('quarantine_sites', 'quarantine_sites.id', '=', 'covid_patients.quarantine_site_id')
+            ->whereRaw("(identifier like '" . $search . "%' OR patient_name like '" . $search . "%' )")
             // ->where('patients.synched', '!=', 2)
-            ->when($facility_user, function($query) use ($string){
-                return $query->whereRaw($string);
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
