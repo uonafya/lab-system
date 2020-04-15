@@ -115,8 +115,10 @@ class CovidReportsController extends Controller
 				'Facility Name (Quarantine /health facility)',
 				'Date Tested', 'Result'
 				]];
+		$count = 1;
 		foreach ($alldata as $key => $row) {
-			$data[] = $this->get_excel_samples($row);
+			$data[] = $this->get_excel_samples($row, $count);
+			$count++;
 		}
 		return $data;
 		// $detail_header = ['Testing Lab', 'S/N'];
@@ -135,11 +137,11 @@ class CovidReportsController extends Controller
 		// return $data;
 	}
 
-	private function get_excel_samples($sample)
+	private function get_excel_samples($sample, $count(var))
 	{
 		return [
 			Lab::find(env('APP_LAB'))->labdesc,
-			$sample->order_no,
+			$count,
 			$sample->patient_name,
 			$sample->age,
 			$sample->patient->gender,

@@ -64,6 +64,9 @@ class CovidSampleController extends Controller
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
             ->paginate();
+
+        $samples->setPath(url()->current());
+        
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
