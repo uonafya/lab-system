@@ -20,6 +20,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(KitsSeeder::class);    
         // $this->call(LabEquipmentMailingSeeder::class);
         // $this->call(GeneralConsumablesSeeder::class);
-        $this->call(CovidLookupSeeder::class);
+        // $this->call(CovidLookupSeeder::class);
     }
 }

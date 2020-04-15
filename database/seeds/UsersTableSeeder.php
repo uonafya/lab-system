@@ -19,6 +19,9 @@ class UsersTableSeeder extends Seeder
 			CREATE TABLE `user_types` (
 				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				`user_type` varchar(100) DEFAULT NULL,
+				  `created_at` timestamp NULL DEFAULT NULL,
+				  `updated_at` timestamp NULL DEFAULT NULL,
+				  `deleted_at` timestamp NULL DEFAULT NULL,
 				PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
