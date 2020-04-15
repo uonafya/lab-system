@@ -31,7 +31,7 @@ class CovidReportsController extends Controller
 
 	private function get_model()
 	{
-		return CovidSampleView::where('repeatt', 0);
+		return CovidSampleView::where('repeatt', 0)->whereNotNull('result');
 	}
 
 	private function generateExcel($data, $title)
@@ -111,9 +111,8 @@ class CovidReportsController extends Controller
 	private function get_detailed_data($alldata)
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
-				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence',
-				'Facility Name (Quarantine /health facility)',
-				'Date Tested', 'Result'
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
+				'Where from', 'Facility Name (Quarantine /health facility)', 'Date Tested', 'Result'
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -137,8 +136,16 @@ class CovidReportsController extends Controller
 		// return $data;
 	}
 
-	private function get_excel_samples($sample, $count(var))
+	private function get_excel_samples($sample, $count)
 	{
+		$travelled = 'N';
+		$history = '';
+		if (!$sample->patient->travel->isEmpty()){
+			$travelled = 'Y';
+			foreach ($sample->patient->travel as $key => $travel) {
+				$history .= $travel->city . ', ' . $travel->country . '\n';
+			}
+		}
 		return [
 			Lab::find(env('APP_LAB'))->labdesc,
 			$count,
@@ -149,8 +156,9 @@ class CovidReportsController extends Controller
 			$sample->phone ?? '',
 			$sample->county ?? '',
 			$sample->subcounty ?? '',
-			$sample->residence ?? '',
-			$sample->hospital_admitted ?? '',
+			$travelled,
+			$history,
+			$sample->patient->quarantine_site->name ?? '',
 			$sample->datetested ?? '',
 			$sample->result_name
 		];
