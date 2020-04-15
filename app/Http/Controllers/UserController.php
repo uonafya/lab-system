@@ -52,8 +52,10 @@ class UserController extends Controller
     public function create()
     {
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+        $partners = DB::table('partners')->get();
+        $quarantine_sites = DB::table('quarantine_sites')->get();
 
-        return view('forms.users', compact('accounts'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -97,8 +99,10 @@ class UserController extends Controller
     public function show(User $user) {
 
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+        $partners = DB::table('partners')->get();
+        $quarantine_sites = DB::table('quarantine_sites')->get();
 
-        return view('forms.users', compact('accounts', 'user'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**

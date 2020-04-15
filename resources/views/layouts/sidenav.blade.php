@@ -243,12 +243,10 @@
                 <a href="{{ url('viralpatient') }}">VL Patient List</a>
             </li>
             <hr />
-            @if(in_array('APP_LAB', [1, 3]))
-                <li>
-                    <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
-                </li>
-                <hr />
-            @endif
+            <li>
+                <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
+            </li>
+            <hr />
             <li>
                 <a href="{{ url('sample/create') }}">Add EID Sample</a>
             </li>
@@ -302,6 +300,20 @@
                 <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
+        @elseif (Auth::user()->quarantine_site)
+            <li>
+                <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covid_sample') }}">Covid 19 Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covid_sample/index/2') }}">Dispatched Covid 19 Samples</a>
+            </li>
+            <hr />
+
         @elseif (Auth::user()->user_type_id == 8)
             <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
             <hr />
@@ -480,6 +492,9 @@
                 <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @elseif(Auth::user()->quarantine_site)
+                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
                 @if(session('testingSystem') == 'Viralload')
                     <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
