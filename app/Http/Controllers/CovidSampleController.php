@@ -56,8 +56,11 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })
             ->orderBy('covid_sample_view.id', 'desc')
-            ->when(($user->user_type_id == 5), function($query) use ($user){
+            ->when(($user->facility_user == 5), function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
             ->paginate();
@@ -279,7 +282,10 @@ class CovidSampleController extends Controller
                 }else{
                     return $query->whereRaw(" (covid_sample_view.id = {$covidSample->id} OR parentid = {$covidSample->id})");
                 }
-            })            
+            })  
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })          
             ->orderBy('run', 'desc')
             ->paginate();
         $myurl = url('/covid_sample/index/' . $type);
@@ -423,12 +429,16 @@ class CovidSampleController extends Controller
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_patients.user_id='{$user->id}')";
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_samples.user_id='{$user->id}')";
 
         $samples = CovidSample::select('covid_samples.id')
             ->whereRaw("covid_samples.id like '" . $search . "%'")
-            ->when($facility_user, function($query) use ($string){
-                return $query->join('covid_patients', 'covid_samples.batch_id', '=', 'covid_patients.id')->whereRaw($string);
+            ->when($user->facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+                    ->where('quarantine_site_id', $user->facility_id);
             })
             ->paginate(10);
 

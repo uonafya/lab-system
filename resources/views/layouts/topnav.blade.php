@@ -44,7 +44,7 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(!in_array(Auth::user()->user_type_id, [7,8]))
+                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
@@ -187,7 +187,7 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-            @if(!in_array(Auth::user()->user_type_id, [7,8]))
+            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
@@ -338,9 +338,9 @@
                             </li>
                             @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
-            <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
-            {{ $widgets['rejectedAllocations'] }}
-            </span></a>
+                                <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
+                                {{ $widgets['rejectedAllocations'] }}
+                                </span></a>
                             </li>
                             @endif
                             @if(Auth::user()->user_type_id == 0)
