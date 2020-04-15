@@ -14,8 +14,7 @@ class CovidLookupSeeder extends Seeder
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
-		DB::statement("
-			CREATE TABLE `quarantine_sites` (
+		DB::statement("CREATE TABLE `quarantine_sites` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				`name` varchar(100) DEFAULT NULL,
 				`email` varchar(100) DEFAULT NULL,
@@ -112,7 +111,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 6, 'name' => 'Other'],
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 		]);
-
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("

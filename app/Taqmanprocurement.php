@@ -19,4 +19,9 @@ class Taqmanprocurement extends BaseModel
     {
         return $this->belongsTo('App\User', 'submittedBy');
     }
+    
+    public function scopeExisting($query, $year, $month, $testtype)
+    {
+        return $query->where(['year' => $year, 'month' => $month, 'testtype' => $testtype]);
+    }
 }

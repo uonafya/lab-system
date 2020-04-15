@@ -20,4 +20,9 @@ class LabPerformanceTracker extends BaseModel
     {
         return $this->belongsTo('App\User', 'submittedBy');
     }
+
+    public function scopeExisting($query, $year, $month, $testtype, $sampletype)
+    {
+        return $query->where(['year' => $year, 'month' => $month, 'testtype' => $testtype, 'sampletype' => $sampletype]);
+    }
 }

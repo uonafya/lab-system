@@ -469,3 +469,8 @@ Artisan::command('alloc', function(){
     $this->info($str);
 });
 
+Artisan::command('rectify', function(){
+    $str = \App\Random::rectify();
+    $this->info($str);
+});
+
