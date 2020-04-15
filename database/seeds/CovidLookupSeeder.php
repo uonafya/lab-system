@@ -24,7 +24,7 @@ class CovidLookupSeeder extends Seeder
 		");
 
 		DB::table('quarantine_sites')->insert([
-			['id' => 1, 'name' => 'Infectious Disease Unit-KNH', 'email' => ''],
+			['id' => 1, 'name' => 'Infectious Disease Unit-KNH IDU', 'email' => 'mwangimilkahke@gmail.com'],
 			['id' => 2, 'name' => 'Kenyatta University - (KU)', 'email' => ''],
 			['id' => 3, 'name' => 'Kenya School of Government - (KSG)', 'email' => ''],
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
