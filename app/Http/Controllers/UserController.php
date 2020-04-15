@@ -71,16 +71,10 @@ class UserController extends Controller
             session(['toast_message'=>'User already exists', 'toast_error'=>1]);
             return redirect()->route('user.add');
         } else {
-            $user = factory(User::class, 1)->create([
-                        'user_type_id' => $request->user_type,
-                        'lab_id' => auth()->user()->lab_id,
-                        'surname' => $request->surname,
-                        'oname' => $request->oname,
-                        'email' => $request->email,
-                        'password' => $request->password
-                        ,
-                        // 'telephone' => $request->telephone,
-                    ]);
+            $user = new User;
+            $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone']));
+            $user->lab_id = auth()->user()->lab_id;
+            $user->save();
             session(['toast_message'=>'User created succesfully']);
 
             if ($request->submit_type == 'release')
@@ -127,9 +121,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         if($request->input('password') == "") { // No password for edit
-            $userData = $request->only(['user_type','email','surname','oname','telephone']);
-            $userData['user_type_id'] = $userData['user_type'];
-            unset($userData['user_type']);
+            $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id']);
             
             $user = User::find($id);
             $user->fill($userData);
