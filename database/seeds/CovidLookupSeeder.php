@@ -12,9 +12,7 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
-    	// * * * * * $labexec synch:covid 2>&1
-    	// php artisan migrate:rollback --path database/migrations/covid
-    	// php artisan migrate --path database/migrations/covid
+    	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
@@ -49,7 +47,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 22, 'name' => 'Trademark Hotel', 'email' => ''],
 			['id' => 23, 'name' => 'Panari Hotel', 'email' => ''],
 			['id' => 24, 'name' => 'KEWI', 'email' => ''],
-			['id' => 25, 'name' => 'Kauwi subcounty hospital', 'email' => ''],
+			['id' => 25, 'name' => 'Kauwi subcounty hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 26, 'name' => 'Kings Premier Inn', 'email' => ''],
 			['id' => 27, 'name' => 'Land Mark Suites', 'email' => ''],
 			['id' => 28, 'name' => 'Nairobi School', 'email' => ''],
@@ -78,7 +76,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
 			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
-			['id' => 54, 'name' => 'Sultan Hamud', 'email' => ''],
+			['id' => 54, 'name' => 'Sultan Hamud', 'email' => 'daviekiuluku@yahoo.com'],
 			['id' => 55, 'name' => 'Sheraton', 'email' => ''],
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => ''],
 			['id' => 57, 'name' => 'Pride Inn Azure', 'email' => ''],

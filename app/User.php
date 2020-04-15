@@ -126,6 +126,18 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function getQuarantineSiteAttribute()
+    {
+        if(in_array($this->user_type_id, [11])) return true;
+        return false;
+    }
+
+    public function getFacilityUserAttribute()
+    {
+        if(in_array($this->user_type_id, [5])) return true;
+        return false;
+    }
+
     public function notifiedAllocation()
     {
         return $this->where('allocation_notification', 1);
