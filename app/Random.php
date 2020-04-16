@@ -3530,9 +3530,9 @@ class Random
             $s = Viralsample::find($data[0]);
             if(!$s) continue;
 
-            if(starts_with($data[3], 'N')) $sample->pmtct = 3;
-            else if(starts_with($data[3], 'P')) $sample->pmtct = 1;
-            else if(starts_with($data[3], 'B')) $sample->pmtct = 2;
+            if(starts_with($data[3], 'N')) $s->pmtct = 3;
+            else if(starts_with($data[3], 'P')) $s->pmtct = 1;
+            else if(starts_with($data[3], 'B')) $s->pmtct = 2;
             $s->pre_update();
         }
     }
