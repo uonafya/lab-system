@@ -16,6 +16,11 @@ class CovidPatient extends BaseModel
         return $this->hasMany('App\CovidTravel', 'patient_id');
     }
 
+    public function county()
+    {
+        return $this->belongsTo('App\County', 'county_id');
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');

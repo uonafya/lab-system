@@ -2,6 +2,8 @@
 
 namespace App;
 
+use DB;
+
 class CovidSampleView extends BaseModel
 {
 	protected $table = "covid_sample_view";
@@ -23,5 +25,10 @@ class CovidSampleView extends BaseModel
         else if($this->result == 3){ return "Failed"; }
         else if($this->result == 5){ return "Collect New Sample"; }
         else{ return ""; }
+    }
+
+    public function getSampletypeAttribute()
+    {
+        return DB::table('covid_sample_types')->where('id', '=', "{$this->test_type}")->first()->name ?? null;
     }
 }
