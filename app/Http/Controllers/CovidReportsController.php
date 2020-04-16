@@ -21,7 +21,7 @@ class CovidReportsController extends Controller
 		$date_filter = Carbon::parse($request->input('date_filter'));
 		$date = $date_filter->format('Y-m-d');
 		$yesterday = $date_filter->yesterday()->toDateString();
-		$today_data = $this->get_model()->whereDate('datetested', "'{$date}'")->get();
+		$today_data = $this->get_model()->whereDate('datetested', $date)->get();
 		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
 		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
 		// dd($alldata);
