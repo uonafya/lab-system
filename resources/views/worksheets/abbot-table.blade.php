@@ -92,7 +92,7 @@ width:1180px;
 			</tr>
 			<tr class="even">
 				<td><strong>Created By	</strong>    </td>
-				<td> {{ $worksheet->creator->full_name }} </td>
+				<td> {{ $worksheet->creator->full_name ?? '' }} </td>
 				<td><strong>Expiry Dates</strong>	</td>
 
 				<td> {{ $worksheet->my_date_format('sampleprepexpirydate') }} </td>
