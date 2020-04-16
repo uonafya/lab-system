@@ -94,7 +94,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 50, 'name' => 'Migori county referral hospital', 'email' => ''],
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
-			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => 'martine.makanga@materkenya.com,mmuhati@materkenya.com'],
 			['id' => 54, 'name' => 'Sultan Hamud', 'email' => 'daviekiuluku@yahoo.com'],
 			['id' => 55, 'name' => 'Sheraton', 'email' => ''],
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => ''],
