@@ -114,8 +114,7 @@ class CovidReportsController extends Controller
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
-				'Where from', 'Facility Name (Quarantine /health facility)', 'Date Tested', 'Result',
-				'Test Type'
+				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Date Tested', 'Result', 'Test Type'
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -123,20 +122,6 @@ class CovidReportsController extends Controller
 			$count++;
 		}
 		return $data;
-		// $detail_header = ['Testing Lab', 'S/N'];
-		// $positives = $this->get_excel_samples($today_data->where('result', 2));
-		// $positives = $positives->push($this->get_excel_samples($yesterday_data->where('result', 2)));
-		// $negatives = $this->get_excel_samples($today_data->where('result', 1));
-		// $negatives = $negatives->push($this->get_excel_samples($yesterday_data->where('result', 1)));
-		
-		// $data[] = ['POSITIVES'];
-		// $data[] = $detail_header;
-		// $data[] = $positives;
-
-		// $data[] = ['NEGATIVES'];
-		// $data[] = $detail_header;
-		// $data[] = $negatives;
-		// return $data;
 	}
 
 	private function get_excel_samples($sample, $count)
@@ -157,11 +142,13 @@ class CovidReportsController extends Controller
 			$sample->patient->gender,
 			$sample->identifier,
 			$sample->phone ?? '',
-			$sample->patient->county->name ?? '',
+			$sample->patient->county ?? '',
 			$sample->subcounty ?? '',
 			$travelled,
 			$history,
+			"",
 			$sample->patient->quarantine_site->name ?? '',
+			"",
 			$sample->datetested ?? '',
 			$sample->result_name,
 			$sample->sampletype ?? ''
