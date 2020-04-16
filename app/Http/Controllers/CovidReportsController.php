@@ -25,7 +25,7 @@ class CovidReportsController extends Controller
 		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
 		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
 		// dd($alldata);
-		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
+		$data = $this->prepareData($today_data, $yesterday_data, $alldata, $date);
 		// dd($data);
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . date('YmdHis'));
 		// return back();
@@ -78,13 +78,13 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $yesterday_data, $alldata)
+	private function prepareData($today_data, $yesterday_data, $alldata, $date)
 	{
-		$data = [['DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
+		$data = [[Lab::find(env('APP_LAB'))->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
-		$data[] = $this->get_summary_data($today_data, $yesterday_data);
+		$data[] = $this->get_summary_data($today_data, $yesterday_data, $date);
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
@@ -96,10 +96,10 @@ class CovidReportsController extends Controller
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $yesterday_data)
+	private function get_summary_data($today_data, $yesterday_data, $date)
 	{
 		return [
-			Carbon::now()->format('d/m/Y'),
+			$date,
 			Lab::find(env('APP_LAB'))->labdesc,
 			$yesterday_data->count(),
 			$today_data->count(),
