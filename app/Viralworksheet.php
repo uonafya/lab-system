@@ -63,6 +63,12 @@ class Viralworksheet extends BaseModel
     }
 
 
+    public function getFailedAttribute()
+    {
+        if(in_array('Failed', [$this->neg_control_result, $this->highpos_control_result, $this->lowpos_control_result])) return true;
+        return false;
+    }
+
 
     public function getSampleTypeNameAttribute()
     {
@@ -108,5 +114,10 @@ class Viralworksheet extends BaseModel
             $s->save();
             \App\MiscViral::check_batch($s->batch_id);
         }
+    }
+
+    public function scopeExisting($query, $createdby, $created_at)
+    {
+        return $query->where(['createdby' => $createdby, 'created_at' => $created_at]);
     }
 }

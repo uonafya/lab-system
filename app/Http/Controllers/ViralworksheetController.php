@@ -25,12 +25,12 @@ class ViralworksheetController extends Controller
     {
         $worksheets = Viralworksheet::selectRaw('viralworksheets.*, count(viralsamples_view.id) AS samples_no, users.surname, users.oname')
             ->leftJoin('viralsamples_view', 'viralsamples_view.worksheet_id', '=', 'viralworksheets.id')
-            ->join('users', 'users.id', '=', 'viralworksheets.createdby')
-            ->where('site_entry', '!=', 2)
+            ->leftJoin('users', 'users.id', '=', 'viralworksheets.createdby')
             ->when($worksheet_id, function ($query) use ($worksheet_id){
                 return $query->where('viralworksheets.id', $worksheet_id);
             })
             ->when($state, function ($query) use ($state){
+                if($state != 4) $query->where('site_entry', '!=', 2);
                 if($state == 1 || $state == 12) $query->orderBy('viralworksheets.id', 'asc');
                 if($state == 11 && env('APP_LAB') == 9){
                     return $query->where('status_id', 3)->whereRaw("viralworksheets.id in (
@@ -347,7 +347,10 @@ class ViralworksheetController extends Controller
         $samples_data = ['datetested' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
 
         // $samples = Viralsample::where(['worksheet_id' => $worksheet->id, 'repeatt' => 1])->get();
-        $samples = Viralsample::where(['worksheet_id' => $worksheet->id])->get();
+        // $samples = Viralsample::where(['worksheet_id' => $worksheet->id])->get();
+
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = Viralsample::whereIn('id', $sample_array)->get();
 
         foreach ($samples as $key => $sample) {
             if($sample->parentid == 0) $del_samples = Viralsample::where('parentid', $sample->id)->get();
@@ -655,7 +658,7 @@ class ViralworksheetController extends Controller
 
         }
 
-        if($doubles){
+       /* if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
@@ -664,7 +667,7 @@ class ViralworksheetController extends Controller
                     $sheet->fromArray($doubles);
                 });
             })->download('csv');
-        }
+        }*/
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
         Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
@@ -714,10 +717,10 @@ class ViralworksheetController extends Controller
                     ->orderBy('viralsamples.id', 'asc')
                     ->get();
 
-        $noresult = $this->checknull($this->get_worksheet_results(0, $worksheet->id));
-        $failed = $this->checknull($this->get_worksheet_results(3, $worksheet->id));
-        $detected = $this->checknull($this->get_worksheet_results(2, $worksheet->id));
-        $undetected = $this->checknull($this->get_worksheet_results(1, $worksheet->id));
+        $noresult = $this->get_worksheet_results(0, $worksheet->id)->first()->totals ?? 0;
+        $failed = $this->get_worksheet_results(3, $worksheet->id)->first()->totals ?? 0;
+        $detected = $this->get_worksheet_results(2, $worksheet->id)->first()->totals ?? 0;
+        $undetected = $this->get_worksheet_results(1, $worksheet->id)->first()->totals ?? 0;
 
         $total = $detected + $undetected + $failed + $noresult;
 
@@ -801,7 +804,7 @@ class ViralworksheetController extends Controller
 
             // Viralsample::where('id', $samples[$key])->update($data);
 
-            if($data['repeatt'] == 1) MiscViral::save_repeat($samples[$key]);
+            if($data['repeatt'] == 1) MiscViral::save_repeat($sample->id);
         }
 
         if($batches){
@@ -848,6 +851,40 @@ class ViralworksheetController extends Controller
 
             return redirect('/viralbatch/dispatch');            
         }
+    }
+
+    public function rerun_worksheet(Viralworksheet $worksheet)
+    {
+        if($worksheet->status_id != 2 || !$worksheet->failed){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
+            return back();
+        }
+        $worksheet->status_id = 5;
+        $worksheet->save();
+
+        $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
+            'neg_control_result', 'highpos_control_result', 'lowpos_control_result', 
+            'neg_control_interpretation', 'highpos_control_interpretation', 'lowpos_control_interpretation',
+            'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
+        ]);
+        $new_worksheet->save();
+
+        
+        $samples = Viralsample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->select('viralsamples.*')
+                    ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 1;
+            $sample->pre_update();
+            $rsample = MiscViral::save_repeat($sample->id);
+            $rsample->worksheet_id = $new_worksheet->id;
+            $rsample->save();
+        }
+        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        return redirect($worksheet->route_name);  
     }
 
     public function download_dump(Viralworksheet $worksheet)
@@ -938,11 +975,6 @@ class ViralworksheetController extends Controller
         $worksheets = Viralworksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
         $worksheets->setPath(url()->current());
         return $worksheets;
-    }
-
-    public function checknull($var)
-    {
-        return $var->first()->totals ?? 0;
     }
 
     public function exceluploadworksheet(Request $request) {

@@ -78,7 +78,7 @@
                     <p style="margin-top: .5em;margin-bottom: 0px;">{{ @Date("l, d F Y") }}</p>
                 </h6>
                 <div class="row">
-                    @if (Auth()->user()->user_type_id == 2 || Auth()->user()->user_type_id == 5 || Auth()->user()->user_type_id == 8)
+                    @if (!Auth()->user()->lab_user)
                         <div class="col-md-3" style="margin-top: .7em;margin-bottom: .7em;">
                             <h2 class="font-light m-b-xs">
                                 {{ $pageTitle ?? '' }}
@@ -191,7 +191,12 @@
         if(current != ''){
             if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
             else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
-            else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
+            @if(!in_array(env('APP_LAB'), [8])) 
+                else if (current == 'Viralload'){ test = 'Covid'; text = '<strong>VIRAL LOAD</strong>'; } 
+                else if (current == 'Covid'){ test = 'EID'; text = '<strong>Covid-19</strong>'; }
+            @else
+                else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
+            @endif
             else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
 
             if(current == 'DR'){

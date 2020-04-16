@@ -187,6 +187,15 @@
                     <hr />
                 @endif
             @endif
+            @if (session('testingSystem') == 'Covid')
+                <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>
+                <hr />
+                <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
+                <hr />
+                <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
+                <hr />
+
+            @endif
             @if (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
@@ -232,6 +241,10 @@
             <hr />
             <li>
                 <a href="{{ url('viralpatient') }}">VL Patient List</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
             </li>
             <hr />
             <li>
@@ -287,6 +300,20 @@
                 <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
+        @elseif (Auth::user()->quarantine_site)
+            <li>
+                <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covid_sample') }}">Covid 19 Samples</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covid_sample/index/2') }}">Dispatched Covid 19 Samples</a>
+            </li>
+            <hr />
+
         @elseif (Auth::user()->user_type_id == 8)
             <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
             <hr />
@@ -332,7 +359,7 @@
                 <hr />
             @endif
         --}}
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 7]))
+        @if(in_array(Session('testingSystem'), ['EID', 'Viralsample']) && in_array(Auth::user()->user_type_id, [0, 7]))
             <li>
                 <a href="{{ url('sample/list_poc') }}">View POC EID Samples</a>
             </li>
@@ -438,7 +465,7 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8]) ))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
@@ -465,6 +492,9 @@
                 <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @elseif(Auth::user()->quarantine_site)
+                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
                 @if(session('testingSystem') == 'Viralload')
                     <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
@@ -486,6 +516,12 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
                     @endif
+                @elseif(session('testingSystem') == 'Covid')
+                    <!-- <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li> -->
+                    <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')
                     <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>

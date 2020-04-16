@@ -134,8 +134,9 @@ Artisan::command('delete:empty-batches', function(){
 
 Artisan::command('delete:pdfs', function(){
     $str = \App\Common::delete_folder(storage_path('app/batches'));
+    $str = \App\Common::delete_folder(storage_path('app/public/results'));
     $this->info($str);
-})->describe('Delete pdfs from hard drive.');
+})->describe('Delete pdfs and excel sheets from hard drive.');
 
 Artisan::command('lablog', function(){
     $str = \App\Synch::labactivity('eid');
@@ -188,6 +189,14 @@ Artisan::command('send:weekly-backlog', function(){
     $str = \App\Synch::send_weekly_backlog();
     $this->info($str);
 })->describe('Send out weekly backlog sms alert.');
+
+
+Artisan::command('synch:covid', function(){
+    $str = \App\Synch::synch_covid();
+    $str .= \App\Synch::synch_updates('covid');
+    $this->info($str);
+})->describe('Synch covid samples to the national database.');
+
 
 Artisan::command('synch:patients', function(){
     // if($type == 'eid') $str = \App\Synch::synch_eid_patients();
@@ -457,6 +466,11 @@ Artisan::command('get:linelist', function(){
 
 Artisan::command('alloc', function(){
     $str = \App\Synch::sendAllocationReviewEmail();
+    $this->info($str);
+});
+
+Artisan::command('rectify', function(){
+    $str = \App\Random::rectify();
     $this->info($str);
 });
 

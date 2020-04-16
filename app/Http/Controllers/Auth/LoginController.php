@@ -131,6 +131,7 @@ class LoginController extends Controller
 
         if($user->user_type_id == 7) return "/sample/list_poc";
         if($user->user_type_id == 8) return "/viralsample/nhrl";
+        if($user->quarantine_site) return "/covid_sample/create";
 
         if($facility){
             $fac = \App\Facility::find($user->facility_id);
@@ -174,6 +175,7 @@ class LoginController extends Controller
          */
 
         if(in_array(env('APP_LAB'), [8, 9])) session(['testingSystem' => 'Viralload']);
+        // if(in_array(env('APP_LAB'), [1, 3])) session(['testingSystem' => 'Covid']);
 
         
         // Checking for pending tasks if user is Lab user before redirecting to the respective page

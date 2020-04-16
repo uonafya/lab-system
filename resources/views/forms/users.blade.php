@@ -19,11 +19,14 @@
 @section('content')
     <div class="content">
         <div>
-            @if(isset($user))
-            {{ Form::open(['url' => '/user/' . $user->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
-            @else
-            {{ Form::open(['url' => '/user', 'method' => 'post', 'class'=>'form-horizontal']) }}
-            @endif
+
+            
+            <form action="{{ url('/user/' . ($user->id ?? '')) }}" class="form-horizontal" method="POST">
+                @if(isset($user))
+                    @method('PUT')
+                @endif
+            
+                @csrf
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
@@ -34,17 +37,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Account Type</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" required name="user_type" id="user_type">
+                                        <select class="form-control" required name="user_type_id" id="user_type_id">
                                         @if(!isset($user))
                                             <option value="" selected disabled>Select Account Type</option>
                                         @endif
                                         @forelse ($accounts as $account)
-                                            @if(isset($user))
-                                                @if($account->id == $user->user_type_id)
-                                                    <option value="{{ $account->id }}" selected>{{ $account->user_type }}</option>
-                                                @else
-                                                    <option value="{{ $account->id }}">{{ $account->user_type }}</option>
-                                                @endif
+                                            @if(isset($user) && $account->id == $user->user_type_id)
+                                                <option value="{{ $account->id }}" selected>{{ $account->user_type }}</option>
                                             @else
                                                 <option value="{{ $account->id }}">{{ $account->user_type }}</option>
                                             @endif
@@ -54,6 +53,36 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group" id="partners">
+                                    <label class="col-sm-4 control-label">Partner</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="facility_id" id="partner_select" disabled="disabled">
+                                            <option value="" selected disabled>Select Partner</option>
+                                        @forelse ($partners as $partner)
+                                            <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                        @empty
+                                            <option value="" disabled="true">No Partners available</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="quarantines">
+                                    <label class="col-sm-4 control-label">Quarantine Site</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="facility_id" id="quarantine_select" disabled="disabled">
+                                            <option value="" selected disabled>Select Quarantine Site</option>
+                                        @forelse ($quarantine_sites as $quarantine_site)
+                                            <option value="{{ $quarantine_site->id }}">{{ $quarantine_site->name }}</option>
+                                        @empty
+                                            <option value="" disabled="true">No Quarantine Sites available</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email</label>
                                     <div class="col-sm-8">
@@ -70,7 +99,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Confirm Password</label>
                                         <div class="col-sm-8">
-                                            <input class="form-control" name="confirm-password" id="confirm-password" type="password" value="">
+                                            <input class="form-control" name="password_confirmation" id="password_confirmation" type="password" value="">
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-            {{ Form::close() }}
+            </form>
         </div>
     </div>
 @endsection
@@ -138,12 +167,13 @@
 @section('scripts')
 
     @component('/forms/scripts')
-        @slot('js_scripts')
-            
-        @endslot
-
         @slot('val_rules')
-           
+            ,
+            rules:{
+                password_confirmation: {
+                    equalTo: '#password'
+                },   
+            }            
         @endslot
 
     @endcomponent
@@ -151,7 +181,29 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".submit").click(function(e){
+            $("#partners").hide();
+            $("#quarantines").hide();
+
+            $("#user_type_id").change(function(){
+                val = $(this).val();
+                if(val == 10){
+                    $("#partners").show();
+                    $('#partner_select').attr("required", "required");
+                    $('#partner_select').removeAttr("disabled");  
+                }else if(val == 11){
+                    $("#quarantines").show();
+                    $('#quarantine_select').attr("required", "required");
+                    $('#quarantine_select').removeAttr("disabled");  
+                }else{
+                    $("#partners").hide();
+                    $('#partner_select').removeAttr("required");     
+                    
+                    $("#quarantines").hide();
+                    $('#quarantine_select').removeAttr("required");                    
+                }
+            });
+
+            /*$(".submit").click(function(e){
                 password = $("#password").val();
                 confirm = $("#confirm-password").val();
                 if (password !== confirm) {
@@ -160,7 +212,7 @@
                     $("#confirm-password").val("");
                     $("#confirm-password").focus();
                 }
-            });
+            });*/
         });
     </script>
 @endsection
