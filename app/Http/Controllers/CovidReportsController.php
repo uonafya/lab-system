@@ -18,17 +18,19 @@ class CovidReportsController extends Controller
 
 	public function generate(Request $request)
 	{
-		$date_filter = Carbon::parse($request->input('date_filter'));
-		$date = $date_filter->format('Y-m-d');
-		$yesterday = $date_filter->yesterday()->toDateString();
+		// Get the dates
+		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
+		
+		// Get the data from the database
 		$today_data = $this->get_model()->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
-		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
-		// dd($alldata);
-		$data = $this->prepareData($today_data, $yesterday_data, $alldata, $date);
-		// dd($data);
+		$last_update_data = $this->get_model()->whereRaw("DATE(datetested) < '{$date}'")->get();
+		
+		// Prepare the data to fill the excel
+		$data = $this->prepareData($today_data, $last_update_data, $date);
+
+		// Generate the excel
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
-		// return back();
+		return back();
 	}
 
 	private function get_model()
@@ -78,13 +80,13 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $yesterday_data, $alldata, $date)
+	private function prepareData($today_data, $last_update_data, $date)
 	{
 		$data = [[Lab::find(env('APP_LAB'))->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
-		$data[] = $this->get_summary_data($today_data, $yesterday_data, $date);
+		$data[] = $this->get_summary_data($today_data, $last_update_data, $date);
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
@@ -96,17 +98,17 @@ class CovidReportsController extends Controller
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $yesterday_data, $date)
+	private function get_summary_data($today_data, $last_update_data, $date)
 	{
 		return [
 			$date,
 			Lab::find(env('APP_LAB'))->labdesc,
-			$yesterday_data->count(),
+			$last_update_data->count(),
 			$today_data->count(),
-			($yesterday_data->count() + $today_data->count()),
-			$yesterday_data->where('result', 2)->count(),
+			($last_update_data->count() + $today_data->count()),
+			$last_update_data->whereIn('result', [2,8])->count(),
 			$today_data->whereIn('result', [2,8])->count(),
-			($yesterday_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
+			($last_update_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
 		];
 	}
 
