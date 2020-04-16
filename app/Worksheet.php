@@ -62,6 +62,11 @@ class Worksheet extends BaseModel
         return $this->belongsTo('App\User', 'reviewedby2');
     }
 
+    public function scopeExisting($query, $createdby, $created_at)
+    {
+        return $query->where(['createdby' => $createdby, 'created_at' => $created_at]);
+    }
+
 
     public function getFailedAttribute()
     {

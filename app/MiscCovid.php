@@ -10,7 +10,7 @@ class MiscCovid extends Common
 {
 
 
-    public static function sample_result($target1, $target2, $error)
+    public static function sample_result($target1, $target2, $error=null)
     {
         $target1 = trim(strtolower($target1));
         $target2 = trim(strtolower($target2));
@@ -18,10 +18,10 @@ class MiscCovid extends Common
 
         if($target1 == 'positive'){
             $result = 2;
-            $interpretation = 'Detected';
+            $interpretation = 'Positive';
         }
         else if($target2 == 'positive'){
-            $result = 8;
+            $result = 2;
             $interpretation = 'Presumed Positive. Requires Rerun.';
         }
         else if($target1 == 'negative' && $target1 == $target2){

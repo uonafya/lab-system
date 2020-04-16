@@ -8,8 +8,6 @@ use Excel;
 
 class CovidTrashCan
 {
-
-
     public static function add_data()
     {    	
         config(['excel.import.heading' => true]);
