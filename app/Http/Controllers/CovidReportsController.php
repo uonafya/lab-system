@@ -87,7 +87,7 @@ class CovidReportsController extends Controller
 			$data[] = [""];
 		}
 
-		foreach ($this->get_detailed_data($alldata) as $key => $value) {
+		foreach ($this->get_detailed_data($today_data) as $key => $value) {
 			$data[] = $value;
 		}
 		
@@ -112,7 +112,8 @@ class CovidReportsController extends Controller
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
-				'Where from', 'Facility Name (Quarantine /health facility)', 'Date Tested', 'Result'
+				'Where from', 'Facility Name (Quarantine /health facility)', 'Date Tested', 'Result',
+				'Test Type'
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -154,13 +155,14 @@ class CovidReportsController extends Controller
 			$sample->patient->gender,
 			$sample->identifier,
 			$sample->phone ?? '',
-			$sample->county ?? '',
+			$sample->patient->county->name ?? '',
 			$sample->subcounty ?? '',
 			$travelled,
 			$history,
 			$sample->patient->quarantine_site->name ?? '',
 			$sample->datetested ?? '',
-			$sample->result_name
+			$sample->result_name,
+			$sample->sampletype ?? ''
 		];
 	}
 }
