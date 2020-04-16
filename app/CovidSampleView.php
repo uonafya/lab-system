@@ -29,6 +29,6 @@ class CovidSampleView extends BaseModel
 
     public function getSampletypeAttribute()
     {
-        return DB::table('covid_sample_types')->where('id', '=', "{$this->test_type}")->first()->name ?? null;
+        return DB::table('covid_test_types')->where('id', '=', "{$this->test_type}")->first()->name ?? null;
     }
 }
