@@ -13,6 +13,18 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         
+    	
+		DB::statement("DROP TABLE IF EXISTS `user_types`;");
+		DB::statement("
+			CREATE TABLE `user_types` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`user_type` varchar(100) DEFAULT NULL,
+				  `created_at` timestamp NULL DEFAULT NULL,
+				  `updated_at` timestamp NULL DEFAULT NULL,
+				  `deleted_at` timestamp NULL DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
 
         DB::table('user_types')->insert([
 		    ['id' => '1', 'user_type' => 'Lab User'],
@@ -24,7 +36,11 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '7', 'user_type' => 'POC Admin'],
 		    ['id' => '8', 'user_type' => 'EDARP Admin'],
 		    ['id' => '9', 'user_type' => 'NHRL Admin'],
+		    ['id' => '10', 'user_type' => 'Partner'],
+		    ['id' => '11', 'user_type' => 'Quarantine Site'],
 		]);
+
+		return;
 
 		// $old_users = DB::connection('old')->table('users')->get();
 
