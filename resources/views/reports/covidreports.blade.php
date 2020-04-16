@@ -144,7 +144,20 @@
                             </div>
                         </div> --}}
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Select Report Type</label>
+                            <label class="col-sm-3 control-label">Date Filter
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="date_filter" required class="form-control" value="{{ date('Y-m-d') }}" name="date_filter">
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Select Report Type
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="daily_results_submission" class="i-checks" required> Daily Laboratory Results Submission </label>
                             </div>
@@ -178,16 +191,6 @@
             autoclose: true,
             endDate: new Date(),
             format: "yyyy-mm-dd"
-        });
-
-        $(".date").datepicker({
-            startView: 0,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            endDate: new Date(),
-            dateFormat: 'MM yy'
         });
 
         set_select_facility("report_facility_search", "{{ url('facility/search') }}", 3, "Search for facility", false);
