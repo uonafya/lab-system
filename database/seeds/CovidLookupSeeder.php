@@ -12,6 +12,25 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
+
+		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
+		DB::statement("
+			CREATE TABLE `covid_test_types` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_test_types')->insert([
+			['id' => 1, 'name' => 'Initial Test'],
+			['id' => 2, 'name' => '1st Follow Up'],
+			['id' => 3, 'name' => '2nd Follow Up'],
+			['id' => 4, 'name' => '3rd Follow Up'],
+			['id' => 5, 'name' => '4th Follow Up'],
+			['id' => 6, 'name' => '5th Follow Up'],
+			['id' => 7, 'name' => 'Not Specified'],
+		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
@@ -29,7 +48,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
 			['id' => 5, 'name' => 'KMTC Karen', 'email' => 'jeprosekip@gmail.com'],
 			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => ''],
-			['id' => 7, 'name' => "Nairobi Women's", 'email' => ''],
+			['id' => 7, 'name' => "Nairobi Women's", 'email' => 'alex.muruga@nwch.co.ke'],
 			['id' => 8, 'name' => 'LANCET', 'email' => ''],
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
 			['id' => 10, 'name' => 'Nairobi hospital', 'email' => 'alicekanyua@nbihosp.org'],
