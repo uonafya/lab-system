@@ -27,7 +27,7 @@ class CovidReportsController extends Controller
 		// dd($alldata);
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata, $date);
 		// dd($data);
-		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . date('YmdHis'));
+		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
 		// return back();
 	}
 
