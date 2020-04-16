@@ -39,7 +39,7 @@
 
 		&nbsp;&nbsp;&nbsp;
 
-		@if(isset($covid) && in_array(env('APP_LAB'), [1]))
+		@if(isset($covid) && in_array(env('APP_LAB'), [100]) )
 			<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39') }}" alt="barcode" height="30" width="80"  />
 		@else
 			<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
