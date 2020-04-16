@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\UserType;
 use App\User;
+use DB;
 
 class UserController extends Controller
 {
@@ -52,8 +53,10 @@ class UserController extends Controller
     public function create()
     {
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+        $partners = DB::table('partners')->get();
+        $quarantine_sites = DB::table('quarantine_sites')->get();
 
-        return view('forms.users', compact('accounts'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -68,16 +71,10 @@ class UserController extends Controller
             session(['toast_message'=>'User already exists', 'toast_error'=>1]);
             return redirect()->route('user.add');
         } else {
-            $user = factory(User::class, 1)->create([
-                        'user_type_id' => $request->user_type,
-                        'lab_id' => auth()->user()->lab_id,
-                        'surname' => $request->surname,
-                        'oname' => $request->oname,
-                        'email' => $request->email,
-                        'password' => $request->password
-                        ,
-                        // 'telephone' => $request->telephone,
-                    ]);
+            $user = new User;
+            $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone']));
+            $user->lab_id = auth()->user()->lab_id;
+            $user->save();
             session(['toast_message'=>'User created succesfully']);
 
             if ($request->submit_type == 'release')
@@ -97,8 +94,10 @@ class UserController extends Controller
     public function show(User $user) {
 
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+        $partners = DB::table('partners')->get();
+        $quarantine_sites = DB::table('quarantine_sites')->get();
 
-        return view('forms.users', compact('accounts', 'user'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -122,9 +121,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         if($request->input('password') == "") { // No password for edit
-            $userData = $request->only(['user_type','email','surname','oname','telephone']);
-            $userData['user_type_id'] = $userData['user_type'];
-            unset($userData['user_type']);
+            $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id']);
             
             $user = User::find($id);
             $user->fill($userData);

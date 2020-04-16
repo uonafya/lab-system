@@ -148,11 +148,8 @@
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
                                     <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
 
-                                    {{--<td> {!! $machines->where('machine', $worksheet->machine_type)->first()['string'] !!} </td>
-                                    <td> {!! $statuses->where('status', $worksheet->status_id)->first()['string'] !!} </td>--}}
-
-                                    <td> {!! $machines->where('id', $worksheet->machine_type)->first()->output !!} </td>
-                                    <td> {!! $worksheet_statuses->where('id', $worksheet->status_id)->first()->output !!} </td>
+                                    <td> {!! $worksheet->get_prop_name($machines, 'machine_type', 'output') !!} </td>
+                                    <td> {!! $worksheet->get_prop_name($worksheet_statuses, 'status_id', 'output') !!} </td>
                                     <td>{{ $worksheet->sample_type_name }} </td>
 
                                     <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>

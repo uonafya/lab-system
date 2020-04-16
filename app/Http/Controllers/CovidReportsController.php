@@ -21,7 +21,7 @@ class CovidReportsController extends Controller
 		$yesterday = Carbon::now()->toDateString();
 		$today_data = $this->get_model()->whereDate('datetested', Carbon::now()->toDateString())->get();
 		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$alldata = $this->get_model()->orderBy('receivedstatus', 'desc')->get();
+		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
 		// dd($alldata);
 		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
 		// dd($data);
@@ -31,7 +31,7 @@ class CovidReportsController extends Controller
 
 	private function get_model()
 	{
-		return CovidSampleView::where('repeatt', 0);
+		return CovidSampleView::where('repeatt', 0)->whereNotNull('result');
 	}
 
 	private function generateExcel($data, $title)
@@ -103,20 +103,21 @@ class CovidReportsController extends Controller
 			$today_data->count(),
 			($yesterday_data->count() + $today_data->count()),
 			$yesterday_data->where('result', 2)->count(),
-			$today_data->where('result', 2)->count(),
-			($yesterday_data->where('result', 2)->count() + $today_data->where('result', 2)->count())
+			$today_data->whereIn('result', [2,8])->count(),
+			($yesterday_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
 		];
 	}
 
 	private function get_detailed_data($alldata)
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
-				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence',
-				'Facility Name (Quarantine /health facility)',
-				'Date Tested', 'Result'
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
+				'Where from', 'Facility Name (Quarantine /health facility)', 'Date Tested', 'Result'
 				]];
+		$count = 1;
 		foreach ($alldata as $key => $row) {
-			$data[] = $this->get_excel_samples($row);
+			$data[] = $this->get_excel_samples($row, $count);
+			$count++;
 		}
 		return $data;
 		// $detail_header = ['Testing Lab', 'S/N'];
@@ -135,11 +136,19 @@ class CovidReportsController extends Controller
 		// return $data;
 	}
 
-	private function get_excel_samples($sample)
+	private function get_excel_samples($sample, $count)
 	{
+		$travelled = 'N';
+		$history = '';
+		if (!$sample->patient->travel->isEmpty()){
+			$travelled = 'Y';
+			foreach ($sample->patient->travel as $key => $travel) {
+				$history .= $travel->city . ', ' . $travel->country . '\n';
+			}
+		}
 		return [
 			Lab::find(env('APP_LAB'))->labdesc,
-			$sample->order_no,
+			$count,
 			$sample->patient_name,
 			$sample->age,
 			$sample->patient->gender,
@@ -147,8 +156,9 @@ class CovidReportsController extends Controller
 			$sample->phone ?? '',
 			$sample->county ?? '',
 			$sample->subcounty ?? '',
-			$sample->residence ?? '',
-			$sample->hospital_admitted ?? '',
+			$travelled,
+			$history,
+			$sample->patient->quarantine_site->name ?? '',
 			$sample->datetested ?? '',
 			$sample->result_name
 		];

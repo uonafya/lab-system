@@ -510,6 +510,9 @@ class Synch
 				$models = $update_class::where('synched', 2)
 										->when(($sample && in_array($type, ['eid', 'vl'])), function($query){
 							                return $query->with(['batch', 'patient']);
+										})
+										->when(($sample && in_array($type, ['covid'])), function($query){
+							                return $query->with(['patient']);
 										})->when($allocate, function($query){
 											return $query->with(array('details' => function($childquery){
 												return $childquery->where('synched', 2);

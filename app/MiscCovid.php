@@ -21,7 +21,7 @@ class MiscCovid extends Common
             $interpretation = 'Positive';
         }
         else if($target2 == 'positive'){
-            $result = 8;
+            $result = 2;
             $interpretation = 'Presumed Positive. Requires Rerun.';
         }
         else if($target1 == 'negative' && $target1 == $target2){
