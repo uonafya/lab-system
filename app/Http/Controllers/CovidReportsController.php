@@ -142,7 +142,7 @@ class CovidReportsController extends Controller
 			$sample->patient->gender,
 			$sample->identifier,
 			$sample->phone ?? '',
-			$sample->patient->county->name ?? '',
+			$sample->patient->county ?? '',
 			$sample->subcounty ?? '',
 			$travelled,
 			$history,
