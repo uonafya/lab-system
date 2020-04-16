@@ -65,4 +65,9 @@ class CovidPatient extends BaseModel
         else if($this->sex == 2){ return "Female"; }
         else{ return "No Gender"; }
     }
+
+    public function getCountyAttribute()
+    {
+        return County::find($this->county_id)->name ?? '';
+    }
 }
