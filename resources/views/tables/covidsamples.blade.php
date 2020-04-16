@@ -180,7 +180,7 @@
                 <div class="panel-body">
                     <div class="table-responsive">
                         @if(isset($type) && $type == 2)
-                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
+                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to print the selected batches?');">
                             @csrf
                         @endif
 
