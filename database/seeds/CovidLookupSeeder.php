@@ -30,6 +30,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => '4th Follow Up'],
 			['id' => 6, 'name' => '5th Follow Up'],
 			['id' => 7, 'name' => 'Not Specified'],
+			['id' => 8, 'name' => 'Repeat'],
 		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
@@ -110,7 +111,6 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("
@@ -129,7 +129,10 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => 'Repatriation'],
 			['id' => 6, 'name' => 'Other'],
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
+			['id' => 8, 'name' => 'Recent travel'],
+			['id' => 9, 'name' => 'Health Care Worker'],
 		]);
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
