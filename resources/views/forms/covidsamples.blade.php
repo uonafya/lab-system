@@ -74,7 +74,7 @@
                             </div>
                         </div>
 
-                        @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'required' => true, 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
+                        @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
