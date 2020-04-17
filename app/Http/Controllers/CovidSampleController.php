@@ -59,10 +59,10 @@ class CovidSampleController extends Controller
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
-            ->orderBy('covid_sample_view.id', 'desc')
-            ->when(($user->facility_user == 5), function($query) use ($user){
+            ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
+            ->orderBy('covid_sample_view.id', 'desc')
             ->paginate();
 
         $samples->setPath(url()->current());
@@ -276,16 +276,16 @@ class CovidSampleController extends Controller
         $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
             ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
-            ->when(($user->user_type_id == 5), function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
-            })
             ->when(true, function($query) use ($covidSample){
                 if($covidSample->parentid){
                     return $query->whereRaw(" (covid_sample_view.id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
                 }else{
                     return $query->whereRaw(" (covid_sample_view.id = {$covidSample->id} OR parentid = {$covidSample->id})");
                 }
-            })  
+            }) 
+            ->when($user->facility_user, function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            }) 
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })          
