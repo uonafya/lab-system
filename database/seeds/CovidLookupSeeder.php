@@ -30,6 +30,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => '4th Follow Up'],
 			['id' => 6, 'name' => '5th Follow Up'],
 			['id' => 7, 'name' => 'Not Specified'],
+			['id' => 8, 'name' => 'Repeat'],
 		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
