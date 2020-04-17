@@ -100,7 +100,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => ''],
 			['id' => 57, 'name' => 'Pride Inn Azure', 'email' => ''],
 			['id' => 58, 'name' => 'Aga Khan Kisii', 'email' => ''],
-			['id' => 59, 'name' => 'Migwani Hospital', 'email' => ''],
+			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
