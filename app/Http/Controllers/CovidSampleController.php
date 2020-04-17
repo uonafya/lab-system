@@ -407,8 +407,8 @@ class CovidSampleController extends Controller
                 'test_type' => $data[9],
                 'sample_type' => $data[10],
                 'datecollected' => $data[11],
-                'datereceived' => $data[12],
-                'receivedstatus' => $data[13],
+                'datereceived' => $data[12] ?? date('Y-m-d'),
+                'receivedstatus' => $data[13] ?? 1,
                 'received_by' => auth()->user()->id,
             ]);
             $created_rows++;
