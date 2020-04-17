@@ -372,6 +372,52 @@ class CovidSampleController extends Controller
     }
 
 
+    public function site_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample'])->with('pageTitle', 'Upload Facility Samples');
+    }
+
+    public function upload_site_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if(starts_with($data[0], ['S', 's'])) continue;
+
+            $facility = Facility::locate($data[3])->first();
+            // if(!$facility) continue;
+
+            $p = CovidPatient::create([
+                'identifier' => $data[4],
+                'facility_id' => $facility->id ?? 3475,
+                'patient_name' => $data[5],
+                'sex' => $data[7],
+                'justification' => $data[8],
+            ]);
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'site_entry' => 1,
+                'age' => $data[6],
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => $data[11],
+                'datereceived' => $data[12],
+                'receivedstatus' => $data[13],
+                'received_by' => auth()->user()->id,
+            ]);
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
+    }
+
+
 
 
     public function upload(Request $request)

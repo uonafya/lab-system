@@ -3546,7 +3546,7 @@ class Random
         {
             if($data[0] == 'Sample NO.') continue;
             $p = CovidPatient::create([
-                'identifier' => $data['3'],
+                'identifier' => $data[3],
                 'facility_id' => 3475,
                 'justification' => $data[8],
             ]);
