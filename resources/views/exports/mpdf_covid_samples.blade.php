@@ -84,7 +84,7 @@ p.breakhere {page-break-before: always}
 						{{ $sample->facility->contacts }} &nbsp;&nbsp;
 						{{ $sample->facility->facility_contacts }}
 					</td>		
-				</tr>			
+				</tr>	
 
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
