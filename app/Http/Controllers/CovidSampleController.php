@@ -205,10 +205,15 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'No samples found']);
             return back(); 
         }
+        $lab = \App\Lab::find(env('APP_LAB'));
 
         $mail_array = explode(',', $quarantine_site->email);
-        Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
-        // Mail::to(['joelkith@gmail.com'])->send(new CovidDispatch($samples, $quarantine_site));
+        if($lab->cc_emails){
+            $cc_array = explode(',', $lab->cc_emails);
+            Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+        }else{
+            Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+        }
         session(['toast_message' => 'The results have been sent to the quarantine site.']);
         return back();            
     }
