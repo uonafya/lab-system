@@ -1,6 +1,6 @@
 <p>
 
-	Hello {{ $quarantine_site->name }},
+	Hello {{ $quarantine_site->name ?? '' }},
 
 	<br />
 	<br />
