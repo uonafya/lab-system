@@ -209,7 +209,7 @@ class CovidSampleController extends Controller
 
         if(in_array(env('APP_LAB'), [5])){
             $mail_array = explode(',', $lab->cc_emails);
-            Mail::to('joelkith@gmail.com')->send(new CovidDispatch($samples));
+            Mail::to($mail_array)->send(new CovidDispatch($samples));
         }else{
             $mail_array = explode(',', $quarantine_site->email);
             if($lab->cc_emails){
