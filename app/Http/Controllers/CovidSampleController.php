@@ -162,12 +162,12 @@ class CovidSampleController extends Controller
     public function email_multiple($request)
     {
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
-        if(!$quarantine_site_id){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [5])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site->email == ''){
+        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [5])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
@@ -207,12 +207,17 @@ class CovidSampleController extends Controller
         }
         $lab = \App\Lab::find(env('APP_LAB'));
 
-        $mail_array = explode(',', $quarantine_site->email);
-        if($lab->cc_emails){
-            $cc_array = explode(',', $lab->cc_emails);
-            Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+        if(in_array(env('APP_LAB'), [5])){
+            $mail_array = explode(',', $lab->cc_emails);
+            Mail::to($mail_array)->send(new CovidDispatch($samples));
         }else{
-            Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+            $mail_array = explode(',', $quarantine_site->email);
+            if($lab->cc_emails){
+                $cc_array = explode(',', $lab->cc_emails);
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }else{
+                Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }
         }
         session(['toast_message' => 'The results have been sent to the quarantine site.']);
         return back();            
@@ -398,7 +403,7 @@ class CovidSampleController extends Controller
             // if(!$facility) continue;
 
             $p = CovidPatient::create([
-                'identifier' => $data[4],
+                'identifier' => $data[3],
                 'facility_id' => $facility->id ?? 3475,
                 'patient_name' => $data[5],
                 'sex' => $data[7],
