@@ -140,7 +140,9 @@ width:1180px;
 					@php $count++; @endphp
 
 					@if($count % 5 == 0)
-						</tr><tr><td colspan=5>&nbsp;</td></tr><tr>
+						</tr>
+						<tr><td colspan=5>&nbsp;</td></tr>
+						<tr>
 					@endif
 
 				@endforeach

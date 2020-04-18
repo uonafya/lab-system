@@ -278,15 +278,9 @@ p.breakhere {page-break-before: always}
 
 		@endif
 
-		@if($count % 2 == 0)
+		@if (!$loop->last)
 			<p class="breakhere"></p>
-			<!-- <pagebreak sheet-size='A4'> -->
-		@else
-			<br/> <br/> <img src="https://eiddash.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
-
-
-
 	@endforeach
 
 </body>
