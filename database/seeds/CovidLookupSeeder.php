@@ -110,6 +110,7 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
 		]);
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
