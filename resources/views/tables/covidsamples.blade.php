@@ -261,7 +261,7 @@
                         </table>
 
                         @if(isset($type) && $type == 2)
-                        <button type="submit">Print Multiple Samples</button>
+                        <button type="submit" class="btn btn-primary">Print Multiple Samples</button>
                         </form>
                         @endif
 
