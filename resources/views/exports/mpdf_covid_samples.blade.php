@@ -66,7 +66,13 @@ p.breakhere {page-break-before: always}
 					<strong> Facility.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? $sample->patient->quarantine_site->name ?? '' }} </strong> 
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->lab->name ?? '' }}</strong>
+					<strong>Testing Lab: 
+						@if(env('APP_LAB') == 5)
+							Moi Teaching & Referral Hospital
+						@else
+							{{ $sample->lab->name ?? '' }}
+						@endif
+					</strong>
 				</td>
 			</tr>
 
@@ -78,21 +84,11 @@ p.breakhere {page-break-before: always}
 						{{ $sample->facility->contacts }} &nbsp;&nbsp;
 						{{ $sample->facility->facility_contacts }}
 					</td>		
-				</tr>			
+				</tr>	
 
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->facility->email_string }}
-					</td>					
-				</tr>
-
-			@endif
-
-			@if(env('APP_LAB') == 5 && $sample->amrs_location)			
-
-				<tr>
-					<td colspan="7" class="style4 style1 comment">
-						<strong>AMRS Location:</strong> &nbsp; {{ $amrs_locations->where('id', $sample->amrs_location)->first()->name ?? ''  }}
 					</td>					
 				</tr>
 
