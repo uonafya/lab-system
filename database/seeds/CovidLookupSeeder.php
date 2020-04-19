@@ -104,7 +104,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
 			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 62, 'name' => 'Ngara', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
