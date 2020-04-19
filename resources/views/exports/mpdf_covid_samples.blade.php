@@ -116,10 +116,10 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Years)</strong></td>
 				<td colspan="2"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
-				<td class="style4 style1 comment" colspan="2" ><strong>Citizenship </strong></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
-						{{ $sample->patient->get_prop_name($nationalities, 'nationality') }}	
+							
 					</span>
 				</td>
 			</tr>
@@ -150,7 +150,7 @@ p.breakhere {page-break-before: always}
 				<td class="style4 style1 comment" colspan="2"><strong>Sample Type </strong></td>
 				<td colspan="1" >
 					<span class="style5">
-						{{ $sample->get_prop_name($covid_sample_types, 'sampletype') }}					
+						{{ $sample->get_prop_name($covid_sample_types, 'sample_type') }}					
 					</span>
 				</td>
 			</tr>
