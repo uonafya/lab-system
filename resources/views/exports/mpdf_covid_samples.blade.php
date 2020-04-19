@@ -229,6 +229,7 @@ p.breakhere {page-break-before: always}
 							<strong>Result Reviewed By: </strong>
 							&nbsp;&nbsp;
 							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<strong>Signature: </strong>
 							&nbsp;&nbsp;
 						</center>					
