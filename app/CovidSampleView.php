@@ -2,6 +2,8 @@
 
 namespace App;
 
+use DB;
+
 class CovidSampleView extends BaseModel
 {
 	protected $table = "covid_sample_view";
@@ -35,5 +37,10 @@ class CovidSampleView extends BaseModel
         if($this->sex == 1){ return "Male"; }
         else if($this->sex == 2){ return "Female"; }
         else{ return "No Gender"; }
+    }
+    
+    public function getSampletypeAttribute()
+    {
+        return DB::table('covid_test_types')->where('id', '=', "{$this->test_type}")->first()->name ?? null;
     }
 }

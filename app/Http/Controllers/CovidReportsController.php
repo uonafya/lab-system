@@ -18,20 +18,24 @@ class CovidReportsController extends Controller
 
 	public function generate(Request $request)
 	{
-		$yesterday = Carbon::now()->toDateString();
-		$today_data = $this->get_model()->whereDate('datetested', Carbon::now()->toDateString())->get();
-		$yesterday_data = $this->get_model()->whereRaw("DATE(datetested) < '{$yesterday}'")->get();
-		$alldata = $this->get_model()->whereNotIn('result', [3])->orderBy('result', 'desc')->get();
-		// dd($alldata);
-		$data = $this->prepareData($today_data, $yesterday_data, $alldata);
-		// dd($data);
-		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . date('YmdHis'));
-		// return back();
+		// Get the dates
+		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
+		
+		// Get the data from the database
+		$today_data = $this->get_model()->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+		$last_update_data = $this->get_model()->whereRaw("DATE(datetested) < '{$date}'")->get();
+		
+		// Prepare the data to fill the excel
+		$data = $this->prepareData($today_data, $last_update_data, $date);
+
+		// Generate the excel
+		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
+		return back();
 	}
 
 	private function get_model()
 	{
-		return CovidSampleView::where('repeatt', 0);
+		return CovidSampleView::where('repeatt', 0)->whereNotNull('result');
 	}
 
 	private function generateExcel($data, $title)
@@ -76,44 +80,49 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $yesterday_data, $alldata)
+	private function prepareData($today_data, $last_update_data, $date)
 	{
-		$data = [['DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
+		$data = [[Lab::find(env('APP_LAB'))->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
-		$data[] = $this->get_summary_data($today_data, $yesterday_data);
+		$data[] = $this->get_summary_data($today_data, $last_update_data, $date);
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
 
-		foreach ($this->get_detailed_data($alldata) as $key => $value) {
+		foreach ($this->get_detailed_data($today_data) as $key => $value) {
 			$data[] = $value;
 		}
 		
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $yesterday_data)
+	private function get_summary_data($today_data, $last_update_data, $date)
 	{
 		return [
-			Carbon::now()->format('d/m/Y'),
+			$date,
 			Lab::find(env('APP_LAB'))->labdesc,
-			$yesterday_data->count(),
+			$last_update_data->count(),
 			$today_data->count(),
-			($yesterday_data->count() + $today_data->count()),
-			$yesterday_data->where('result', 2)->count(),
+			($last_update_data->count() + $today_data->count()),
+			$last_update_data->whereIn('result', [2,8])->count(),
 			$today_data->whereIn('result', [2,8])->count(),
-			($yesterday_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
+			($last_update_data->whereIn('result', [2,8])->count() + $today_data->whereIn('result', [2,8])->count())
 		];
 	}
 
 	private function get_detailed_data($alldata)
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
+<<<<<<< HEAD
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence',
 				'Facility Name (Quarantine /health facility)',
 				'Date Collected', 'Date Tested', 'Result'
+=======
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
+				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Date Tested', 'Result', 'Test Type'
+>>>>>>> 1913ac3b82311f7af9e9ea7a74d1da3e9c7ed4c2
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -121,24 +130,18 @@ class CovidReportsController extends Controller
 			$count++;
 		}
 		return $data;
-		// $detail_header = ['Testing Lab', 'S/N'];
-		// $positives = $this->get_excel_samples($today_data->where('result', 2));
-		// $positives = $positives->push($this->get_excel_samples($yesterday_data->where('result', 2)));
-		// $negatives = $this->get_excel_samples($today_data->where('result', 1));
-		// $negatives = $negatives->push($this->get_excel_samples($yesterday_data->where('result', 1)));
-		
-		// $data[] = ['POSITIVES'];
-		// $data[] = $detail_header;
-		// $data[] = $positives;
-
-		// $data[] = ['NEGATIVES'];
-		// $data[] = $detail_header;
-		// $data[] = $negatives;
-		// return $data;
 	}
 
-	private function get_excel_samples($sample, $count(var))
+	private function get_excel_samples($sample, $count)
 	{
+		$travelled = 'N';
+		$history = '';
+		if (!$sample->patient->travel->isEmpty()){
+			$travelled = 'Y';
+			foreach ($sample->patient->travel as $key => $travel) {
+				$history .= $travel->city . ', ' . $travel->country . '\n';
+			}
+		}
 		return [
 			Lab::find(env('APP_LAB'))->labdesc,
 			$count,
@@ -147,13 +150,22 @@ class CovidReportsController extends Controller
 			$sample->gender,
 			$sample->identifier,
 			$sample->phone ?? '',
-			$sample->county ?? '',
+			$sample->patient->county ?? '',
 			$sample->subcounty ?? '',
+<<<<<<< HEAD
 			$sample->residence ?? '',
 			$sample->hospital_admitted ?? '',
 			$sample->datecollected ?? '',
+=======
+			$travelled,
+			$history,
+			"",
+			$sample->patient->quarantine_site->name ?? '',
+			"",
+>>>>>>> 1913ac3b82311f7af9e9ea7a74d1da3e9c7ed4c2
 			$sample->datetested ?? '',
-			$sample->result_name
+			$sample->result_name,
+			$sample->sampletype ?? ''
 		];
 	}
 }
