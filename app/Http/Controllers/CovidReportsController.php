@@ -115,8 +115,14 @@ class CovidReportsController extends Controller
 	private function get_detailed_data($alldata)
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
+<<<<<<< HEAD
+				'Telephone Number', 'County of Residence', 'Sub-County', 'Residence',
+				'Facility Name (Quarantine /health facility)',
+				'Date Collected', 'Date Tested', 'Result'
+=======
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Date Tested', 'Result', 'Test Type'
+>>>>>>> 1913ac3b82311f7af9e9ea7a74d1da3e9c7ed4c2
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -141,16 +147,22 @@ class CovidReportsController extends Controller
 			$count,
 			$sample->patient_name,
 			$sample->age,
-			$sample->patient->gender,
+			$sample->gender,
 			$sample->identifier,
 			$sample->phone ?? '',
 			$sample->patient->county ?? '',
 			$sample->subcounty ?? '',
+<<<<<<< HEAD
+			$sample->residence ?? '',
+			$sample->hospital_admitted ?? '',
+			$sample->datecollected ?? '',
+=======
 			$travelled,
 			$history,
 			"",
 			$sample->patient->quarantine_site->name ?? '',
 			"",
+>>>>>>> 1913ac3b82311f7af9e9ea7a74d1da3e9c7ed4c2
 			$sample->datetested ?? '',
 			$sample->result_name,
 			$sample->sampletype ?? ''
