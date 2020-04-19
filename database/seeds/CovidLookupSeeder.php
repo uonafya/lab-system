@@ -105,7 +105,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
 			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
 			['id' => 62, 'name' => 'Ngara', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
