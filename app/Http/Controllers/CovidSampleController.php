@@ -403,7 +403,7 @@ class CovidSampleController extends Controller
             // if(!$facility) continue;
 
             $p = CovidPatient::create([
-                'identifier' => $data[4],
+                'identifier' => $data[3],
                 'facility_id' => $facility->id ?? 3475,
                 'patient_name' => $data[5],
                 'sex' => $data[7],
