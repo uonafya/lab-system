@@ -127,7 +127,7 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Gender </strong></td>
 				<td colspan="2"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="2" ><strong> 	</strong></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Area of Residence </strong></td>
 				<td colspan="1" class="comment"> <span class="style5"> {{ $sample->patient->residence }} </span> </td>
 			</tr>
 
