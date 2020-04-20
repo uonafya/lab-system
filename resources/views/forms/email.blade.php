@@ -20,7 +20,7 @@
    <div class="content">
         <div>
 
-        @if(isset($sample))
+        @if(isset($email))
         <form action="{{ url('/email/' . $email->id) }}" class="form-horizontal" method="POST">
             @method('PUT')
         @else
