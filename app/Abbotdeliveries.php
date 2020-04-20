@@ -37,4 +37,9 @@ class Abbotdeliveries extends BaseModel
         return $this->belongsTo('App\User', 'enteredby');
     }
     
+    public function scopeExisting($query, $year, $quarter, $testtype)
+    {
+        return $query->where(['year' => $year, 'quarter' => $quarter, 'testtype' => $testtype]);
+    }
+    
 }

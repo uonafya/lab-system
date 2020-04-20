@@ -21,38 +21,27 @@
    <div class="content">
         <div>
 
-        @if(isset($type) && $type == 'viralload')
-        <form action="{{ url('/viralsample/upload') }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
-        @else
-        <form action="{{ url('/sample/upload') }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
-        @endif
+
+        <form method="POST" action="{{ url($url . '/upload') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
 
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <div class="hpanel">
-                        <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <div class="hpanel">
+                    <div class="panel-body">
 
-                            <div class="alert alert-warning">
-                                <center>
-                                    The file must be a csv file.
-                                </center>
-                            </div>
-                            <br />
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv file.
+                            </center>
+                        </div>
+                        <br />
 
 
-                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                <div class="form-control" data-trigger="fileinput">
-                                    <i class="glyphicon glyphicon-file fileinput-exists"></i> 
-                                    <span class="fileinput-filename"></span>
-                                </div>
-                                <span class="input-group-addon btn btn-default btn-file">
-                                    <span class="fileinput-new">Select CSV</span>
-                                    <span class="fileinput-exists">Change</span>
-                                    <input id="upload" type="file" required accept=".csv" name="upload" >
-                                </span>
-                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput">
+                                <i class="glyphicon glyphicon-file fileinput-exists"></i> 
+                                <span class="fileinput-filename"></span>
                             </div>
 
 
@@ -68,7 +57,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+
         </form>
+
       </div>
     </div>
 

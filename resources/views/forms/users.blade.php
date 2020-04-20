@@ -19,13 +19,12 @@
 @section('content')
     <div class="content">
         <div>
-
-            @if(isset($user))
-            <form action="{{ url('/user/' . $user->id) }}" class="form-horizontal" method="POST">
-                @method('PUT')
-            @else
-            <form action="{{ url('/user') }}" class="form-horizontal" method="POST">
-            @endif
+            
+            <form action="{{ url('/user/' . ($user->id ?? '')) }}" class="form-horizontal" method="POST">
+                @if(isset($user))
+                    @method('PUT')
+                @endif
+            
                 @csrf
                 <div class="row">
                     <div class="col-lg-12">
@@ -63,6 +62,20 @@
                                             <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                                         @empty
                                             <option value="" disabled="true">No Partners available</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="quarantines">
+                                    <label class="col-sm-4 control-label">Quarantine Site</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="facility_id" id="quarantine_select" disabled="disabled">
+                                            <option value="" selected disabled>Select Quarantine Site</option>
+                                        @forelse ($quarantine_sites as $quarantine_site)
+                                            <option value="{{ $quarantine_site->id }}">{{ $quarantine_site->name }}</option>
+                                        @empty
+                                            <option value="" disabled="true">No Quarantine Sites available</option>
                                         @endforelse
                                         </select>
                                     </div>
@@ -153,10 +166,6 @@
 @section('scripts')
 
     @component('/forms/scripts')
-        @slot('js_scripts')
-            
-        @endslot
-
         @slot('val_rules')
             ,
             rules:{
@@ -172,17 +181,24 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $("#partners").hide();
+            $("#quarantines").hide();
 
             $("#user_type_id").change(function(){
                 val = $(this).val();
                 if(val == 10){
                     $("#partners").show();
                     $('#partner_select').attr("required", "required");
-                    $('#partner_select').removeAttr("disabled");  
-                } 
-                else{
+                    $('#partner_select').removeAttr("disabled"); 
+                }else if(val == 11){
+                    $("#quarantines").show();
+                    $('#quarantine_select').attr("required", "required");
+                    $('#quarantine_select').removeAttr("disabled");  
+                }else{
                     $("#partners").hide();
-                    $('#partner_select').removeAttr("required");                    
+                    $('#partner_select').removeAttr("required");     
+                    
+                    $("#quarantines").hide();
+                    $('#quarantine_select').removeAttr("required");                    
                 }
             });
 

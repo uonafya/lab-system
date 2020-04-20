@@ -20,7 +20,8 @@ use App\Synch;
 class Common
 {
 	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
-	public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+	// public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+	public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
@@ -56,6 +57,33 @@ class Common
 			'sample_table' => 'viralsamples',
 		],
 	];
+
+
+
+	public static function csv_download($data, $file_name='page-data-export')
+	{
+		if(!$data) return;
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/csv');
+		header("Content-Disposition: attachment; filename={$file_name}.csv");
+		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		
+		$fp = fopen('php://output', 'w');
+		// ob_clean();
+
+		$first = [];
+
+		foreach ($data[0] as $key => $value) {
+			$first[] = $key;
+		}
+		fputcsv($fp, $first);
+
+		foreach ($data as $key => $value) {
+			fputcsv($fp, $value);
+		}
+		// ob_flush();
+		fclose($fp);
+	}
 
     public static function test_email()
     {
@@ -117,7 +145,7 @@ class Common
 	{
 		$client = new Client(['base_uri' => self::$sms_url]);
 
-		$response = $client->request('post', '', [
+		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
@@ -129,12 +157,30 @@ class Common
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
 			],
+		]);*/
+
+		$response = $client->request('post', '', [
+			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'http_errors' => false,
+			// 'debug' => true,
+			'json' => [
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $recepient,
+				'message' => $message,
+			],
 		]);
 
 		$body = json_decode($response->getBody());
-        if($response->getStatusCode() == 402) die();
+        // if($response->getStatusCode() == 402) die();
 		// if($response->getStatusCode() == 201){
-        if($response->getStatusCode() < 300) return true;
+        if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
+        else{
+        	die();
+        	echo "Status Code is " . $response->getStatusCode();
+        	echo $response->getBody();
+        }
 
 	}
 

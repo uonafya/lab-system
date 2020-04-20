@@ -64,9 +64,7 @@
                         <br />
   
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Facility 
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
+                            <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
                                 <select class="form-control" name="facility_id" id="facility_id">
                                     @if(isset($sample) && $sample->patient->facility)
@@ -76,7 +74,7 @@
                             </div>
                         </div>
 
-                        @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'required' => true, 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
+                        @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
@@ -94,9 +92,19 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->nationality ?? null, 'prop' => 'nationality', 'label' => 'Nationality', 'items' => $nationalities])
+
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
+
+                        @if(auth()->user()->quarantine_site)
+                            <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
+                        @else
+                            @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                        @endif
 
 
 
@@ -107,7 +115,9 @@
                         @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number'])
 
 
-                        @include('partial.date', ['model' => $m, 'prop' => 'dob', 'required' => true, 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
+                        @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -234,7 +244,7 @@
 
                         @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datecollected', 'label' => 'Date of Collection',])
 
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->lab_user)
 
                             @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Received',])
 
@@ -242,7 +252,7 @@
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
-                            @if(isset($sample))
+                            @if(isset($sample) && false)
 
                                 @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
 
@@ -290,7 +300,7 @@
                                 <textarea  class="form-control" name="comments">{{ $sample->comments ?? '' }}</textarea>
                             </div>
                         </div>
-                        @if(auth()->user()->user_type_id != 5)
+                        @if(auth()->user()->lab_user)
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
                                 <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
                                     {{ $sample->labcomment ?? '' }}
@@ -336,7 +346,7 @@
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
-                @if(auth()->user()->user_type_id != 5)
+                @if(auth()->user()->lab_user)
                     datecollected: {
                         lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                     },

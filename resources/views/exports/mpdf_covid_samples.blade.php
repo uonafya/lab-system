@@ -48,6 +48,7 @@ p.breakhere {page-break-before: always}
 
 	@foreach($samples as $key => $sample)
 		@continue($sample->repeatt == 1)
+		<?php $count++; ?>
 
 		<table id="table1" align="center">
 
@@ -56,20 +57,26 @@ p.breakhere {page-break-before: always}
 					<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
 					<span class="style1"><br>
 					  <span class="style7">MINISTRY OF HEALTH <br />
-					  COVID 19 RESULT FORM</span>
+					  COVID-19 RESULT FORM</span>
 					</span>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="4" class="comment style1 style4">
-					<strong> Batch No.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? '' }} </strong> 
+					<strong> Facility.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? $sample->patient->quarantine_site->name ?? '' }} </strong> 
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->lab->name ?? '' }}</strong>
+					<strong>Testing Lab: 
+						@if(env('APP_LAB') == 5)
+							Moi Teaching & Referral Hospital
+						@else
+							{{ $sample->lab->name ?? '' }}
+						@endif
+					</strong>
 				</td>
 			</tr>
 
-			@if(env('APP_LAB') == 1)
+			@if(env('APP_LAB') == 1 && $sample->facility)
 
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
@@ -77,21 +84,11 @@ p.breakhere {page-break-before: always}
 						{{ $sample->facility->contacts }} &nbsp;&nbsp;
 						{{ $sample->facility->facility_contacts }}
 					</td>		
-				</tr>			
+				</tr>	
 
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->facility->email_string }}
-					</td>					
-				</tr>
-
-			@endif
-
-			@if(env('APP_LAB') == 5 && $sample->amrs_location)			
-
-				<tr>
-					<td colspan="7" class="style4 style1 comment">
-						<strong>AMRS Location:</strong> &nbsp; {{ $amrs_locations->where('id', $sample->amrs_location)->first()->name ?? ''  }}
 					</td>					
 				</tr>
 
@@ -107,78 +104,77 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> Unique Case Identifier</strong></td>
-				<td colspan="1"> <span class="style5">{{ $sample->patient->identifier }}</span></td>
-				<td class="style4 style1 comment" colspan="3"><strong> Citizenship </strong></td>
+				<td colspan="2"> <span class="style5">{{ $sample->patient->identifier }}</span></td>
+				<td class="style4 style1 comment" colspan="2"><strong> Name </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
-						{{ $sample->patient->get_prop_name($nationalities, 'nationality') }}
+						{{ $sample->patient->patient_name }}	
 					</span>
 				</td>
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Months)</strong></td>
-				<td colspan="1"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong>Area of Residence </strong></td>
+				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Years)</strong></td>
+				<td colspan="2"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> </strong></td>
 				<td colspan="1" class="comment">
 					<span class="style5">
-						{{ $sample->patient->residence }}			
+							
 					</span>
 				</td>
 			</tr>
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Gender </strong></td>
-				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
-				<td class="style4 style1 comment" colspan="3" ><strong> Health Status at time of reporting	</strong></td>
-				<td colspan="1" class="comment">
-					<span class="style5">
-						{{ $sample->get_prop_name($health_statuses, 'health_status') }}
-					</span>
-				</td>
+				<td colspan="2"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Area of Residence </strong></td>
+				<td colspan="1" class="comment"> <span class="style5"> {{ $sample->patient->residence }} </span> </td>
 			</tr>
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment" ><strong>Date	Collected </strong></td>
-				<td class="comment" colspan="1">
+				<td class="comment" colspan="2">
 					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong> Sample Type </strong></td>
-				<td colspan="1" > <span class="style5">{{ $sample->get_prop_name($covid_sample_types, 'sampletype') }}</span></td>
+				<td class="style4 style1 comment" colspan="2"><strong> Health Status at time of reporting </strong></td>
+				<td colspan="1" > <span class="style5">{{ $sample->get_prop_name($health_statuses, 'health_status') }}</span></td>
 			</tr>
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Date Received </strong></td>
-				<td colspan="1" class="comment" >
+				<td colspan="2" class="comment" >
 					<span class="style5">
 						{{ $sample->my_date_format('datereceived') }} 
 					</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong>Reason for Test </strong></td>
+				<td class="style4 style1 comment" colspan="2"><strong>Sample Type </strong></td>
 				<td colspan="1" >
 					<span class="style5">
-						{{ $sample->patient->get_prop_name($covid_justifications, 'justification') }}					
+						{{ $sample->get_prop_name($covid_sample_types, 'sample_type') }}					
 					</span>
 				</td>
 			</tr>
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>Date Test Performed </strong></td>
-				<td colspan="1" class="comment" >
+				<td colspan="2" class="comment" >
 					<span class="style5">{{ $sample->my_date_format('datetested') }}</span>
 				</td>
-				<td class="style4 style1 comment" colspan="3"><strong> </strong></td>
-				<td colspan="1" ><span class="style5"> </span></td>
+				<td class="style4 style1 comment" colspan="2"><strong>Reason for Test </strong></td>
+				<td colspan="1" ><span class="style5"> 
+						{{ $sample->patient->get_prop_name($covid_justifications, 'justification') }}					
+					</span></td>
 			</tr>
 
 			<tr>
 				
 
 				@if($sample->receivedstatus == 2)
-					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						 {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
+						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 
 
@@ -206,18 +202,6 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			
-			@if($sample->worksheet)
-				<tr>
-					<td colspan="2"></td>
-					<td colspan="5" class="style4 style1 comment">					
-						@if($sample->worksheet->machine_type == 1)
-							HIV-1 DNA qualitative  assay on Roche CAP/CTM system
-						@elseif($sample->worksheet->machine_type == 2)
-							HIV-1 DNA qualitative  assay on Abbott M2000 system
-						@endif					
-					</td>				
-				</tr>
-			@endif
 			
 
 			<tr>
@@ -226,8 +210,11 @@ p.breakhere {page-break-before: always}
 				</td>
 				<td colspan="5" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}
-						@if($sample->result == 2 && $sample->pcrtype < 4)
-							&nbsp; Initiate on ART, Collect samples for Confirmatory Testing & Baseline Viral Load
+						@if($sample->result == 2)
+							&nbsp; Kindly carry out a follow up test in due time
+						@endif
+						@if($sample->result == 8)
+							&nbsp; The patient should be presumed to be positive but the results were not conclusive. Carry out a follow up test as soon as possible.
 						@endif
 
 					</span>
@@ -241,7 +228,10 @@ p.breakhere {page-break-before: always}
 						<center>
 							<strong>Result Reviewed By: </strong>
 							&nbsp;&nbsp;
-							<strong> {{ $sample->approver->full_name ?? '' }}</strong> 
+							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<strong>Signature: </strong>
+							&nbsp;&nbsp;
 						</center>					
 					</td>
 				</tr>
@@ -278,22 +268,16 @@ p.breakhere {page-break-before: always}
 				@elseif(env('APP_LAB') == 3)
 					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
 				@else
-					If you have questions or problems regarding samples, please contact the {{ $sample->lab->name }} at {{ $sample->lab->email }}
+					If you have questions or problems regarding samples, please contact the testing laboratory.
 				@endif
 
 			</span>
 
 		@endif
 
-		@if($count % 2 == 0)
+		@if (!$loop->last)
 			<p class="breakhere"></p>
-			<pagebreak sheet-size='A4'>
-		@else
-			<br/> <br/> <img src="https://eiddash.nascop.org/img/but_cut.gif"> <br/><br/> 
 		@endif
-
-
-
 	@endforeach
 
 </body>

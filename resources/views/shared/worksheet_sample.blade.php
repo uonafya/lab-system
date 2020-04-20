@@ -37,7 +37,14 @@
 	</span>
 	<br />
 
-		&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+		&nbsp;&nbsp;&nbsp;
+
+		@if(isset($covid))
+			<!-- <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C39') }}" alt="barcode" height="30" width="40"  /> -->
+			<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+		@else
+			<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+		@endif
 
 	<br />
 	{{ $sample->id }}

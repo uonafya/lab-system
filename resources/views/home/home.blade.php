@@ -197,6 +197,25 @@
 			                    </span>
 		                    	<a href="{{ url('batch/delayed') }}">Incomplete Tested Batches </a>
 		                    </li>
+		                @elseif(Session('testingSystem') == 'Covid')
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['covid_pending_receipt']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['covid_pending_receipt']) }}">{{ $widgets['covid_pending_receipt'] }}</span>
+		                        <a href="{{ url('covid_sample/index/0') }}">Samples Pending Approval for Testing.</a>
+		                    </li>
+
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['covid_pending_testing']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['covid_pending_testing']) }}">{{ $widgets['covid_pending_testing'] }}</span>
+		                        <a href="{{ url('covid_sample') }}">Samples Pending Testing.</a>
+		                    </li>
+
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['covid_pending_results_update']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['covid_pending_results_update']) }}">{{ $widgets['covid_pending_results_update'] }}</span>
+		                        <a href="{{ url('covid_worksheet/index/1') }}">Worksheets Pending Results Update.</a>
+		                    </li>
+
 		                @elseif(Session('testingSystem') == 'CD4')
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['CD4samplesInQueue']) }}">

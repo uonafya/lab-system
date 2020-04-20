@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidWorksheet;
 use App\CovidSample;
+use App\CovidSampleView;
 use App\Lookup;
 use App\MiscCovid;
 use App\Misc;
@@ -54,10 +55,11 @@ class CovidWorksheetController extends Controller
 
         $worksheets->setPath(url()->current());
 
+        $data = Lookup::worksheet_lookups();
+
         $worksheet_ids = $worksheets->pluck(['id'])->toArray();
         $samples = $this->get_worksheets($worksheet_ids);
         $reruns = $this->get_reruns($worksheet_ids);
-        $data = Lookup::worksheet_lookups();
 
         $worksheets->transform(function($worksheet, $key) use ($samples, $reruns, $data){
             $status = $worksheet->status_id;
@@ -66,6 +68,7 @@ class CovidWorksheetController extends Controller
             if(($status == 2 || $status == 3) && $samples){
                 $neg = $samples->where('worksheet_id', $worksheet->id)->where('result', 1)->first()->totals ?? 0;
                 $pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 2)->first()->totals ?? 0;
+                $presumed_pos = $samples->where('worksheet_id', $worksheet->id)->where('result', 8)->first()->totals ?? 0;
                 $failed = $samples->where('worksheet_id', $worksheet->id)->where('result', 3)->first()->totals ?? 0;
                 $redraw = $samples->where('worksheet_id', $worksheet->id)->where('result', 5)->first()->totals ?? 0;
                 $noresult = $samples->where('worksheet_id', $worksheet->id)->where('result', 0)->first()->totals ?? 0;
@@ -73,7 +76,7 @@ class CovidWorksheetController extends Controller
                 $rerun = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
             }
             else{
-                $neg = $pos = $failed = $redraw = $noresult = $rerun = 0;
+                $neg = $pos = $failed = $redraw = $noresult = $presumed_pos = $rerun = 0;
 
                 if($status == 1){
                     $noresult = $worksheet->sample_count;
@@ -83,7 +86,8 @@ class CovidWorksheetController extends Controller
             $worksheet->rerun = $rerun;
             $worksheet->neg = $neg;
             $worksheet->pos = $pos;
-            $worksheet->failed = $failed;
+            $worksheet->presumed_pos = $presumed_pos;
+            $worksheet->failed_samples = $failed;
             $worksheet->redraw = $redraw;
             $worksheet->noresult = $noresult;
             // $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
@@ -92,8 +96,7 @@ class CovidWorksheetController extends Controller
 
             return $worksheet;
         });
-
-        $data = Lookup::worksheet_lookups();
+        
         $data['status_count'] = CovidWorksheet::selectRaw("count(*) AS total, status_id, machine_type")
             ->groupBy('status_id', 'machine_type')
             ->orderBy('status_id', 'asc')
@@ -109,11 +112,11 @@ class CovidWorksheetController extends Controller
     public function set_details_form()
     {
         $data = Lookup::worksheet_lookups();
-        $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+        $data['users'] = User::withTrashed()
             ->whereRaw(" id IN 
                 (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 )
                 ")
-            ->withTrashed()
+            // ->labUser()
             ->get();
 
         return view('forms.set_covidworksheet', $data)->with('pageTitle', 'Set Worksheet Details');
@@ -186,7 +189,7 @@ class CovidWorksheetController extends Controller
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
-        $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'));
+        $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'), $request->input('entered_by'));
 
         if($worksheet->combined && !$data['create']){
             $new_limit = $limit - $data['count'];
@@ -247,6 +250,12 @@ class CovidWorksheetController extends Controller
         else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
         }
+    }
+
+    public function find(CovidWorksheet $worksheet)
+    {
+        session(['toast_message' => 'Found 1 worksheet.']);
+        return $this->index(0, null, null, $worksheet->id);
     }
 
     /**
@@ -314,6 +323,7 @@ class CovidWorksheetController extends Controller
         return redirect("/covid_worksheet");
     }
 
+
     public function cancel_upload(CovidWorksheet $worksheet)
     {
         if($worksheet->status_id != 2){
@@ -334,7 +344,7 @@ class CovidWorksheetController extends Controller
             $sample->remove_rerun();
         }
 
-        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        CovidSample::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->update(['result' => null, 'interpretation' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'target1' => null, 'target2' => null, 'approvedby' => null]);
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
@@ -356,6 +366,7 @@ class CovidWorksheetController extends Controller
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
+
     public function save_results(Request $request, CovidWorksheet $worksheet)
     {
         if(!in_array($worksheet->status_id, [1, 4])){
@@ -372,7 +383,8 @@ class CovidWorksheetController extends Controller
         $today = $datemodified = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
-        $sample_array = $doubles = [];
+        $sample_array = $doubles = $wrong_worksheet = [];
+
 
         // C8800
         if($worksheet->machine_type == 3){
@@ -382,48 +394,48 @@ class CovidWorksheetController extends Controller
                 if(!isset($value[1])) break;
                 if($value[0] == 'Test') continue;
                 $sample_id = $value[1];
-                // $interpretation = $value[6];
+
 
                 $target1 = $value[6];
-                $target1 = $value[7];
+                $target2 = $value[7];
                 $flag = $value[3];
 
                 $result_array = MiscCovid::sample_result($target1, $target2, $flag);
 
+
+                MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['interpretation']);
+
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(str_contains($control, ['-'])){
-                        $negative_control = $result_array;                       
+                    if(str_contains($control, ['+'])){
+                        $positive_control = $result_array;                       
                     }else{
-                        $positive_control = $result_array; 
+                        $negative_control = $result_array; 
                     }
                     continue;
                 }
-
-                $data_array = array_merge(compact('datetested'), $result_array);
-
 
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
 
-                $sample->fill($data_array);
+                $sample->datetested = $datetested;
+                $sample->fill($result_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
+        }else{
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
+            return back();
         }
 
 
         if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
-        
-            Excel::create($file, function($excel) use($doubles){
-                $excel->sheet('Sheetname', function($sheet) use($doubles) {
-                    $sheet->fromArray($doubles);
-                });
-            })->download('csv');
+
+            MiscCovid::csv_download($doubles, $file);
         }
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);

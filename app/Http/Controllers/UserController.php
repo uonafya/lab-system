@@ -73,7 +73,9 @@ class UserController extends Controller
         })->get();*/
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
-        return view('forms.users', compact('accounts', 'partners'))->with('pageTitle', 'Add User');
+        $quarantine_sites = DB::table('quarantine_sites')->get();
+
+        return view('forms.users', compact('accounts', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -111,8 +113,10 @@ class UserController extends Controller
     public function show(User $user) {
 
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
+        $partners = DB::table('partners')->get();
+        $quarantine_sites = DB::table('quarantine_sites')->get();
 
-        return view('forms.users', compact('accounts', 'user'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -136,9 +140,8 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         if($request->input('password') == "") { // No password for edit
-            $userData = $request->only(['user_type_id','email','surname','oname','telephone']);
-            // $userData['user_type_id'] = $userData['user_type'];
-            // unset($userData['user_type']);
+
+            $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id']);
             
             $user = User::find($id);
             $user->fill($userData);

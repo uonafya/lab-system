@@ -21,6 +21,11 @@ class CovidPatient extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function quarantine_site()
+    {
+        return $this->belongsTo('App\QuarantineSite');
+    }
+
     public function sample()
     {
         return $this->hasMany('App\CovidSample', 'patient_id');
@@ -59,5 +64,10 @@ class CovidPatient extends BaseModel
         if($this->sex == 1){ return "Male"; }
         else if($this->sex == 2){ return "Female"; }
         else{ return "No Gender"; }
+    }
+
+    public function getCountyAttribute()
+    {
+        return County::find($this->county_id)->name ?? '';
     }
 }

@@ -125,6 +125,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\Facility');
     }
 
+    public function quarantine()
+    {
+        return $this->belongsTo('App\QuarantineSite', 'facility_id');
+    }
+
     public function set_last_access()
     {
         $this->last_access = date('Y-m-d H:i:s');
@@ -146,7 +151,31 @@ class User extends Authenticatable implements JWTSubject
 
     public function is_admin()
     {
-        if($this->user_type_id == 0 || $this->user_type_id == 2) return true;
+        if(in_array($this->user_type_id, [0, 2])) return true;
+        return false;
+    }
+
+    public function is_facility()
+    {
+        if(in_array($this->user_type_id, [5])) return true;
+        return false;
+    }
+
+    public function getQuarantineSiteAttribute()
+    {
+        if(in_array($this->user_type_id, [11])) return true;
+        return false;
+    }
+
+    public function getFacilityUserAttribute()
+    {
+        if(in_array($this->user_type_id, [5])) return true;
+        return false;
+    }
+
+    public function getLabUserAttribute()
+    {
+        if(in_array($this->user_type_id, [0,1,4])) return true;
         return false;
     }
 

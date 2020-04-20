@@ -3380,4 +3380,203 @@ class Random
         echo "==> Mailing excel";
         Mail::to(['bakasajoshua09@gmail.com', 'joshua.bakasa@dataposit.co.ke'])->send(new TestMail($data));
     }
+
+    public static function rectify()
+    {
+        $correction_classes = [
+                [
+                    'incomingclass' => \App\CorruptModels\Batch::class, 
+                    'restclass' => Batch::class, 
+                    'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralbatch::class, 
+                    'restclass' => Viralbatch::class, 
+                    'check_columns' => ['facility_id', 'datereceived', 'lab_id'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Sample::class,
+                    'restclass' => Sample::class, 
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralsample::class,
+                    'restclass' => Viralsample::class, 
+                    'check_columns' => ['patient_id', 'batch_id', 'created_at'],
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
+                    'restclass' => Abbotdeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotprocurement::class,
+                    'restclass' => Abbotprocurement::class,
+                    'check_columns' => ['year', 'month', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Abbotdeliveries::class,
+                    'restclass' => Abbotdeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmanprocurement::class,
+                    'restclass' => Taqmanprocurement::class,
+                    'check_columns' => ['year', 'month', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
+                    'restclass' => Taqmandeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Taqmandeliveries::class,
+                    'restclass' => Taqmandeliveries::class,
+                    'check_columns' => ['year', 'quarter', 'testtype']],
+                [
+                    'incomingclass' => \App\CorruptModels\LabEquipmentTracker::class,
+                    'restclass' => LabEquipmentTracker::class,
+                    'check_columns' => ['year', 'month', 'equipment_id']],
+                [
+                    'incomingclass' => \App\CorruptModels\LabPerformanceTracker::class,
+                    'restclass' => LabPerformanceTracker::class,
+                    'check_columns' => ['year', 'month', 'testtype', 'sampletype']],
+                [
+                    'incomingclass' => \App\CorruptModels\Patient::class,
+                    'restclass' => Patient::class,
+                    'check_columns' => ['facility_id', 'patient']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Viralpatient::class,
+                    'restclass' => Viralpatient::class,
+                    'check_columns' => ['facility_id', 'patient']
+                ], 
+                [
+                    'incomingclass' => \App\CorruptModels\Viralworksheet::class,
+                    'restclass' => Viralworksheet::class,
+                    'check_columns' => ['createdby', 'created_at']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Worksheet::class,
+                    'restclass' => Worksheet::class,
+                    'check_columns' => ['createdby', 'created_at']
+                ],
+                [
+                    'incomingclass' => \App\CorruptModels\Mother::class,
+                    'restclass' => Mother::class
+                ],
+        ];
+
+        echo "==>Begin transaction\n";
+
+        echo "==> Inserting the data\n";
+        foreach ($correction_classes as $key => $class) {
+            echo "==> Processing {$class['incomingclass']}\n";
+            $objects = self::process_incoming_model($class);
+            echo "\t{$class['incomingclass']} {$objects->count()} objects found\n";
+            $insertclass = $class['incomingclass'];          
+            foreach ($objects as $key => $model) {
+                $model->old_id = $model->id;
+                unset($model->id);
+                $save = self::format_for_and_save($model, $class, $insertclass);
+            }
+        }
+        echo "==> Correcting the reference ids\n";
+        echo "\tViralsample correction\n";
+        foreach (\App\CorruptModels\Viralsample::whereNotNull('old_id')->get() as $key => $sample) {
+            $sample->corrupt_version();
+        }
+
+        echo "\tSample correction\n";
+        foreach (\App\CorruptModels\Sample::whereNotNull('old_id')->get() as $key => $sample) {
+            $sample->corrupt_version();
+        }
+
+        echo "\tPatient correction\n";
+        foreach (\App\CorruptModels\Patient::whereNotNull('old_id')->get() as $key => $patient) {
+            $patient->corrupt_version();
+        }
+        echo "==> End transaction\n";
+    }
+
+    private static function process_incoming_model($class) {
+        $reference_date = '2020-03-25';
+        $modelclass = $class['restclass'];
+        $oldmodels = $modelclass::whereRaw("date(created_at) > '{$reference_date}'")->whereNull('old_id')->get();
+        return $oldmodels;
+    }
+
+    private static function format_for_and_save($model, $class, $insertclass) 
+    {
+        // $existingColumns = [];
+        // foreach ($class['check_columns'] as $key => $value) {
+        //     $existingColumns[] = $model->$value;
+        // }
+        // $existing = $insertclass::existing(...$existingColumns)->get();
+        // if ($existing->isEmpty()) {
+            self::save_missing_model($insertclass, $model);
+        // }
+        return true;
+    }
+
+    private static function save_missing_model($class, $model) {
+        // dd($class);
+        return $class::create($model->toArray());
+    }
+
+    public static function ampath_pmtct()
+    {
+        $file = public_path('ampath_pmtct.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Lab ID') continue;
+            $s = Viralsample::find($data[0]);
+            if(!$s) continue;
+
+            if(starts_with($data[3], 'N')) $s->pmtct = 3;
+            else if(starts_with($data[3], 'P')) $s->pmtct = 1;
+            else if(starts_with($data[3], 'B')) $s->pmtct = 2;
+            $s->pre_update();
+        }
+    }
+
+    public static function knh_samples()
+    {
+        // ALTER TABLE `covid_samples` ADD `justification` tinyint(4) NULL AFTER `test_type`;
+        $file = public_path('knh-samples.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Sample NO.') continue;
+            $p = CovidPatient::create([
+                'identifier' => $data[3],
+                'facility_id' => 3475,
+                'justification' => $data[8],
+            ]);
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'site_entry' => 1,
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => $data[11],
+            ]);
+        }
+    }
+
+    public static function old_id_column()
+    {
+        DB::statement('ALTER TABLE samples ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE viralsamples ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE patients ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE viralpatients ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE viralbatches ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE batches ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE worksheets ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE viralworksheets ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE abbotdeliveries ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE abbotprocurements ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE taqmandeliveries ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE taqmanprocurements ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE lab_equipment_trackers ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE lab_performance_trackers ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+        DB::statement('ALTER TABLE mothers ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
+    }
 }

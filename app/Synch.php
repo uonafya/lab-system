@@ -118,6 +118,11 @@ class Synch
 				'update_url' => 'update/covid_samples',
 				'delete_url' => 'delete/covid_samples',
 			],
+			'patients' => [
+				'class' => CovidPatient::class,
+				'update_url' => 'update/covid_patients',
+				'delete_url' => 'delete/covid_patients',
+			],
 
 		],
 
@@ -505,6 +510,9 @@ class Synch
 				$models = $update_class::where('synched', 2)
 										->when(($sample && in_array($type, ['eid', 'vl'])), function($query){
 							                return $query->with(['batch', 'patient']);
+										})
+										->when(($sample && in_array($type, ['covid'])), function($query){
+							                return $query->with(['patient']);
 										})->when($allocate, function($query){
 											return $query->with(array('details' => function($childquery){
 												return $childquery->where('synched', 2);
@@ -1258,7 +1266,7 @@ class Synch
 
 			$sample->synched = 1;
 			$sample->datesynched = $today;
-			$sample->national_sample_id = $sample_array[$sample->id];
+			$sample->national_sample_id = $sample_array->{'sample_' . $sample->id} ?? null;
 			$sample->save();
 
 
@@ -1270,7 +1278,7 @@ class Synch
 			foreach ($sample->child as $key => $child) {
 				$child->synched = 1;
 				$child->datesynched = $today;
-				$child->national_sample_id = $sample_array[$child->id];
+				$child->national_sample_id = $sample_array->{'sample_' . $child->id} ?? null;
 				$child->save();
 			}
 
