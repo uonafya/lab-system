@@ -52,25 +52,25 @@
 
                     @if(isset($create) && $create)
 
-                        @if (isset($worksheet))
-                            {{ Form::open(['url' => '/dr_extraction_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
-                        @else
-                            {{ Form::open(['url'=>'/dr_extraction_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
-                            <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
-                            <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
-                            <input type="hidden" value="{{ $limit }}" name="limit">
-                        @endif
+                        <form action="{{ url('dr_extraction_worksheet/' . ($worksheet->id ?? '')) }}" class="form-horizontal" method="POST" target="_blank">
+                            @csrf
+
+                            @empty($worksheet)
+                                @method('PUT')
+                                <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
+                                <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+                                <input type="hidden" value="{{ $limit }}" name="limit">
+
+                            @endempty
 
 
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-4">
-                                        <button class="btn btn-success" type="submit"
-
-                                        >Create Extraction Worksheet</button>
+                                        <button class="btn btn-success" type="submit">Create Extraction Worksheet</button>
                                     </div>
                                 </div>
 
-                        {{ Form::close() }}
+                        </form>
 
                     @else
 
