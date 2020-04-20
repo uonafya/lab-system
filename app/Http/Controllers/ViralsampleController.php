@@ -940,7 +940,7 @@ class ViralsampleController extends Controller
 
     public function site_sample_page()
     {
-        return view('forms.upload_site_samples', ['type' => 'viralload'])->with('pageTitle', 'Upload Facility Samples');
+        return view('forms.upload_site_samples', ['type' => 'viralsample'])->with('pageTitle', 'Upload Facility Samples');
     }
 
     public function upload_site_samples(Request $request)

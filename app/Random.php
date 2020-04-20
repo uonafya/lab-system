@@ -3520,6 +3520,47 @@ class Random
         return $class::create($model->toArray());
     }
 
+    public static function ampath_pmtct()
+    {
+        $file = public_path('ampath_pmtct.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Lab ID') continue;
+            $s = Viralsample::find($data[0]);
+            if(!$s) continue;
+
+            if(starts_with($data[3], 'N')) $s->pmtct = 3;
+            else if(starts_with($data[3], 'P')) $s->pmtct = 1;
+            else if(starts_with($data[3], 'B')) $s->pmtct = 2;
+            $s->pre_update();
+        }
+    }
+
+    public static function knh_samples()
+    {
+        // ALTER TABLE `covid_samples` ADD `justification` tinyint(4) NULL AFTER `test_type`;
+        $file = public_path('knh-samples.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Sample NO.') continue;
+            $p = CovidPatient::create([
+                'identifier' => $data[3],
+                'facility_id' => 3475,
+                'justification' => $data[8],
+            ]);
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'site_entry' => 1,
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => $data[11],
+            ]);
+        }
+    }
+
     public static function old_id_column()
     {
         DB::statement('ALTER TABLE samples ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');

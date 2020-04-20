@@ -12,6 +12,26 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
+
+		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
+		DB::statement("
+			CREATE TABLE `covid_test_types` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_test_types')->insert([
+			['id' => 1, 'name' => 'Initial Test'],
+			['id' => 2, 'name' => '1st Follow Up'],
+			['id' => 3, 'name' => '2nd Follow Up'],
+			['id' => 4, 'name' => '3rd Follow Up'],
+			['id' => 5, 'name' => '4th Follow Up'],
+			['id' => 6, 'name' => '5th Follow Up'],
+			['id' => 7, 'name' => 'Not Specified'],
+			['id' => 8, 'name' => 'Repeat'],
+		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
@@ -29,7 +49,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
 			['id' => 5, 'name' => 'KMTC Karen', 'email' => 'jeprosekip@gmail.com'],
 			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => ''],
-			['id' => 7, 'name' => "Nairobi Women's", 'email' => ''],
+			['id' => 7, 'name' => "Nairobi Women's", 'email' => 'alex.muruga@nwch.co.ke'],
 			['id' => 8, 'name' => 'LANCET', 'email' => ''],
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
 			['id' => 10, 'name' => 'Nairobi hospital', 'email' => 'alicekanyua@nbihosp.org'],
@@ -75,15 +95,17 @@ class CovidLookupSeeder extends Seeder
 			['id' => 50, 'name' => 'Migori county referral hospital', 'email' => ''],
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
-			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => 'martine.makanga@materkenya.com,mmuhati@materkenya.com'],
 			['id' => 54, 'name' => 'Sultan Hamud', 'email' => 'daviekiuluku@yahoo.com'],
 			['id' => 55, 'name' => 'Sheraton', 'email' => ''],
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => ''],
 			['id' => 57, 'name' => 'Pride Inn Azure', 'email' => ''],
-			// ['id' => 5, 'name' => '', 'email' => ''],
-			// ['id' => 5, 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 58, 'name' => 'Aga Khan Kisii', 'email' => ''],
+			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
+			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
+			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
+			['id' => 62, 'name' => 'Ngara', 'email' => ''],
+			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
@@ -91,7 +113,6 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("
@@ -110,7 +131,10 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => 'Repatriation'],
 			['id' => 6, 'name' => 'Other'],
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
+			['id' => 8, 'name' => 'Recent travel'],
+			['id' => 9, 'name' => 'Health Care Worker'],
 		]);
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("

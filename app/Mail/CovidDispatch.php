@@ -26,7 +26,7 @@ class CovidDispatch extends Mailable
      *
      * @return void
      */
-    public function __construct($samples, $quarantine_site)
+    public function __construct($samples, $quarantine_site=null)
     {
         $this->individual_path = storage_path('app/batches/covid/individual-results.pdf');
         $this->quarantine_site = $quarantine_site;

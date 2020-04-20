@@ -21,11 +21,8 @@
    <div class="content">
         <div>
 
-        @if(isset($type) && $type == 'viralload')
-            {{ Form::open(['url'=>'/viralsample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
-        @else
-            {{ Form::open(['url'=>'/sample/upload', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
-        @endif
+        <form method="POST" action="{{ url($url . '/upload') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
+            @csrf
 
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
@@ -67,7 +64,7 @@
             </div>
         </div>
 
-        {{ Form::close() }}
+        </form>
 
       </div>
     </div>
