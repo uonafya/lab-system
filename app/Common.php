@@ -150,7 +150,6 @@ class Common
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
-				// 'sender' => env('SMS_SENDER_ID'),
                 'apikey' => env('SMS_KEY'),
                 'shortcode' => env('SMS_SENDER_ID'),
                 'partnerID' => env('SMS_PARTNER_ID'),
@@ -160,9 +159,13 @@ class Common
 		]);
 
 		$body = json_decode($response->getBody());
-        if($response->getStatusCode() == 402) die();
+        // if($response->getStatusCode() == 402) die();
 		// if($response->getStatusCode() == 201){
         if($response->getStatusCode() < 300) return true;
+        else{
+        	echo "Status Code is " . $response->getStatusCode();
+        	echo $response->getBody();
+        }
 
 	}
 
