@@ -131,7 +131,7 @@ class Common
 	{
 		$client = new Client(['base_uri' => self::$sms_url]);
 
-		$response = $client->request('post', '', [
+		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
@@ -142,6 +142,19 @@ class Common
 				'message' => $message,
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
+			],
+		]);*/
+
+		$response = $client->request('post', '', [
+			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
+			'http_errors' => false,
+			'json' => [
+				// 'sender' => env('SMS_SENDER_ID'),
+                'apikey' => env('SMS_KEY'),
+                'shortcode' => env('SMS_SENDER_ID'),
+                'partnerID' => env('SMS_PARTNER_ID'),
+				'mobile' => $recepient,
+				'message' => $message,
 			],
 		]);
 
