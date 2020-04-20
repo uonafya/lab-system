@@ -30,6 +30,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => '4th Follow Up'],
 			['id' => 6, 'name' => '5th Follow Up'],
 			['id' => 7, 'name' => 'Not Specified'],
+			['id' => 8, 'name' => 'Repeat'],
 		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
@@ -94,15 +95,17 @@ class CovidLookupSeeder extends Seeder
 			['id' => 50, 'name' => 'Migori county referral hospital', 'email' => ''],
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
-			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => ''],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => 'martine.makanga@materkenya.com,mmuhati@materkenya.com'],
 			['id' => 54, 'name' => 'Sultan Hamud', 'email' => 'daviekiuluku@yahoo.com'],
 			['id' => 55, 'name' => 'Sheraton', 'email' => ''],
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => ''],
 			['id' => 57, 'name' => 'Pride Inn Azure', 'email' => ''],
-			// ['id' => 5, 'name' => '', 'email' => ''],
-			// ['id' => 5, 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 58, 'name' => 'Aga Khan Kisii', 'email' => ''],
+			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
+			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
+			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
+			['id' => 62, 'name' => 'Ngara', 'email' => ''],
+			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
@@ -110,7 +113,6 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("
@@ -129,7 +131,10 @@ class CovidLookupSeeder extends Seeder
 			['id' => 5, 'name' => 'Repatriation'],
 			['id' => 6, 'name' => 'Other'],
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
+			['id' => 8, 'name' => 'Recent travel'],
+			['id' => 9, 'name' => 'Health Care Worker'],
 		]);
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
