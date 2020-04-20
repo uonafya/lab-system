@@ -116,7 +116,7 @@ class CovidReportsController extends Controller
 	{
 		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
-				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
+				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
 		$count = 1;
 		foreach ($alldata as $key => $row) {
@@ -152,6 +152,7 @@ class CovidReportsController extends Controller
 			"",
 			$sample->patient->quarantine_site->name ?? '',
 			"",
+			$sample->worksheet_id ?? '',
 			$sample->datecollected ?? '',
 			$sample->datetested ?? '',
 			$sample->result_name,
