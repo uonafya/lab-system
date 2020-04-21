@@ -55,9 +55,8 @@ class DrExtractionWorksheet extends BaseModel
     public function runFailed()
     {
         $samples = $this->sample()->where(['passed_gel_documentation' => false])->get();
-        // if($samples->)
-        foreach ($samples as $key => $value) {
-            # code...
+        foreach ($samples as $key => $sample) {
+            $sample->create_vl_sample();
         }
     }
 }

@@ -160,6 +160,23 @@ class DrSample extends BaseModel
         $this->save();
     }
 
+    public function create_vl_sample()
+    {
+        if($this->passed_gel_documentation != 0) return false;
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        if($sample) return false;
+
+        $batch = new Viralbatch;
+        $batch->fill($this->only(['facility_id', 'datereceived', 'user_id', 'lab_id', 'received_by',]));
+        $batch->save();
+
+        $sample = new Viralsample;
+        $sample->fill($this->only(['patient_id', 'datecollected', 'receivedstatus', 'prophylaxis']));
+        $sample->batch_id = $batch->id;
+        $sample->save();
+        return $sample;
+    }
+
 
 
 
