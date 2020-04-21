@@ -180,7 +180,8 @@ class DrWorksheetController extends Controller
 
         foreach ($samples as $key => $sample) {
             $data[] = [
-                'Patient ID' => $sample->patient->nat ?? $sample->patient->patient,
+                'NAT ID' => $sample->patient->nat,
+                'Patient CCC' => $sample->patient->patient,
                 'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
                 'Full Name' => $sample->patient->patient_name,
                 'DOB' => $sample->patient->dob,

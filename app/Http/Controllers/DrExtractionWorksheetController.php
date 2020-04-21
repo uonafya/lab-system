@@ -198,4 +198,13 @@ class DrExtractionWorksheetController extends Controller
         return back();
         // return redirect("/worksheet");
     }
+
+    public function vl_worksheet(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $samples = $drExtractionWorksheet->sample()->where(['passed_gel_documentation' => false])->get();
+
+        foreach ($variable as $key => $value) {
+            # code...
+        }
+    }
 }
