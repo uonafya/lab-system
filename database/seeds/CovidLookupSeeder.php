@@ -106,7 +106,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
 			['id' => 62, 'name' => 'Ngara', 'email' => ''],
 			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 64, 'name' => 'New Life Home Trust', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
