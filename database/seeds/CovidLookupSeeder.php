@@ -48,7 +48,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 3, 'name' => 'Kenya School of Government - (KSG)', 'email' => ''],
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
 			['id' => 5, 'name' => 'KMTC Karen', 'email' => 'jeprosekip@gmail.com'],
-			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => 'matilu.mwau@gmail.com,limbaso@gmail.com'],
+			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => 'abukardug@gmail.com'],
 			['id' => 7, 'name' => "Nairobi Women's", 'email' => 'alex.muruga@nwch.co.ke'],
 			['id' => 8, 'name' => 'LANCET', 'email' => ''],
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
