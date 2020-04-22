@@ -54,7 +54,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
 			['id' => 10, 'name' => 'Nairobi hospital', 'email' => 'alicekanyua@nbihosp.org'],
 			['id' => 11, 'name' => 'Nairobi West', 'email' => ''],
-			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => ''],
+			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => 'cliffmomanyimogeni@gmail.com'],
 			['id' => 13, 'name' => 'NHPLS', 'email' => ''],
 			['id' => 14, 'name' => 'Meru TRH', 'email' => ''],
 			['id' => 15, 'name' => 'MP Shah hospital', 'email' => 'vpatel@mpshahhospital.org'],
