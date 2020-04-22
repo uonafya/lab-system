@@ -926,7 +926,6 @@ class ViralworksheetController extends Controller
                 if(is_array($worksheet_id)) return $query->whereIn('worksheet_id', $worksheet_id);
                 return $query->where('worksheet_id', $worksheet_id);
             })
-            ->whereNotNull('worksheet_id')
             ->where('site_entry', '!=', 2)
             ->where('receivedstatus', '!=', 2)
             ->when(true, function($query) use ($result){
