@@ -104,7 +104,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
 			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
-			['id' => 62, 'name' => 'Ngara', 'email' => ''],
+			['id' => 62, 'name' => 'Ngara', 'email' => 'nmmarebe@gmail.com,koyiolucina@yahoo.co.uk,ngunucarol@yahoo.com'],
 			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 64, 'name' => 'New Life Home Trust', 'email' => 'janet.mutinda@newlifehometrust.org'],
 			// ['id' => , 'name' => '', 'email' => ''],
