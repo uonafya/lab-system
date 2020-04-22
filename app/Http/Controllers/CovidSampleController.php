@@ -207,7 +207,7 @@ class CovidSampleController extends Controller
         }
         $lab = \App\Lab::find(env('APP_LAB'));
 
-        if(in_array(env('APP_LAB'), [5]) || (env('APP_LAB') == 1) && $quarantine_site->email == ''){
+        if(in_array(env('APP_LAB'), [5]) || (env('APP_LAB') == 1 && $quarantine_site->email == '')){
             $mail_array = explode(',', $lab->cc_emails);
             Mail::to($mail_array)->send(new CovidDispatch($samples));
         }else{
