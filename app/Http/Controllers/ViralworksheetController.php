@@ -64,7 +64,7 @@ class ViralworksheetController extends Controller
 
         $data = Lookup::worksheet_lookups();
 
-        $ids = $worksheets->pluck(['id'])->toArray();
+        $ids = $worksheets->pluck('id')->flatten()->toArray();
 
         $data['noresult'] = $this->get_worksheet_results(0, $ids);
         $data['failed'] = $this->get_worksheet_results(3, $ids);
