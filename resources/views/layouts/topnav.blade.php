@@ -80,6 +80,9 @@
                         <li class="">
                             <a href="{{ url('covidreports') }}">Reports</a>
                         </li>
+                        <li class="">
+                            <a href="{{ url('covidkits/reports') }}">Kits</a>
+                        </li>
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                             @if (Auth::user()->user_type_id == 5)
@@ -225,6 +228,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('covidreports') }}">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covidkits/reports') }}">Kits</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">

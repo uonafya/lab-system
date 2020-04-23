@@ -53,6 +53,11 @@ class CovidConsumptionController extends Controller
     	
     }
 
+    public function reports(Request $request)
+    {
+    	return view('reports.covidconsumption', ['consumptions' => CovidConsumption::get()]);
+    }
+
     private function buildConsumptionData($request)
     {
     	$datacolumns = $request->only(["kits_used","begining_balance","received","positive",
