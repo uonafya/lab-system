@@ -26,7 +26,7 @@ class CovidDispatch extends Mailable
      *
      * @return void
      */
-    public function __construct($samples, $quarantine_site)
+    public function __construct($samples, $quarantine_site=null)
     {
         $this->individual_path = storage_path('app/batches/covid/individual-results.pdf');
         $this->quarantine_site = $quarantine_site;
@@ -39,6 +39,7 @@ class CovidDispatch extends Mailable
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "5000000");
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
     }

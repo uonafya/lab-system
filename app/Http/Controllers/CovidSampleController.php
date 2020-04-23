@@ -59,10 +59,10 @@ class CovidSampleController extends Controller
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
-            ->orderBy('covid_sample_view.id', 'desc')
-            ->when(($user->facility_user == 5), function($query) use ($user){
+            ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
+            ->orderBy('covid_sample_view.id', 'desc')
             ->paginate();
 
         $samples->setPath(url()->current());
@@ -162,12 +162,12 @@ class CovidSampleController extends Controller
     public function email_multiple($request)
     {
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
-        if(!$quarantine_site_id){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [5])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site->email == ''){
+        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [1, 5])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
@@ -205,10 +205,20 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'No samples found']);
             return back(); 
         }
+        $lab = \App\Lab::find(env('APP_LAB'));
 
-        $mail_array = explode(',', $quarantine_site->email);
-        Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
-        // Mail::to(['joelkith@gmail.com'])->send(new CovidDispatch($samples, $quarantine_site));
+        if(in_array(env('APP_LAB'), [5]) || (env('APP_LAB') == 1 && $quarantine_site->email == '')){
+            $mail_array = explode(',', $lab->cc_emails);
+            Mail::to($mail_array)->send(new CovidDispatch($samples));
+        }else{
+            $mail_array = explode(',', $quarantine_site->email);
+            if($lab->cc_emails){
+                $cc_array = explode(',', $lab->cc_emails);
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }else{
+                Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }
+        }
         session(['toast_message' => 'The results have been sent to the quarantine site.']);
         return back();            
     }
@@ -276,16 +286,16 @@ class CovidSampleController extends Controller
         $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
             ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
-            ->when(($user->user_type_id == 5), function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
-            })
             ->when(true, function($query) use ($covidSample){
                 if($covidSample->parentid){
                     return $query->whereRaw(" (covid_sample_view.id = {$covidSample->parentid} OR parentid = {$covidSample->parentid})");
                 }else{
                     return $query->whereRaw(" (covid_sample_view.id = {$covidSample->id} OR parentid = {$covidSample->id})");
                 }
-            })  
+            }) 
+            ->when($user->facility_user, function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            }) 
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })          
@@ -369,6 +379,52 @@ class CovidSampleController extends Controller
         $covidSample->delete();
         session(['toast_message' => 'The sample has been deleted.']);
         return back();
+    }
+
+
+    public function site_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample'])->with('pageTitle', 'Upload Facility Samples');
+    }
+
+    public function upload_site_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if(starts_with($data[0], ['S', 's'])) continue;
+
+            $facility = Facility::locate($data[3])->first();
+            // if(!$facility) continue;
+
+            $p = CovidPatient::create([
+                'identifier' => $data[3],
+                'facility_id' => $facility->id ?? 3475,
+                'patient_name' => $data[5],
+                'sex' => $data[7],
+                'justification' => $data[8],
+            ]);
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'site_entry' => 1,
+                'age' => $data[6],
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => $data[11],
+                'datereceived' => $data[12] ?? date('Y-m-d'),
+                'receivedstatus' => $data[13] ?? 1,
+                'received_by' => auth()->user()->id,
+            ]);
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
     }
 
 

@@ -188,6 +188,12 @@
                 @endif
             @endif
             @if (session('testingSystem') == 'Covid')
+                @if(in_array(env('APP_LAB'), [8, 9]))
+                    <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />
+                @endif
+                <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
+                <hr />
                 <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
@@ -288,19 +294,26 @@
             </li>
             <hr>
             <li>
-                <a href="http://lab-2.test.nascop.org/download/poc">POC User Guide</a>
+                <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
             </li>
             <li>
-                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
+                <a href="https://eiddash.nascop.org/download/poc">POC User Guide</a>
             </li>
             <li>
-                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+                <a href="https://eiddash.nascop.org/download/eid_req">EID Form</a>
             </li>
             <li>
-                <a href="http://lab-2.test.nascop.org/download/remotelogin">Remote Login SOP</a>
+                <a href="https://eiddash.nascop.org/download/vl_req">VL Form</a>
+            </li>
+            <li>
+                <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
         @elseif (Auth::user()->quarantine_site)
+            <li>
+                <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
+            </li>
+            <hr />
             <li>
                 <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
             </li>
@@ -318,10 +331,10 @@
             <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
             <hr />
             <li>
-                <a href="http://lab-2.test.nascop.org/download/eid_req">EID Form</a>
+                <a href="https://eiddash.nascop.org/download/eid_req">EID Form</a>
             </li>
             <li>
-                <a href="http://lab-2.test.nascop.org/download/vl_req">VL Form</a>
+                <a href="https://eiddash.nascop.org/download/vl_req">VL Form</a>
             </li>
             <hr />
         
@@ -483,7 +496,10 @@
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
-            @if(Auth::user()->user_type_id == 5)
+            @if(Auth::user()->facility_user)
+                <!-- Covid Searches -->
+                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li> 
                 <!-- EID Searches -->
                 <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
@@ -497,7 +513,7 @@
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
                 @if(session('testingSystem') == 'Viralload')
-                    <li><a href="http://lab-2.test.nascop.org/download/vl_req">Download VL Form</a></li>
+                    <li><a href="https://eiddash.nascop.org/download/vl_req">Download VL Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
@@ -507,7 +523,7 @@
                         <li><a href="#"><select class="form-control" id="sidebar_viral_order_no_search"></select></a></li>
                     @endif
                 @elseif(session('testingSystem') == 'EID')
-                    <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li>
+                    <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
@@ -517,7 +533,7 @@
                         <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
                     @endif
                 @elseif(session('testingSystem') == 'Covid')
-                    <!-- <li><a href="http://lab-2.test.nascop.org/download/eid_req">Download EID Form</a></li> -->
+                    <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
