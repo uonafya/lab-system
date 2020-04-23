@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
+use App\CovidSample;
 use DB;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,11 @@ class CovidConsumptionController extends Controller
 {
     public function index()
     {
-    	return view('tasks.covid.consumption', ['covidkits' => CovidKit::get(), 'tests' => 2000]);
+    	$time = $this->getPreviousWeek();
+    	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
+    	return view('tasks.covid.consumption',
+    		['covidkits' => CovidKit::get(),
+    		'tests' => $tests]);
     }
 
     public function submitConsumption(Request $request)
