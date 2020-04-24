@@ -29,56 +29,59 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        {{ Form::open(['url' => '/dr_extraction_worksheet/gel_documentation/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
-                        <table class="table table-striped table-bordered table-hover" >
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th id="check_all">Passed (Check All)</th>
-                                    <th>Collect New Sample</th>
-                                    <th>Sample Type</th>
-                                    <th>Sample Code / Patient ID</th>
-                                    <th>Facility</th>
-                                    <th>Lab ID</th>
-                                    <th>Date Received</th>
-                                    <th>Reason</th>
-                                    <th>Patient History</th>
-                                </tr>
-                            </thead>
-                            <tbody> 
-                                @foreach($samples as $key => $sample)
+                        <form action="{{ url('dr_extraction_worksheet/gel_documentation/' . ($worksheet->id ?? '')) }}" class="form-horizontal" method="POST" target="_blank">
+                            @csrf
+                            @method('PUT')
+                            <table class="table table-striped table-bordered table-hover" >
+                                <thead>
                                     <tr>
-                                        <td> {{ $key+1 }} </td>
-                                        <td>
-                                            <div align='center'>
-                                                <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' 
-                                                    @if($sample->passed_gel_documentation)
-                                                        checked='checked'
-                                                    @endif
-                                                />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div align='center'>
-                                                <input name='cns[]' type='checkbox' class='other_checks' value='{{ $sample->id }}' />
-                                            </div>
-                                        </td>
-                                        <td> {{ $sample->control_type }} </td>
-                                        <td> {{ $sample->patient ?? '' }} </td>
-                                        <td> {{ $sample->facilityname ?? '' }} </td>
-                                        <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->my_date_format('datereceived') }} </td>
-                                        <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
-                                        <td>
-                                            <a href="{{ url('viralpatient/' . $sample->patient_id) }}" target="_blank">
-                                                View History 
-                                            </a> 
-                                        </td>
+                                        <th>#</th>
+                                        <th id="check_all">Passed (Check All)</th>
+                                        <th>Collect New Sample</th>
+                                        <th>Sample Type</th>
+                                        <th>Sample Code / Patient ID</th>
+                                        <th>Facility</th>
+                                        <th>Lab ID</th>
+                                        <th>Date Received</th>
+                                        <th>Reason</th>
+                                        <th>Patient History</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <button class="btn btn-success" type="submit">Proceed to Submit Gel Documentation</button>
+                                </thead>
+                                <tbody> 
+                                    @foreach($samples as $key => $sample)
+                                        <tr>
+                                            <td> {{ $key+1 }} </td>
+                                            <td>
+                                                <div align='center'>
+                                                    <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' 
+                                                        @if($sample->passed_gel_documentation)
+                                                            checked='checked'
+                                                        @endif
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div align='center'>
+                                                    <input name='cns[]' type='checkbox' class='other_checks' value='{{ $sample->id }}' />
+                                                </div>
+                                            </td>
+                                            <td> {{ $sample->control_type }} </td>
+                                            <td> {{ $sample->patient ?? '' }} </td>
+                                            <td> {{ $sample->facilityname ?? '' }} </td>
+                                            <td> {{ $sample->id }} </td>
+                                            <td> {{ $sample->my_date_format('datereceived') }} </td>
+                                            <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
+                                            <td>
+                                                <a href="{{ url('viralpatient/' . $sample->patient_id) }}" target="_blank">
+                                                    View History 
+                                                </a> 
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <button class="btn btn-success" type="submit">Proceed to Submit Gel Documentation</button>
+                        </form>
                     </div>
                 </div>
             </div>
