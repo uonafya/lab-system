@@ -56,7 +56,6 @@
                             @csrf
 
                             @empty($worksheet)
-                                @method('PUT')
                                 <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                                 <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
                                 <input type="hidden" value="{{ $limit }}" name="limit">
