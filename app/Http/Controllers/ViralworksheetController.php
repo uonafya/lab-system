@@ -56,7 +56,7 @@ class ViralworksheetController extends Controller
                 }
                 return $query->whereDate('viralworksheets.created_at', $date_start);
             })
-            ->orderBy('viralworksheets.created_at', 'desc')
+            ->orderBy('viralworksheets.id', 'desc')
             ->groupBy('viralworksheets.id')
             ->paginate();
 
