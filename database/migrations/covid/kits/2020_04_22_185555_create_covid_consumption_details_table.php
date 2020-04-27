@@ -25,6 +25,8 @@ class CreateCovidConsumptionDetailsTable extends Migration
             $table->integer('wastage')->default(0);
             $table->integer('ending')->default(0);
             $table->integer('requested')->default(0);
+            $table->tinyInteger('synced')->default(0);
+            $table->date('datesynced')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

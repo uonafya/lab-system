@@ -19,6 +19,8 @@ class CreateCovidConsumptionsTable extends Migration
             $table->date('end_of_week');
             $table->integer('week');
             $table->integer('lab_id');
+            $table->tinyInteger('synced')->default(0);
+            $table->date('datesynced')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
