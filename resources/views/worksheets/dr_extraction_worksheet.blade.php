@@ -58,7 +58,6 @@ width:1180px;
 			<tr>
 				@foreach($samples as $sample)
 
-					@include('shared/worksheet_sample', ['sample' => $sample, 'i' => ++$i])
 
 					@if($sample->control == 1)
 						Negative Control
