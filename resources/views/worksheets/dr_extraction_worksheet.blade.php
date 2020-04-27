@@ -60,9 +60,9 @@ width:1180px;
 
 					<td>
 						@if($sample->control == 1)
-							Negative Control
+							Negative Control <br />
 						@elseif($sample->control == 2)
-							Positive Control
+							Positive Control <br />
 						@else
 							CCC - {{ $sample->patient->patient ?? '' }} <br />
 							Nat - {{ $sample->patient->nat ?? '' }} <br />
