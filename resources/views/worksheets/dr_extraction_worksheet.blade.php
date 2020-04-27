@@ -58,18 +58,19 @@ width:1180px;
 			<tr>
 				@foreach($samples as $sample)
 
+					<td>
+						@if($sample->control == 1)
+							Negative Control
+						@elseif($sample->control == 2)
+							Positive Control
+						@else
+							CCC - {{ $sample->patient->patient ?? '' }} <br />
+							Nat - {{ $sample->patient->nat ?? '' }} <br />
+							Date Received - {{ $sample->my_date_format('datereceived') }} <br />
+						@endif
 
-					@if($sample->control == 1)
-						Negative Control
-					@elseif($sample->control == 2)
-						Positive Control
-					@else
-						CCC - {{ $sample->patient->patient ?? '' }} <br />
-						Nat - {{ $sample->patient->nat ?? '' }} <br />
-						Date Received - {{ $sample->my_date_format('datereceived') }} <br />
-					@endif
-
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+					</td>
 
 					@php $count++; @endphp
 
