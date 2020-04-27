@@ -90,39 +90,20 @@ class DrExtractionWorksheetController extends Controller
      * @param  \App\DrExtractionWorksheet  $drExtractionWorksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(DrExtractionWorksheet $drExtractionWorksheet)
+    public function show(DrExtractionWorksheet $drExtractionWorksheet, $print=false)
     {
-
         $drExtractionWorksheet->load(['creator']);
-        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
         
-        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
-                    ->with(['patient', 'batch.facility'])
-                    ->select('viralsamples.*', 'viralbatches.facility_id')
-                    ->whereIn('viralsamples.id', $sample_array)
-                    ->orderBy('run', 'desc')
-                    ->when(true, function($query){
-                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
-                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
-                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
-                    })
-                    ->orderBy('viralsamples.id', 'asc')
+        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id])
+                    ->orderBy('control', 'desc')
+                    ->orderBy('id', 'asc')
                     ->get();
 
-        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
+        $data = ['worksheet' => $drExtractionWorksheet, 'samples' => $samples, 'i' => 0, 'count' => 0];
 
         if($print) $data['print'] = true;
 
-        if($Viralworksheet->machine_type == 1){
-            return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
-        }
-        else if($Viralworksheet->machine_type == 3){
-            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
-        }
-        else{
-            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
-        }
+        return view('worksheets.dr_extraction_worksheet', $data)->with('pageTitle', 'Other Worksheets');
     }
 
     /**
@@ -157,6 +138,12 @@ class DrExtractionWorksheetController extends Controller
     public function destroy(DrExtractionWorksheet $drExtractionWorksheet)
     {
         //
+    }
+
+
+    public function print(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        return $this->show($drExtractionWorksheet, true);
     }
 
     /**
