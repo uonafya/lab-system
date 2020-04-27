@@ -14,7 +14,6 @@ labexec="kubectl exec -it lab-app-app-deployment --container app -n lab-app -- p
 
 5 * * * * $labexec compute:tat5 2>&1
 
-
 0 3 * * * $labexec input-complete 2>&1
 0 3 * * * $labexec transfer:missing-samples 2>&1
 10 3 * * * $labexec reject:missing-samples 2>&1
