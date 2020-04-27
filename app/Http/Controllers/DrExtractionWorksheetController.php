@@ -192,7 +192,7 @@ class DrExtractionWorksheetController extends Controller
             ];
         }
 
-        $filename = 'bulk_template_' . $worksheet->id . '.csv';
+        $filename = 'bulk_template_extraction_' . $drExtractionWorksheet->id . '.csv';
 
         MiscDr::downloadCSV($data, $filename);
 
