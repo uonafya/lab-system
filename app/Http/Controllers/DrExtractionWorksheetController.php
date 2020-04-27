@@ -158,7 +158,7 @@ class DrExtractionWorksheetController extends Controller
     {
         //
     }
-    
+
     /**
      * Download the specified resource as csv.
      *
@@ -167,7 +167,7 @@ class DrExtractionWorksheetController extends Controller
      */
     public function download(DrExtractionWorksheet $drExtractionWorksheet)
     {
-        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id])->get();
+        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id, 'control' => 0])->get();
         $data = [];
 
         foreach ($samples as $key => $sample) {
