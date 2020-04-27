@@ -326,6 +326,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('create/{limit}', 'DrExtractionWorksheetController@create')->name('create_any');
 			Route::get('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation_form')->name('upload');
 			Route::put('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation')->name('upload');
+			Route::get('download/{drExtractionWorksheet}', 'DrExtractionWorksheetController@download')->name('download');
 
 			Route::get('cancel/{drExtractionWorksheet}', 'DrExtractionWorksheetController@cancel')->name('cancel');
 

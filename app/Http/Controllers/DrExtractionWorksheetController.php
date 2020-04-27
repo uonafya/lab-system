@@ -92,7 +92,37 @@ class DrExtractionWorksheetController extends Controller
      */
     public function show(DrExtractionWorksheet $drExtractionWorksheet)
     {
-        //
+
+        $drExtractionWorksheet->load(['creator']);
+        $sample_array = ViralsampleView::select('id')->where('worksheet_id', $Viralworksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        // $samples = Viralsample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        
+        $samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                    ->with(['patient', 'batch.facility'])
+                    ->select('viralsamples.*', 'viralbatches.facility_id')
+                    ->whereIn('viralsamples.id', $sample_array)
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    })
+                    ->orderBy('viralsamples.id', 'asc')
+                    ->get();
+
+        $data = ['worksheet' => $Viralworksheet, 'samples' => $samples, 'i' => 0];
+
+        if($print) $data['print'] = true;
+
+        if($Viralworksheet->machine_type == 1){
+            return view('worksheets.other-table', $data)->with('pageTitle', 'Other Worksheets');
+        }
+        else if($Viralworksheet->machine_type == 3){
+            return view('worksheets.c-8800', $data)->with('pageTitle', 'C8800 Worksheets');
+        }
+        else{
+            return view('worksheets.abbot-table', $data)->with('pageTitle', 'Abbot Worksheets');
+        }
     }
 
     /**
@@ -127,6 +157,50 @@ class DrExtractionWorksheetController extends Controller
     public function destroy(DrExtractionWorksheet $drExtractionWorksheet)
     {
         //
+    }
+    
+    /**
+     * Download the specified resource as csv.
+     *
+     * @param  \App\DrWorksheet $worksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function download(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id])->get();
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'NAT ID' => $sample->patient->nat,
+                'Patient CCC' => $sample->patient->patient,
+                'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
+                'Full Name' => $sample->patient->patient_name,
+                'DOB' => $sample->patient->dob,
+                'Sex' => $sample->patient->gender,
+                'Date of Sample Collection' => $sample->datecollected,
+                'Sample Type' => Lookup::retrieve_val('sample_types', $sample->sampletype),
+                'Most Current HIV VL Result (copies/mL)' => $sample->vl_result1,
+                'Most Current HIV VL Result Date' => $sample->vl_date_result1,
+                'Patient Regimen' => Lookup::retrieve_val('prophylaxis', $sample->prophylaxis),
+                'Most Recent CD4 Count' => $sample->cd4_result,
+                'Patient Current Age' => $sample->age,
+                'Amount' => $sample->sample_amount,
+                'Amount Unit' => Lookup::retrieve_val('amount_units', $sample->amount_unit),
+                'Container Type' => Lookup::retrieve_val('container_types', $sample->container_type),
+                'Location Barcode' => '',
+            ];
+        }
+
+        $filename = 'bulk_template_' . $worksheet->id . '.csv';
+
+        MiscDr::downloadCSV($data, $filename);
+
+        /*Excel::create($filename, function($excel) use($data){
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');*/
     }
 
 
