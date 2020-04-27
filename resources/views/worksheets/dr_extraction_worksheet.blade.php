@@ -70,6 +70,7 @@ width:1180px;
 						@endif
 
 						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" height="30" width="80"  />
+						{{ $sample->id }}
 					</td>
 
 					@php $count++; @endphp

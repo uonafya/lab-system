@@ -112,6 +112,9 @@
                                         <a href="{{ url('dr_extraction_worksheet/download/' . $worksheet->id) }}" title="Click to Download Worksheet">
                                             Download Bulk Template
                                         </a> | 
+                                        <a href="{{ url('dr_extraction_worksheet/print/' . $worksheet->id) }}" title="Click to Print Worksheet">
+                                            Print
+                                        </a> | 
 
                                         @if($worksheet->date_gel_documentation)
                                             @if($worksheet->status_id != 3 && $worksheet->sequencing)
