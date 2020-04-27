@@ -160,7 +160,7 @@ class Common
 		]);*/
 
 		$body = json_decode($response->getBody());
-        if($response->getStatusCode() > 399) dd(json_decode($body));
+        if($response->getStatusCode() > 399) dd($body);
         return true;
 		// if($response->getStatusCode() == 201){
         if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
