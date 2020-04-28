@@ -45,7 +45,7 @@ class WorksheetController extends Controller
             }
             return $query->whereDate('worksheets.created_at', $date_start);
         })
-        ->orderBy('worksheets.created_at', 'desc')
+        ->orderBy('worksheets.id', 'desc')
         ->paginate();
 
         $worksheets->setPath(url()->current());
