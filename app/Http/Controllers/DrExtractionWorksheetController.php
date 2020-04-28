@@ -233,7 +233,9 @@ class DrExtractionWorksheetController extends Controller
 
         foreach ($samples as $key => $sample){
             $sample->passed_gel_documentation = 0;
-            $sample->create_rerun();
+            // $sample->create_rerun();
+            $sample->save();
+            $sample->create_vl_sample();
         }
 
         session(['toast_message' => 'Gel documentation has been submitted.']);

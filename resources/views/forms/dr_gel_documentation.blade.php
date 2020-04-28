@@ -11,7 +11,7 @@
 
         <div class="alert alert-success">
             <center>
-                All samples that are not selected as passed and are not marked as collect new sample will be sent for rerun.
+                All samples that are not selected as passed and are not marked as collect new sample will be sent for rerun as a VL sample.
             </center>
         </div>        
         <br />
