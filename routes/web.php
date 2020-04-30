@@ -177,6 +177,12 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('/', 'CovidReportsController@generate')->name('generate');
 	});
 
+	Route::prefix('covidkits')->name('covidkits.')->group(function() {
+		Route::get('/', 'CovidConsumptionController@index');
+		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
+		Route::get('reports', 'CovidConsumptionController@reports');
+	});
+
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){
 			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');

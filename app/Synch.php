@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use DB;
 
+use App\CovidConsumption;
+use App\CovidConsumptionDetail;
 use App\Sample;
 use App\Batch;
 use App\Patient;
@@ -27,6 +29,7 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
 	public static $synch_arrays = [
@@ -210,7 +213,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
-            'debug' => false,
+            'debug' => true,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -220,7 +223,9 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
-		if($status_code > 399)  die();
+		if($status_code > 399)
+			return json_decode($response->getBody());
+
 		$body = json_decode($response->getBody());
 		// dd($body);
 		Cache::store('file')->put('api_token', $body->token, 60);
@@ -1684,6 +1689,42 @@ class Synch
 			}
 		}
 		return $body;
+	}
+
+	public static function synchCovidConsumption()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$today = date('Y-m-d');
+
+		$url = 'insert/covidconsumption';
+		
+		while (true) {
+			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
+			
+			if($consumptions->isEmpty())
+				break;
+			
+			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'debug' => false,
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'consumptions' => $consumptions->toJson()
+				],
+
+			]);
+			
+			$body = json_decode($response->getBody());
+			foreach ($body as $key => $consumption) {
+				$covidconsumption = CovidConsumption::find($consumption->original_id);
+				$covidconsumption->synchComplete();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private static function sendAllocationReviewEmail()
