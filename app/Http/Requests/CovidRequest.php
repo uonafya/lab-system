@@ -19,6 +19,7 @@ class CovidRequest extends BaseRequest
         if($this->input('facility_id') == 7148 || $this->input('receivedstatus') == 2 || $this->input('submit_type') == 'cancel') return [];
 
         $rules = Config::get('boilerplate.covid'); 
+        $received = Config::get('boilerplate.lab_user'); 
 
         $user  = auth()->user();
 
