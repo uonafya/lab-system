@@ -67,28 +67,31 @@
                                 $kitsused = $kit->computekitsUsed($tests);
                             @endphp
                             <td>                            
-                                <input class="form-control" type="number" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" required]>
+                                <input class="form-control" type="number" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" disabled="true">
+                                <input type="hidden" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}">
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}" required>
+                                <input class="form-control" type="number" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}" min="0" disabled="true">
+                                <input type="hidden" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}">
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="positive[{{$kit->material_no}}]" id="positive[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control positive" type="number" name="positive[{{$kit->material_no}}]" id="positive[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="negative[{{$kit->material_no}}]" id="negative[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control negative" type="number" name="negative[{{$kit->material_no}}]" id="negative[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance()-$kitsused)}}" min="0" disabled="true">
+                                <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance()-$kitsused)}}">
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="10" required>
+                                <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                         </tr>
                     @endforeach
@@ -129,17 +132,46 @@
     @endcomponent
     <script type="text/javascript">
         $(function(){
-            $("#platform").change(function(){
-                platform = $(this).val();
+            // Observe changes on received kits
+            $(".received").change(function(){
+                var received = $(this).get(0).id;
+                var receivedval = $(this).val();
+                // console.log(receivedval);
+                updateendingbalance("received", received, receivedval);
+            });
 
-                if (platform == 1) {
-                    $("#abbott").hide();
-                    $("#taqman").show();
-                } else if (platform == 2) {
-                    $("#taqman").hide();
-                    $("#abbott").show();
-                }
+            // Observe changes on the positive kits
+            $(".positive").change(function(){
+                var positive = $(this).get(0).id;
+                var positiveval = $(this).val();
+                updateendingbalance("positive", positive, positiveval);
+            });
+
+            // Observe changes on the negatiive kits
+            $(".negative").change(function(){
+                var negative = $(this).get(0).id;
+                var negativeval = $(this).val();
+                if (negativeval == '')
+                    negativeval = 0;
+                updateendingbalance("negative", negative, (parseInt(negativeval)*-1));
+            });
+
+            // Observe changes on the wastage kits
+            $(".wastage").change(function(){
+                var wastage = $(this).get(0).id;
+                var wastageval = $(this).val();
+                if (wastageval == '')
+                    wastageval = 0;
+                updateendingbalance("wastage", wastage, (parseInt(wastageval)*-1));
             });
         });
+
+        function updateendingbalance(elementname, elementid, value) {
+            if (value == '')
+                value = 0;
+            var ending = elementid.replace(elementname, "ending");
+            var endingval = $('input[name="' + ending + '"').val();
+            $('input[name="' + ending + '"').val((parseInt(endingval)+parseInt(value)));
+        }
     </script>
 @endsection

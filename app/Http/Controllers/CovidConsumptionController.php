@@ -6,6 +6,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\CovidSample;
+use App\Synch;
 use DB;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,12 @@ class CovidConsumptionController extends Controller
     public function index()
     {
     	$time = $this->getPreviousWeek();
+
+        if (!CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
+            session(['toast_message' => "Covid Consumption already filled.",
+                    'toast_error' => true]);
+            return redirect('home');
+        }
     	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
     	return view('tasks.covid.consumption',
     		['covidkits' => CovidKit::get(),
@@ -22,7 +29,7 @@ class CovidConsumptionController extends Controller
 
     public function submitConsumption(Request $request)
     {
-    	$data = $this->buildConsumptionData($request);
+        $data = $this->buildConsumptionData($request);
     	$time = $this->getPreviousWeek();
     	
     	// Start transaction!
@@ -44,6 +51,7 @@ class CovidConsumptionController extends Controller
         		$consumption_detail->fill($detail);
         		$consumption_detail->save();
         	}
+            Synch::synchCovidConsumption();
         	DB::commit();
             return redirect('home');
         } catch(\Exception $e) {
