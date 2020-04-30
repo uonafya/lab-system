@@ -242,7 +242,7 @@ class CovidSampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CovidRequest $request)
+    public function store(Request $request)
     {
         $data = Lookup::covid_arrays();
 
