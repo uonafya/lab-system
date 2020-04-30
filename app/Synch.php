@@ -1700,7 +1700,7 @@ class Synch
 		
 		while (true) {
 			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
-			
+			dd($consumptions);
 			if($consumptions->isEmpty())
 				break;
 			
