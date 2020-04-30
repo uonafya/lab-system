@@ -14,7 +14,9 @@ use Excel;
 use DB;
 use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\CovidRequest;
 use Illuminate\Http\Request;
+
 
 class CovidSampleController extends Controller
 {
@@ -240,7 +242,7 @@ class CovidSampleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CovidRequest $request)
     {
         $data = Lookup::covid_arrays();
 
@@ -330,7 +332,7 @@ class CovidSampleController extends Controller
      * @param  \App\CovidSample  $covidSample
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CovidSample $covidSample)
+    public function update(CovidRequest $request, CovidSample $covidSample)
     {
         $data = Lookup::covid_arrays();
 
