@@ -246,8 +246,6 @@ class CovidSampleController extends Controller
     {
         $data = Lookup::covid_arrays();
 
-        file_put_contents(public_path('covid.txt'), serialize($request->all()));
-
         $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
