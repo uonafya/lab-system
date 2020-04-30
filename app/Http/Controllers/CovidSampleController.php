@@ -334,7 +334,7 @@ class CovidSampleController extends Controller
      * @param  \App\CovidSample  $covidSample
      * @return \Illuminate\Http\Response
      */
-    public function update(CovidRequest $request, CovidSample $covidSample)
+    public function update(Request $request, CovidSample $covidSample)
     {
         $data = Lookup::covid_arrays();
 
