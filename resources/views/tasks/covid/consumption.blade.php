@@ -133,7 +133,7 @@
     <script type="text/javascript">
         $(function(){
             // Observe changes on received kits
-            $(".received").keyup(function(){
+            $(".received").change(function(){
                 var received = $(this).get(0).id;
                 var receivedval = $(this).val();
                 // console.log(receivedval);
@@ -141,14 +141,14 @@
             });
 
             // Observe changes on the positive kits
-            $(".positive").keyup(function(){
+            $(".positive").change(function(){
                 var positive = $(this).get(0).id;
                 var positiveval = $(this).val();
                 updateendingbalance("positive", positive, positiveval);
             });
 
             // Observe changes on the negatiive kits
-            $(".negative").keyup(function(){
+            $(".negative").change(function(){
                 var negative = $(this).get(0).id;
                 var negativeval = $(this).val();
                 if (negativeval == '')
@@ -157,7 +157,7 @@
             });
 
             // Observe changes on the wastage kits
-            $(".wastage").keyup(function(){
+            $(".wastage").change(function(){
                 var wastage = $(this).get(0).id;
                 var wastageval = $(this).val();
                 if (wastageval == '')

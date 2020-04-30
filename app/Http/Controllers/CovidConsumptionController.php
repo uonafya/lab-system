@@ -6,6 +6,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\CovidSample;
+use App\Synch;
 use DB;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,7 @@ class CovidConsumptionController extends Controller
         		$consumption_detail->fill($detail);
         		$consumption_detail->save();
         	}
+            Synch::synchCovidConsumption();
         	DB::commit();
             return redirect('home');
         } catch(\Exception $e) {
