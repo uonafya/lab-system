@@ -61,6 +61,9 @@ class CovidSampleController extends Controller
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
+            ->when($user->other_lab, function($query) use ($user){
+                return $query->where('lab_id', $user->lab_id);
+            })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
