@@ -81,21 +81,21 @@ class CovidConsumptionController extends Controller
     	return $data;
     }
 
-    private function getPreviousWeek()
-    {
-    	$date = strtotime('-7 days', strtotime(date('Y-m-d')));
-    	return $this->getStartAndEndDate(date('W', $date),
-    							date('Y', $date));
-    }
+ //    private function getPreviousWeek()
+ //    {
+ //    	$date = strtotime('-7 days', strtotime(date('Y-m-d')));
+ //    	return $this->getStartAndEndDate(date('W', $date),
+ //    							date('Y', $date));
+ //    }
 
-    private function getStartAndEndDate($week, $year) {
-		$dto = new \DateTime();
-		$dto->setISODate($year, $week);
-		$ret['week_start'] = $dto->format('Y-m-d');
-		$dto->modify('+6 days');
-		$ret['week_end'] = $dto->format('Y-m-d');
-		$ret['week'] = date('W', strtotime($ret['week_start']));
-		return (object)$ret;
-	}
+ //    private function getStartAndEndDate($week, $year) {
+	// 	$dto = new \DateTime();
+	// 	$dto->setISODate($year, $week);
+	// 	$ret['week_start'] = $dto->format('Y-m-d');
+	// 	$dto->modify('+6 days');
+	// 	$ret['week_end'] = $dto->format('Y-m-d');
+	// 	$ret['week'] = date('W', strtotime($ret['week_start']));
+	// 	return (object)$ret;
+	// }
 }
 

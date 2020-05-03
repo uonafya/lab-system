@@ -16,6 +16,9 @@
 @endsection
 
 @section('content')
+@php
+
+@endphp
 <div class="row">
         <div class="col-md-12">
             <div class="hpanel" style="margin-top: 1em;margin-right: 20%;">
@@ -35,6 +38,16 @@
                 @endphp
                 
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                    @if($data->covidconsumption == 0)
+                        <div class="alert alert-danger spacing bottom">
+                            <strong><a href="{{ url('covidkits') }}">Click to Submit Last Week`s COVID Consumptions</a></strong>
+                            <p style="margin-left: 3em;"><font color="#CCCCCC" style="color: black;">Log on last week`s consumption {{ $data->time->week_start }} - {{ $data->time->week_end }}</font></p>
+                        </div>
+                    @else 
+                        <div class="alert alert-success spacing bottom">
+                            <strong><a href="#" style="color: black;">Last week`s ({{ $data->time->week_start }} - {{ $data->time->week_end }}) COVID consumptions Submitted</a></strong>
+                        </div>
+                    @endif
                     <!-- Kit and kits consumption -->
                     @if ($data->submittedkits == 0)
                         <div class="alert alert-warning spacing  bottom">
