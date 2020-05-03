@@ -19,7 +19,7 @@ class CovidConsumptionController extends Controller
         if (!CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
             session(['toast_message' => "Covid Consumption already filled.",
                     'toast_error' => true]);
-            return redirect('home');
+            return redirect('pending');
         }
     	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
     	return view('tasks.covid.consumption',
