@@ -144,7 +144,7 @@ class LoginController extends Controller
             if(!($facility || $user->user_type_id == 4)){
                 $tasks = $this->pendingTasks();
                 
-                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0) {
+                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0 || $tasks['covidkits'] == 0) {
                     session(['pendingTasks' => true]);
                     return '/pending';
                 }
@@ -152,7 +152,7 @@ class LoginController extends Controller
         } else {
             if(!$facility){
                 $tasks = $this->pendingTasks();
-                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0) {
+                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0 || $tasks['covidkits'] == 0) {
                     if (env('APP_LAB') != 5)
                         session(['pendingTasks' => true]);
                     return '/pending';

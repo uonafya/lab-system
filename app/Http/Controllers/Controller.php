@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Abbotdeliveries;
 use App\Abbotprocurement;
 use App\Allocation;
+use App\CovidConsumption;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Taqmandeliveries;
@@ -141,8 +142,30 @@ class Controller extends BaseController
 
         if ($abbottoday > 0 || $taqmantoday > 0)
             $today = true;
-        // dd($submittedstatus);
-        return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today];
+        
+        $time = $this->getPreviousWeek();
+        $covidsubmittedstatus = 1;
+        if (CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
+            $covidsubmittedstatus = 0;
+        }
+        return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today, 'covidkits' => $covidsubmittedstatus];
+    }
+
+    protected function getPreviousWeek()
+    {
+        $date = strtotime('-7 days', strtotime(date('Y-m-d')));
+        return $this->getStartAndEndDate(date('W', $date),
+                                date('Y', $date));
+    }
+
+    protected function getStartAndEndDate($week, $year) {
+        $dto = new \DateTime();
+        $dto->setISODate($year, $week);
+        $ret['week_start'] = $dto->format('Y-m-d');
+        $dto->modify('+6 days');
+        $ret['week_end'] = $dto->format('Y-m-d');
+        $ret['week'] = date('W', strtotime($ret['week_start']));
+        return (object)$ret;
     }
 
     public function pilotAllocation()
