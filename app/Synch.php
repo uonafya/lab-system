@@ -1713,14 +1713,15 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
-					'consumptions' => $consumptions->toJson()
+					'consumptions' => $consumptions->toJson(),
+					'lab' => env('APP_LAB')
 				],
 
 			]);
 			
 			$body = json_decode($response->getBody());
 			
-			if (null !== $body->error) {
+			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body->message));
 				return false;
