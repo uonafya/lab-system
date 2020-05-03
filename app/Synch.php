@@ -24,6 +24,7 @@ use App\Facility;
 use App\FacilityChange;
 
 use App\Mail\AllocationReview;
+use App\Mail\TestMail;
 
 class Synch
 {
@@ -1705,8 +1706,8 @@ class Synch
 				break;
 			
 			$response = $client->request('post', $url, [
-				'http_errors' => true,
-				'debug' => true,
+				'http_errors' => false,
+				'debug' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
@@ -1718,12 +1719,18 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			print_r($body);
-			foreach ($body as $key => $consumption) {
-				$covidconsumption = CovidConsumption::find($consumption->original_id);
-				$covidconsumption->synchComplete();
+			
+			if (null !== $body->error) {
+				$subject = "COVID allocation synch failed";
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body->message));
+				return false;
+			} else {
+				foreach ($body as $key => $consumption) {
+					$covidconsumption = CovidConsumption::find($consumption->original_id);
+					$covidconsumption->synchComplete();
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
