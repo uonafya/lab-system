@@ -19,7 +19,9 @@ class CreateCovidKitsTable extends Migration
             $table->string('product_description');
             $table->double('pack_size')->nullable();
             $table->double('calculated_pack_size')->nullable();
-            $table->enum('type', ['Kit', 'Consumable']);
+            $table->enum('type', ['Kit', 'Consumable', 'Manual']);
+            $table->string('unit')->nullable();
+            $table->tinyInteger('machine')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
