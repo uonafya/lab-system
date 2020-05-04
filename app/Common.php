@@ -886,9 +886,11 @@ class Common
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
+        	return true;
         } catch (Exception $exception) {
         	\Log::error($exception);
         	// print_r($exception);
+        	return false;
         }
     }
 
@@ -1161,5 +1163,15 @@ class Common
 					'enteredby' => $delivery->enteredby ?? $delivery->receivedby ?? 0,
 					'dateentered' => $delivery->dateentered ?? $delivery->datereceived ?? date('Y-m-d'),
 				]);
+    }
+
+    public static function resend_lab_tracker()
+    {
+		$start_date = '2020-01-01';
+		$end_date = '2020-03-01';
+		while (strtotime($start_date) <= strtotime($end_date)) {
+			self::send_lab_tracker(date('Y', strtotime($start_date)), date('m', strtotime($start_date)));
+			$start_date = date('Y-m-d', strtotime('+1 month', strtotime($start_date)));
+		}
     }
 }
