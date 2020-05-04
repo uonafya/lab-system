@@ -132,7 +132,7 @@ class Common
 	{
 		$client = new Client(['base_uri' => self::$sms_url]);
 
-		$response = $client->request('post', '', [
+		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
@@ -144,9 +144,9 @@ class Common
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
 			],
-		]);
+		]);*/
 
-		/*$response = $client->request('post', '', [
+		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			// 'debug' => true,
@@ -157,13 +157,11 @@ class Common
 				'mobile' => $recepient,
 				'message' => $message,
 			],
-		]);*/
+		]);
 
 		$body = json_decode($response->getBody());
         if($response->getStatusCode() > 399) dd($body);
-        return true;
-		// if($response->getStatusCode() == 201){
-        if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
+        else if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
         else{
         	die();
         	echo "Status Code is " . $response->getStatusCode();
