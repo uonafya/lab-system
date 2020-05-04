@@ -144,7 +144,9 @@ Route::middleware(['auth'])->group(function(){
 	});
 	Route::resource('covid_patient', 'CovidPatientController');
 
-	Route::group(['middleware' => ['utype:4']], function () {
+	// Route::group(['middleware' => ['utype:4']], function () {
+	Route::group(['middleware' => ['only_utype:1']], function () {
+
 		Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 			Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 			Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
@@ -158,30 +160,32 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('rerun_worksheet/{worksheet}', 'CovidWorksheetController@rerun_worksheet')->name('rerun_worksheet');
 			Route::get('convert/{machine_type}/{worksheet}', 'CovidWorksheetController@convert_worksheet')->name('convert');
 
-			Route::group(['middleware' => ['only_utype:1']], function () {
+			// Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'CovidWorksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('reverse_upload/{worksheet}', 'CovidWorksheetController@reverse_upload')->name('reverse_upload');
 				Route::get('upload/{worksheet}', 'CovidWorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'CovidWorksheetController@save_results')->name('save_results');
 				Route::get('approve/{worksheet}', 'CovidWorksheetController@approve_results')->name('approve_results');
 				Route::put('approve/{worksheet}', 'CovidWorksheetController@approve')->name('approve');
-			});
+			// });
 
 			Route::post('search/', 'CovidWorksheetController@search')->name('search');		
 		});
 		Route::resource('covid_worksheet', 'CovidWorksheetController');
+
+		Route::prefix('covidreports')->name('covid_reports.')->group(function () {
+			Route::get('/', 'CovidReportsController@index')->name('index');
+			Route::post('/', 'CovidReportsController@generate')->name('generate');
+		});
+
+		Route::prefix('covidkits')->name('covidkits.')->group(function() {
+			Route::get('/', 'CovidConsumptionController@index');
+			Route::post('consumption', 'CovidConsumptionController@submitConsumption');
+			Route::get('reports', 'CovidConsumptionController@reports');
+		});
 	});
 
-	Route::prefix('covidreports')->name('covid_reports.')->group(function () {
-		Route::get('/', 'CovidReportsController@index')->name('index');
-		Route::post('/', 'CovidReportsController@generate')->name('generate');
-	});
 
-	Route::prefix('covidkits')->name('covidkits.')->group(function() {
-		Route::get('/', 'CovidConsumptionController@index');
-		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
-		Route::get('reports', 'CovidConsumptionController@reports');
-	});
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
 		Route::prefix('sample')->name('sample.')->group(function(){

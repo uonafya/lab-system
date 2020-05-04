@@ -31,6 +31,7 @@ class CovidSampleController extends Controller
         // 1 - all
         // 2 - dispatched
         $user = auth()->user();
+        if($user->user_type_id == 4 && $type != 0) abort(403);
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
@@ -61,6 +62,9 @@ class CovidSampleController extends Controller
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
+            ->when($user->other_lab, function($query) use ($user){
+                return $query->where('lab_id', $user->lab_id);
+            })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
@@ -79,7 +83,6 @@ class CovidSampleController extends Controller
 
     public function sample_search(Request $request)
     {
-        // dd($request->all());
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
         if($submit_type == 'excel') return $this->download_excel($request);
@@ -104,6 +107,8 @@ class CovidSampleController extends Controller
 
     public function download_excel($request)
     {
+        if(auth()->user()->user_type_id == 4) abort(403);
+        
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
         $type = $request->input('type', 1);
@@ -282,6 +287,7 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
+        if(auth()->user()->user_type_id == 4) abort(403);
         $user = auth()->user();
         $type=1;
 
@@ -459,6 +465,7 @@ class CovidSampleController extends Controller
 
     public function result(CovidSample $covidSample)
     {
+        if(auth()->user()->user_type_id == 4) abort(403);
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         return view('exports.mpdf_covid_samples', $data);
