@@ -13,16 +13,18 @@ class TestMail extends Mailable
 
     public $my_attachments;
     public $sub;
+    public $text;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($my_attachments = null, $sub = null)
+    public function __construct($my_attachments = null, $sub = null, $text = null)
     {
         $this->my_attachments = $my_attachments;
         $this->sub = $sub;
+        $this->text = $text;
     }
 
     /**

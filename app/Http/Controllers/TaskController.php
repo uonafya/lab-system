@@ -10,6 +10,9 @@ use App\AllocationDetailsBreakdown;
 use App\Consumption;
 use App\ConsumptionDetail;
 use App\ConsumptionDetailBreakdown;
+use App\CovidConsumption;
+use App\CovidConsumptionDetail;
+use App\CovidKit;
 use App\Taqmandeliveries;
 use App\Taqmanprocurement;
 use App\LabEquipmentTracker;
@@ -76,7 +79,9 @@ class TaskController extends Controller
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
-
+        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)->count();
+        $data['time'] = $this->getPreviousWeek();
+        // dd($this->getPreviousWeek());
         $data = (object) $data;
         // dd($data);
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
