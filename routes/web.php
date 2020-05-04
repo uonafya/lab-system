@@ -128,66 +128,6 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}', 'CovidSampleController@index');
 			Route::post('index', 'CovidSampleController@sample_search');
 
-<<<<<<< HEAD
-	Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
-		
-		Route::post('search/', 'CovidPatientController@search')->name('search');
-	});
-	Route::resource('covid_patient', 'CovidPatientController');
-
-	// Route::group(['middleware' => ['utype:4']], function () {
-	Route::group(['middleware' => ['only_utype:1']], function () {
-
-		Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
-			Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
-			Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
-
-			Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
-			Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');
-			Route::get('find/{worksheet}', 'CovidWorksheetController@find')->name('find');
-			Route::get('print/{worksheet}', 'CovidWorksheetController@print')->name('print');
-			Route::get('labels/{worksheet}', 'CovidWorksheetController@labels')->name('labels');
-			Route::get('cancel/{worksheet}', 'CovidWorksheetController@cancel')->name('cancel');
-			Route::get('rerun_worksheet/{worksheet}', 'CovidWorksheetController@rerun_worksheet')->name('rerun_worksheet');
-			Route::get('convert/{machine_type}/{worksheet}', 'CovidWorksheetController@convert_worksheet')->name('convert');
-
-			// Route::group(['middleware' => ['only_utype:1']], function () {
-				Route::get('cancel_upload/{worksheet}', 'CovidWorksheetController@cancel_upload')->name('cancel_upload');
-				Route::get('reverse_upload/{worksheet}', 'CovidWorksheetController@reverse_upload')->name('reverse_upload');
-				Route::get('upload/{worksheet}', 'CovidWorksheetController@upload')->name('upload');
-				Route::put('upload/{worksheet}', 'CovidWorksheetController@save_results')->name('save_results');
-				Route::get('approve/{worksheet}', 'CovidWorksheetController@approve_results')->name('approve_results');
-				Route::put('approve/{worksheet}', 'CovidWorksheetController@approve')->name('approve');
-			// });
-
-			Route::post('search/', 'CovidWorksheetController@search')->name('search');		
-		});
-		Route::resource('covid_worksheet', 'CovidWorksheetController');
-
-		Route::prefix('covidreports')->name('covid_reports.')->group(function () {
-			Route::get('/', 'CovidReportsController@index')->name('index');
-			Route::post('/', 'CovidReportsController@generate')->name('generate');
-		});
-
-		Route::prefix('covidkits')->name('covidkits.')->group(function() {
-			Route::get('/', 'CovidConsumptionController@index');
-			Route::post('consumption', 'CovidConsumptionController@submitConsumption');
-			Route::get('reports', 'CovidConsumptionController@reports');
-		});
-	});
-
-
-
-	Route::prefix('cd4')->name('cd4.')->group(function(){
-		Route::prefix('sample')->name('sample.')->group(function(){
-			Route::get('dispatch/{state}', 'Cd4SampleController@dispatch')->name('dispatch');
-			Route::get('facility/{facility}', 'Cd4SampleController@facility')->name('facility');
-			Route::get('print/{sample}', 'Cd4SampleController@print')->name('print');
-			Route::get('printresult/{sample}', 'Cd4SampleController@printresult')->name('printresult');
-			Route::get('search/{sample}', 'Cd4SampleController@searchresult')->name('searchresult');
-			Route::get('delete/{sample}', 'Cd4SampleController@destroy')->name('delete');
-			Route::post('search', 'Cd4SampleController@search')->name('search');
-=======
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
 			
@@ -201,7 +141,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
 			
 			Route::post('search/', 'CovidPatientController@search')->name('search');
->>>>>>> 3224b188a68ceb2a8563c190ce089e44466a8ef0
+
 		});
 		Route::resource('covid_patient', 'CovidPatientController');
 
