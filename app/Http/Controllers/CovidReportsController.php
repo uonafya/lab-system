@@ -115,12 +115,12 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification',
+		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
 		$count = 1;
-		$a = ['covid_justifications'];
+		$a = ['covid_justifications', 'health_statuses'];
 		$lookups = [];
 		foreach ($a as $value) {
 			$lookups[$value] = DB::table($value)->get();
@@ -150,6 +150,7 @@ class CovidReportsController extends Controller
 			$sample->gender,
 			$sample->identifier,
 			$sample->get_prop_name($lookups['covid_justifications'], 'justification'),
+			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
 			$sample->phone_no ?? '',
 			$sample->countyname ?? '',
 			$sample->subcountyname ?? $sample->subcounty ?? '',
