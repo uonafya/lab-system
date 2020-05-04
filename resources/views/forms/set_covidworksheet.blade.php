@@ -44,6 +44,17 @@
                                 </div>
                             </div>
 
+                            @if(env('APP_LAB') == 6)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Set Sample Number</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" name="soft_limit" min="0" max="94">
+                                </div>
+                            </div>
+
+                            @endif
+
 
                             <!-- <div class="form-group">
                                 <label class="col-sm-4 control-label">Combined</label>

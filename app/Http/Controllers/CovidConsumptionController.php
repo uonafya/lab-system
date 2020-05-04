@@ -56,6 +56,7 @@ class CovidConsumptionController extends Controller
             DB::rollback();
             throw $e;
         }
+        $this->reportRelease();
         Synch::synchCovidConsumption();
         return redirect('pending');
     	
