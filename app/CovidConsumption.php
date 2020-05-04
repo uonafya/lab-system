@@ -22,4 +22,10 @@ class CovidConsumption extends BaseModel
         $this->datesynced = date('Y-m-d');
         $this->save();
     }
+
+    public function lastweekConsumption()
+    {
+        $time = $this->getPreviousWeek();
+        return $this->whereDate('start_of_week', $time->week_start)->get();
+    }
 }

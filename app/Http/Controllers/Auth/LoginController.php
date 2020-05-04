@@ -142,17 +142,14 @@ class LoginController extends Controller
         session(['testingSystem' => 'EID']);
         if (env('APP_LAB') == 4) {
             if(!($facility || $user->user_type_id == 4)){
-                $tasks = $this->pendingTasks();
-                
-                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0 || $tasks['covidkits'] == 0) {
+                if (!$this->pendingTasks()) {
                     session(['pendingTasks' => true]);
                     return '/pending';
                 }
             }
         } else {
             if(!$facility){
-                $tasks = $this->pendingTasks();
-                if ($tasks['submittedstatus'] == 0 || $tasks['labtracker'] == 0 || $tasks['covidkits'] == 0) {
+                if (!$this->pendingTasks()) {
                     if (env('APP_LAB') != 5)
                         session(['pendingTasks' => true]);
                     return '/pending';

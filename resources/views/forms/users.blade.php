@@ -82,6 +82,20 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group" id="lab_row">
+                                    <label class="col-sm-4 control-label">Lab</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="lab_id" id="lab_select" disabled="disabled">
+                                            <option value="" selected disabled>Select Lab</option>
+                                        @forelse ($labs as $lab)
+                                            <option value="{{ $lab->id }}">{{ $lab->name }}</option>
+                                        @empty
+                                            <option value="" disabled="true">No lab available</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+
 
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Email</label>
@@ -183,6 +197,7 @@
         $(document).ready(function(){
             $("#partners").hide();
             $("#quarantines").hide();
+            $("#lab_row").hide();
 
             $("#user_type_id").change(function(){
                 val = $(this).val();
@@ -194,12 +209,19 @@
                     $("#quarantines").show();
                     $('#quarantine_select').attr("required", "required");
                     $('#quarantine_select').removeAttr("disabled");  
+                }else if(val == 12){
+                    $("#lab_row").show();
+                    $('#lab_select').attr("required", "required");
+                    $('#lab_select').removeAttr("disabled");  
                 }else{
                     $("#partners").hide();
                     $('#partner_select').removeAttr("required");     
                     
                     $("#quarantines").hide();
-                    $('#quarantine_select').removeAttr("required");                    
+                    $('#quarantine_select').removeAttr("required");    
+                    
+                    $("#lab_row").hide();
+                    $('#lab_select').removeAttr("required");                     
                 }
             });
 
