@@ -20,8 +20,8 @@ use App\Synch;
 class Common
 {
 	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
-	public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
-	// public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
+	// public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+	public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
