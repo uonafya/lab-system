@@ -11,7 +11,7 @@ class CovidKit extends BaseModel
     	if ($tests == 0 || $this->calculated_pack_size == NULL)
     		return 0;
     	
-    	return (int)round(($tests + (($tests/94) * 2))/$this->calculated_pack_size);
+    	return (int)ceil(($tests + (($tests/94) * 2))/$this->calculated_pack_size);
     	// return $tests;
     }
 

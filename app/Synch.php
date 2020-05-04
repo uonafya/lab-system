@@ -24,6 +24,7 @@ use App\Facility;
 use App\FacilityChange;
 
 use App\Mail\AllocationReview;
+use App\Mail\TestMail;
 
 class Synch
 {
@@ -1699,8 +1700,8 @@ class Synch
 		$url = 'insert/covidconsumption';
 		
 		while (true) {
-			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
-			
+			// $consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
+			$consumptions = CovidConsumption::with(['details.kit'])->get();
 			if($consumptions->isEmpty())
 				break;
 			
@@ -1712,17 +1713,25 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				'json' => [
-					'consumptions' => $consumptions->toJson()
+					'consumptions' => $consumptions->toJson(),
+					'lab' => env('APP_LAB')
 				],
 
 			]);
 			
 			$body = json_decode($response->getBody());
-			foreach ($body as $key => $consumption) {
-				$covidconsumption = CovidConsumption::find($consumption->original_id);
-				$covidconsumption->synchComplete();
+			
+			if (isset($body->error)) {
+				$subject = "COVID allocation synch failed";
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body->message));
+				return false;
+			} else {
+				foreach ($body as $key => $consumption) {
+					$covidconsumption = CovidConsumption::find($consumption->original_id);
+					$covidconsumption->synchComplete();
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}

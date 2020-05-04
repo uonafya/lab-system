@@ -19,7 +19,7 @@ class CovidConsumptionController extends Controller
         if (!CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
             session(['toast_message' => "Covid Consumption already filled.",
                     'toast_error' => true]);
-            return redirect('home');
+            return redirect('pending');
         }
     	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
     	return view('tasks.covid.consumption',
@@ -51,13 +51,13 @@ class CovidConsumptionController extends Controller
         		$consumption_detail->fill($detail);
         		$consumption_detail->save();
         	}
-            Synch::synchCovidConsumption();
         	DB::commit();
-            return redirect('home');
         } catch(\Exception $e) {
             DB::rollback();
             throw $e;
         }
+        Synch::synchCovidConsumption();
+        return redirect('pending');
     	
     }
 
@@ -81,21 +81,21 @@ class CovidConsumptionController extends Controller
     	return $data;
     }
 
-    private function getPreviousWeek()
-    {
-    	$date = strtotime('-7 days', strtotime(date('Y-m-d')));
-    	return $this->getStartAndEndDate(date('W', $date),
-    							date('Y', $date));
-    }
+ //    private function getPreviousWeek()
+ //    {
+ //    	$date = strtotime('-7 days', strtotime(date('Y-m-d')));
+ //    	return $this->getStartAndEndDate(date('W', $date),
+ //    							date('Y', $date));
+ //    }
 
-    private function getStartAndEndDate($week, $year) {
-		$dto = new \DateTime();
-		$dto->setISODate($year, $week);
-		$ret['week_start'] = $dto->format('Y-m-d');
-		$dto->modify('+6 days');
-		$ret['week_end'] = $dto->format('Y-m-d');
-		$ret['week'] = date('W', strtotime($ret['week_start']));
-		return (object)$ret;
-	}
+ //    private function getStartAndEndDate($week, $year) {
+	// 	$dto = new \DateTime();
+	// 	$dto->setISODate($year, $week);
+	// 	$ret['week_start'] = $dto->format('Y-m-d');
+	// 	$dto->modify('+6 days');
+	// 	$ret['week_end'] = $dto->format('Y-m-d');
+	// 	$ret['week'] = date('W', strtotime($ret['week_start']));
+	// 	return (object)$ret;
+	// }
 }
 
