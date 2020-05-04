@@ -107,12 +107,18 @@ class CovidLookupSeeder extends Seeder
 			['id' => 62, 'name' => 'Ngara', 'email' => 'nmmarebe@gmail.com,koyiolucina@yahoo.co.uk,ngunucarol@yahoo.com'],
 			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 64, 'name' => 'New Life Home Trust', 'email' => 'janet.mutinda@newlifehometrust.org'],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 65, 'name' => 'KMTC- Port Reitz', 'email' => ''],
+			['id' => 66, 'name' => 'KMTC- Mombasa Campus', 'email' => ''],
+			['id' => 67, 'name' => 'Mombasa Beach Hotel', 'email' => ''],
+			['id' => 68, 'name' => 'Likoni Approved School', 'email' => ''],
+			// ['id' => 6, 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
+
+
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("

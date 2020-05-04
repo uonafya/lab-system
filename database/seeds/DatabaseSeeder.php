@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         // dd('What the hell do you think you are doing!! We see you!!!');
         // $this->call(UsersTableSeeder::class);
         // dd('What the hell do you think you are doing!! We see you!!!');
+        $this->call(UsersTableSeeder::class);
         // $this->call(UsersTableSeeder::class);
         // $this->call(FakerSeeder::class);        
         // $this->call(DrSeeder::class);
@@ -21,5 +22,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(LabEquipmentMailingSeeder::class);
         // $this->call(GeneralConsumablesSeeder::class);
         $this->call(CovidLookupSeeder::class);
+        // $this->call(CovidKitsSeeder::class);
     }
 }

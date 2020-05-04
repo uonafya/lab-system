@@ -160,9 +160,9 @@ class Common
 		]);
 
 		$body = json_decode($response->getBody());
-        // if($response->getStatusCode() == 402) die();
-		// if($response->getStatusCode() == 201){
-        if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
+		// dd($body);
+        if($response->getStatusCode() > 399) dd($body);
+        else if($response->getStatusCode() == 200 && $body->responses[0]->{"response-code"} == 200) return true;
         else{
         	die();
         	echo "Status Code is " . $response->getStatusCode();
