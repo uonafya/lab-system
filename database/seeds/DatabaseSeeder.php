@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         // dd('What the hell do you think you are doing!! We see you!!!');
         // $this->call(UsersTableSeeder::class);
+        // dd('What the hell do you think you are doing!! We see you!!!');
+        // $this->call(UsersTableSeeder::class);
         // $this->call(UsersTableSeeder::class);
         // $this->call(FakerSeeder::class);        
         // $this->call(DrSeeder::class);

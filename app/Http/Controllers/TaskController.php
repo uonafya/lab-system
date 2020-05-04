@@ -53,9 +53,7 @@ class TaskController extends Controller
 
     public function index() 
     {
-        $tasks = $this->pendingTasks();
-        
-        if ($tasks['submittedstatus'] > 0 && $tasks['labtracker'] > 0) {
+        if ($this->pendingTasks()) {
             \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');

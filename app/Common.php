@@ -20,8 +20,8 @@ use App\Synch;
 class Common
 {
 	// public static $sms_url = 'http://sms.southwell.io/api/v1/messages';
-	public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
-	// public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
+	// public static $sms_url = 'https://api.vaspro.co.ke/v3/BulkSMS/api/create';
+	public static $sms_url = 'https://mysms.celcomafrica.com/api/services/sendsms/';
 	public static $sms_callback = 'http://vaspro.co.ke/dlr';
 	// public static $mlab_url = 'http://197.248.10.20:3001/api/results/results';
 	public static $mlab_url = 'https://api.mhealthkenya.co.ke/api/vl_results';
@@ -132,7 +132,7 @@ class Common
 	{
 		$client = new Client(['base_uri' => self::$sms_url]);
 
-		$response = $client->request('post', '', [
+		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			'json' => [
@@ -144,9 +144,9 @@ class Common
                 'callbackURL' => self::$sms_callback,
                 'enqueue' => 0,
 			],
-		]);
+		]);*/
 
-		/*$response = $client->request('post', '', [
+		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
 			// 'debug' => true,
@@ -157,13 +157,12 @@ class Common
 				'mobile' => $recepient,
 				'message' => $message,
 			],
-		]);*/
+		]);
 
 		$body = json_decode($response->getBody());
+		// dd($body);
         if($response->getStatusCode() > 399) dd($body);
-        return true;
-		// if($response->getStatusCode() == 201){
-        if($response->getStatusCode() == 200 && $body->{"response-code"} == 200) return true;
+        else if($response->getStatusCode() == 200 && $body->responses[0]->{"response-code"} == 200) return true;
         else{
         	die();
         	echo "Status Code is " . $response->getStatusCode();
@@ -887,9 +886,11 @@ class Common
         	->send(new LabTracker($data));
         	$allemails = array_merge($mainRecepient, $mailinglist);
         	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
+        	return true;
         } catch (Exception $exception) {
         	\Log::error($exception);
         	// print_r($exception);
+        	return false;
         }
     }
 
@@ -1162,5 +1163,15 @@ class Common
 					'enteredby' => $delivery->enteredby ?? $delivery->receivedby ?? 0,
 					'dateentered' => $delivery->dateentered ?? $delivery->datereceived ?? date('Y-m-d'),
 				]);
+    }
+
+    public static function resend_lab_tracker()
+    {
+		$start_date = '2020-01-01';
+		$end_date = '2020-03-01';
+		while (strtotime($start_date) <= strtotime($end_date)) {
+			self::send_lab_tracker(date('Y', strtotime($start_date)), date('m', strtotime($start_date)));
+			$start_date = date('Y-m-d', strtotime('+1 month', strtotime($start_date)));
+		}
     }
 }
