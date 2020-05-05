@@ -20,6 +20,12 @@ use Illuminate\Http\Request;
 
 class CovidWorksheetController extends Controller
 {
+
+    public function __construct()
+    {
+        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+    }
+    
     /**
      * Display a listing of the resource.
      *
