@@ -74,8 +74,9 @@ class UserController extends Controller
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
         $quarantine_sites = DB::table('quarantine_sites')->get();
+        $labs = DB::table('labs')->get();
 
-        return view('forms.users', compact('accounts', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'partners', 'quarantine_sites', 'labs'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -92,7 +93,7 @@ class UserController extends Controller
         } else {
             $user = new User;
             $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone']));
-            $user->lab_id = auth()->user()->lab_id;
+            if(!$user->lab_id) $user->lab_id = auth()->user()->lab_id;
             $user->save();
             session(['toast_message'=>'User created succesfully']);
 
@@ -145,6 +146,7 @@ class UserController extends Controller
             
             $user = User::find($id);
             $user->fill($userData);
+            if($request->input('lab_id')) $user->lab_id = $request->input('lab_id');
             $user->save();
         } else {
             $user = self::__unHashUser($id);

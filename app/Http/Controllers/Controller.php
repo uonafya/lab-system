@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Abbotdeliveries;
 use App\Abbotprocurement;
 use App\Allocation;
+use App\CovidConsumption;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
 use App\Taqmandeliveries;
@@ -78,71 +79,47 @@ class Controller extends BaseController
             $prevyear -= 1;
         }
         $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
+        if ($equipment == 0)
+            return false;
         $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
-
-        $labtracker = 0;
-        if ($performance > 0 &&  $equipment > 0) 
-            $labtracker=1;
+        if ($performance == 0)
+            return false;
 
         $abbot = \App\Lab::select('abbott')->where('id', auth()->user()->lab_id)->first()->abbott;
-        $testype = [1,2];
-        $taqman = [];
-        $abbottproc = [];
-        $abbottoday = null;
-        $taqmantoday = null;
-        $today = false;
-
-        foreach ($testype as $key => $value) {
-            if ($abbot == 1) {//Check for both abbot and taqman
-                $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', '=', env('APP_LAB'))->where('testtype', $value);
-                $abbottproc[] = $abbottmodel->count();
-                $abbottoday = $abbottmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
-            }
+        
+        if ($abbot == 1) {//Check for both abbot and taqman
+            $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
+            if ($abbottmodel == 0)
+                return false;
+        }
                      
-            $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->where('lab_id', '=', env('APP_LAB'))->where('testtype', $value);
-            $taqman[] = $taqmanmodel->count();
-            $taqmantoday = $taqmanmodel->where('datesubmitted', '=', date('Y-m-d'))->count();
+        $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
+        if ($taqmanmodel == 0)
+            return false;       
+        
+        $time = $this->getPreviousWeek();
+        $covidsubmittedstatus = 1;
+        if (CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
+            return false;
         }
-        // dd($abbottproc);
-        if ($abbot == 1) {
-            //..if both taqman and abbott have been submitted; set $submittedstatus > 0
-            if ( ($taqman[0] > 0 && $taqman[1] >0 ) && ($abbottproc[0] > 0 && $abbottproc[1]>0) ){
-                $submittedstatus = 1;
-            } else {
-                $submittedstatus = 0;
-            }
-            
+        return true;
+    }
 
-            // //..if only taqman has been submitted and not abbott; set $submittedstatus = 0; and only show the abbott link 
-            // if ( ($taqman[0] > 0 && $taqman[1] >0) && ($abbottproc[0] == 0 || $abbottproc[1]==0 ) )
-            //     $submittedstatus = 0;
-            
+    protected function getPreviousWeek()
+    {
+        $date = strtotime('-7 days', strtotime(date('Y-m-d')));
+        return $this->getStartAndEndDate(date('W', $date),
+                                date('Y', $date));
+    }
 
-            // //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link
-            // if ( ($taqman[0] == 0 || $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
-            //     $submittedstatus = 0;
-            
-
-            // //..if only abbott has been submitted and not taqman; set $submittedstatus = 0; and only show the taqman link 
-            // if ( ($taqman[0] == 0 && $taqman[1] ==0) && ($abbottproc[0] > 0 || $abbottproc[1]>0) )
-            //     $submittedstatus = 0;
-            
-
-            // //..if none has been submitted; set $submittedstatus = 0; and only show the main link that requests both platforms to be submitted ***but also check whether lab has abbott machine*****
-            // if ( ($taqman[0] == 0 || $taqman[1] ==0 ) && ($abbottproc[0] == 0  || $abbottproc[1]==0 ) )
-            //     $submittedstatus = 0;
-            
-        } else {
-            // dd($taqman);
-            $submittedstatus = 1;
-            if ($taqman[0] == 0 || $taqman[1] == 0)
-                $submittedstatus = 0;
-        }
-
-        if ($abbottoday > 0 || $taqmantoday > 0)
-            $today = true;
-        // dd($submittedstatus);
-        return ['submittedstatus'=>$submittedstatus,'labtracker'=>$labtracker, 'filledtoday' => $today];
+    protected function getStartAndEndDate($week, $year) {
+        $dto = new \DateTime();
+        $dto->setISODate($year, $week);
+        $ret['week_start'] = $dto->format('Y-m-d');
+        $dto->modify('+6 days');
+        $ret['week_end'] = $dto->format('Y-m-d');
+        $ret['week'] = date('W', strtotime($ret['week_start']));
+        return (object)$ret;
     }
 
     public function pilotAllocation()
@@ -199,6 +176,11 @@ class Controller extends BaseController
             $months = [10, 11, 12];
         
         return $months;
+    }
+
+    protected function reportRelease()
+    {
+        return session(['pendingTasks'=> false]);
     }
 
 }

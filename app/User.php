@@ -167,6 +167,12 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function getOtherLabAttribute()
+    {
+        if(in_array($this->user_type_id, [12])) return true;
+        return false;
+    }
+
     public function getFacilityUserAttribute()
     {
         if(in_array($this->user_type_id, [5])) return true;

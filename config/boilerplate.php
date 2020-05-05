@@ -127,6 +127,12 @@ return [
 
     ],
 
+    'covid' => [
+        'identifier' => 'required',
+        'datecollected' => ['required', 'after_or_equal:-6month', 'before_or_equal:today', 'date_format:Y-m-d'],
+        'sex' => ['required', 'integer', 'between:1,2'], 
+    ],
+
     'lab_user' => [
         'datereceived' => ['required', 'after_or_equal:-6month', 'before_or_equal:today', 'date_format:Y-m-d'],
         'receivedstatus' => ['required', 'integer', 'between:1,2'],

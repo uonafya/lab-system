@@ -6,10 +6,17 @@ use App\CovidSampleView;
 use App\Lab;
 use Carbon\Carbon;
 use Excel;
+use DB;
 use Illuminate\Http\Request;
 
 class CovidReportsController extends Controller
 {
+
+    public function __construct()
+    {
+        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+    }
+    
     private $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
 	public function index()
 	{
@@ -114,19 +121,24 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number',
+		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
 		$count = 1;
+		$a = ['covid_justifications', 'health_statuses'];
+		$lookups = [];
+		foreach ($a as $value) {
+			$lookups[$value] = DB::table($value)->get();
+		}
 		foreach ($alldata as $key => $row) {
-			$data[] = $this->get_excel_samples($row, $count);
+			$data[] = $this->get_excel_samples($row, $count, $lookups);
 			$count++;
 		}
 		return $data;
 	}
 
-	private function get_excel_samples($sample, $count)
+	private function get_excel_samples($sample, $count, $lookups)
 	{
 		$travelled = 'N';
 		$history = '';
@@ -143,14 +155,16 @@ class CovidReportsController extends Controller
 			$sample->age,
 			$sample->gender,
 			$sample->identifier,
-			$sample->phone ?? '',
-			$sample->patient->county ?? '',
-			$sample->subcounty ?? '',
+			$sample->get_prop_name($lookups['covid_justifications'], 'justification'),
+			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
+			$sample->phone_no ?? '',
+			$sample->countyname ?? '',
+			$sample->subcountyname ?? $sample->subcounty ?? '',
 
 			$travelled,
 			$history,
 			"",
-			$sample->patient->quarantine_site->name ?? '',
+			$sample->quarantine_site ?? $sample->facilityname ?? '',
 			"",
 			$sample->worksheet_id ?? '',
 			$sample->datecollected ?? '',

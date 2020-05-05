@@ -77,6 +77,9 @@
                         <li class="">
                             <a href="{{ url('covidreports') }}">Reports</a>
                         </li>
+                        <li class="">
+                            <a href="{{ url('covidkits/reports') }}">Kits</a>
+                        </li>
 
                     @elseif(session('testingSystem') == 'DR')
                         <li class="">
@@ -243,6 +246,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('covidreports') }}">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covidkits/reports') }}">Kits</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">

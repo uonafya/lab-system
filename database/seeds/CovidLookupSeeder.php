@@ -48,13 +48,13 @@ class CovidLookupSeeder extends Seeder
 			['id' => 3, 'name' => 'Kenya School of Government - (KSG)', 'email' => ''],
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
 			['id' => 5, 'name' => 'KMTC Karen', 'email' => 'jeprosekip@gmail.com'],
-			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => ''],
+			['id' => 6, 'name' => 'Mandera - (MCRH)', 'email' => 'abukardug@gmail.com'],
 			['id' => 7, 'name' => "Nairobi Women's", 'email' => 'alex.muruga@nwch.co.ke'],
 			['id' => 8, 'name' => 'LANCET', 'email' => ''],
 			['id' => 9, 'name' => 'KQ medical centre pride', 'email' => ''],
 			['id' => 10, 'name' => 'Nairobi hospital', 'email' => 'alicekanyua@nbihosp.org'],
 			['id' => 11, 'name' => 'Nairobi West', 'email' => ''],
-			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => ''],
+			['id' => 12, 'name' => 'Kisii teaching and referral hospital', 'email' => 'cliffmomanyimogeni@gmail.com'],
 			['id' => 13, 'name' => 'NHPLS', 'email' => ''],
 			['id' => 14, 'name' => 'Meru TRH', 'email' => ''],
 			['id' => 15, 'name' => 'MP Shah hospital', 'email' => 'vpatel@mpshahhospital.org'],
@@ -104,15 +104,21 @@ class CovidLookupSeeder extends Seeder
 			['id' => 59, 'name' => 'Migwani Hospital', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
 			['id' => 60, 'name' => 'Hilton Garden Inn', 'email' => ''],
 			['id' => 61, 'name' => 'Kawangware', 'email' => ''],
-			['id' => 62, 'name' => 'Ngara', 'email' => ''],
-			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 62, 'name' => 'Ngara', 'email' => 'nmmarebe@gmail.com,koyiolucina@yahoo.co.uk,ngunucarol@yahoo.com'],
+			['id' => 63, 'name' => 'Mwingi Level 4', 'email' => 'alowino@gmail.com,mutisya45@yahoo.com,annvera06@gmail.com'],
+			['id' => 64, 'name' => 'New Life Home Trust', 'email' => 'janet.mutinda@newlifehometrust.org'],
+			['id' => 65, 'name' => 'KMTC- Port Reitz', 'email' => ''],
+			['id' => 66, 'name' => 'KMTC- Mombasa Campus', 'email' => ''],
+			['id' => 67, 'name' => 'Mombasa Beach Hotel', 'email' => ''],
+			['id' => 68, 'name' => 'Likoni Approved School', 'email' => ''],
+			['id' => 69, 'name' => 'Kamalel', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
+
+
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("

@@ -143,23 +143,31 @@
                         <tbody>
 
                             @foreach($worksheets as $key => $worksheet)
+                                <?php
+                                    $det = $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                                    $undet = $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                                    $fa = $failed->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                                    $nores = $noresult->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                                    $total = $det + $undet + $fa + $nores;
+                                    $rer = $reruns->where('worksheet_id', $worksheet->id)->first()->totals ?? 0;
+                                ?>
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
-                                    <td> {{ $worksheet->surname . ' ' . $worksheet->oname }} </td>
+                                    <td> {{ $worksheet->creator->full_name ?? '' }} </td>
 
                                     <td> {!! $worksheet->get_prop_name($machines, 'machine_type', 'output') !!} </td>
                                     <td> {!! $worksheet->get_prop_name($worksheet_statuses, 'status_id', 'output') !!} </td>
                                     <td>{{ $worksheet->sample_type_name }} </td>
 
-                                    <td> {{ $detected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
-                                    <td> {{ $undetected->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
-                                    <td> {{ $failed->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
-                                    <td> {{ $noresult->where('worksheet_id', $worksheet->id)->first()->totals ?? 0 }} </td>
+                                    <td> {{ $det }} </td>
+                                    <td> {{ $undet }} </td>
+                                    <td> {{ $fa }} </td>
+                                    <td> {{ $nores }} </td>
 
-                                    <td> {{ $worksheet->samples_no }} 
-                                        @if($reruns->where('worksheet_id', $worksheet->id)->first())
-                                            <span style="color: #ff0000;"> ({{ $reruns->where('worksheet_id', $worksheet->id)->first()->totals }}) </span>
+                                    <td> {{ $total }} 
+                                        @if($rer)
+                                            <span style="color: #ff0000;"> ({{ $rer }}) </span>
                                         @endif
                                     </td>
                                     <td> {{ $worksheet->my_date_format('daterun') }} </td>

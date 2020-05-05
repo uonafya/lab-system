@@ -244,7 +244,7 @@
 
                         @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datecollected', 'label' => 'Date of Collection',])
 
-                        @if(auth()->user()->lab_user)
+                        @if(auth()->user()->lab_user || auth()->user()->other_lab)
 
                             @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Received',])
 
@@ -252,7 +252,9 @@
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
-                            @if(isset($sample) && false)
+                            @if(auth()->user()->other_lab)
+
+                                @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datetested', 'label' => 'Date Tested',])
 
                                 @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
 
@@ -346,7 +348,7 @@
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
-                @if(auth()->user()->lab_user)
+                @if(auth()->user()->lab_user || auth()->user()->other_lab)
                     datecollected: {
                         lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                     },

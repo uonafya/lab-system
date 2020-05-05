@@ -316,7 +316,7 @@
                 </li>
 
             @endif
-        @elseif (Auth::user()->quarantine_site)
+        @elseif (Auth::user()->quarantine_site || Auth::user()->other_lab)
             <li>
                 <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
             </li>
@@ -524,7 +524,7 @@
                     <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
                 @endif
                 
-            @elseif(Auth::user()->quarantine_site)
+            @elseif(Auth::user()->quarantine_site || Auth::user()->other_lab)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
