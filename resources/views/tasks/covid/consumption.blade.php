@@ -67,12 +67,12 @@
                                 $kitsused = $kit->computekitsUsed($tests);
                             @endphp
                             <td>                            
-                                <input class="form-control" type="number" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" disabled="true">
-                                <input type="hidden" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}">
+                                <input class="form-control" type="number" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" disabled="false">
+                                {{-- <input type="hidden" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}"> --}}
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}" min="0" disabled="true">
-                                <input type="hidden" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}">
+                                <input class="form-control" type="number" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 0}}" min="0" disabled="false">
+                                {{--<input type="hidden" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}">--}}
                             </td>
                             <td>
                                 <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
