@@ -1704,7 +1704,7 @@ class Synch
 			$consumptions = CovidConsumption::with(['details.kit'])->get();
 			if($consumptions->isEmpty())
 				break;
-			dd($consumptions);
+			
 			$response = $client->request('post', $url, [
 				'http_errors' => false,
 				'debug' => false,
