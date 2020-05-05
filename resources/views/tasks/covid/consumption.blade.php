@@ -67,11 +67,11 @@
                                 $kitsused = $kit->computekitsUsed($tests);
                             @endphp
                             <td>                            
-                                <input class="form-control" type="number" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" required="true">
+                                <input class="form-control kits_used" type="number" name="kits_used[{{$kit->material_no}}]" id="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" required="true">
                                 {{-- <input type="hidden" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}"> --}}
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 0}}" min="0" required="true">
+                                <input class="form-control begining_balance" type="number" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 0}}" min="0" required="true">
                                 {{--<input type="hidden" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}">--}}
                             </td>
                             <td>
@@ -132,6 +132,26 @@
     @endcomponent
     <script type="text/javascript">
         $(function(){
+            // Observe changes on received kits
+            $(".kits_used").change(function(){
+                var kits_used = $(this).get(0).id;
+                var kits_usedval = $(this).val();
+                if (kits_usedval == '')
+                    kits_usedval = 0;
+                // console.log(kits_usedval);
+                updateendingbalance("kits_used", kits_used, (parseInt(kits_usedval)*-1));
+            });
+
+            // Observe changes on received kits
+            $(".begining_balance").change(function(){
+                var begining_balance = $(this).get(0).id;
+                var begining_balanceval = $(this).val();
+                if (begining_balanceval == '')
+                    begining_balanceval = 0;
+                // console.log(begining_balanceval);
+                updateendingbalance("begining_balance", begining_balance, begining_balanceval);
+            });
+            
             // Observe changes on received kits
             $(".received").change(function(){
                 var received = $(this).get(0).id;
