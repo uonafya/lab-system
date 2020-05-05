@@ -20,7 +20,7 @@ class ConsumptionSubmission
             // Check if COVID consumption has been submitted
             $covid = new CovidConsumption;
             if ($covid->lastweekConsumption()->isEmpty()){
-                // return redirect('/pending');
+                return redirect('/pending');
             }
         }
         return $next($request);

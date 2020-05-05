@@ -1704,7 +1704,7 @@ class Synch
 			$consumptions = CovidConsumption::with(['details.kit'])->get();
 			if($consumptions->isEmpty())
 				break;
-			
+			dd($consumptions);
 			$response = $client->request('post', $url, [
 				'http_errors' => false,
 				'debug' => false,
@@ -1720,7 +1720,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			
+			dd($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body->message));
