@@ -1,3 +1,7 @@
-FROM nginx:1.15.2
+#FROM nginx:1.15.2
 
-ADD vhost.conf /etc/nginx/conf.d/default.conf
+#ADD default.conf /etc/nginx/conf.d/default.conf
+
+FROM nginx
+RUN mkdir -p /etc/nginx/conf.d/
+ADD ./default.conf /etc/nginx/conf.d/default.conf
