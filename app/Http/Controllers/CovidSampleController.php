@@ -36,6 +36,7 @@ class CovidSampleController extends Controller
         // 0 - not received
         // 1 - all
         // 2 - dispatched
+        // 3 - from cif
         $user = auth()->user();
         if($user->user_type_id == 4 && $type != 0) abort(403);
         $date_column = "covid_sample_view.created_at";
@@ -61,15 +62,16 @@ class CovidSampleController extends Controller
             ->when(true, function($query) use ($type){
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched');
+                else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
+            ->when(!$user->facility_user, function($query) use ($user){
+                return $query->where('lab_id', $user->lab_id);
+            })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
-            })
-            ->when($user->other_lab, function($query) use ($user){
-                return $query->where('lab_id', $user->lab_id);
             })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
@@ -84,6 +86,7 @@ class CovidSampleController extends Controller
         $quarantine_sites = DB::table('quarantine_sites')->get();
         $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'quarantine_site_id');
         $data['results'] = DB::table('results')->get();
+        if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
     }
 
@@ -467,6 +470,20 @@ class CovidSampleController extends Controller
                 'phone_no' => $row[10],
             ]);
         }
+    }
+
+
+    public function transfer(Request $request)
+    {
+        $lab_id = $request->input('lab_id');
+        $sample_ids = $request->input('sample_ids');
+        if(!$lab_id){            
+            session(['toast_message' => "Select a lab.", 'toast_error' => 1]);
+            return back();
+        }
+        CovidSample::whereIn('id', $sample_ids)->update(['lab_id' => $lab_id]);         
+        session(['toast_message' => "The samples have been transferred."]);
+        return back();
     }
 
     public function result(CovidSample $covidSample)

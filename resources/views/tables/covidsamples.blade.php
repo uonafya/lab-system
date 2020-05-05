@@ -20,6 +20,9 @@
             </a> |
             <a href="{{ $myurl2 }}/0">
                 Samples Pending Receipt at the Lab
+            </a>|
+            <a href="{{ $myurl2 }}/3">
+                Samples Pending Receipt at the Lab (From CIF)
             </a>
         </div>
     </div>
@@ -184,6 +187,19 @@
                             @csrf
                         @endif
 
+                        @if(isset($type) && $type == 3)
+                        <form  method="post" action="{{ url('covid_sample/transfer/') }}" onsubmit="return confirm('Are you sure you want to transfer the selected samples to the selected lab?');">
+                            @csrf
+
+                            <select class="form-control" name="lab_id" id="select_lab" required>
+                                <option></option>
+                                @foreach($labs as $l)
+                                    @continue($l->id < 11)
+                                    <option value="{{ $l->id }}"> {{ $l->name }} </option>
+                                @endforeach
+                            </select>
+                        @endif
+
                         <table class="table table-striped table-bordered table-hover @empty($quarantine_sites) data-table @endempty " >
                             <thead>
                                 <tr class="colhead">
@@ -246,7 +262,7 @@
                                                 <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
                                             @endif                                         
                                         </td>
-                                        @if(isset($type) && $type == 2)
+                                        @if(isset($type) && in_array($type, [2, 3]))
                                             <td> 
                                                 <div align="center">
                                                     <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
@@ -262,6 +278,11 @@
 
                         @if(isset($type) && $type == 2)
                         <button type="submit" class="btn btn-primary">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
+                        @if(isset($type) && $type == 3)
+                        <button type="submit" class="btn btn-primary">Transfer to Other Lab</button>
                         </form>
                         @endif
 
@@ -305,6 +326,11 @@
             //         $(".checks").prop('checked', false);           
             //     }
             // });
+
+            $("#select_lab").select2({
+                placeholder: "Select a Lab",
+                allowClear: true
+            }); 
 
 
             $("#quarantine_site_id").select2({

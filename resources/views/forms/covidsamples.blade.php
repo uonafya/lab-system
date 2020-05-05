@@ -254,6 +254,8 @@
 
                             @if(auth()->user()->other_lab)
 
+                                @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datetested', 'label' => 'Date Tested',])
+
                                 @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
 
                             @endif
