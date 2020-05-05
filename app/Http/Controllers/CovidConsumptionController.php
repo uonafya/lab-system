@@ -32,30 +32,34 @@ class CovidConsumptionController extends Controller
         $data = $this->buildConsumptionData($request);
     	$time = $this->getPreviousWeek();
     	
-    	// Start transaction!
-        DB::beginTransaction();
+        if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
+            // Start transaction!
+            DB::beginTransaction();
 
-        try {
-        	$consumption = new CovidConsumption;
-        	$consumption->fill([
-        					'start_of_week' => $time->week_start,
-        					'end_of_week' => $time->week_end,
-        					'week' => $time->week,
-        					'lab_id' => env('APP_LAB')
-        				]);
-        	$consumption->save();
+            try {
+                $consumption = new CovidConsumption;
+                $consumption->fill([
+                                'start_of_week' => $time->week_start,
+                                'end_of_week' => $time->week_end,
+                                'week' => $time->week,
+                                'lab_id' => env('APP_LAB')
+                            ]);
+                $consumption->save();
 
-        	foreach ($data as $key => $detail) {
-        		$consumption_detail = new CovidConsumptionDetail;
-        		$consumption_detail->consumption_id = $consumption->id;
-        		$consumption_detail->fill($detail);
-        		$consumption_detail->save();
-        	}
-        	DB::commit();
-        } catch(\Exception $e) {
-            DB::rollback();
-            throw $e;
+                foreach ($data as $key => $detail) {
+                    $consumption_detail = new CovidConsumptionDetail;
+                    $consumption_detail->consumption_id = $consumption->id;
+                    $consumption_detail->fill($detail);
+                    $consumption_detail->save();
+                }
+                DB::commit();
+            } catch(\Exception $e) {
+                DB::rollback();
+                throw $e;
+            }
         }
+    	
+        $this->reportRelease();
         Synch::synchCovidConsumption();
         return redirect('pending');
     	
