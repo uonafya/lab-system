@@ -16,11 +16,11 @@ class ConsumptionSubmission
      */
     public function handle($request, Closure $next)
     {
-        if (in_array(auth()->user()->user_type_id, [null])) {
+        if (in_array(auth()->user()->user_type_id, [0, 1, 2, 3])) {
             // Check if COVID consumption has been submitted
             $covid = new CovidConsumption;
             if ($covid->lastweekConsumption()->isEmpty()){
-                return redirect('/pending');
+                // return redirect('/pending');
             }
         }
         return $next($request);
