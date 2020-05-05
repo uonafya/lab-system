@@ -140,7 +140,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 8, 'name' => 'Recent travel'],
 			['id' => 9, 'name' => 'Health Care Worker'],
 		]);
-		return;
+		// return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
