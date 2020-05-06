@@ -135,7 +135,7 @@
 
             <div class="row">
 
-                <div class="col-md-9"> 
+                <div class="col-md-8"> 
                     <div class="form-group">
 
                         <label class="col-sm-1 control-label">From:</label>
@@ -160,10 +160,11 @@
                     </div> 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">              
                         <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
                         <button class="btn btn-primary" name="submit_type" value="email" type='submit'>Email Results</button> 
+                        <button class="btn btn-primary" name="submit_type" value="multiple_results" type='submit'>Download Results</button> 
                     </div>                
                 </div>
             </div>
