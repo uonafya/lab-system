@@ -24,7 +24,7 @@ class CovidSampleController extends Controller
 
     public function __construct()
     {
-        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+        if(in_array(env('APP_LAB'), [5,6]) && auth()->user()->user_type_id && !auth()->user()->covid_allowed) abort(403);
     }
 
     /**
@@ -39,7 +39,6 @@ class CovidSampleController extends Controller
         // 2 - dispatched
         // 3 - from cif
         $user = auth()->user();
-        if($user->user_type_id == 4 && $type != 0) abort(403);
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
@@ -94,7 +93,6 @@ class CovidSampleController extends Controller
     public function sample_search(Request $request)
     {
         $user = auth()->user();
-        if($user->user_type_id == 4) abort(403);
 
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
@@ -358,7 +356,6 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
-        if(auth()->user()->user_type_id == 4) abort(403);
         $user = auth()->user();
         $type=1;
 
@@ -550,7 +547,6 @@ class CovidSampleController extends Controller
 
     public function result(CovidSample $covidSample)
     {
-        if(auth()->user()->user_type_id == 4) abort(403);
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         return view('exports.mpdf_covid_samples', $data);
