@@ -214,7 +214,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
-            'debug' => true,
+            'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],

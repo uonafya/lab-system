@@ -38,7 +38,12 @@
                     @if($data->covidconsumption == 0)
                         <div class="alert alert-danger spacing bottom">
                             <strong><a href="{{ url('covidkits') }}">Click to Submit Last Week`s COVID Consumptions</a></strong>
-                            <p style="margin-left: 3em;"><font color="#CCCCCC" style="color: black;">Log on last week`s consumption {{ $data->time->week_start }} - {{ $data->time->week_end }}</font></p>
+                            @if(sizeof($data->time) > 1)
+                            <strong><p style="margin-left: 1.5em;"><font color="#CCCCCC" style="color: black;">Your lab needs to update consumptions for the last {{ sizeof($data->time) }} weeks. Click on the link above to update them</font></p></strong>
+                            @endif
+                            @foreach($data->time as $key => $week)
+                            <p style="margin-left: 3em;"><font color="#CCCCCC" style="color: black;">Update consumptions for week {{ $week->week }} ({{ $week->week_start }} - {{ $week->week_end }})</font></p>
+                            @endforeach
                         </div>
                     @else 
                         <div class="alert alert-success spacing bottom">

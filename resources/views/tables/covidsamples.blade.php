@@ -20,6 +20,9 @@
             </a> |
             <a href="{{ $myurl2 }}/0">
                 Samples Pending Receipt at the Lab
+            </a>|
+            <a href="{{ $myurl2 }}/3">
+                Samples Pending Receipt at the Lab (From CIF)
             </a>
         </div>
     </div>
@@ -132,7 +135,7 @@
 
             <div class="row">
 
-                <div class="col-md-9"> 
+                <div class="col-md-8"> 
                     <div class="form-group">
 
                         <label class="col-sm-1 control-label">From:</label>
@@ -157,10 +160,11 @@
                     </div> 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">              
                         <button class="btn btn-primary" name="submit_type" value="excel" type='submit'>Download as Excel</button> 
                         <button class="btn btn-primary" name="submit_type" value="email" type='submit'>Email Results</button> 
+                        <button class="btn btn-primary" name="submit_type" value="multiple_results" type='submit'>Download Results</button> 
                     </div>                
                 </div>
             </div>
@@ -184,6 +188,19 @@
                             @csrf
                         @endif
 
+                        @if(isset($type) && $type == 3)
+                        <form  method="post" action="{{ url('covid_sample/transfer/') }}" onsubmit="return confirm('Are you sure you want to transfer the selected samples to the selected lab?');">
+                            @csrf
+
+                            <select class="form-control" name="lab_id" id="select_lab" required>
+                                <option></option>
+                                @foreach($labs as $l)
+                                    @continue($l->id < 11)
+                                    <option value="{{ $l->id }}"> {{ $l->name }} </option>
+                                @endforeach
+                            </select>
+                        @endif
+
                         <table class="table table-striped table-bordered table-hover @empty($quarantine_sites) data-table @endempty " >
                             <thead>
                                 <tr class="colhead">
@@ -199,6 +216,8 @@
                                     <th rowspan="2">Task</th>
                                     @if(isset($type) && $type == 2)
                                         <th rowspan="2">Print Multiple</th>
+                                    @elseif(isset($type) && $type == 3)
+                                        <th rowspan="2">Select Sample</th>
                                     @else
                                         <th rowspan="2">Delete</th>
                                     @endif
@@ -246,7 +265,7 @@
                                                 <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
                                             @endif                                         
                                         </td>
-                                        @if(isset($type) && $type == 2)
+                                        @if(isset($type) && in_array($type, [2, 3]))
                                             <td> 
                                                 <div align="center">
                                                     <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
@@ -262,6 +281,11 @@
 
                         @if(isset($type) && $type == 2)
                         <button type="submit" class="btn btn-primary">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
+                        @if(isset($type) && $type == 3)
+                        <button type="submit" class="btn btn-primary">Transfer to Other Lab</button>
                         </form>
                         @endif
 
@@ -305,6 +329,11 @@
             //         $(".checks").prop('checked', false);           
             //     }
             // });
+
+            $("#select_lab").select2({
+                placeholder: "Select a Lab",
+                allowClear: true
+            }); 
 
 
             $("#quarantine_site_id").select2({
