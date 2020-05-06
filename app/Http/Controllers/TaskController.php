@@ -78,10 +78,11 @@ class TaskController extends Controller
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
         $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)->count();
-        $data['time'] = $this->getPreviousWeek();
+        $covidconsumption = new CovidConsumption;
+        $data['time'] = $covidconsumption->getMissingConsumptions();
         // dd($this->getPreviousWeek());
         $data = (object) $data;
-        // dd($data);
+        
         return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
     }
 
