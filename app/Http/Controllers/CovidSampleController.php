@@ -223,7 +223,7 @@ class CovidSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when(!$user->facility_user, function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+                return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
@@ -280,7 +280,7 @@ class CovidSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when(!$user->facility_user, function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+                return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
