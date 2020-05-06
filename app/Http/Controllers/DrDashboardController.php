@@ -39,7 +39,7 @@ class DrDashboardController extends Controller
 			$i = 0;
 			foreach ($call_array as $call_key => $c) {
 				if($i==4) break;
-				$data["outcomes"][$i]["data"][$key] = (int) $rows->where('short_name_id', $drug->id)->where('call', $call_key)->first()->samples ?? 0;
+				$data["outcomes"][$i]["data"][$key] = (int) ($rows->where('short_name_id', $drug->id)->where('call', $call_key)->first()->samples ?? 0);
 				$i++;
 			}
 		}
