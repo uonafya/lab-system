@@ -86,6 +86,9 @@
                             <a href="{{ url('home') }}">Home</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('dr_dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
                         </li>    
                         @if(auth()->user()->is_admin)
@@ -253,6 +256,9 @@
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">
                         <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_dashboard') }}">Dashboard</a>
                     </li>
                     <li class="">
                         <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
