@@ -16,7 +16,7 @@ class ConsumptionSubmission
      */
     public function handle($request, Closure $next)
     {
-        if (auth()->user()->covid_allowed) {
+        if (auth()->user()->covid_consumption_allowed) {
             // Check if COVID consumption has been submitted
             $covid = new CovidConsumption;
             if ($covid->lastweekConsumption()->isEmpty()){

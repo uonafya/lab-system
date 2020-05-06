@@ -26,7 +26,7 @@ class CovidConsumptionController extends Controller
     	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
     	return view('tasks.covid.consumption',
     		[
-                'covidkits' => CovidKit::get(),
+                'covidkits' => CovidKit::whereNot('type', 'Manual')->get(),
                 'tests' => $tests,
                 'time' => $time
             ]);
