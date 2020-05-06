@@ -3582,7 +3582,7 @@ class Random
 
     public static function covid_consumption_allowed()
     {
-        DB::statement('ALTER TABLE `users` ADD COLUMN `covid_consumption_allowed` TINYINT NOT NULL DEFAULT '0' AFTER `last_access`');
+        DB::statement("ALTER TABLE `users` ADD COLUMN `covid_consumption_allowed` TINYINT NOT NULL DEFAULT '0' AFTER `last_access`");
 
     }
 }
