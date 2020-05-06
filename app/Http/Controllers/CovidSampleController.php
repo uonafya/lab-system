@@ -291,6 +291,7 @@ class CovidSampleController extends Controller
             return back();
         }
 
+        $mpdf = new Mpdf();
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
