@@ -22,6 +22,7 @@ class CovidSampleObserver
                 $covidSample->site_entry = 0;
             }
         }
+        if(!$covidSample->lab_id && $user && $user->other_lab) $covidSample->lab_id = $user->lab_id;
         if(!$covidSample->lab_id && $user) $covidSample->lab_id = env('APP_LAB');
         if(!$covidSample->user_id && $user) $covidSample->user_id = $user->id;
         if(!$covidSample->received_by && $covidSample->datereceived && $user) $covidSample->received_by = $user->id;

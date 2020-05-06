@@ -148,7 +148,8 @@ class CovidReportsController extends Controller
 			}
 		}
 		return [
-			Lab::find(env('APP_LAB'))->labdesc,
+			// Lab::find(env('APP_LAB'))->labdesc,
+			Lab::find($sample->lab_id)->labdesc,
 			$count,
 			$sample->patient_name,
 			$sample->age,
