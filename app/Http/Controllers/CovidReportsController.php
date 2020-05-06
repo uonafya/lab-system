@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 
 class CovidReportsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('covid_allowed');   
+    }
+    
     private $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
 	public function index()
 	{
@@ -143,7 +148,8 @@ class CovidReportsController extends Controller
 			}
 		}
 		return [
-			Lab::find(env('APP_LAB'))->labdesc,
+			// Lab::find(env('APP_LAB'))->labdesc,
+			Lab::find($sample->lab_id)->labdesc,
 			$count,
 			$sample->patient_name,
 			$sample->age,

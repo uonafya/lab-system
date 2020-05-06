@@ -111,7 +111,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 66, 'name' => 'KMTC- Mombasa Campus', 'email' => ''],
 			['id' => 67, 'name' => 'Mombasa Beach Hotel', 'email' => ''],
 			['id' => 68, 'name' => 'Likoni Approved School', 'email' => ''],
-			// ['id' => 6, 'name' => '', 'email' => ''],
+			['id' => 69, 'name' => 'Kamalel', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
