@@ -1227,7 +1227,9 @@ class Synch
 
 	public static function synch_covid()
 	{
-		$client = new Client(['base_uri' => self::$base]);
+		$base = self::$base;
+		if(env('APP_LAB') == 7) $base = env('NATIONAL_URL');
+		$client = new Client(['base_uri' => $base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
