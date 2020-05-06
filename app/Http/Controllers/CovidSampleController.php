@@ -24,7 +24,7 @@ class CovidSampleController extends Controller
 
     public function __construct()
     {
-        if(in_array(env('APP_LAB'), [5,6]) && auth()->user()->user_type_id && !auth()->user()->covid_allowed) abort(403);
+        $this->middleware('covid_allowed');   
     }
 
     /**

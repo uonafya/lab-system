@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'utype' => \App\Http\Middleware\CheckAuth::class,
         'only_utype' => \App\Http\Middleware\OnlyUtype::class,
         'consumptionsubmitted' => \App\Http\Middleware\ConsumptionSubmission::class,
+        'covid_allowed' => \App\Http\Middleware\CovidAllowed::class,
     ];
 }

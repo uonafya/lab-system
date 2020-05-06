@@ -13,7 +13,7 @@ class CovidReportsController extends Controller
 {
     public function __construct()
     {
-        if(in_array(env('APP_LAB'), [5,6]) && auth()->user()->user_type_id && !auth()->user()->covid_allowed) abort(403);
+        $this->middleware('covid_allowed');   
     }
     
     private $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
