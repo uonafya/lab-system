@@ -300,6 +300,11 @@ Route::middleware(['auth'])->group(function(){
 
 		// Start of Drug Resistance Routes
 
+		Route::prefix('dr_dashboard')->name('dr_dashboard.')->group(function () {
+			Route::get('/', 'DrDashboardController@index');
+			Route::get('drug_resistance', 'DrDashboardController@drug_resistance');
+		});			
+
 		Route::post('dr_report', 'DrReportController@reports');
 
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
