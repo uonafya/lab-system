@@ -69,7 +69,7 @@ class CovidSampleController extends Controller
                 return $query->orderBy($date_column, 'desc');
             })
             ->when(!$user->facility_user, function($query) use ($user){
-                return $query->where('lab_id', $user->lab_id);
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
@@ -120,6 +120,7 @@ class CovidSampleController extends Controller
 
     public function download_excel($request)
     {
+        $user = auth()->user();
         if(auth()->user()->user_type_id == 4) abort(403);
         
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
@@ -154,6 +155,9 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
+            ->when(!$user->facility_user, function($query) use ($user){
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            })
             ->get();
 
         extract(Lookup::covid_form());
@@ -181,6 +185,7 @@ class CovidSampleController extends Controller
 
     public function email_multiple($request)
     {
+        $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         if(!$quarantine_site_id && !in_array(env('APP_LAB'), [5])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
@@ -217,6 +222,9 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
+            ->when(!$user->facility_user, function($query) use ($user){
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
             ->get();
@@ -245,6 +253,7 @@ class CovidSampleController extends Controller
 
     public function multiple_results($request)
     {
+        $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
 
@@ -269,6 +278,9 @@ class CovidSampleController extends Controller
                     ->whereDate($date_column, '<=', $date_end);
                 }
                 return $query->whereDate($date_column, $date_start);
+            })
+            ->when(!$user->facility_user, function($query) use ($user){
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
