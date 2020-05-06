@@ -132,6 +132,7 @@ class LoginController extends Controller
         if($user->user_type_id == 7) return "/sample/list_poc";
         if($user->user_type_id == 8) return "/viralsample/nhrl";
         if($user->quarantine_site) return "/covid_sample/create";
+        if($user->other_lab) return "/covid_sample";
 
         if($facility){
             $fac = \App\Facility::find($user->facility_id);

@@ -44,7 +44,7 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
+                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
@@ -190,7 +190,7 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
+            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
