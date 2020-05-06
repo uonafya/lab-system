@@ -11,6 +11,7 @@ use App\Facility;
 use App\Lookup;
 use App\MiscCovid;
 use Excel;
+use Mpdf\Mpdf;
 use DB;
 use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
@@ -92,10 +93,13 @@ class CovidSampleController extends Controller
 
     public function sample_search(Request $request)
     {
+        if($user->user_type_id == 4) abort(403);
+
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
         if($submit_type == 'excel') return $this->download_excel($request);
         if($submit_type == 'email') return $this->email_multiple($request);
+        if($submit_type == 'multiple_results') return $this->multiple_results($request);
         $to_print = $request->input('to_print');
         $date_start = $request->input('from_date', 0);
         if($submit_type == 'submit_date') $date_start = $request->input('filter_date', 0);
@@ -237,6 +241,46 @@ class CovidSampleController extends Controller
         }
         session(['toast_message' => 'The results have been sent to the quarantine site.']);
         return back();            
+    }
+
+    public function multiple_results($request)
+    {
+        $quarantine_site_id = $request->input('quarantine_site_id', 0);
+        $facility_id = $request->input('facility_id', 0);
+
+        $date_start = $request->input('from_date', 0);
+        $date_end = $request->input('to_date', 0);
+
+        $date_column = "covid_samples.datedispatched";
+
+        $samples = CovidSample::select('covid_samples.*')
+            ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+            ->where('repeatt', 0)
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
+            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+                if($date_end)
+                {
+                    return $query->whereDate($date_column, '>=', $date_start)
+                    ->whereDate($date_column, '<=', $date_end);
+                }
+                return $query->whereDate($date_column, $date_start);
+            })
+            ->whereNotNull('datedispatched')
+            ->orderBy($date_column, 'desc')
+            ->get();
+
+        $data = Lookup::covid_form();
+        $data['samples'] = [$covidSample];
+        $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "5000000");
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
     }
 
     /**
