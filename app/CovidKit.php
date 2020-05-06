@@ -15,11 +15,11 @@ class CovidKit extends BaseModel
     	// return $tests;
     }
 
-    public function beginingbalance()
+    public function beginingbalance($date)
     {
     	$balance = 0;
-    	$last_week = $this->getPreviousWeek();
-    	$last_week_consumption = CovidConsumption::whereDate('start_of_week', $last_week->week_start)->get();
+        $last_week = date('Y-m-d', strtotime('-7 days', strtotime($date)));
+    	$last_week_consumption = CovidConsumption::whereDate('start_of_week', $last_week)->get();
     	
     	if (!$last_week_consumption->isEmpty()){
     		$details = $last_week_consumption->first()->details->where('kit_id', $this->id);

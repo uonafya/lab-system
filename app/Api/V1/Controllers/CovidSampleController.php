@@ -38,6 +38,7 @@ class CovidSampleController extends Controller
         $p->national_patient_id = $patient_details['id'];
         unset($patient_details['original_patient_id']);
         unset($patient_details['cif_patient_id']);
+        unset($patient_details['nhrl_patient_id']);
         unset($patient_details['date_recovered']);
         $p->fill($patient_details);
         $p->save();
@@ -50,6 +51,7 @@ class CovidSampleController extends Controller
         $s->national_sample_id = $sample->id;
         unset($s->original_sample_id);
         unset($s->cif_sample_id);
+        unset($s->nhrl_sample_id);
         unset($s->age_category);
         $s->save();
 

@@ -78,7 +78,21 @@ class CovidKitsSeeder extends Seeder
                 ['material_no' => 'P34', 'product_description' => 'Shoe covers(disposable)', 'unit'=> 'pack', 'pack_size' => 10, 'type' => 'Consumable'],
                 ['material_no' => 'P35', 'product_description' => 'Head covers(disposable)', 'unit'=> 'pack', 'pack_size' => 100, 'type' => 'Consumable'],
                 ['material_no' => 'P36', 'product_description' => 'Paper towels', 'type' => 'Consumable'],
-                ['material_no' => 'P37', 'product_description' => 'Tongue depressors', 'type' => 'Consumable']
+                ['material_no' => 'P37', 'product_description' => 'Tongue depressors', 'type' => 'Consumable'],
+                ['material_no' => 'manual-1', 'product_description' => 'SARS-COV-2 Extraction Kits',
+                'pack_size' => 240, 'calculated_pack_size' => 240, 'type' => 'Manual', 'unit' => 'tests'],
+                ['material_no' => 'manual-2', 'product_description' => 'SARS-Cov2 Primers and probes- 96 tests',
+                'pack_size' => 96, 'calculated_pack_size' => 96, 'type' => 'Manual', 'unit' => 'tests'],
+                ['material_no' => 'manual-3', 'product_description' => 'AgPath as a kit (Enzyme and buffer)',
+                'pack_size' => 1000, 'calculated_pack_size' => 1000, 'type' => 'Manual', 'unit' => 'tests'],
+                ['material_no' => 'manual-4', 'product_description' => '10µl Sterile Filtered Pipette tips ',
+                'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
+                ['material_no' => 'manual-5', 'product_description' => '100µl Sterile Filtered Pipette tips',
+                'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
+                ['material_no' => 'manual-6', 'product_description' => '200µl Sterile Filtered Pipette tips',
+                'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
+                ['material_no' => 'manual-7', 'product_description' => '1000µl Sterile Filtered Pipette tips',
+                'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
         	];
         foreach ($kits as $key => $kit)
         	CovidKit::create($kit);

@@ -23,7 +23,7 @@ class CovidWorksheetController extends Controller
 
     public function __construct()
     {
-        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+        $this->middleware('covid_allowed');   
     }
     
     /**
