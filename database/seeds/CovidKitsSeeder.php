@@ -14,8 +14,8 @@ class CovidKitsSeeder extends Seeder
      */
     public function run()
     {
-        // CovidConsumption::truncate();
-        // CovidConsumptionDetail::truncate();
+        CovidConsumption::truncate();
+        CovidConsumptionDetail::truncate();
     	CovidKit::truncate();
         $kits = [
         		['material_no' => '9175431190', 'product_description' => 'Cobas® SARS-CoV-2 Test',
