@@ -252,9 +252,9 @@
 
                             @include('partial.select', ['model' => $m, 'row_attr' => "id='rejection'", 'prop' => 'rejectedreason', 'label' => 'Rejected Reason', 'items' => $viralrejectedreasons, ])
 
-                            @if(auth()->user()->other_lab)
+                            @if(auth()->user()->other_lab || env('APP_LAB') == 7)
 
-                                @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datetested', 'label' => 'Date Tested',])
+                                @include('partial.date', ['model' => $m, 'prop' => 'datetested', 'label' => 'Date Tested',])
 
                                 @include('partial.select', ['model' => $m, 'prop' => 'result', 'label' => 'Result', 'items' => $results, ])
 
