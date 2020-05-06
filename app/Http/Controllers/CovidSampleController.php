@@ -93,6 +93,7 @@ class CovidSampleController extends Controller
 
     public function sample_search(Request $request)
     {
+        $user = auth()->user();
         if($user->user_type_id == 4) abort(403);
 
         $type = $request->input('type', 1);
@@ -121,7 +122,6 @@ class CovidSampleController extends Controller
     public function download_excel($request)
     {
         $user = auth()->user();
-        if(auth()->user()->user_type_id == 4) abort(403);
         
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
