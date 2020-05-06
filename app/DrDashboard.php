@@ -151,6 +151,7 @@ class DrDashboard
 			$data['outcomes'][$key]['type'] = $type;
 			if(isset($colours[$key])) $data['outcomes'][$key]['color'] = $colours[$key];
 		}
+		return $data;
 	}
 
 	public static function columns(&$data, $start, $finish, $type='column')
