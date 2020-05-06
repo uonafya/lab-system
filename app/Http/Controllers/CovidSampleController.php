@@ -286,8 +286,13 @@ class CovidSampleController extends Controller
             ->orderBy($date_column, 'desc')
             ->get();
 
+        if(!$samples->count()){
+            session(['toast_error' => 1, 'toast_message' => 'No samples found']);
+            return back();
+        }
+
         $data = Lookup::covid_form();
-        $data['samples'] = [$samples];
+        $data['samples'] = $samples;
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
         ini_set("pcre.backtrack_limit", "5000000");
         $mpdf->WriteHTML($view_data);
