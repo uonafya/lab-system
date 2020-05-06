@@ -216,6 +216,8 @@
                                     <th rowspan="2">Task</th>
                                     @if(isset($type) && $type == 2)
                                         <th rowspan="2">Print Multiple</th>
+                                    @if(isset($type) && $type == 3)
+                                        <th rowspan="2">Select Sample</th>
                                     @else
                                         <th rowspan="2">Delete</th>
                                     @endif
