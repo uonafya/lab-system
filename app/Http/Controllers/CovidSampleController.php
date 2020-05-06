@@ -287,7 +287,7 @@ class CovidSampleController extends Controller
             ->get();
 
         $data = Lookup::covid_form();
-        $data['samples'] = [$covidSample];
+        $data['samples'] = [$samples];
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
         ini_set("pcre.backtrack_limit", "5000000");
         $mpdf->WriteHTML($view_data);
