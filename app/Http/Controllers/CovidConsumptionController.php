@@ -81,8 +81,10 @@ class CovidConsumptionController extends Controller
     	
     }
 
-    public function reports(Request $request)
+    public function reports(Request $request, CovidConsumption $consumption)
     {
+        if (null !== $consumption->start_of_week)
+            return view('reports.covidconsumptiondetails', ['consumption' => $consumption]);
     	return view('reports.covidconsumption', ['consumptions' => CovidConsumption::get()]);
     }
 

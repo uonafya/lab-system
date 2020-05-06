@@ -11,6 +11,11 @@ class CovidConsumption extends BaseModel
     	return $this->hasMany(CovidConsumptionDetail::class, 'consumption_id', 'id');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo(Lab::class, 'lab_id', 'id');
+    }
+
     public function synchComplete()
     {
         foreach ($this->details as $key => $detail) {
