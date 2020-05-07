@@ -56,6 +56,9 @@ class DrWorksheetController extends Controller
                         ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
                         ->whereNull('worksheet_id')
                         ->where('receivedstatus', 1)
+                        ->orderBy('control', 'desc')
+                        ->orderBy('run', 'desc')
+                        ->orderBy('id', 'asc')
                         ->limit(16)
                         ->get();
 
