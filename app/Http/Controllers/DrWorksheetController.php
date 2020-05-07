@@ -65,6 +65,7 @@ class DrWorksheetController extends Controller
         $data = Lookup::get_dr();
         $samples->load(['patient.facility']);
         $data['dr_samples'] = $samples;
+        $data['create'] = $samples->count();
 
         // $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
