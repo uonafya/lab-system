@@ -89,6 +89,7 @@
                         <thead>
                             <tr>
                                     <th> W No </th>
+                                    <th> Extraction W No </th>
                                     <th> Date Created </th>
                                     <th> Created By </th>
                                     <th> Reviewed By </th>
@@ -106,6 +107,7 @@
                             @foreach($worksheets as $key => $worksheet)
                                 <tr>
                                     <td>{{ $worksheet->id }} </td>
+                                    <td>{{ $worksheet->extraction_worksheet_id }} </td>
                                     <td> {{ $worksheet->my_date_format('created_at') }} </td>
                                     <td> {{ $worksheet->creator->full_name ?? '' }} </td>
                                     <td> {{ $worksheet->reviewer->full_name ?? '' }} </td>

@@ -28,6 +28,7 @@
 
                             <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                             <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+                            <input type="hidden" value="{{ $extraction_worksheet_id }}" name="extraction_worksheet_id">
                         @endif
 
                             @csrf

@@ -63,6 +63,7 @@ class DrWorksheetController extends Controller
         $data = Lookup::get_dr();
         $data['samples'] = $samples;
         $data['create'] = $samples->count();
+        $data['extraction_worksheet_id'] = $extraction_worksheet_id;
 
         // $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
@@ -78,10 +79,18 @@ class DrWorksheetController extends Controller
     {
         $limit = 16;
         $c = $request->input('control_samples');
+        $extraction_worksheet_id = $request->input('extraction_worksheet_id');
         if($c) $limit = 14;
-        $data = MiscDr::get_worksheet_samples($request->input('samples'), $limit);
 
-        if(!$data['create']){
+        $samples = DrSampleView::whereNull('worksheet_id')
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        // ->orderBy('control', 'desc')
+                        ->orderBy('run', 'desc')
+                        ->orderBy('id', 'asc')
+                        ->limit($limit)
+                        ->get();
+
+        if(!$samples->count()){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
             return back();
         }
@@ -89,7 +98,7 @@ class DrWorksheetController extends Controller
         $dr_worksheet = new DrWorksheet;
         $dr_worksheet->fill($request->except(['_token', 'samples', 'control_samples']));
         $dr_worksheet->save();
-        $samples = $data['samples'];
+        // $samples = $data['samples'];
 
         foreach ($samples as $s) {
             $sample = DrSample::find($s->id);
