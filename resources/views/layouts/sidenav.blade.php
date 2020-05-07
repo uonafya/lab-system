@@ -219,8 +219,6 @@
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
                 <hr />
-                <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet (Bulk Template)</a></li>
-                <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
                 

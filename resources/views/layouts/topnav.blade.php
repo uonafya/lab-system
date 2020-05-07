@@ -89,6 +89,12 @@
                             <a href="{{ url('dr_dashboard') }}">Dashboard</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('dr_worksheet') }}">Sequencing Worksheets</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
                         </li>    
                         @if(auth()->user()->is_admin)
@@ -259,6 +265,12 @@
                     </li>
                     <li class="">
                         <a href="{{ url('dr_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_worksheet') }}">Sequencing Worksheets</a>
                     </li>
                     <li class="">
                         <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
