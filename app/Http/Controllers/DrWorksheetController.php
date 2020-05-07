@@ -61,7 +61,6 @@ class DrWorksheetController extends Controller
                         ->get();
 
         $data = Lookup::get_dr();
-        $samples->load(['patient.facility']);
         $data['samples'] = $samples;
         $data['create'] = $samples->count();
 
