@@ -54,7 +54,6 @@ class DrWorksheetController extends Controller
     {
         $samples = DrSample::selectRaw("dr_samples.*")
                         ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-                        ->orderBy('drug_resistance_reasons.rank', 'asc')
                         ->whereNull('worksheet_id')
                         ->where('receivedstatus', 1)
                         ->limit(16)
