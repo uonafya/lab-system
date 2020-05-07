@@ -355,7 +355,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
 
-				// Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
+				Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
 				Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 

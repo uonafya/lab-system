@@ -49,22 +49,22 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create($extraction_worksheet_id)
-    public function create()
+    // public function create()
+    public function create($extraction_worksheet_id)
     {
-        // $samples = DrSample::selectRaw("dr_samples.*")
-        //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-        //                 ->orderBy('drug_resistance_reasons.rank', 'asc')
-        //                 ->whereNull('worksheet_id')
-        //                 ->where('receivedstatus', 1)
-        //                 ->limit(16)
-        //                 ->get();
-
-        // $samples->load(['patient.facility']);
-        // $data['dr_samples'] = $samples;
+        $samples = DrSample::selectRaw("dr_samples.*")
+                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
+                        ->orderBy('drug_resistance_reasons.rank', 'asc')
+                        ->whereNull('worksheet_id')
+                        ->where('receivedstatus', 1)
+                        ->limit(16)
+                        ->get();
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
+        $samples->load(['patient.facility']);
+        $data['dr_samples'] = $samples;
+
+        // $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
     }
 
