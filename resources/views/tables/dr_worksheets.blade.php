@@ -85,7 +85,7 @@
                     Worksheets
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover data-table" >
+                    <table class="table table-striped table-bordered table-hover" >
                         <thead>
                             <tr>
                                     <th> W No </th>
@@ -127,6 +127,7 @@
                         </tbody>
                     </table>
                 </div>
+                {{ $worksheets->links() }}
             </div>
         </div>
     </div>
