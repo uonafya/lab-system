@@ -53,7 +53,7 @@ class DrWorksheetController extends Controller
     public function create($extraction_worksheet_id)
     {
         $samples = DrSampleView::whereNull('worksheet_id')
-                        ->where(['receivedstatus' => 1, 'control' => 0])
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id])
                         // ->orderBy('control', 'desc')
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
