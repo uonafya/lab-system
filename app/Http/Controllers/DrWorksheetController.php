@@ -52,11 +52,9 @@ class DrWorksheetController extends Controller
     // public function create()
     public function create($extraction_worksheet_id)
     {
-        $samples = DrSample::selectRaw("dr_samples.*")
-                        ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-                        ->whereNull('worksheet_id')
-                        ->where('receivedstatus', 1)
-                        ->orderBy('control', 'desc')
+        $samples = DrSampleView::whereNull('worksheet_id')
+                        ->where(['receivedstatus' => 1, 'control' => 0])
+                        // ->orderBy('control', 'desc')
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
                         ->limit(16)
@@ -64,7 +62,7 @@ class DrWorksheetController extends Controller
 
         $data = Lookup::get_dr();
         $samples->load(['patient.facility']);
-        $data['dr_samples'] = $samples;
+        $data['samples'] = $samples;
         $data['create'] = $samples->count();
 
         // $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
