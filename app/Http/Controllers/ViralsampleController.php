@@ -675,6 +675,8 @@ class ViralsampleController extends Controller
             return redirect('viralbatch/site_approval/' . $batch->id);
         }
 
+        if(env('APP_LAB') == 7) return redirect('dr_sample/12');
+
         return redirect('viralbatch/' . $batch->id);
     }
 

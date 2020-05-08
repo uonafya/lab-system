@@ -315,6 +315,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('search', 'DrSampleController@search');
 
 				// Route::put('{drSample}', 'DrSampleController@update')->name('update');
+				Route::get('vl_results/{drSample}', 'DrSampleController@vl_results')->name('vl_results');
 				Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 				Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
 			// });

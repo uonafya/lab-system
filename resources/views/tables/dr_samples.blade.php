@@ -17,6 +17,8 @@
                 @foreach($dr_sample_statuses as $dr_sample_status)
                     <a href="{{ $myurl2 . '/' . $dr_sample_status->id }}"> {{ $dr_sample_status->name }} samples</a> | 
                 @endforeach
+                <br />
+                <a href="{{ $myurl2 . '/12'}}"> Samples that failed gel documentation</a> | 
             </div>
         </div>
 
@@ -242,6 +244,9 @@
                                             @if(in_array($sample->status_id, [1, 2, 3]))
                                                 @if(auth()->user()->is_lab_user)
                                                     <a href="{{ url('dr_sample/email/' . $sample->id ) }}"> Email Results </a> | 
+                                                    @if($sample->passed_gel_documentation == 0)
+                                                        <a href="{{ url('dr_sample/vl_results/' . $sample->id ) }}"> Edit VL Results </a> | 
+                                                    @endif
                                                 @endif
                                                 <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank"> View Results </a> | 
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}"> Download </a> | 

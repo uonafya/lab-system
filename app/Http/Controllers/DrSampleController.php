@@ -6,6 +6,7 @@ use App\DrSample;
 use App\DrSampleView;
 use App\DrPatient;
 use App\Viralpatient;
+use App\Viralsample;
 use App\User;
 use App\Lookup;
 use App\MiscDr;
@@ -34,7 +35,7 @@ class DrSampleController extends Controller
         $user = auth()->user();
         $date_column = "datereceived";
         if(in_array($sample_status, [1, 2, 3])) $date_column = "datedispatched";
-        else if(in_array($sample_status, [11])) $date_column = "dr_samples.created_at";
+        else if(in_array($sample_status, [11, 12])) $date_column = "dr_samples.created_at";
 
         $string=null;
         if($user->is_facility) $string = "(user_id='{$user->id}' OR dr_samples.facility_id='{$user->facility_id}')";
@@ -52,6 +53,7 @@ class DrSampleController extends Controller
             })
             ->when($sample_status, function($query) use ($sample_status){
                 if($sample_status == 11) return $query->whereNull('datereceived');
+                if($sample_status == 12) return $query->where('passed_gel_documentation', 0);
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
@@ -316,6 +318,17 @@ class DrSampleController extends Controller
         $data['sample'] = $sample;
         // dd($request);
         return view('forms.dr_samples', $data)->with('pageTitle', 'Edit Drug Resistance Sample');
+    }
+
+
+    public function vl_results(DrSample $drSample)
+    {
+        $sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->firstOrFail();
+        $drSample->load(['dr_call.call_drug']);
+        $data = Lookup::get_dr();
+        $data['sample'] = $drSample;
+        $data['print'] = $print;
+        return view('exports.dr_result', $data);  
     }
 
 
