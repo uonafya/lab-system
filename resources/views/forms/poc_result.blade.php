@@ -10,7 +10,7 @@
         <div class="hpanel">
             <div class="panel-body">
                 <h2 class="font-light m-b-xs">
-                    Update POC Result
+                    Update Result
                 </h2>
             </div>
         </div>
