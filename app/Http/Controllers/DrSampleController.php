@@ -324,11 +324,7 @@ class DrSampleController extends Controller
     public function vl_results(DrSample $drSample)
     {
         $sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->firstOrFail();
-        $drSample->load(['dr_call.call_drug']);
-        $data = Lookup::get_dr();
-        $data['sample'] = $drSample;
-        $data['print'] = $print;
-        return view('exports.dr_result', $data);  
+        return redirect('viralsample/' . $sample->id . '/edit');
     }
 
 
