@@ -324,7 +324,7 @@ class DrSampleController extends Controller
     public function vl_results(DrSample $drSample)
     {
         $sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->firstOrFail();
-        return redirect('viralsample/' . $sample->id . '/edit');
+        return redirect('viralsample/' . $sample->id . '/edit_result');
     }
 
 

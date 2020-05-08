@@ -320,6 +320,7 @@ class Common
 
         if($samples->isEmpty()){
         	$worklist = \App\Worklist::find($worklist_id);
+        	if(!$worklist) return;
         	$worklist->status_id = 3;
         	$worklist->pre_update();
         }

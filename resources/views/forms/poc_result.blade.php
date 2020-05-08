@@ -68,21 +68,25 @@
                                 </div>
                             </div>   
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">POC Site Sample Tested at
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" required name="lab_id" id="lab_id">
-                                        @if($sample->batch->facility_lab)
-                                            <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
-                                        @else
-                                            <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
-                                        @endif
+                            @if($sample->batch->site_entry == 2)
 
-                                    </select>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" required name="lab_id" id="lab_id">
+                                            @if($sample->batch->facility_lab)
+                                                <option value="{{ $sample->batch->facility_lab->id }}" selected>{{ $sample->batch->facility_lab->facilitycode }} {{ $sample->batch->facility_lab->name }}</option>
+                                            @else
+                                                <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                            @endif
+
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+
+                            @endif
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Tested
