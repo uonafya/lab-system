@@ -16,6 +16,12 @@ class CovidConsumption extends BaseModel
         return $this->belongsTo(Lab::class, 'lab_id', 'id');
     }
 
+    public function getTestsDone($start_date, $end_date)
+    {
+        return CovidSample::whereBetween('datetested', [$start_date, $end_date])
+                    ->where('receivedstatus', '<>', 2)->get()->count();
+    }
+
     public function synchComplete()
     {
         foreach ($this->details as $key => $detail) {
@@ -54,6 +60,15 @@ class CovidConsumption extends BaseModel
         }
         $data[] = $this->getPreviousWeek();
         return $data;
+    }
+
+    public function fillTestsDone()
+    {
+        foreach ($this->whereNull('tests')->get() as $key => $consumption) {
+            $consumption->tests = (int)$this->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
+            $consumption->save();
+        }
+        // Synch::synchCovidConsumption();
     }
 
     private function getdata($week)
