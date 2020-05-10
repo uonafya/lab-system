@@ -95,11 +95,15 @@ class Controller extends BaseController
                      
         $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
         if ($taqmanmodel == 0)
-            return false;       
+            return false;   
+
+        if(in_array(env('APP_LAB'), [8])) return true;
         
         $time = $this->getPreviousWeek();
         $covidsubmittedstatus = 1;
-        if (CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
+        if (CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
+            !in_array(env('APP_LAB'), [8]) && 
+            auth()->user()->covid_consumption_allowed) {
             return false;
         }
         return true;
