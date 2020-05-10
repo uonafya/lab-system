@@ -65,6 +65,7 @@ class CovidConsumption extends BaseModel
     public function fillTestsDone()
     {
         foreach ($this->whereNull('tests')->get() as $key => $consumption) {
+            dd($consumption);
             $consumption->tests = (int)$this->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
             $consumption->save();
         }
