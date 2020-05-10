@@ -457,6 +457,20 @@ class CovidSampleController extends Controller
         return back();
     }
 
+    public function cif_samples()
+    {
+        $samples = \App\Synch::get_covid_samples();
+        dd($samples);
+    }
+
+    public function set_cif_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        \App\Synch::set_covid_samples($samples);
+        session(['toast_message' => 'The sample have been set to come to the lab.']);
+        return redirect();        
+    }
+
 
     public function site_sample_page()
     {
