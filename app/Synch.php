@@ -1324,7 +1324,7 @@ class Synch
 			],
 				'json' => [
 					'samples' => $sample->toJson(),
-					'lab_id' => env('APP_LAB', null),
+					'lab_id' => auth()->user()->lab_id,
 				],
 		]);
 
