@@ -460,12 +460,16 @@ class CovidSampleController extends Controller
     public function cif_samples()
     {
         $samples = \App\Synch::get_covid_samples();
-        dd($samples);
+        return view('tables.cif_covid_samples');
     }
 
     public function set_cif_samples(Request $request)
     {
         $samples = $request->input('samples');
+        if(!$samples){
+            session(['toast_error' => 1, 'toast_message' => 'No samples selected.']);
+            return back();            
+        }
         \App\Synch::set_covid_samples($samples);
         session(['toast_message' => 'The sample have been set to come to the lab.']);
         return redirect();        
