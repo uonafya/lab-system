@@ -57,6 +57,7 @@ class CovidConsumptionController extends Controller
                                 'week' => $time->week,
                                 'lab_id' => env('APP_LAB')
                             ]);
+                $consumption->tests = $consumption->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
                 $consumption->save();
 
                 foreach ($data as $key => $detail) {
