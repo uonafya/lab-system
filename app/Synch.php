@@ -1302,7 +1302,7 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 
-		$response = $client->request('get', 'covid_sample/nic', [
+		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
@@ -1317,7 +1317,7 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 
-		$response = $client->request('post', 'covid_sample/nic', [
+		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
