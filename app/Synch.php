@@ -1298,6 +1298,40 @@ class Synch
 	}
 
 
+	public static function get_covid_samples()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('get', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
+
+	public static function set_covid_samples($samples)
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('post', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+				'json' => [
+					'samples' => $sample->toJson(),
+					'lab_id' => auth()->user()->lab_id,
+				],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
+
 
 	public static function match_eid_patients()
 	{
