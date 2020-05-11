@@ -56,21 +56,21 @@
                         	<strong><a href="{{ url('kitsdeliveries') }}">Click to Add Kit Deliveries for  [  Quarter {{ Session('quarter') }} ({{ Session('range') }}), {{ date('Y') }}]</a></strong>
                         	<p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
-                                    @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
+                                    @if ($data->kits->taqkits > 0 && $data->kits->abkits == 0)
                                         RECEIVED ABBOTT (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
-                                    @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
+                                    @elseif ($data->kits->abkits > 0 && $data->kits->taqkits == 0)
                                         RECEIVED ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
-                                    @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
+                                    @elseif ($data->kits->taqkits == 0 && $data->kits->abkits == 0)
                                         RECEIVED ABBOTT & ROCHE (EID & VL) KITS NEED TO BE ENTERED BEFORE REPORT SUBMISSION
                                     @endif
                                 </font>
                             </p>
                             <p style="margin-left: 3em;">
-                                @if (($data->kits->eidtaqkits > 0) && ($data->kits->vltaqkits > 0))
+                                @if ($data->kits->taqkits > 0)
                                     <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a>
-                                @elseif (($data->kits->eidabkits > 0) && ($data->kits->vlabkits > 0))
+                                @elseif ($data->kits->abkits > 0)
                                     <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
-                                @elseif (($data->kits->eidtaqkits == 0) && ($data->kits->vltaqkits == 0) && ($data->kits->eidabkits == 0) && ($data->kits->vlabkits == 0))
+                                @elseif ($data->kits->taqkits == 0 && $data->kits->abkits == 0)
                                     <a href="{{ url('kitsdeliveries/all') }}">Click here to submit a NULL ABBOTT & ROCHE (EID & VL) report</a><br>
                                     <a href="{{ url('kitsdeliveries/abbott') }}">Click here to submit a NULL ABBOTT (EID & VL) report</a><br>
                                     <a href="{{ url('kitsdeliveries/roche') }}">Click here to submit a NULL ROCHE (EID & VL) report</a>
@@ -78,7 +78,7 @@
                             </p>
                         </div>
                     @elseif ($data->submittedkits == 1)  
-                        @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)))
+                        @if ($data->consumption->taqconsumption > 0 && $data->consumption->abconsumption > 0)
                             <div class="alert alert-success spacing bottom">
                                 <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Consumption Report Submitted</a></strong>
                             </div>
@@ -87,11 +87,11 @@
                             <strong><a href="{{ url('consumption') }}">Click to Submit Consumption Report for  [ {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }}]</a></strong>
                             <p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
-                                    @if ((($data->consumption->eidtaqconsumption > 0) && ($data->consumption->vltaqconsumption > 0)) && (($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0)))
+                                    @if ($data->consumption->taqconsumption > 0 && $data->consumption->abconsumption == 0)
                                         ABBOTT
-                                    @elseif ((($data->consumption->eidabconsumption > 0) && ($data->consumption->vlabconsumption > 0)) && (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0)))
+                                    @elseif ($data->consumption->abconsumption > 0 && $data->consumption->taqconsumption == 0)
                                         TAQMAN
-                                    @elseif (($data->consumption->eidtaqconsumption == 0) && ($data->consumption->vltaqconsumption == 0) && ($data->consumption->eidabconsumption == 0) && ($data->consumption->vlabconsumption == 0))
+                                    @elseif ($data->consumption->taqconsumption == 0 && $data->consumption->abconsumption == 0)
                                         TAQMAN & ABBOTT
                                     @endif
                                 </font>
