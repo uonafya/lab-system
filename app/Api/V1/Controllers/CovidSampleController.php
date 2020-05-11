@@ -5,10 +5,9 @@ namespace App\Api\V1\Controllers;
 use App\CovidPatient;
 use App\CovidSample;
 use App\CovidTravel;
-use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
-class CovidSampleController extends Controller
+class CovidSampleController extends BaseController
 {
     
     /**

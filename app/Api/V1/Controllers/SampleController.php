@@ -7,12 +7,10 @@ use App\Sample;
 use App\Batch;
 use App\Patient;
 use App\Mother;
-use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
-class SampleController extends Controller
+class SampleController extends BaseController
 {
-    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
