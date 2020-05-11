@@ -414,7 +414,8 @@ class WorksheetController extends Controller
      */
     public function save_results(Request $request, Worksheet $worksheet)
     {
-        if(!in_array($worksheet->status_id, [1, 4])){
+        // if(!in_array($worksheet->status_id, [1, 4])){
+        if(true){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
