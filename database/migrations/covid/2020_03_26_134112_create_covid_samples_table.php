@@ -16,6 +16,7 @@ class CreateCovidSamplesTable extends Migration
         Schema::create('covid_samples', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('national_sample_id')->index()->nullable();
+            $table->integer('cif_sample_id')->index()->nullable();
             $table->integer('patient_id')->index()->nullable();
             $table->tinyInteger('lab_id')->nullable();
 

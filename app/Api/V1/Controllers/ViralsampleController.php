@@ -6,12 +6,11 @@ use App\ViralsampleView;
 use App\Viralsample;
 use App\Viralbatch;
 use App\Viralpatient;
-use App\Http\Controllers\Controller;
+use App\MiscViral;
 use App\Api\V1\Requests\ApiRequest;
 
-class ViralsampleController extends Controller
+class ViralsampleController extends BaseController
 {
-    use \Dingo\Api\Routing\Helpers;
     
     /**
      * Display a listing of the resource.
@@ -177,5 +176,26 @@ class ViralsampleController extends Controller
                 'status_code' => 201,
             ], 201);
 
+    }
+
+    public function poc_sample(ApiRequest $request)
+    {
+        $datetested = $request->input('datetested');
+        $result = $request->input('result');
+        $min_date = date('Y-m-d', strtotime($datetested . ' -3 days'));
+        $s = ViralsampleView::where($request->only(['patient', ]))
+            ->where(['site_entry' => 2])
+            ->whereBetween('datecollected', [$min_date, $datetested])
+            ->firstOrFail();
+
+        $sample = Viralsample::find($s->id);
+        $sample->fill(compact('datetested', 'result'));
+        $sample->fill(MiscViral::sample_result($sample->result));
+        $sample->save();
+
+        MiscViral::check_batch($sample->batch_id);
+        MiscViral::check_worklist(ViralsampleView::class, $sample->worksheet_id);
+
+        return $sample;
     }
 }
