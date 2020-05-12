@@ -35,7 +35,7 @@
 		            </div>
 
 		            <div class="panel-body no-padding">
-		            	@if(auth->user()->lab_user)
+		            	@if(auth()->user()->lab_user)
 		            	<ul class="list-group">
 		                @if(session('testingSystem') == 'Viralload')
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
