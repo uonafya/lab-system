@@ -331,7 +331,7 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('covidkits/report') }}">Consumption Report</a>
+                <a href="{{ url('covidkits/reports') }}">Consumption Report</a>
             </li>
             <hr />
             <li>
