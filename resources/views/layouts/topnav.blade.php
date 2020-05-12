@@ -186,6 +186,19 @@
                             </li>
                         @endif
                     @endif
+                @elseif(in_array(Auth::user()->user_type_id, [12]))
+                    <li class="">
+                        <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -378,6 +391,19 @@
                         </li>
                     @endif
                 @endif
+            @elseif(in_array(Auth::user()->user_type_id, [12]))
+                <li class="">
+                    <a href="{{ url('home') }}">Home</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample') }}">Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                </li>
             @endif
                 <li class="dropdown">
                         
