@@ -21,8 +21,11 @@
     <div class="col-md-12">
     {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
     @php
+        $kits = $covidkits->where('type', 'Kit');
+        if ($kits->isEmpty())
+            $kits = $covidkits->where('type', 'Manual');
         $kittypes = [
-                'kits' => $covidkits->where('type', 'Kit'),
+                'kits' => $kits,
                 'consumables' => $covidkits->where('type', 'Consumable')
             ];
     @endphp
