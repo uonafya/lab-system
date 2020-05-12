@@ -47,7 +47,7 @@
                         </div>
                     @else 
                         <div class="alert alert-success spacing bottom">
-                            <strong><a href="#" style="color: black;">Last week`s ({{ $data->time[0]->week_start }} - {{ $data->time[0]->week_end }}) COVID consumptions Submitted</a></strong>
+                            <strong><a href="#" style="color: black;">Previous COVID consumptions Submitted</a></strong>
                         </div>
                     @endif
                     <!-- Kit and kits consumption -->
