@@ -47,24 +47,25 @@
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
 			                    <a href="{{-- url('home/overdue/dispatch') --}}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
 		                    </li> -->
+		                    
 
-		                	<li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamples']['plasma'] }}</span>
+		                	<li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamples']['plasma']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamples']['plasma']) }}">{{ $widgets['pendingSamples']['plasma'] }}</span>
 		                        <a href="{{ url('home/pending/samples/plasma') }}">Frozen Plasma Samples Awaiting Testing</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamples']['EDTA'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamples']['EDTA']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamples']['EDTA']) }}">{{ $widgets['pendingSamples']['EDTA'] }}</span>
 		                        <a href="{{ url('home/pending/samples/EDTA') }}">Venous Blood (EDTA) Samples Awaiting Testing</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamples']['DBS'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamples']['DBS']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamples']['DBS']) }}">{{ $widgets['pendingSamples']['DBS'] }}</span>
 		                        <a href="{{ url('home/pending/samples/DBS') }}">DBS Samples Awaiting Testing</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['batchesForApproval'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['batchesForApproval']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['batchesForApproval']) }}">{{ $widgets['batchesForApproval'] }}</span>
 		                        <a href="{{ url('viralbatch/site_approval') }}">Site Entry Batches Awaiting Approval for Testing</a>
 		                    </li>
 
@@ -73,23 +74,23 @@
 		                        <a href="#">Batches Marked as Not Received at Lab</a>
 		                    </li> -->
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['batchesForDispatch'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['batchesForDispatch']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['batchesForDispatch']) }}">{{ $widgets['batchesForDispatch'] }}</span>
 		                        <a href="{{ url('viralbatch/dispatch') }}">Complete Batches Awaiting Dispatch</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['samplesForRepeat']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['samplesForRepeat']) }}">{{ $widgets['samplesForRepeat'] }}</span>
 		                        <a href="{{ url('home/repeat') }}">Invalid/Failed Samples from Previous Runs to be Rerun</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['rejectedForDispatch'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['rejectedForDispatch']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['rejectedForDispatch']) }}">{{ $widgets['rejectedForDispatch'] }}</span>
 		                        <a href="{{ url('home/rejected') }}">Rejected Samples Awaiting Dispatch</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamplesOverTen']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamplesOverTen']) }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
@@ -109,33 +110,33 @@
 			                    <a href="{{-- url('home/overdue/dispatch') --}}">EID Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
 		                    </li> -->
 
-	            		    <li class="list-group-item" style="{{ $style }}">
-	            		    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamples'] }}</span>
+	            		    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamples']) }}">
+	            		    	<span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamples']) }}">{{ $widgets['pendingSamples'] }}</span>
 			                    <a href="{{ url('home/pending/samples') }}">Samples awaiting testing</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['batchesForApproval'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['batchesForApproval']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['batchesForApproval']) }}">{{ $widgets['batchesForApproval'] }}</span>
 		                        <a href="{{ url('batch/site_approval') }}">Site entry batches awaiting approval for testing.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['batchesForDispatch'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['batchesForDispatch']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['batchesForDispatch']) }}">{{ $widgets['batchesForDispatch'] }}</span>
 		                        <a href="{{ url('batch/dispatch') }}">Complete batches awaiting dispatch.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['samplesForRepeat'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['samplesForRepeat']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['samplesForRepeat']) }}">{{ $widgets['samplesForRepeat'] }}</span>
 		                        <a href="{{ url('home/repeat') }}">Invalid/Failed Samples from previous runs to be rerun.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['rejectedForDispatch'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['rejectedForDispatch']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['rejectedForDispatch']) }}">{{ $widgets['rejectedForDispatch'] }}</span>
 		                        <a href="{{ url('home/rejected') }}">Rejected samples awaiting dispatch.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $style }}">
-		                    	<span class="badge badge-{{ $badge }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamplesOverTen']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamplesOverTen']) }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
