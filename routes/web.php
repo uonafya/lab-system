@@ -475,8 +475,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 			Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
 			Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
+			Route::resource('user', 'UserController');	
 		});
-		Route::resource('user', 'UserController');	
 
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {
