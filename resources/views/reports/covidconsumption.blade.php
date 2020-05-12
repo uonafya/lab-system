@@ -31,7 +31,7 @@
                 				<td>{{ $key+1 }}</td>
                                 <td>{{ $consumption->start_of_week ?? '' }}</td>
                                 <td>{{ $consumption->end_of_week ?? '' }}</td>
-                                <td>{{ $consumption->lab->labdesc ?? '' }}</td>
+                                <td>{{ $consumption->lab->name ?? '' }}</td>
                                 <td>{{ $consumption->tests ?? '' }}</td>
                                 <td><a class="btn btn-primary" href="{{ url('covidkits/reports/' . $consumption->id) }}" >View Details</a></td>
                 			</tr>

@@ -65,6 +65,7 @@ class TaskController extends Controller
 		{
             $data['submittedkits'] = 1;
             $data['consumption'] = (object)$this->getConsumption();
+            print_r($this->getConsumption());
 		}else {
 			$data['submittedkits'] = 0;
 		}
@@ -77,7 +78,8 @@ class TaskController extends Controller
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
-        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)->count();
+        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
+                                        ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
         // dd($this->getPreviousWeek());
