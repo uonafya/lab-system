@@ -218,6 +218,25 @@ class UserController extends Controller
         }
     }
 
+    public function edit_password(Request $request, $id)
+    {
+        $user = self::__unHashUser($id);
+
+        if (!empty($user)) {
+            $user->password = $request->password;
+            $user->update();
+            session(['toast_message'=>'User password succesfully updated']);
+        } else {
+            session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+        }  
+        
+        if (isset($request->user)) {
+            return back();
+        } else {
+            return redirect()->route('users');
+        }          
+    }
+
     public function allocationcontact(User $user)
     {
         $text = '';

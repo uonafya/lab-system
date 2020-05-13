@@ -468,6 +468,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 		Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
+		Route::put('user/edit_password/{id?}', 'UserController@edit_password')->name('edit_password');
 
 		Route::group(['middleware' => ['only_utype:2']], function () {
 			Route::get('users', 'UserController@index')->name('users');
