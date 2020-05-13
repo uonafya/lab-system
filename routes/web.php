@@ -472,6 +472,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 		Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
+		Route::put('user/edit_password/{id?}', 'UserController@edit_password')->name('edit_password');
 
 		Route::group(['middleware' => ['only_utype:2']], function () {
 			Route::get('users', 'UserController@index')->name('users');
@@ -479,8 +480,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 			Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
 			Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
+			Route::resource('user', 'UserController');	
 		});
-		Route::resource('user', 'UserController');	
 
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {

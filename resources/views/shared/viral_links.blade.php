@@ -16,16 +16,19 @@
 	@endif
 	
 	@if($worksheet->machine_type == 2)
-		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" target='_blank'>
+		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
 			Convert to C8800
 		</a> |
+		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" >
+			Convert to Panther
+		</a> |
 		@if($worksheet->samples_no < 22)
-			<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
+			<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
 				Convert to Roche/Taqman
 			</a> |
 		@endif
 	@elseif($worksheet->machine_type == 3)
-		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
+		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" >
 			Convert to Abbott
 		</a> |
 	@endif

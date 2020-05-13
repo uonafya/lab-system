@@ -199,6 +199,9 @@
                     <li class="">
                         <a href="{{ url('covid_sample/index/2') }}">Results List</a>
                     </li>
+                    <li class="">
+                        <a href="{{ url('covidreports') }}">Reports</a>
+                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -403,6 +406,9 @@
                 </li>
                 <li class="">
                     <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covidreports') }}">Reports</a>
                 </li>
             @endif
                 <li class="dropdown">
