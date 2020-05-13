@@ -252,7 +252,7 @@ class MiscViral extends Common
             return self::exponential_result($result);
         }
 
-        else if($result == 'Failed' || $result == 'Invalid' || $result == '' || str_contains($str, ['error']) || strlen($error) > 10)
+        else if($str == 'failed' || $str == 'invalid' || $str == '' || str_contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
             $interpretation = $error ?? $result;       

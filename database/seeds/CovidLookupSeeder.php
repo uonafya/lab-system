@@ -139,6 +139,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 7, 'name' => 'Surveillance and Quarantine'],
 			['id' => 8, 'name' => 'Recent travel'],
 			['id' => 9, 'name' => 'Health Care Worker'],
+			['id' => 10, 'name' => 'Truck Driver'],
 		]);
 		return;
 
