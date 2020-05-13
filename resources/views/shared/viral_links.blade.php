@@ -15,23 +15,18 @@
 		</a> | 
 	@endif
 	
-	@if($worksheet->machine_type == 2)
-		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
-			Convert to C8800
-		</a> |
-		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" >
-			Convert to Panther
-		</a> |
-		@if($worksheet->samples_no < 22)
-			<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
-				Convert to Roche/Taqman
-			</a> |
-		@endif
-	@elseif($worksheet->machine_type == 3)
-		<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" >
-			Convert to Abbott
-		</a> |
-	@endif
+	<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
+		Convert to Roche/Taqman
+	</a> |
+	<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" >
+		Convert to Abbott
+	</a> |
+	<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
+		Convert to C8800
+	</a> |
+	<a href="{{ url('viralworksheet/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" >
+		Convert to Panther
+	</a> |
 
 	<a href="{{ url('viralworksheet/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
 		Update
