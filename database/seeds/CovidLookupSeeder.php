@@ -114,8 +114,8 @@ class CovidLookupSeeder extends Seeder
 			['id' => 69, 'name' => 'Kamalel', 'email' => ''],
 			['id' => 70, 'name' => 'CJ Bar & Restaurant', 'email' => ''],
 			['id' => 71, 'name' => 'Kajiado Central', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 72, 'name' => 'Embassy Hotel', 'email' => ''],
+			['id' => 73, 'name' => 'Eco Foods Resort', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
 
