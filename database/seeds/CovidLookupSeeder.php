@@ -130,7 +130,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 85, 'name' => 'Narok County Referral Hospital', 'email' => 'bundi.lilah@gmail.com'],
 			['id' => 86, 'name' => 'Vigilance', 'email' => ''],
 			['id' => 87, 'name' => 'Nanyuki TRH', 'email' => 'laikipiacountyhealth@gmail.com,joelmaino7@yahoo.com'],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 88, 'name' => 'KMTC Uasin Gishu', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
