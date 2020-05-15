@@ -276,7 +276,7 @@ p.breakhere {page-break-before: always}
 		@endif
 
 		@if(env('APP_LAB') == 6)
-			<img src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
+			<img height="30" width="80" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
 		@endif
 
 		@if (!$loop->last)
