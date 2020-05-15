@@ -38,8 +38,8 @@
 		@if(env('APP_LAB') == 4 && $sample->parentid)
 			<br /> Previous Worksheet - {{ $sample->prev_worksheet }}
 		@endif
-		@if(env('APP_LAB') == 6 && isset($covid))
-			<br /> Patient - {{ $sample->patient->patient_name }}
+		@if(isset($covid))
+			<br /> Name - {{ $sample->patient->patient_name }}
 		@endif
 	</span>
 	<br />
