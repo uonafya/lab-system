@@ -529,7 +529,7 @@ class WorksheetController extends Controller
             {
                 $rows[] = $data;
             }
-            dd($data);
+            dd($rows);
         }
 
         /*if($doubles){
