@@ -44,7 +44,7 @@ class HomeController extends Controller
             session(['toast_message' => 'Please make sure that your contact information is up to date.']);
             return redirect("/facility/{$user->facility_id}/edit");
         }
-        else if (in_array(auth()->user()->user_type_id, [0, 1, 4])) {
+        else if (in_array(auth()->user()->user_type_id, [0, 1, 4, 12])) {
             self::cacher();
             $chart = $this->getHomeGraph();
             $week_chart = $this->getHomeGraph('week');
@@ -113,11 +113,21 @@ class HomeController extends Controller
         $chart = [];
         $count = 0;
         $period = strtolower(trim($period));
-        $entered = $testingSystem.$period.'entered';
-        $received = $testingSystem.$period.'received';
-        $tested = $testingSystem.$period.'tested';
-        $dispatched = $testingSystem.$period.'dispatched';
-        $rejected = $testingSystem.$period.'rejected';
+        $lab_id = auth()->user()->lab_id;
+
+        if(env('APP_LAB') != $lab_id){
+            $entered = $testingSystem.$period."_{$lab_id}_entered";
+            $received = $testingSystem.$period."_{$lab_id}_received";
+            $tested = $testingSystem.$period."_{$lab_id}_tested";
+            $dispatched = $testingSystem.$period."_{$lab_id}_dispatched";
+            $rejected = $testingSystem.$period."_{$lab_id}_rejected";
+        }else{
+            $entered = $testingSystem.$period.'entered';
+            $received = $testingSystem.$period.'received';
+            $tested = $testingSystem.$period.'tested';
+            $dispatched = $testingSystem.$period.'dispatched';
+            $rejected = $testingSystem.$period.'rejected';
+        }
         
         $data = ['Entered Samples' => Cache::get($entered),
                 'Received Samples' => Cache::get($received),
@@ -323,11 +333,22 @@ class HomeController extends Controller
             if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
             if (session('testingSystem') == 'DR') $testingSystem = 'dr';
             if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
-            Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
-            Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
-            Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
-            Cache::put($testingSystem.$periodvalue."dispatched", self::__getDispatchedSamples($periodvalue), $minutes);
-            Cache::put($testingSystem.$periodvalue."rejected", self::__getRejectedSamples($periodvalue), $minutes);
+
+            $lab_id = auth()->user()->lab_id;
+
+            if(env('APP_LAB') != $lab_id){
+                Cache::put($testingSystem.$periodvalue."_{$lab_id}_entered", self::__getEnteredSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."_{$lab_id}_received", self::__getReceivedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."_{$lab_id}_tested", self::__getTestedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."_{$lab_id}_dispatched", self::__getDispatchedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."_{$lab_id}_rejected", self::__getRejectedSamples($periodvalue), $minutes); 
+            }else{
+                Cache::put($testingSystem.$periodvalue."entered", self::__getEnteredSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."received", self::__getReceivedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."tested", self::__getTestedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."dispatched", self::__getDispatchedSamples($periodvalue), $minutes);
+                Cache::put($testingSystem.$periodvalue."rejected", self::__getRejectedSamples($periodvalue), $minutes);                
+            }
         }
         
     }
@@ -365,7 +386,7 @@ class HomeController extends Controller
         $model = self::get_classname();
 
         return $model::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1])
+            ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
             ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
@@ -381,7 +402,7 @@ class HomeController extends Controller
         $model = self::get_classname();
 
         return $model::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 2])
+            ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0, 'receivedstatus' => 2])
             ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
@@ -397,7 +418,7 @@ class HomeController extends Controller
         $model = self::get_classname();
 
         return $model::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0])
             ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
@@ -413,7 +434,7 @@ class HomeController extends Controller
         $model = self::get_classname();
 
         return $model::selectRaw("count(id) as total")
-            ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0])
             ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })

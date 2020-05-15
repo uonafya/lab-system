@@ -81,10 +81,14 @@ class Misc extends Common
     {
         $str = strtolower($result);
 
-        if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+
+        if(str_contains($str, ['non']) && str_contains($str, ['reactive'])){
             $res = 1;
         }
-        else if(str_contains($result, ['1', '>']) || str_contains($str, ['detected'])){
+        else if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+            $res = 1;
+        }
+        else if(str_contains($result, ['1', '>']) || str_contains($str, ['detected', 'reactive'])){
             $res = 2;
         }
         else if(str_contains($str, ['invalid'])){
