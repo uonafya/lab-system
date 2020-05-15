@@ -482,7 +482,7 @@ class WorksheetController extends Controller
                 if($bool && $value[5] == "RESULT") break;
             }
         }
-        else
+        else if($worksheet->machine_type == 1)
         {
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
@@ -520,6 +520,16 @@ class WorksheetController extends Controller
 
             }
             fclose($handle);
+        }
+        else if($worksheet->machine_type == 3)
+        {
+            $rows = [];
+            $handle = fopen($file, "r");
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $rows[] = $data;
+            }
+            dd($data);
         }
 
         /*if($doubles){
