@@ -128,7 +128,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 83, 'name' => 'Bellavista', 'email' => ''],
 			['id' => 84, 'name' => 'Kajiado County Referral Hospital', 'email' => 'sheyue@gmail.com,eligach2017@gmail.com,michirakelvin@gmail.com'],
 			['id' => 85, 'name' => 'Narok County Referral Hospital', 'email' => 'bundi.lilah@gmail.com'],
-			['id' => 86, 'name' => 'Vigilance', 'email' => ''],
+			['id' => 86, 'name' => 'Vigilance', 'email' => 'covid-19lab@nphl.go.ke'],
 			['id' => 87, 'name' => 'Nanyuki TRH', 'email' => 'laikipiacountyhealth@gmail.com,joelmaino7@yahoo.com'],
 			['id' => 88, 'name' => 'KMTC Uasin Gishu', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
@@ -165,6 +165,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 8, 'name' => 'Recent travel'],
 			['id' => 9, 'name' => 'Health Care Worker'],
 			['id' => 10, 'name' => 'Truck Driver'],
+			['id' => 11, 'name' => 'Food Handlers'],
 		]);
 		return;
 
