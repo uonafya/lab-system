@@ -96,4 +96,53 @@ class CovidSampleController extends BaseController
     {
         //
     }
+
+    public function transfer(ApiRequest $request)
+    {        
+        $new_samples = json_decode($request->input('samples'));
+
+        $ok = $samples = $patients = [];
+
+        foreach ($new_samples as $key => $new_sample) {
+
+            $travels = $new_sample->patient->travel ?? null;
+
+            unset($new_sample->patient->travel);
+
+            $p = new CovidPatient;
+            $p->fill(get_object_vars($new_sample->patient));
+            $p->pre_update();
+            unset($new_sample->patient);
+
+            if($travels){
+                foreach ($travels as $key => $travel) {
+                    $t = new CovidTravel;
+                    $t->fill(get_object_vars($travel));
+                    $t->patient_id = $p->id;
+                    $t->save();
+                }
+            }
+
+            $s = new CovidSample;
+            $s->fill(get_object_vars($new_sample));
+            $s->patient_id = $p->id;
+            unset($s->id);
+            $s->datereceived = $s->receivedstatus = null;
+            $s->pre_update();
+
+            $patients[] = $p;
+            $samples[] = $s;
+
+            $ok[] = $new_sample->id;
+        }
+
+        return response()->json([
+                'ok' => $ok,
+                'samples' => $samples,
+                'patients' => $patients,
+                'message' => 'The transfer was successful.',
+                'status_code' => 201,
+            ], 201);
+
+    }
 }

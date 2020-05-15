@@ -141,6 +141,11 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			
+			Route::group(['middleware' => ['only_utype:2']], function () {	
+				Route::get('transfer_samples/{facility_id?}', 'CovidSampleController@transfer_samples_form');	
+				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
+			});
+			
 			Route::post('search/', 'CovidSampleController@search')->name('search');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');

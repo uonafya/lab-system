@@ -257,6 +257,17 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
+			@if(env('APP_LAB') == 6)
+
+				<tr>
+					<td colspan="5" class="style4 style1 comment">
+						<img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
+					</td>
+					<td colspan="2" class="style4 style1 comment">
+					</td>
+				</tr>
+			@endif
+
 		</table>
 
 		@if($sample->site_entry != 2)
@@ -273,12 +284,6 @@ p.breakhere {page-break-before: always}
 
 			</span>
 
-		@endif
-
-		@if(env('APP_LAB') == 6)
-			<div>
-				<img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
-			</div>
 		@endif
 
 		@if (!$loop->last)

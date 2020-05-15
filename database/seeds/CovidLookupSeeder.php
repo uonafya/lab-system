@@ -80,7 +80,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 35, 'name' => 'Kambu Sub County Hospital', 'email' => ''],
 			['id' => 36, 'name' => 'Iten County referal hospital', 'email' => ''],
 			['id' => 37, 'name' => 'Coptic Hospital', 'email' => ''],
-			['id' => 38, 'name' => 'Kisii Teaching and Referral hospital', 'email' => ''],
+			// ['id' => 38, 'name' => 'Kisii Teaching and Referral hospital', 'email' => ''],
 			['id' => 39, 'name' => 'Karen - KEMRI', 'email' => ''],
 			['id' => 40, 'name' => 'EID - KEMRI', 'email' => ''],
 			['id' => 41, 'name' => 'Mtito Andei Subcounty hospital', 'email' => ''],
