@@ -539,7 +539,7 @@ class WorksheetController extends Controller
                     $positive_control = $data_array;
                     continue;
                 }
-                else if(str_contains($control, '-') && ){
+                else if(str_contains($control, '-')){
                     $negative_control = $data_array;
                     continue;
                 }
