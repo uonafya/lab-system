@@ -21,7 +21,7 @@
 
 		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id ?? $sample->patient->facility->name ?? '' }}</b> 
 		@if(isset($covid) && $sample->patient->quarantine_site_id)
-			<b> {{ $sample->patient->quarantine_site->name ?? '' }} </b>
+			<br /> <b> {{ $sample->patient->quarantine_site->name ?? '' }} </b> 
 		@endif
 		{{ $sample->patient->patient ?? $sample->patient->identifier ?? '' }}
 		@if(env('APP_LAB') != 5) 
