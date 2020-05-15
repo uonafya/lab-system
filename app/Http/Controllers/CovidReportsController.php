@@ -144,7 +144,7 @@ class CovidReportsController extends Controller
 		if (!$sample->patient->travel->isEmpty()){
 			$travelled = 'Y';
 			foreach ($sample->patient->travel as $key => $travel) {
-				$history .= $travel->city . ', ' . $travel->country . '\n';
+				$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
 			}
 		}
 		return [
