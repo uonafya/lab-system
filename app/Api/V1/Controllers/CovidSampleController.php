@@ -119,6 +119,7 @@ class CovidSampleController extends BaseController
                 foreach ($travels as $key => $travel) {
                     $t = new CovidTravel;
                     $t->fill(get_object_vars($travel));
+                    unset($t->id);
                     $t->patient_id = $p->id;
                     $t->save();
                 }
