@@ -111,7 +111,6 @@ class CovidSampleController extends BaseController
 
             $p = new CovidPatient;
             $p->fill(get_object_vars($new_sample->patient));
-            unset($p->id);
             $p->pre_update();
             unset($new_sample->patient);
 
@@ -119,7 +118,6 @@ class CovidSampleController extends BaseController
                 foreach ($travels as $key => $travel) {
                     $t = new CovidTravel;
                     $t->fill(get_object_vars($travel));
-                    unset($t->id);
                     $t->patient_id = $p->id;
                     $t->save();
                 }
@@ -129,7 +127,6 @@ class CovidSampleController extends BaseController
             $s->fill(get_object_vars($new_sample));
             $s->patient_id = $p->id;
             $s->lab_id = env('APP_LAB');
-            unset($s->id);
             $s->datereceived = $s->user_id = $s->received_by = $s->receivedstatus = null;
             $s->pre_update();
 
