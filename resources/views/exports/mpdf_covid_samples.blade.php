@@ -277,7 +277,7 @@ p.breakhere {page-break-before: always}
 
 		@if(env('APP_LAB') == 6)
 			<div>
-				<img height="30" width="80" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
+				<img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
 			</div>
 		@endif
 
