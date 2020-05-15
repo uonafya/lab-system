@@ -552,8 +552,7 @@ class CovidSampleController extends Controller
     // Transfer Between Remote Labs
     public function transfer_samples_form($facility_id=null)
     {
-        $samples = CovidSampleView::whereNull('receivedstatus')
-                    ->where('site_entry', '!=', 2)
+        $samples = CovidSampleView::where('site_entry', '!=', 2)
                     ->when($facility_id, function($query) use($facility_id){
                         return $query->where('facility_id', $facility_id);
                     })
