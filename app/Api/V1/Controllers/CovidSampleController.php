@@ -111,6 +111,7 @@ class CovidSampleController extends BaseController
 
             $p = new CovidPatient;
             $p->fill(get_object_vars($new_sample->patient));
+            unset($p->id);
             $p->pre_update();
             unset($new_sample->patient);
 
