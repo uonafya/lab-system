@@ -168,17 +168,17 @@
 		                @elseif(Session('testingSystem') == 'CD4')
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['CD4samplesInQueue']) }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['get_badge']($widgets['CD4samplesInQueue']) }}</span>
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['CD4samplesInQueue']) }}">{{ $widgets['CD4samplesInQueue'] }}</span>
 		                        <a href="{{ url('cd4/sample/dispatch/3') }}">Samples In-Queue.</a>
 		                    </li>
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['CD4resultsForDispatch']) }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['get_badge']($widgets['CD4resultsForDispatch']) }}</span>
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['CD4resultsForDispatch']) }}">{{ $widgets['CD4resultsForDispatch'] }}</span>
 		                        <a href="{{ url('cd4/sample/dispatch/1') }}">Results Awaiting Printing for Dispatch.</a>
 		                    </li>
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['CD4worksheetFor2ndApproval']) }}">
-		                        <span class="badge badge-{{ $badge }}">{{ $widgets['get_badge']($widgets['CD4worksheetFor2ndApproval']) }}</span>
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['CD4worksheetFor2ndApproval']) }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
 		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
 						@endif
