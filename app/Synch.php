@@ -57,6 +57,13 @@ class Synch
 			'worksheets_table' => 'viralworksheets',
 			'with_array' => ['batch.creator', 'patient'],
 		],
+
+		'covid' => [
+			'misc_class' => MiscCovid::class,
+			'sample_class' => CovidSample::class,
+			'patient_class' => CovidPatient::class,
+			'with_array' => ['patient.travel'],
+		],
 	];
 
 	public static $update_arrays = [

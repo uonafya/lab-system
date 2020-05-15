@@ -326,6 +326,9 @@
                                 <li>
                                     <a href="{{ url('viralsample/transfer_samples') }}">Transfer VL Samples</a>
                                 </li>
+                                <li>
+                                    <a href="{{ url('covid_sample/transfer_samples') }}">Transfer Covid Samples</a>
+                                </li>
                         @elseif(Auth::user()->user_type_id == 12)
                             <li class="">
                                 <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
