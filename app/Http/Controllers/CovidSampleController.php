@@ -559,7 +559,7 @@ class CovidSampleController extends Controller
                     ->whereNull('datetested')
                     ->where(['repeatt' => 0])
                     ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
-                    ->paginate(25);
+                    ->paginate(500);
 
         $samples->setPath(url()->current());
 
