@@ -107,7 +107,7 @@
                                             @if($pre == 'covid_')
                                                 <td> {{ $sample->identifier }} </td>
                                                 <td> {{ $sample->patient_name }} </td>
-                                            @elseif
+                                            @else
                                                 <td> {!! $sample->get_link('batch_id') !!} </td>
                                                 <td> {!! $sample->get_link('patient_id') !!} </td>
                                             @endif
