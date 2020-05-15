@@ -1022,7 +1022,8 @@ class MiscViral extends Common
     } 
 
     public static function edarpsamplesforapproval() {
-        $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
+        // $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
+        $samples = ViralsampleView::selectRaw("count(*) as total")->where('lab_id', 10)->whereBetween('created_at', [date('Y-m-d', strtotime('-1 day')), date('Y-m-d')])->first();
         $edarpUser = User::where('user_type_id', 8)->first();
         if ($edarpUser->count()){
             $form_url = URL::temporarySignedRoute(
@@ -1052,7 +1053,7 @@ class MiscViral extends Common
         
         $mail_array = array('joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') 
-            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "tngugi@gmail.com", "Peter@edarp.org"];
+            $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
         if(!$mail_array) return null;
 
         try {
