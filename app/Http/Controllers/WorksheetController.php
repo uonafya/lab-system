@@ -517,19 +517,43 @@ class WorksheetController extends Controller
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                     
                 $sample->save();
-
             }
             fclose($handle);
         }
         else if($worksheet->machine_type == 3)
         {
-            $rows = [];
             $handle = fopen($file, "r");
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
             {
-                $rows[] = $data;
+                if(!isset($data[5])) break;
+
+                $sample_id = (int) trim($data[1]); 
+                $interpretation = rtrim($data[5]); 
+                $control = rtrim($data[4]);
+                $date_tested=date("Y-m-d", strtotime($data[12]));
+                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+
+                $data_array = Misc::sample_result($interpretation);
+
+                if(str_contains($control, '-')){
+                    $negative_control = $data_array;
+                    continue;
+                }else if(str_contains($control, '+')){
+                    $positive_control = $data_array;
+                    continue;
+                }
+
+                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
+                $sample = Sample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
+                $sample->save();
             }
-            dd($rows);
+            fclose($handle);
         }
 
         /*if($doubles){
