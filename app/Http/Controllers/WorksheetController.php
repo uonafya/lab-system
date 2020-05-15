@@ -535,11 +535,12 @@ class WorksheetController extends Controller
 
                 $data_array = Misc::sample_result($interpretation);
 
-                if(str_contains($control, '-')){
-                    $negative_control = $data_array;
-                    continue;
-                }else if(str_contains($control, '+')){
+                if(str_contains($control, '+')){
                     $positive_control = $data_array;
+                    continue;
+                }
+                else if(str_contains($control, '-') && ){
+                    $negative_control = $data_array;
                     continue;
                 }
 
