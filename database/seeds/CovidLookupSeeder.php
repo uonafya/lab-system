@@ -131,7 +131,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 86, 'name' => 'Vigilance', 'email' => 'covid-19lab@nphl.go.ke'],
 			['id' => 87, 'name' => 'Nanyuki TRH', 'email' => 'laikipiacountyhealth@gmail.com,joelmaino7@yahoo.com'],
 			['id' => 88, 'name' => 'KMTC Uasin Gishu', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 89, 'name' => 'Eastleigh', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
