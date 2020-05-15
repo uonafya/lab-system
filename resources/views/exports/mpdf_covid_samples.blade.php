@@ -275,6 +275,10 @@ p.breakhere {page-break-before: always}
 
 		@endif
 
+		@if(env('APP_LAB') == 6)
+			<img src="{{ base_path('john_sig.jpg') }} " alt="SIGNATURE">
+		@endif
+
 		@if (!$loop->last)
 			<p class="breakhere"></p>
 		@endif
