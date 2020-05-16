@@ -21,11 +21,6 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\CovidPatient', 'patient_id');
     }
 
-    public function lab()
-    {
-        return $this->belongsTo('App\Lab', 'lab_id');
-    }
-
     public function worksheet()
     {
         return $this->belongsTo('App\CovidWorksheet', 'worksheet_id');
