@@ -44,7 +44,7 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
+                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
@@ -67,6 +67,9 @@
                     @elseif(Session('testingSystem') == 'Covid') 
                         <li class="">
                             <a href="{{ url('covid_sample') }}">Samples</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
                         </li>
                         <li class="">
                             <a href="{{ url('covid_worksheet') }}">Worksheets</a>
@@ -163,6 +166,10 @@
                                 <li>
                                     <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
+                            @elseif(Auth::user()->user_type_id == 12)
+                                <li class="">
+                                    <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                                </li>
                             @else
                                 @if(!Session('pendingTasks') || env('APP_LAB') == 2)
 
@@ -206,6 +213,22 @@
                             </li>
                         @endif
                     @endif
+                @elseif(in_array(Auth::user()->user_type_id, [12]))
+                    <li class="">
+                        <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covidreports') }}">Reports</a>
+                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -217,7 +240,7 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
+            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
@@ -246,6 +269,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('covid_sample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
                     </li>
                     <li class="">
                         <a href="{{ url('covid_worksheet') }}">Worksheets</a>
@@ -350,6 +376,13 @@
                                 <li>
                                     <a href="{{ url('viralsample/transfer_samples') }}">Transfer VL Samples</a>
                                 </li>
+                                <li>
+                                    <a href="{{ url('covid_sample/transfer_samples') }}">Transfer Covid Samples</a>
+                                </li>
+                        @elseif(Auth::user()->user_type_id == 12)
+                            <li class="">
+                                <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                            </li>
 
 
                         @else
@@ -414,6 +447,22 @@
                         </li>
                     @endif
                 @endif
+            @elseif(in_array(Auth::user()->user_type_id, [12]))
+                <li class="">
+                    <a href="{{ url('home') }}">Home</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample') }}">Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covid_sample/index/2') }}">Results List</a>
+                </li>
+                <li class="">
+                    <a href="{{ url('covidreports') }}">Reports</a>
+                </li>
             @endif
                 <li class="dropdown">
                         

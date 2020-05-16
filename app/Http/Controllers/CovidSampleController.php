@@ -24,7 +24,7 @@ class CovidSampleController extends Controller
 
     public function __construct()
     {
-        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+        $this->middleware('covid_allowed');   
     }
 
     /**
@@ -39,7 +39,6 @@ class CovidSampleController extends Controller
         // 2 - dispatched
         // 3 - from cif
         $user = auth()->user();
-        if($user->user_type_id == 4 && $type != 0) abort(403);
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
@@ -94,7 +93,6 @@ class CovidSampleController extends Controller
     public function sample_search(Request $request)
     {
         $user = auth()->user();
-        if($user->user_type_id == 4) abort(403);
 
         $type = $request->input('type', 1);
         $submit_type = $request->input('submit_type');
@@ -358,7 +356,6 @@ class CovidSampleController extends Controller
      */
     public function show(CovidSample $covidSample)
     {
-        if(auth()->user()->user_type_id == 4) abort(403);
         $user = auth()->user();
         $type=1;
 
@@ -460,6 +457,24 @@ class CovidSampleController extends Controller
         return back();
     }
 
+    public function cif_samples()
+    {
+        $samples = \App\Synch::get_covid_samples();
+        return view('tables.cif_covid_samples', compact('samples'));
+    }
+
+    public function set_cif_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        if(!$samples){
+            session(['toast_error' => 1, 'toast_message' => 'No samples selected.']);
+            return back();            
+        }
+        \App\Synch::set_covid_samples($samples);
+        session(['toast_message' => 'The sample have been set to come to the lab.']);
+        return redirect();        
+    }
+
 
     public function site_sample_page()
     {
@@ -534,6 +549,41 @@ class CovidSampleController extends Controller
         }
     }
 
+    // Transfer Between Remote Labs
+    public function transfer_samples_form($facility_id=null)
+    {
+        $samples = CovidSampleView::where('site_entry', '!=', 2)
+                    ->when($facility_id, function($query) use($facility_id){
+                        return $query->where('facility_id', $facility_id);
+                    })
+                    ->whereNull('datetested')
+                    ->where(['repeatt' => 0])
+                    ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
+                    ->paginate(500);
+
+        $samples->setPath(url()->current());
+
+        if($facility_id) $facility = \App\Facility::find($facility_id);
+
+        $data = [
+            'samples' => $samples,
+            'labs' => \App\Lab::all(),
+            'facility' => $facility ?? null,
+            'pre' => 'covid_',
+        ];
+
+        return view('forms.transfer_samples', $data);
+    }
+
+    public function transfer_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        $lab = $request->input('lab');
+        // dd($samples);
+        \App\Synch::transfer_sample('covid', $lab, $samples);
+        return back();
+    }
+
 
     public function transfer(Request $request)
     {
@@ -550,7 +600,6 @@ class CovidSampleController extends Controller
 
     public function result(CovidSample $covidSample)
     {
-        if(auth()->user()->user_type_id == 4) abort(403);
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         return view('exports.mpdf_covid_samples', $data);

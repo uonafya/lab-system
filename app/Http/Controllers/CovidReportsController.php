@@ -11,10 +11,9 @@ use Illuminate\Http\Request;
 
 class CovidReportsController extends Controller
 {
-
     public function __construct()
     {
-        if(env('APP_LAB') == 5 && !auth()->user()->covid_allowed) abort(403);
+        $this->middleware('covid_allowed');   
     }
     
     private $quarters = ['Q1' => '1,2,3', 'Q2' => '4,5,6', 'Q3' => '7,8,9', 'Q4' => '10,11,12'];
@@ -42,7 +41,13 @@ class CovidReportsController extends Controller
 
 	private function get_model()
 	{
-		return CovidSampleView::where('repeatt', 0)->whereNotNull('result');
+		$user = auth()->user();
+		return CovidSampleView::where('repeatt', 0)
+						->whereNotNull('result')
+						->when($user, function ($query) use ($user) {
+							if ($user->user_type_id == 12)
+	                            return $query->where('lab_id', '=', $user->lab_id);
+						});
 	}
 
 	private function generateExcel($data, $title)
@@ -145,11 +150,12 @@ class CovidReportsController extends Controller
 		if (!$sample->patient->travel->isEmpty()){
 			$travelled = 'Y';
 			foreach ($sample->patient->travel as $key => $travel) {
-				$history .= $travel->city . ', ' . $travel->country . '\n';
+				$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
 			}
 		}
 		return [
-			Lab::find(env('APP_LAB'))->labdesc,
+			// Lab::find(env('APP_LAB'))->labdesc,
+			Lab::find($sample->lab_id)->labdesc,
 			$count,
 			$sample->patient_name,
 			$sample->age,

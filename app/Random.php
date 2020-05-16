@@ -3579,4 +3579,10 @@ class Random
         DB::statement('ALTER TABLE lab_performance_trackers ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
         DB::statement('ALTER TABLE mothers ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
     }
+
+    public static function covid_consumption_allowed()
+    {
+        DB::statement("ALTER TABLE `users` ADD COLUMN `covid_consumption_allowed` TINYINT NOT NULL DEFAULT '0' AFTER `last_access`");
+
+    }
 }

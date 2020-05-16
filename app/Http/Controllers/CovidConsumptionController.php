@@ -14,36 +14,72 @@ class CovidConsumptionController extends Controller
 {
     public function index()
     {
-    	$time = $this->getPreviousWeek();
-
-        if (!CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
+        $consumption = new CovidConsumption;
+        $weeks = $consumption->getMissingConsumptions();
+        
+        if (sizeof($weeks) == 0) {
             session(['toast_message' => "Covid Consumption already filled.",
-                    'toast_error' => true]);
+                'toast_error' => true]);
             return redirect('pending');
         }
-    	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
+
+        $time = collect($weeks)->first();
+        $user = auth()->user();
+    	$tests = $consumption->getTestsDone($time->week_start, $time->week_end);
+        $kits = CovidKit::when($user, function($query) use ($user){
+                                        if ($user->user_type_id == 12)
+                                            return $query->where('type', '<>', 'Kit');
+                                        else
+                                            return $query->where('type', '<>', 'Manual');
+                                    })->get();
+        // dd($kits);
     	return view('tasks.covid.consumption',
-    		['covidkits' => CovidKit::get(),
-    		'tests' => $tests]);
+    		[
+                'covidkits' => $kits,
+                'tests' => $tests,
+                'time' => $time
+            ]);
+    }
+
+    public function pending()
+    {
+        // $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
+        //                                 ->where('lab_id', '=', auth()->user()->lab_id)->count();
+        $covidconsumption = new CovidConsumption;
+        $data['time'] = $covidconsumption->getMissingConsumptions();
+        // dd($data);
+        return view('tasks.covid.manual', $data);
     }
 
     public function submitConsumption(Request $request)
     {
+        $consumption = new CovidConsumption;
+        $time = collect($consumption->getMissingConsumptions())->first();
+        // $time = $this->getPreviousWeek();
+        if ($request->input('week_start') != $time->week_start) {
+            session(['toast_message' => "Bad Request in submitting the form kindly refresh your browser and try again.",
+                'toast_error' => true]);
+            return back();
+        }
+        
         $data = $this->buildConsumptionData($request);
-    	$time = $this->getPreviousWeek();
     	
         if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
             // Start transaction!
             DB::beginTransaction();
 
             try {
+                $lab = env('APP_LAB');
+                if (auth()->user()->user_type_id == 12)
+                    $lab = auth()->user()->lab_id;
                 $consumption = new CovidConsumption;
                 $consumption->fill([
                                 'start_of_week' => $time->week_start,
                                 'end_of_week' => $time->week_end,
                                 'week' => $time->week,
-                                'lab_id' => env('APP_LAB')
+                                'lab_id' => $lab
                             ]);
+                $consumption->tests = $consumption->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
                 $consumption->save();
 
                 foreach ($data as $key => $detail) {
@@ -58,16 +94,30 @@ class CovidConsumptionController extends Controller
                 throw $e;
             }
         }
-    	
-        $this->reportRelease();
-        Synch::synchCovidConsumption();
+    	$consumption = new CovidConsumption;
+        $weeks = $consumption->getMissingConsumptions();
+        if (sizeof($weeks) == 0) {
+            if (auth()->user()->user_type_id != 12)
+                $this->reportRelease();
+            Synch::synchCovidConsumption();
+        }
+        if (auth()->user()->user_type_id == 12)
+            return redirect('covidkits/pending');    
         return redirect('pending');
     	
     }
 
-    public function reports(Request $request)
+    public function reports(Request $request, CovidConsumption $consumption)
     {
-    	return view('reports.covidconsumption', ['consumptions' => CovidConsumption::get()]);
+        if (null !== $consumption->start_of_week)
+            return view('reports.covidconsumptiondetails', ['consumption' => $consumption]);
+        $user = auth()->user();
+    	return view('reports.covidconsumption',
+                    ['consumptions' => CovidConsumption::when($user, function ($query) use ($user){
+                                                if ($user->user_type_id == 12)
+                                                    return $query->where('lab_id', '=', $user->lab_id);
+                                        })->get()
+                ]);
     }
 
     private function buildConsumptionData($request)
@@ -84,22 +134,5 @@ class CovidConsumptionController extends Controller
     	}
     	return $data;
     }
-
- //    private function getPreviousWeek()
- //    {
- //    	$date = strtotime('-7 days', strtotime(date('Y-m-d')));
- //    	return $this->getStartAndEndDate(date('W', $date),
- //    							date('Y', $date));
- //    }
-
- //    private function getStartAndEndDate($week, $year) {
-	// 	$dto = new \DateTime();
-	// 	$dto->setISODate($year, $week);
-	// 	$ret['week_start'] = $dto->format('Y-m-d');
-	// 	$dto->modify('+6 days');
-	// 	$ret['week_end'] = $dto->format('Y-m-d');
-	// 	$ret['week'] = date('W', strtotime($ret['week_start']));
-	// 	return (object)$ret;
-	// }
 }
 

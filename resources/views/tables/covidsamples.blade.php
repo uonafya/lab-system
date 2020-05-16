@@ -184,7 +184,7 @@
                 <div class="panel-body">
                     <div class="table-responsive">
                         @if(isset($type) && $type == 2)
-                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to print the selected batches?');">
+                        <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to print the selected samples?');">
                             @csrf
                         @endif
 
@@ -205,6 +205,7 @@
                             <thead>
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
+                                    <th rowspan="2">CIF ID</th>
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
@@ -216,6 +217,8 @@
                                     <th rowspan="2">Task</th>
                                     @if(isset($type) && $type == 2)
                                         <th rowspan="2">Print Multiple</th>
+                                    @elseif(isset($type) && $type == 3)
+                                        <th rowspan="2">Select Sample</th>
                                     @else
                                         <th rowspan="2">Delete</th>
                                     @endif
@@ -233,6 +236,7 @@
                                     @continue($sample->repeatt == 1 && auth()->user()->is_facility())
                                     <tr>
                                         <td> {{ $sample->id }} </td>
+                                        <td> {{ $sample->cif_sample_id }} </td>
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>

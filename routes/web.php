@@ -148,12 +148,20 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
+
+			Route::get('cif', 'CovidSampleController@cif_samples');
+			Route::post('cif', 'CovidSampleController@set_cif_samples');
 			
 			Route::group(['middleware' => ['utype:4']], function () {
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
 				
 				Route::post('transfer', 'CovidSampleController@transfer');
+			});
+			
+			Route::group(['middleware' => ['only_utype:2']], function () {	
+				Route::get('transfer_samples/{facility_id?}', 'CovidSampleController@transfer_samples_form');	
+				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
 			});
 			
 			Route::post('search/', 'CovidSampleController@search')->name('search');
@@ -203,7 +211,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('covidkits')->name('covidkits.')->group(function() {
 			Route::get('/', 'CovidConsumptionController@index');
 			Route::post('consumption', 'CovidConsumptionController@submitConsumption');
-			Route::get('reports', 'CovidConsumptionController@reports');
+			Route::get('reports/{consumption?}', 'CovidConsumptionController@reports');
+
+			Route::group(['middleware' => ['utype:12']], function () {
+				Route::get('pending', 'CovidConsumptionController@pending');
+			});
 		});
 
 		Route::prefix('cd4')->name('cd4.')->group(function(){
@@ -589,6 +601,8 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 		Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
+		Route::put('user/password_reset/{id?}', 'UserController@edit_password')->name('edit_password');
+		// Route::put('user/password_reset/{id?}', 'UserController@edit_password')->name('edit_password');
 
 		Route::group(['middleware' => ['only_utype:2']], function () {
 			Route::get('users', 'UserController@index')->name('users');
@@ -596,8 +610,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 			Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
 			Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
+			Route::resource('user', 'UserController');	
 		});
-		Route::resource('user', 'UserController');	
 
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {

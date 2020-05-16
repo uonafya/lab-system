@@ -18,7 +18,11 @@
 				unset($sample->batch);
 			}
 		?>
+
 		<b>{{ $sample->batch->facility->name ??  $sample->batch->facility_id ?? $sample->patient->facility->name ?? '' }}</b> 
+		@if(isset($covid) && $sample->patient->quarantine_site_id)
+			<b> {{ $sample->patient->quarantine_site->name ?? '' }} </b> <br />
+		@endif
 		{{ $sample->patient->patient ?? $sample->patient->identifier ?? '' }}
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
@@ -34,8 +38,8 @@
 		@if(env('APP_LAB') == 4 && $sample->parentid)
 			<br /> Previous Worksheet - {{ $sample->prev_worksheet }}
 		@endif
-		@if(env('APP_LAB') == 6 && isset($covid))
-			<br /> Patient - {{ $sample->patient->patient_name }}
+		@if(isset($covid))
+			<br /> Name - {{ $sample->patient->patient_name }}
 		@endif
 	</span>
 	<br />

@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-lg-12">
                 @if($user)
-                    <form action="{{ url('/user/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id)) }}" class="form-horizontal" method="POST">
+                    <form action="{{ url('/user/password_reset/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id)) }}" class="form-horizontal" method="POST">
                         @csrf
                         @method('PUT')
                     @if($user == 'personal')

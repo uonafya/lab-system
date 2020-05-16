@@ -116,8 +116,9 @@ class UserController extends Controller
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
         $quarantine_sites = DB::table('quarantine_sites')->get();
+        $labs = DB::table('labs')->get();
 
-        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites', 'labs'))->with('pageTitle', 'Add User');
     }
 
     /**
@@ -239,6 +240,25 @@ class UserController extends Controller
             $user = self::__unHashUser($id);
             return view('forms.passwordReset', compact('user'))->with('pageTitle', 'Password Reset');
         }
+    }
+
+    public function edit_password(Request $request, $id)
+    {
+        $user = self::__unHashUser($id);
+
+        if (!empty($user)) {
+            $user->password = $request->password;
+            $user->update();
+            session(['toast_message'=>'User password succesfully updated']);
+        } else {
+            session(['toast_message'=>'User password succesfully updated','toast_error'=>1]);
+        }  
+        
+        if (isset($request->user)) {
+            return back();
+        } else {
+            return redirect()->route('users');
+        }          
     }
 
     public function allocationcontact(User $user)

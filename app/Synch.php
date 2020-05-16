@@ -57,6 +57,13 @@ class Synch
 			'worksheets_table' => 'viralworksheets',
 			'with_array' => ['batch.creator', 'patient'],
 		],
+
+		'covid' => [
+			'misc_class' => MiscCovid::class,
+			'sample_class' => CovidSample::class,
+			'patient_class' => CovidPatient::class,
+			'with_array' => ['patient.travel'],
+		],
 	];
 
 	public static $update_arrays = [
@@ -214,7 +221,7 @@ class Synch
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
-            'debug' => true,
+            'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -1298,6 +1305,40 @@ class Synch
 	}
 
 
+	public static function get_covid_samples()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('get', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
+
+	public static function set_covid_samples($samples)
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('post', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+				'json' => [
+					'samples' => $sample->toJson(),
+					'lab_id' => auth()->user()->lab_id,
+				],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
+
 
 	public static function match_eid_patients()
 	{
@@ -1720,10 +1761,10 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			
+			// print_r($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
-				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body->message));
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body));
 				return false;
 			} else {
 				foreach ($body as $key => $consumption) {

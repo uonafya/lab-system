@@ -33,40 +33,21 @@
 		            <div class="alert alert-warning">
 		                <center><i class="fa fa-bolt"></i> <strong>PENDING TASKS</strong></center>
 		            </div>
+
 		            <div class="panel-body no-padding">
+		            	@if(auth()->user()->lab_user)
 		            	<ul class="list-group">
 		                @if(session('testingSystem') == 'Viralload')
-		            		@if ((int)$widgets['overduetesting'] > 0)
-		            			@php
-		            				$style = 'background-color: #FDE3A7';
-		            				$badge = 'danger';
-		            			@endphp
-		            		@else
-		            			@php
-		            				$style = '';
-		            				$badge = 'success';
-		            			@endphp
-		            		@endif
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduetesting'] --}}</span>
 			                    <a href="{{ url('home/overdue/testing') }}">VL Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
 		                    </li> -->
 
-		                    @if ((int)$widgets['overduedispatched'] > 0)
-		            			@php
-		            				$style = 'background-color: #FDE3A7';
-		            				$badge = 'danger';
-		            			@endphp
-		            		@else
-		            			@php
-		            				$style = '';
-		            				$badge = 'success';
-		            			@endphp
-		            		@endif
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
 			                    <a href="{{-- url('home/overdue/dispatch') --}}">VL Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
 		                    </li> -->
+		                    
 
 		                	<li class="list-group-item" style="{{ $widgets['get_style']($widgets['pendingSamples']['plasma']) }}">
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamples']['plasma']) }}">{{ $widgets['pendingSamples']['plasma'] }}</span>
@@ -87,17 +68,7 @@
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['batchesForApproval']) }}">{{ $widgets['batchesForApproval'] }}</span>
 		                        <a href="{{ url('viralbatch/site_approval') }}">Site Entry Batches Awaiting Approval for Testing</a>
 		                    </li>
-		            		@if ((int)$widgets['batchesNotReceived'] > 0)
-		            			@php
-		            				$style = 'background-color: #FDE3A7';
-		            				$badge = 'danger';
-		            			@endphp
-		            		@else
-		            			@php
-		            				$style = '';
-		            				$badge = 'success';
-		            			@endphp
-		            		@endif
+
 		                    <!-- <li class="list-group-item" style="{{-- $style --}}">
 		                        <span class="badge badge-{{-- $badge --}}">{{-- $widgets['batchesNotReceived'] --}}</span>
 		                        <a href="#">Batches Marked as Not Received at Lab</a>
@@ -129,33 +100,11 @@
 		                    </li>
 
 		            	@elseif(session('testingSystem') == 'EID')
-		            		@if ((int)$widgets['overduetesting'] > 0)
-		            			@php
-		            				$style = 'background-color: #FDE3A7';
-		            				$badge = 'danger';
-		            			@endphp
-		            		@else
-		            			@php
-		            				$style = '';
-		            				$badge = 'success';
-		            			@endphp
-		            		@endif
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduetesting'] --}}</span>
 			                    <a href="{{-- url('home/overdue/testing') --}}">EID Samples Overdue for Testing ( > 14 Days since Receipt at Lab )</a>
 		                    </li> -->
 
-		                    @if ((int)$widgets['overduedispatched'] > 0)
-		            			@php
-		            				$style = 'background-color: #FDE3A7';
-		            				$badge = 'danger';
-		            			@endphp
-		            		@else
-		            			@php
-		            				$style = '';
-		            				$badge = 'success';
-		            			@endphp
-		            		@endif
 	            		    <!-- <li class="list-group-item" style="{{-- $style --}}">
 	            		    	<span class="badge badge-{{-- $badge --}}">{{-- $widgets['overduedispatched'] --}}</span>
 			                    <a href="{{-- url('home/overdue/dispatch') --}}">EID Samples Overdue for Result Update & Dispatch ( > 14 Days since Receipt at Lab ) </a>
@@ -276,6 +225,7 @@
 							@endif
 						@endif
 		            	</ul>
+		            	@endif
 		            </div>
 		        </div>
 		    </div>

@@ -21,19 +21,29 @@
     <div class="col-md-12">
     {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
     @php
+        $kits = $covidkits->where('type', 'Kit');
+        if ($kits->isEmpty())
+            $kits = $covidkits->where('type', 'Manual');
         $kittypes = [
-                'kits' => $covidkits->where('type', 'Kit'),
+                'kits' => $kits,
                 'consumables' => $covidkits->where('type', 'Consumable')
             ];
     @endphp
+    <input type="hidden" name="week_start" value="{{ $time->week_start }}">
+    <input type="hidden" name="week_end" value="{{ $time->week_end }}">
     @foreach($kittypes as $typekey => $kits)
         <div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-            @if($typekey == 'kits')
-                <div class="alert alert-info">
-                    <center><i class="fa fa-bolt"></i> Please enter values below. <strong>(Last Week Tests:{{ number_format($tests) }})</strong></center>
+                <div class="alert alert-danger">
+                    <center><strong>Please enter the Kits received from KEMSA</strong></center>
                 </div>
-            @endif
+                <div class="alert alert-info">
+                    <center><i class="fa fa-bolt"></i> Please enter {{ ucfirst($typekey) }} consumption values below for the week starting {{ $time->week_start }} and ending {{ $time->week_end }}.
+                    @if($typekey == 'kits')
+                        <strong>(Week`s Tests:{{ number_format($tests) }})</strong>    
+                    @endif
+                    </center>
+                </div>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;width: 100%">
                     <thead>               
@@ -68,11 +78,9 @@
                             @endphp
                             <td>                            
                                 <input class="form-control kits_used" type="number" name="kits_used[{{$kit->material_no}}]" id="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" required="true">
-                                {{-- <input type="hidden" name="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}"> --}}
                             </td>
                             <td>
-                                <input class="form-control begining_balance" type="number" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 0}}" min="0" required="true">
-                                {{--<input type="hidden" name="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance() ?? 10}}">--}}
+                                <input class="form-control begining_balance" type="text" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance($time->week_start) ?? 0}}" required="true">
                             </td>
                             <td>
                                 <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
@@ -87,8 +95,8 @@
                                 <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
                             </td>
                             <td>
-                                <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance()-$kitsused)}}" min="0" disabled="true">
-                                <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance()-$kitsused)}}">
+                                <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}" min="0" disabled="true">
+                                <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}">
                             </td>
                             <td>
                                 <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>
@@ -189,9 +197,26 @@
         function updateendingbalance(elementname, elementid, value) {
             if (value == '')
                 value = 0;
+
+            var kits_used = elementid.replace(elementname, "kits_used");
+            var kits_usedval = $('input[name="' + kits_used + '"').val();
+            var begining_balance = elementid.replace(elementname, "begining_balance");
+            var begining_balanceval = $('input[name="' + begining_balance + '"').val();
+            var received = elementid.replace(elementname, "received");
+            var receivedval = $('input[name="' + received + '"').val();
+            var positive = elementid.replace(elementname, "positive");
+            var positiveval = $('input[name="' + positive + '"').val();
+            var negative = elementid.replace(elementname, "negative");
+            var negativeval = $('input[name="' + negative + '"').val();
+            var wastage = elementid.replace(elementname, "wastage");
+            var wastageval = $('input[name="' + wastage + '"').val();
+
+            var additinalvalues = (parseInt(begining_balanceval)+parseInt(receivedval)+parseInt(positiveval));
+            var subtractivevalues = (parseInt(kits_usedval)+parseInt(negativeval)+parseInt(wastageval));
+
             var ending = elementid.replace(elementname, "ending");
-            var endingval = $('input[name="' + ending + '"').val();
-            $('input[name="' + ending + '"').val((parseInt(endingval)+parseInt(value)));
+            // var endingval = $('input[name="' + ending + '"').val();
+            $('input[name="' + ending + '"').val((parseInt(additinalvalues)-parseInt(subtractivevalues)));
         }
     </script>
 @endsection
