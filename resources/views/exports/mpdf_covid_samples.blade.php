@@ -279,7 +279,8 @@ p.breakhere {page-break-before: always}
 
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-						<img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
+						<!-- <img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE"> -->
+						<img src="{{ $sample->lab->lab_signature }}" height="90" width="240" alt="SIGNATURE">
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
