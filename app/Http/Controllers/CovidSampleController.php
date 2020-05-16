@@ -132,14 +132,12 @@ class CovidSampleController extends Controller
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
         $samples = CovidSampleView::where('repeatt', 0)
-            // ->when($facility_id, function($query) use ($facility_id){
-            //     return $query->where('covid_sample_view.facility_id', $facility_id);
-            // })
-            // ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
-            //     return $query->where('quarantine_site_id', $quarantine_site_id);
-            // })
-            ->whereNull('quarantine_site_id')
-            ->whereNull('facility_id')
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('covid_sample_view.facility_id', $facility_id);
+            })
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
@@ -265,12 +263,14 @@ class CovidSampleController extends Controller
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
-            ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('facility_id', $facility_id);
-            })
-            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
-                return $query->where('quarantine_site_id', $quarantine_site_id);
-            })
+            // ->when($facility_id, function($query) use ($facility_id){
+            //     return $query->where('facility_id', $facility_id);
+            // })
+            // ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+            //     return $query->where('quarantine_site_id', $quarantine_site_id);
+            // })            
+            ->whereNull('quarantine_site_id')
+            ->whereNull('facility_id')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
