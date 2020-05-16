@@ -50,6 +50,11 @@ p.breakhere {page-break-before: always}
 		@continue($sample->repeatt == 1)
 		<?php $count++; ?>
 
+		<br />
+		<br />
+		<br />
+		<br />
+
 		<table id="table1" align="center">
 
 			<tr>
@@ -223,6 +228,18 @@ p.breakhere {page-break-before: always}
 
 			@if(env('APP_LAB') != 1)
 
+				@if(env('APP_LAB') == 5)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> Kadima S.</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</center>					
+					</td>
+				</tr>
+				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -235,6 +252,7 @@ p.breakhere {page-break-before: always}
 						</center>					
 					</td>
 				</tr>
+				@endif
 				<tr>
 					<td colspan="3" class="style4 style1 comment">
 						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
@@ -261,7 +279,8 @@ p.breakhere {page-break-before: always}
 
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-						<img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE">
+						<!-- <img height="90" width="240" src="{{ asset('john_sig.jpg') }} " alt="SIGNATURE"> -->
+						<img src="{{ $sample->lab->lab_signature }}" height="90" width="240" alt="SIGNATURE">
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>

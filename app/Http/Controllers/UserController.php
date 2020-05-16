@@ -97,8 +97,9 @@ class UserController extends Controller
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
         $quarantine_sites = DB::table('quarantine_sites')->get();
+        $labs = DB::table('labs')->get();
 
-        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites'))->with('pageTitle', 'Add User');
+        return view('forms.users', compact('accounts', 'user', 'partners', 'quarantine_sites', 'labs'))->with('pageTitle', 'Add User');
     }
 
     /**
