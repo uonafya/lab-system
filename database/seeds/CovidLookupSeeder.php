@@ -12,26 +12,6 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
-
-		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
-		DB::statement("
-			CREATE TABLE `covid_test_types` (
-				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				`name` varchar(50) DEFAULT NULL,
-				PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-		");
-
-		DB::table('covid_test_types')->insert([
-			['id' => 1, 'name' => 'Initial Test'],
-			['id' => 2, 'name' => '1st Follow Up'],
-			['id' => 3, 'name' => '2nd Follow Up'],
-			['id' => 4, 'name' => '3rd Follow Up'],
-			['id' => 5, 'name' => '4th Follow Up'],
-			['id' => 6, 'name' => '5th Follow Up'],
-			['id' => 7, 'name' => 'Not Specified'],
-			['id' => 8, 'name' => 'Repeat'],
-		]);
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
@@ -43,7 +23,7 @@ class CovidLookupSeeder extends Seeder
 		");
 
 		DB::table('quarantine_sites')->insert([
-			['id' => 1, 'name' => 'Infectious Disease Unit-KNH IDU', 'email' => 'mwangimilkahke@gmail.com'],
+			['id' => 1, 'name' => 'Infectious Disease Unit-KNH IDU', 'email' => 'mwangimilkahke@gmail.com,idu@knh.or.ke'],
 			['id' => 2, 'name' => 'Kenyatta University - (KU)', 'email' => ''],
 			['id' => 3, 'name' => 'Kenya School of Government - (KSG)', 'email' => ''],
 			['id' => 4, 'name' => 'Boma Hotel', 'email' => 'omondij2005@yahoo.com,pwwanjohi@gmail.com'],
@@ -128,20 +108,23 @@ class CovidLookupSeeder extends Seeder
 			['id' => 83, 'name' => 'Bellavista', 'email' => ''],
 			['id' => 84, 'name' => 'Kajiado County Referral Hospital', 'email' => 'sheyue@gmail.com,eligach2017@gmail.com,michirakelvin@gmail.com'],
 			['id' => 85, 'name' => 'Narok County Referral Hospital', 'email' => 'bundi.lilah@gmail.com'],
-			['id' => 86, 'name' => 'Vigilance', 'email' => ''],
+			['id' => 86, 'name' => 'Vigilance', 'email' => 'covid-19lab@nphl.go.ke'],
 			['id' => 87, 'name' => 'Nanyuki TRH', 'email' => 'laikipiacountyhealth@gmail.com,joelmaino7@yahoo.com'],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 88, 'name' => 'KMTC Uasin Gishu', 'email' => ''],
+			['id' => 89, 'name' => 'Eastleigh', 'email' => ''],
+			['id' => 90, 'name' => 'Somalia', 'email' => 'raimundP@bacroftglobal.org'],
+			['id' => 91, 'name' => 'Dandora', 'email' => ''],
+			['id' => 92, 'name' => 'Kasarani', 'email' => 'florencewangari09@yahoo.com'],
+			['id' => 93, 'name' => 'Aga Khan Mombasa', 'email' => ''],
+			['id' => 94, 'name' => 'Naivasha hospital', 'email' => ''],
+			['id' => 95, 'name' => 'Kiambu Level 5', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
+
+		return;
 
 
 
@@ -165,8 +148,29 @@ class CovidLookupSeeder extends Seeder
 			['id' => 8, 'name' => 'Recent travel'],
 			['id' => 9, 'name' => 'Health Care Worker'],
 			['id' => 10, 'name' => 'Truck Driver'],
+			['id' => 11, 'name' => 'Food Handlers'],
 		]);
 		return;
+
+		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
+		DB::statement("
+			CREATE TABLE `covid_test_types` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_test_types')->insert([
+			['id' => 1, 'name' => 'Initial Test'],
+			['id' => 2, 'name' => '1st Follow Up'],
+			['id' => 3, 'name' => '2nd Follow Up'],
+			['id' => 4, 'name' => '3rd Follow Up'],
+			['id' => 5, 'name' => '4th Follow Up'],
+			['id' => 6, 'name' => '5th Follow Up'],
+			['id' => 7, 'name' => 'Not Specified'],
+			['id' => 8, 'name' => 'Repeat'],
+		]);
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("

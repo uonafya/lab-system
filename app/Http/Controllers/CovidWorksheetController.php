@@ -477,7 +477,7 @@ class CovidWorksheetController extends Controller
                     ->where('site_entry', '!=', 2) 
                     ->orderBy('run', 'desc')
                     ->when(true, function($query){
-                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        // if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
                         if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
                     })
                     ->orderBy('id', 'asc')

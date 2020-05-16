@@ -21,10 +21,11 @@
     <div class="content">
         <div>
 
-        @if (isset($sample))
-            {{ Form::open(['url' => '/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+        @if(isset($sample))
+        <form action="{{ url('/sample/' . $sample->id) }}" class="form-horizontal" method="POST" id='samples_form'>
+            @method('PUT')
         @else
-            {{ Form::open(['url'=>'/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+        <form action="{{ url('/sample') }}" class="form-horizontal" method="POST" id='samples_form'>
         @endif
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
@@ -741,7 +742,7 @@
             </div>
         </div>
 
-        {{ Form::close() }}
+        </form>
 
       </div>
     </div>

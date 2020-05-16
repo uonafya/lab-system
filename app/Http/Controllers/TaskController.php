@@ -65,7 +65,6 @@ class TaskController extends Controller
 		{
             $data['submittedkits'] = 1;
             $data['consumption'] = (object)$this->getConsumption();
-            print_r($this->getConsumption());
 		}else {
 			$data['submittedkits'] = 0;
 		}

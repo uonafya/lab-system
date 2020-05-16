@@ -126,7 +126,7 @@ class CovidSampleController extends BaseController
             $s = new CovidSample;
             $s->fill(get_object_vars($new_sample));
             $s->patient_id = $p->id;
-            unset($s->id);
+            $s->lab_id = env('APP_LAB');
             $s->datereceived = $s->user_id = $s->received_by = $s->receivedstatus = null;
             $s->pre_update();
 
