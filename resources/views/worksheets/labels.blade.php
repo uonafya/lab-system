@@ -21,9 +21,14 @@
 
 				<td>
 					<div align="left">
-						<span style="font-size: 8px;"> P.ID: {{ $sample->patient }} </span>	
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						<span style="font-size: 8px;"> P.ID: {{ $sample->patient->identifier ?? $sample->patient }} </span>	
+						@if($sample->id < 1000)
+							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						@else
+							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						@endif
 						<br />
+
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
 					</div>			
 				</td>
@@ -38,8 +43,12 @@
 
 				<td>
 					<div align="left">
-						<span style="font-size: 8px;"> P.ID: {{ $sample->patient }} </span>	
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						<span style="font-size: 8px;"> P.ID: {{ $sample->patient->identifier ?? $sample->patient }} </span>	
+						@if($sample->id < 1000)
+							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						@else
+							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
+						@endif
 						<br />
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
 					</div>			
@@ -54,10 +63,14 @@
 					@if(in_array(env('APP_LAB'), [5]))								
 						<span style="font-size: 12px;">
 							Date Ordered: {{ $sample->datecollected }} <br />
-							Patient ID: {{ $sample->patient }} <br />
+							Patient ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
 						</span>
 					@endif
-					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
+					@if($sample->id < 1000)
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" 
+					@else
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
+					@endif
 					@if(in_array(env('APP_LAB'), [5]))
 						height="50" width="250"
 					@else

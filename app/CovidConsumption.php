@@ -115,7 +115,14 @@ class CovidConsumption extends BaseModel
 
     private function getdata($week)
     {
-        if ($this->whereDate('start_of_week', $week)->get()->isEmpty())
+        $user = auth()->user();
+        $filled = $this->whereDate('start_of_week', $week)->when($user, function($query) use ($user) {
+                    if ($user->user_type_id == 12)
+                            return $query->where('lab_id', '=', $user->lab_id);
+                        else
+                            return $query->where('lab_id', '=', env('APP_LAB'));
+                })->get();
+        if ($filled->isEmpty())
             return (object)['week_start' => $week,
                             'week_end' => date('Y-m-d', strtotime('+6 days', strtotime($week))),
                             'week' => date('W', strtotime($week))
