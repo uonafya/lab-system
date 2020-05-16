@@ -135,7 +135,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 90, 'name' => 'Somalia', 'email' => 'raimundP@bacroftglobal.org'],
 			['id' => 91, 'name' => 'Dandora', 'email' => ''],
 			['id' => 92, 'name' => 'Kasarani', 'email' => 'florencewangari09@yahoo.com'],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 93, 'name' => 'Aga Khan Mombasa', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
