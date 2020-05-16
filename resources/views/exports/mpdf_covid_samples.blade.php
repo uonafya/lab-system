@@ -228,6 +228,18 @@ p.breakhere {page-break-before: always}
 
 			@if(env('APP_LAB') != 1)
 
+				@if(env('APP_LAB') == 5)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> Kadima S.</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</center>					
+					</td>
+				</tr>
+				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -235,11 +247,12 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<!-- <strong>Signature: </strong>
-							&nbsp;&nbsp; -->
+							<strong>Signature: </strong>
+							&nbsp;&nbsp;
 						</center>					
 					</td>
 				</tr>
+				@endif
 				<tr>
 					<td colspan="3" class="style4 style1 comment">
 						<strong>Date Reviewed:  {{ $sample->my_date_format('dateapproved') }}</strong>
