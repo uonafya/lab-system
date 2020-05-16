@@ -47,6 +47,11 @@ class CovidReportsController extends Controller
 						->when($user, function ($query) use ($user) {
 							if ($user->user_type_id == 12)
 	                            return $query->where('lab_id', '=', $user->lab_id);
+						})
+						->when((env('APP_LAB') == 5), function($query){
+							return $query->orderBy('worksheet_id', 'asc')
+									->orderBy('run', 'desc')
+									->orderBy('covid_sample_view.id', 'asc');
 						});
 	}
 
