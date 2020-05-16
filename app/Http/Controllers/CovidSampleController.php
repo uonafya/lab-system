@@ -268,7 +268,9 @@ class CovidSampleController extends Controller
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
                 return $query->where('quarantine_site_id', $quarantine_site_id);
-            })
+            })            
+            // ->whereNull('quarantine_site_id')
+            // ->whereNull('facility_id')
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
@@ -547,6 +549,41 @@ class CovidSampleController extends Controller
                 'phone_no' => $row[10],
             ]);
         }
+    }
+
+    // Transfer Between Remote Labs
+    public function transfer_samples_form($facility_id=null)
+    {
+        $samples = CovidSampleView::where('site_entry', '!=', 2)
+                    ->when($facility_id, function($query) use($facility_id){
+                        return $query->where('facility_id', $facility_id);
+                    })
+                    ->whereNull('datetested')
+                    ->where(['repeatt' => 0])
+                    ->where('created_at', '>', date('Y-m-d', strtotime("-3 months")))
+                    ->paginate(500);
+
+        $samples->setPath(url()->current());
+
+        if($facility_id) $facility = \App\Facility::find($facility_id);
+
+        $data = [
+            'samples' => $samples,
+            'labs' => \App\Lab::all(),
+            'facility' => $facility ?? null,
+            'pre' => 'covid_',
+        ];
+
+        return view('forms.transfer_samples', $data);
+    }
+
+    public function transfer_samples(Request $request)
+    {
+        $samples = $request->input('samples');
+        $lab = $request->input('lab');
+        // dd($samples);
+        \App\Synch::transfer_sample('covid', $lab, $samples);
+        return back();
     }
 
 

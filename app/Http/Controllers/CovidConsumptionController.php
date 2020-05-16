@@ -16,6 +16,7 @@ class CovidConsumptionController extends Controller
     {
         $consumption = new CovidConsumption;
         $weeks = $consumption->getMissingConsumptions();
+        
         if (sizeof($weeks) == 0) {
             session(['toast_message' => "Covid Consumption already filled.",
                 'toast_error' => true]);
@@ -23,13 +24,31 @@ class CovidConsumptionController extends Controller
         }
 
         $time = collect($weeks)->first();
-    	$tests = CovidSample::whereBetween('datetested', [$time->week_start, $time->week_end])->where('receivedstatus', '<>', 2)->get()->count();
+        $user = auth()->user();
+    	$tests = $consumption->getTestsDone($time->week_start, $time->week_end);
+        $kits = CovidKit::when($user, function($query) use ($user){
+                                        if ($user->user_type_id == 12)
+                                            return $query->where('type', '<>', 'Kit');
+                                        else
+                                            return $query->where('type', '<>', 'Manual');
+                                    })->get();
+        // dd($kits);
     	return view('tasks.covid.consumption',
     		[
-                'covidkits' => CovidKit::where('type', '<>', 'Manual')->get(),
+                'covidkits' => $kits,
                 'tests' => $tests,
                 'time' => $time
             ]);
+    }
+
+    public function pending()
+    {
+        // $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
+        //                                 ->where('lab_id', '=', auth()->user()->lab_id)->count();
+        $covidconsumption = new CovidConsumption;
+        $data['time'] = $covidconsumption->getMissingConsumptions();
+        // dd($data);
+        return view('tasks.covid.manual', $data);
     }
 
     public function submitConsumption(Request $request)
@@ -50,12 +69,15 @@ class CovidConsumptionController extends Controller
             DB::beginTransaction();
 
             try {
+                $lab = env('APP_LAB');
+                if (auth()->user()->user_type_id == 12)
+                    $lab = auth()->user()->lab_id;
                 $consumption = new CovidConsumption;
                 $consumption->fill([
                                 'start_of_week' => $time->week_start,
                                 'end_of_week' => $time->week_end,
                                 'week' => $time->week,
-                                'lab_id' => env('APP_LAB')
+                                'lab_id' => $lab
                             ]);
                 $consumption->tests = $consumption->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
                 $consumption->save();
@@ -75,9 +97,12 @@ class CovidConsumptionController extends Controller
     	$consumption = new CovidConsumption;
         $weeks = $consumption->getMissingConsumptions();
         if (sizeof($weeks) == 0) {
-            $this->reportRelease();
+            if (auth()->user()->user_type_id != 12)
+                $this->reportRelease();
             Synch::synchCovidConsumption();
         }
+        if (auth()->user()->user_type_id == 12)
+            return redirect('covidkits/pending');    
         return redirect('pending');
     	
     }
@@ -86,7 +111,13 @@ class CovidConsumptionController extends Controller
     {
         if (null !== $consumption->start_of_week)
             return view('reports.covidconsumptiondetails', ['consumption' => $consumption]);
-    	return view('reports.covidconsumption', ['consumptions' => CovidConsumption::get()]);
+        $user = auth()->user();
+    	return view('reports.covidconsumption',
+                    ['consumptions' => CovidConsumption::when($user, function ($query) use ($user){
+                                                if ($user->user_type_id == 12)
+                                                    return $query->where('lab_id', '=', $user->lab_id);
+                                        })->get()
+                ]);
     }
 
     private function buildConsumptionData($request)

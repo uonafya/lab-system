@@ -141,6 +141,11 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			
+			Route::group(['middleware' => ['only_utype:2']], function () {	
+				Route::get('transfer_samples/{facility_id?}', 'CovidSampleController@transfer_samples_form');	
+				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
+			});
+			
 			Route::post('search/', 'CovidSampleController@search')->name('search');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
@@ -189,6 +194,10 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('/', 'CovidConsumptionController@index');
 			Route::post('consumption', 'CovidConsumptionController@submitConsumption');
 			Route::get('reports/{consumption?}', 'CovidConsumptionController@reports');
+
+			Route::group(['middleware' => ['utype:12']], function () {
+				Route::get('pending', 'CovidConsumptionController@pending');
+			});
 		});
 
 		Route::prefix('cd4')->name('cd4.')->group(function(){
@@ -468,6 +477,8 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 		Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');
+		Route::put('user/password_reset/{id?}', 'UserController@edit_password')->name('edit_password');
+		// Route::put('user/password_reset/{id?}', 'UserController@edit_password')->name('edit_password');
 
 		Route::group(['middleware' => ['only_utype:2']], function () {
 			Route::get('users', 'UserController@index')->name('users');
@@ -475,8 +486,8 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('user/status/{user}', 'UserController@delete')->name('user.delete');
 			Route::get('users/activity/{user?}/{year?}/{month?}', 'UserController@activity')->name('user.activity');
 			Route::get('allocationcontact/{user}', 'UserController@allocationcontact');
+			Route::resource('user', 'UserController');	
 		});
-		Route::resource('user', 'UserController');	
 
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {

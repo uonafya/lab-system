@@ -74,6 +74,14 @@
                 @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
+                <li><a href="{{ url('worksheet/create/3/22') }}">Create C8800 Worksheet(24)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3/46') }}">Create C8800 Worksheet(48)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3/70') }}">Create C8800 Worksheet(72)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -326,6 +334,18 @@
                 <a href="{{ url('covid_sample/index/2') }}">Dispatched Covid 19 Samples</a>
             </li>
             <hr />
+            <li>
+                <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covidkits/reports') }}">Consumption Report</a>
+            </li>
+            <hr />
+            <li>
+                <a href="{{ url('covidreports') }}">Daily Tests Report</a>
+            </li>
+            <hr />
 
         @elseif (Auth::user()->user_type_id == 8)
             <li><a href="{{ url('viralsample/nhrl') }}">Approve EDARP Samples</a></li>
@@ -484,7 +504,7 @@
                 @if(Auth::user()->user_type_id != 4)
                     <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
                 @endif
-            @else
+            @elseif(!(Auth::user()->quarantine_site || Auth::user()->other_lab))
                 <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
             @endif
             </li>

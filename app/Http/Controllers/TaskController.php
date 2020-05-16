@@ -61,7 +61,7 @@ class TaskController extends Controller
 
     	$data['kits'] = (object)$this->getKitsEntered();
         
-    	if (($data['kits']->eidtaqkits  > 0 && $data['kits']->vltaqkits > 0) && ($data['kits']->eidabkits  > 0 && $data['kits']->vlabkits > 0))
+    	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
 		{
             $data['submittedkits'] = 1;
             $data['consumption'] = (object)$this->getConsumption();
@@ -77,7 +77,8 @@ class TaskController extends Controller
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         $data['requisitions'] = count($this->getRequisitions());
-        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)->count();
+        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
+                                        ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
         // dd($this->getPreviousWeek());
@@ -629,20 +630,16 @@ class TaskController extends Controller
     public function getKitsEntered(){
     	$quarter = parent::_getMonthQuarter($this->month);
     	return [
-    		'eidtaqkits' => self::__getifKitsEntered(1,1,$quarter,$this->year),
-			'vltaqkits' => self::__getifKitsEntered(2,1,$quarter,$this->year),
-			'eidabkits' => self::__getifKitsEntered(1,2,$quarter,$this->year),
-			'vlabkits' => self::__getifKitsEntered(2,2,$quarter,$this->year)
+    		'taqkits' => self::__getifKitsEntered(1,$quarter,$this->year),
+			'abkits' => self::__getifKitsEntered(2,$quarter,$this->year)
 		];
 	}
 
     public function getConsumption()
     {
         return [
-            'eidtaqconsumption' => self::__getifConsumptionEntered(1,1,$this->previousMonth,$this->previousYear),
-            'vltaqconsumption' => self::__getifConsumptionEntered(2,1,$this->previousMonth,$this->previousYear),
-            'eidabconsumption' => self::__getifConsumptionEntered(1,2,$this->previousMonth,$this->previousYear),
-            'vlabconsumption' => self::__getifConsumptionEntered(2,2,$this->previousMonth,$this->previousYear)
+            'taqconsumption' => self::__getifConsumptionEntered(1,$this->previousMonth,$this->previousYear),
+            'abconsumption' => self::__getifConsumptionEntered(2,$this->previousMonth,$this->previousYear)
         ];
     }
 
@@ -656,22 +653,22 @@ class TaskController extends Controller
     	return $model;
     }
 
-    public static function __getifKitsEntered($testtype,$platform,$quarter,$currentyear){
+    public static function __getifKitsEntered($platform,$quarter,$currentyear){
         if ($platform==1)
-            $model = Taqmandeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+            $model = Taqmandeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
         if ($platform==2)
-            $model = Abbotdeliveries::where('testtype', $testtype)->where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+            $model = Abbotdeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
         return $model->count();
     }
 
-    public static function __getifConsumptionEntered($testtype,$platform,$month,$currentyear){
+    public static function __getifConsumptionEntered($platform,$month,$currentyear){
         if ($platform==1)
-            $model = Taqmanprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
+            $model = Taqmanprocurement::where('month', $month)->where('year', '=', $currentyear);
 
         if ($platform==2)
-            $model = Abbotprocurement::where('testtype', $testtype)->where('month', $month)->where('year', '=', $currentyear);
+            $model = Abbotprocurement::where('month', $month)->where('year', '=', $currentyear);
 
         // return $model->toSql();
         return $model->count();

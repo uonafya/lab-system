@@ -63,7 +63,7 @@
 					@if(in_array(env('APP_LAB'), [5]))								
 						<span style="font-size: 12px;">
 							Date Ordered: {{ $sample->datecollected }} <br />
-							Patient ID: {{ $sample->patient }} <br />
+							Patient ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
 						</span>
 					@endif
 					@if($sample->id < 1000)

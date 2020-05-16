@@ -34,6 +34,13 @@ class CovidSampleObserver
             if(!$covidSample->datetested) $covidSample->datetested = date('Y-m-d');
         }
 
+        if($covidSample->isDirty('receivedstatus') && $covidSample->receivedstatus == 1 && $covidSample->datedispatched)
+        {
+            $covidSample->datedispatched = null;
+            $covidSample->dateapproved = $covidSample->dateapproved2 = null;
+            $covidSample->approvedby = $covidSample->approvedby2 = null;
+        }
+
         /*if($covidSample->county && !$covidSample->county_id){
             $covidSample->county_id = DB::table('countys')->where('name', $covidSample->county)->first()->id ?? null;
         }*/

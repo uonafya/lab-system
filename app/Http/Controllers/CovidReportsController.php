@@ -41,7 +41,13 @@ class CovidReportsController extends Controller
 
 	private function get_model()
 	{
-		return CovidSampleView::where('repeatt', 0)->whereNotNull('result');
+		$user = auth()->user();
+		return CovidSampleView::where('repeatt', 0)
+						->whereNotNull('result')
+						->when($user, function ($query) use ($user) {
+							if ($user->user_type_id == 12)
+	                            return $query->where('lab_id', '=', $user->lab_id);
+						});
 	}
 
 	private function generateExcel($data, $title)
@@ -144,7 +150,7 @@ class CovidReportsController extends Controller
 		if (!$sample->patient->travel->isEmpty()){
 			$travelled = 'Y';
 			foreach ($sample->patient->travel as $key => $travel) {
-				$history .= $travel->city . ', ' . $travel->country . '\n';
+				$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
 			}
 		}
 		return [
