@@ -50,6 +50,11 @@ p.breakhere {page-break-before: always}
 		@continue($sample->repeatt == 1)
 		<?php $count++; ?>
 
+		<br />
+		<br />
+		<br />
+		<br />
+
 		<table id="table1" align="center">
 
 			<tr>

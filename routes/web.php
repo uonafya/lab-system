@@ -194,6 +194,10 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('/', 'CovidConsumptionController@index');
 			Route::post('consumption', 'CovidConsumptionController@submitConsumption');
 			Route::get('reports/{consumption?}', 'CovidConsumptionController@reports');
+
+			Route::group(['middleware' => ['utype:12']], function () {
+				Route::get('pending', 'CovidConsumptionController@pending');
+			});
 		});
 
 		Route::prefix('cd4')->name('cd4.')->group(function(){
