@@ -235,8 +235,8 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<strong>Signature: </strong>
-							&nbsp;&nbsp;
+							<!-- <strong>Signature: </strong>
+							&nbsp;&nbsp; -->
 						</center>					
 					</td>
 				</tr>
