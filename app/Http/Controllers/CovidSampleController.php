@@ -240,7 +240,7 @@ class CovidSampleController extends Controller
             $mail_array = explode(',', $quarantine_site->email);
             if($lab->cc_emails){
                 $cc_array = explode(',', $lab->cc_emails);
-                Mail::to($mail_array)->cc($cc_array)->bcc(['joel.kithinji@dataposit.co.ke'])->send(new CovidDispatch($samples, $quarantine_site));
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
             }else{
                 Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
             }
