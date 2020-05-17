@@ -42,7 +42,7 @@ class CovidWorksheetController extends Controller
             if($state == 12){
                 return $query->where('status_id', 1)->whereRaw("id in (
                     SELECT DISTINCT worksheet_id
-                    FROM samples_view
+                    FROM covid_samples
                     WHERE parentid > 0 AND site_entry != 2
                 )");
             }
