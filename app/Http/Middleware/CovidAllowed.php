@@ -15,7 +15,8 @@ class CovidAllowed
      */
     public function handle($request, Closure $next)
     {
-        if(in_array(env('APP_LAB'), [5,6]) && auth()->user()->user_type_id && !auth()->user()->covid_allowed) abort(403);        
+        if(in_array(env('APP_LAB'), [5,6]) && auth()->user()->user_type_id && !auth()->user()->covid_allowed) abort(403); 
+        if(env('APP_LAB') == 3) dd(url()->current());       
         return $next($request);
     }
 }
