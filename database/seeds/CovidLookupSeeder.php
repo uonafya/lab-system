@@ -118,7 +118,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 93, 'name' => 'Aga Khan Mombasa', 'email' => ''],
 			['id' => 94, 'name' => 'Naivasha hospital', 'email' => 'naivashahospital@gmail.com,lizkiptoo@gmail.com'],
 			['id' => 95, 'name' => 'Kiambu Level 5', 'email' => 'scmohkiambu@gmail.com'],
-			['id' => 96, 'name' => 'Kibwancha', 'email' => ''],
+			['id' => 96, 'name' => 'Kwibancha', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
