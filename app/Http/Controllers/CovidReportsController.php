@@ -47,6 +47,11 @@ class CovidReportsController extends Controller
 						->when($user, function ($query) use ($user) {
 							if ($user->user_type_id == 12)
 	                            return $query->where('lab_id', '=', $user->lab_id);
+						})
+						->when((env('APP_LAB') == 5), function($query){
+							return $query->orderBy('worksheet_id', 'asc')
+									->orderBy('run', 'desc')
+									->orderBy('covid_sample_view.id', 'asc');
 						});
 	}
 
@@ -126,7 +131,7 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
+		$data = [['Testing Lab', 'S/N', 'Lab ID', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
@@ -157,6 +162,7 @@ class CovidReportsController extends Controller
 			// Lab::find(env('APP_LAB'))->labdesc,
 			Lab::find($sample->lab_id)->labdesc,
 			$count,
+			$sample->id,
 			$sample->patient_name,
 			$sample->age,
 			$sample->gender,
