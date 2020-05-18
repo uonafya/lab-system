@@ -124,7 +124,7 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
 
-		return;
+		// return;
 
 
 
@@ -150,7 +150,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 10, 'name' => 'Truck Driver'],
 			['id' => 11, 'name' => 'Food Handlers'],
 		]);
-		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
 		DB::statement("
@@ -188,7 +187,12 @@ class CovidLookupSeeder extends Seeder
 			['id' => 4, 'name' => 'Asian'],
 			['id' => 5, 'name' => 'American'],
 			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Ugandan'],
+			['id' => 8, 'name' => 'Tanzanian'],
+			['id' => 9, 'name' => 'Rwandese'],
+			['id' => 10, 'name' => 'DRC National'],
 		]);
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `identifier_types`;");
 		DB::statement("

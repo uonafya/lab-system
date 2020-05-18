@@ -42,7 +42,7 @@ class CovidWorksheetController extends Controller
             if($state == 12){
                 return $query->where('status_id', 1)->whereRaw("id in (
                     SELECT DISTINCT worksheet_id
-                    FROM samples_view
+                    FROM covid_samples
                     WHERE parentid > 0 AND site_entry != 2
                 )");
             }
@@ -516,6 +516,11 @@ class CovidWorksheetController extends Controller
         if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
             session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);            
+        }
+
+        if(env('APP_LAB') == 3 && !$approver->covid_allowed){
+            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+            return redirect($worksheet->route_name);                        
         }
 
         foreach ($samples as $key => $value) {
