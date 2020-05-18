@@ -518,6 +518,11 @@ class CovidWorksheetController extends Controller
             return redirect($worksheet->route_name);            
         }
 
+        if(env('APP_LAB') == 3 && !$approver->covid_allowed){
+            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+            return redirect($worksheet->route_name);                        
+        }
+
         foreach ($samples as $key => $value) {
 
             if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){
