@@ -116,6 +116,12 @@ class DrSample extends BaseModel
         return false;
     }
 
+    public function getVlSampleAttribute()
+    {
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        return $sample;
+    }
+
 
     public function scopeRuns($query, $sample)
     {

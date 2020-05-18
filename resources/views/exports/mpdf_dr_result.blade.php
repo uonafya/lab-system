@@ -95,6 +95,10 @@
 				<p>
 					Sample Test Has Failed. Please collect a new sample.
 				</p>
+			@elseif($sample->passed_gel_documentation == 0)
+				<p>
+					<b>VL Results</b> &nbsp;&nbsp;&nbsp;&nbsp; {{ $sample->vl_sample->result }}, The copies are below the sensitivity limit of the DR test assay
+				</p>
 			@else
 				<table class="table table-bordered table-hover">
 					<thead>
