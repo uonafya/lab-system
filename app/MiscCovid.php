@@ -106,6 +106,7 @@ class MiscCovid extends Common
             ->where('site_entry', '!=', 2)
             ->whereNull('result')            
             ->orderBy('run', 'desc')
+            ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
             ->when(in_array(env('APP_LAB'), [2, 3, 6]), function($query){
                 if(in_array(env('APP_LAB'), [3])) return $query->orderBy('justification', 'desc');
