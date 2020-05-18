@@ -251,6 +251,7 @@ class CovidSampleController extends Controller
 
     public function multiple_results($request)
     {
+        ini_set("memory_limit", "-1");
         $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
