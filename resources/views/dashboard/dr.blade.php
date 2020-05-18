@@ -13,6 +13,29 @@
 </style>
 <div class="p-lg">
     <div class="content animate-panel" data-child="hpanel" style="background-color: white;">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="panel-body no-padding">
+
+                        <select class="form-control" id="county_id">
+                            <option></option>
+                            @foreach($counties as $county)
+                                <option value="{{ $county->id }}"> {{ $county->name }} </option>
+                            @endforeach                            
+                        </select>
+
+                        <select class="form-control" id="subcounty_id">
+                            <option></option>
+                            @foreach($subcounties as $subcounty)
+                                <option value="{{ $subcounty->id }}"> {{ $subcounty->name }} </option>
+                            @endforeach                            
+                        </select>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     <!-- <div class="animate-panel"  data-child="hpanel" data-effect="fadeInDown"> -->
         <div class="row">
             <div class="col-lg-12">
@@ -43,9 +66,20 @@
         $("#resistance_by_drug").html("<center><div class='loader'></div></center>");
 
         $("#resistance_by_drug").load("{{ url('dr_dashboard/drug_resistance') }}");
+
     }
 
     $().ready(function(){
+
+        $("#county_id").select2({
+            placeholder: "Select County",
+            allowClear: true
+        }); 
+
+        $("#subcounty_id").select2({
+            placeholder: "Select Subcounty",
+            allowClear: true
+        }); 
         
         reload_page();
 

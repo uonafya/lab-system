@@ -2,6 +2,7 @@
 
 namespace App;
 
+use DB;
 
 class DrDashboard 
 {
@@ -10,6 +11,14 @@ class DrDashboard
 	{
 		$months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 		return $months[$m] ?? '';
+	}
+
+	public static function get_divisions()
+	{		
+		$counties = DB::table('counties')->get();
+		$subcounties = DB::table('districts')->get();
+		$partners = DB::table('partners')->get();
+		return compact('counties', 'subcounties', 'partners');
 	}
 
 	public static function get_category($row)
@@ -41,15 +50,11 @@ class DrDashboard
 	public static function divisions_query()
 	{
 		$query = " 1 ";
-		if(session('filter_county')) $query .= " AND county" . self::set_division_query(session('filter_county'));
+		if(session('filter_county')) $query .= " AND county_id" . self::set_division_query(session('filter_county'));
 		if(session('filter_subcounty')) $query .= " AND subcounty_id" . self::set_division_query(session('filter_subcounty'));
 		if(session('filter_ward')) $query .= " AND ward_id" . self::set_division_query(session('filter_ward'));
 		if(session('filter_facility')) $query .= " AND view_facilitys.id" . self::set_division_query(session('filter_facility'));
-		if(session('filter_partner') || is_numeric(session('filter_partner'))) $query .= " AND partner" . self::set_division_query(session('filter_partner'));
-		if(session('filter_agency')) $query .= " AND funding_agency_id" . self::set_division_query(session('filter_agency'));
-
-		// Though week is a time period, considering the way it is filtered, filter_week will be part of the divisions query
-		if(session('filter_week')) $query .= " AND week_id" . self::set_division_query(session('filter_week'));
+		if(session('filter_partner') || is_numeric(session('filter_partner'))) $query .= " AND partner_id" . self::set_division_query(session('filter_partner'));
 
 		return $query;
 	}

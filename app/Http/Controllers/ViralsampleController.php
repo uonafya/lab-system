@@ -710,6 +710,7 @@ class ViralsampleController extends Controller
         }
 
         $sample->pre_update();
+
         MiscViral::check_batch($sample->batch_id);
         MiscViral::check_worklist(ViralsampleView::class, $sample->worksheet_id);
 
@@ -722,7 +723,12 @@ class ViralsampleController extends Controller
         $batch->pre_update();
         session(['toast_message' => 'The sample has been updated.']);
 
-        if(env('APP_LAB') == 7) return redirect('dr_sample/12');
+        if(env('APP_LAB') == 7){
+            $dr_sample = \App\DrSample::where($sample->only(['datecollected', 'patient_id']))->first();
+            $dr_sample->status_id = 1;
+            $dr_sample->save();
+            return redirect('dr_sample/12');
+        }
 
         return redirect('viralsample/list_poc');        
     }

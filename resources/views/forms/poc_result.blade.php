@@ -95,7 +95,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datetested" required class="form-control" value="{{ $sample->datetested ?? '' }}" name="datetested">
+                                        <input type="text" id="datetested" @if(env('APP_LAB') != 7) required @endif class="form-control" value="{{ $sample->datetested ?? '' }}" name="datetested">
                                     </div>
                                 </div>                            
                             </div>
