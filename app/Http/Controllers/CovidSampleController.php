@@ -170,7 +170,7 @@ class CovidSampleController extends Controller
                 'Age' => $sample->age,
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
-                'Quarantine Site' => $sample->get_prop_name($quarantine_sites, 'quarantine_site_id'),
+                'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
                 'Date Collected' => $sample->datecollected,
                 'Date Tested' => $sample->datetested,
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
