@@ -78,6 +78,17 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">High Priority</label>
+                            <div class="col-sm-8">
+                            <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                @if(isset($sample) && $sample->highpriority)
+                                    checked
+                                @endif
+                             />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
