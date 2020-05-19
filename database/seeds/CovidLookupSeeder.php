@@ -134,6 +134,8 @@ class CovidLookupSeeder extends Seeder
 			['id' => 109, 'name' => 'KMTC Ngong', 'email' => ''],
 			['id' => 110, 'name' => 'Lamada Hotel', 'email' => ''],
 			['id' => 111, 'name' => 'JKUAT', 'email' => ''],
+			['id' => 112, 'name' => 'Bapian Peak Apartments', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
