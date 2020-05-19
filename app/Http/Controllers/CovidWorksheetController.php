@@ -546,6 +546,9 @@ class CovidWorksheetController extends Controller
                 $sample->result = 5;
                 $sample->labcomment = 'Failed Run';
             }
+            if($sample->result == 2 &&  $sample->repeatt == 0 && str_contains($sample->interpretation, ['Presumed'])){
+                
+            }
             $sample->pre_update();
 
             if($sample->repeatt == 1) MiscCovid::save_repeat($sample->id);
