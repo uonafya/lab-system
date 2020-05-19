@@ -116,14 +116,28 @@ class CovidLookupSeeder extends Seeder
 			['id' => 91, 'name' => 'Dandora', 'email' => ''],
 			['id' => 92, 'name' => 'Kasarani', 'email' => 'florencewangari09@yahoo.com'],
 			['id' => 93, 'name' => 'Aga Khan Mombasa', 'email' => ''],
-			['id' => 94, 'name' => 'Naivasha hospital', 'email' => ''],
-			['id' => 95, 'name' => 'Kiambu Level 5', 'email' => ''],
+			['id' => 94, 'name' => 'Naivasha hospital', 'email' => 'naivashahospital@gmail.com,lizkiptoo@gmail.com'],
+			['id' => 95, 'name' => 'Kiambu Level 5', 'email' => 'scmohkiambu@gmail.com'],
+			['id' => 96, 'name' => 'Kwibancha', 'email' => ''],
+			['id' => 97, 'name' => 'Red Cross', 'email' => ''],
+			['id' => 98, 'name' => 'Namanga Port', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-
 		// return;
 
 
