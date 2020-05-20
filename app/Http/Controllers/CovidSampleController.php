@@ -185,12 +185,12 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [5])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [1, 5])){
+        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [1, 3, 5])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
@@ -233,7 +233,7 @@ class CovidSampleController extends Controller
         }
         $lab = \App\Lab::find(env('APP_LAB'));
 
-        if(in_array(env('APP_LAB'), [5]) || (env('APP_LAB') == 1 && $quarantine_site->email == '')){
+        if(!$quarantine_site || $quarantine_site->email == ''){
             $mail_array = explode(',', $lab->cc_emails);
             Mail::to($mail_array)->send(new CovidDispatch($samples));
         }else{
