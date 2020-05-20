@@ -139,7 +139,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 114, 'name' => 'Corat Africa', 'email' => ''],
 			['id' => 115, 'name' => 'Kamkunji', 'email' => ''],
 			['id' => 116, 'name' => 'Mathare', 'email' => ''],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 117, 'name' => 'Garden Estate', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
@@ -147,7 +147,7 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-		// return;
+		return;
 
 		// osbp/bus - busia
 		// bus/tn - malaba
