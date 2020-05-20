@@ -80,12 +80,14 @@ class CovidSampleController extends Controller
             ->paginate();
 
         $samples->setPath(url()->current());
+
+        $facility = Facility::find($facility_id);
         
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
         $justifications = DB::table('covid_justifications')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'quarantine_site_id');
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id');
         $data['results'] = DB::table('results')->get();
         if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
