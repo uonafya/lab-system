@@ -196,6 +196,7 @@ class CovidSampleController extends Controller
         }
 
         $facility_id = $request->input('facility_id', 0);
+        $facility = Facility::find($facility_id);
         $type = 2;
 
         $date_start = $request->input('from_date', 0);
@@ -233,19 +234,28 @@ class CovidSampleController extends Controller
         }
         $lab = \App\Lab::find(env('APP_LAB'));
 
-        if(!$quarantine_site || $quarantine_site->email == ''){
-            $mail_array = explode(',', $lab->cc_emails);
-            Mail::to($mail_array)->send(new CovidDispatch($samples));
-        }else{
-            $mail_array = explode(',', $quarantine_site->email);
-            if($lab->cc_emails){
-                $cc_array = explode(',', $lab->cc_emails);
-                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
-            }else{
-                Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
-            }
+        if($lab->cc_emails) $cc_array = explode(',', $lab->cc_emails);
+        else{
+            $cc_array = [];
         }
-        session(['toast_message' => 'The results have been sent to the quarantine site.']);
+
+        $mail_array = [];
+        if($quarantine_site && $quarantine_site->email != '') $mail_array = explode(',', $quarantine_site->email);
+        else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+
+        if(!$mail_array){
+            Mail::to($cc_array)->send(new CovidDispatch($samples));
+        }else{             
+            if($quarantine_site){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }else if($facility){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }
+            // else{
+            //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+            // }
+        }
+        session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
     }
 
