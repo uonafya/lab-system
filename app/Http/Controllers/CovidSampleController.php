@@ -182,6 +182,7 @@ class CovidSampleController extends Controller
                 'Date Tested' => $sample->datetested,
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($results, 'result'),
+                'Date Entered' => $sample->my_date_format('created_at'),
             ];
         }
         if(!$data) return back();
