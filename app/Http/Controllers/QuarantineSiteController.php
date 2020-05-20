@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class QuarantineSiteController extends Controller
 {
+
+    public function __construct(){
+        if(!in_array(env('APP_LAB'), [1,2,3,6])) abort(403);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +30,7 @@ class QuarantineSiteController extends Controller
      */
     public function create()
     {
-        //
+        return view('forms.quarantine_site');
     }
 
     /**
@@ -36,7 +41,12 @@ class QuarantineSiteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $quarantineSite = QuarantineSite::where($request->only('name'))->first();
+        if(!$quarantineSite) $quarantineSite = new QuarantineSite;
+        $quarantineSite->fill($request->only(['name', 'email']));
+        $quarantineSite->pre_update();
+        session(['toast_message' => 'The quarantine site has been created.']);
+        return back();
     }
 
     /**
@@ -58,7 +68,7 @@ class QuarantineSiteController extends Controller
      */
     public function edit(QuarantineSite $quarantineSite)
     {
-        //
+        return view('forms.quarantine_site', ['quarantine_site' => $quarantineSite]);
     }
 
     /**
@@ -70,7 +80,10 @@ class QuarantineSiteController extends Controller
      */
     public function update(Request $request, QuarantineSite $quarantineSite)
     {
-        //
+        $quarantineSite->fill($request->only(['name', 'email']));
+        $quarantineSite->pre_update();
+        session(['toast_message' => 'The quarantine site has been updated.']);
+        return redirect('/quarantine_site');
     }
 
     /**
