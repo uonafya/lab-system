@@ -97,7 +97,7 @@
                 
                 <br />
 
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
@@ -110,7 +110,7 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Quarantine Site</label>
                         <div class="col-sm-9">
@@ -124,6 +124,20 @@
                                     @endif
 
                                     > {{ $quarantine_site->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Justification</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="justification_id" id="justification_id">
+                                <option></option>
+                                @foreach ($justifications as $justification)
+                                    <option value="{{ $justification->id }}"> {{ $justification->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -342,6 +356,12 @@
                 placeholder: "Select One",
                 allowClear: true
             }); 
+
+            $("#justification_id").select2({
+                placeholder: "Select One",
+                allowClear: true
+            }); 
+
 
             $(".date").datepicker({
                 startView: 0,
