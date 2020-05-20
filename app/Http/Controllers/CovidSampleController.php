@@ -178,10 +178,12 @@ class CovidSampleController extends Controller
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
-                'Date Collected' => $sample->datecollected,
+                'Date Collected' => $sample->my_date_format('datecollected'),
+                'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->datetested,
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($results, 'result'),
+                'Entered By' => $sample->creator->full_name,
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
         }
