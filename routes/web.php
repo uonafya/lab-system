@@ -183,6 +183,8 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('search/', 'CovidWorksheetController@search')->name('search');		
 			});
 			Route::resource('covid_worksheet', 'CovidWorksheetController');
+
+			Route::resource('quarantine_site', 'QuarantineSiteController');
 		});
 
 		Route::prefix('covidreports')->name('covid_reports.')->group(function () {
