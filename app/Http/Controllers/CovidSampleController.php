@@ -200,7 +200,7 @@ class CovidSampleController extends Controller
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [1, 3, 5])){
+        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
@@ -254,7 +254,7 @@ class CovidSampleController extends Controller
         }
 
         $mail_array = [];
-        if($quarantine_site && $quarantine_site->email != '') $mail_array = explode(',', $quarantine_site->email);
+        if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
 
         if(!$mail_array){
