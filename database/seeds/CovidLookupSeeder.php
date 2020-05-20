@@ -147,7 +147,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 122, 'name' => 'Kenya Institute of Special Education', 'email' => ''],
 			['id' => 123, 'name' => 'St. Teresia', 'email' => ''],
 			['id' => 124, 'name' => 'St. Vincent', 'email' => ''],
-			// ['id' => 12, 'name' => '', 'email' => ''],
+			['id' => 125, 'name' => 'Kitengela', 'email' => ''],
 			// ['id' => 12, 'name' => '', 'email' => ''],
 			// ['id' => 12, 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],

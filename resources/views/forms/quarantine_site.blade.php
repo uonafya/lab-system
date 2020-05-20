@@ -309,7 +309,9 @@
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        
+                        @include('partial.input', ['model' => $m, 'prop' => 'name', 'label' => 'Quarantine Site'])
+
+
                         <div class="form-group">
                             <center>
                                 <div class="col-sm-4 col-sm-offset-4">
