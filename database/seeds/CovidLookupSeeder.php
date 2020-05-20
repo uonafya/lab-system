@@ -136,7 +136,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 111, 'name' => 'JKUAT', 'email' => 'jnyamweru@gmail.com'],
 			['id' => 112, 'name' => 'Batian Peak Apartments', 'email' => 'gichanajk@yahoo.com'],
 			['id' => 113, 'name' => 'Korinda Prison', 'email' => 'otirehilary@yahoo.com'],
-			// ['id' => , 'name' => '', 'email' => ''],
+			['id' => 114, 'name' => 'Corat Africa', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
