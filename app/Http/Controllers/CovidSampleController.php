@@ -84,7 +84,8 @@ class CovidSampleController extends Controller
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'quarantine_site_id');
+        $justifications = DB::table('covid_justifications')->get();
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'quarantine_site_id');
         $data['results'] = DB::table('results')->get();
         if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
@@ -121,6 +122,7 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         
+        $justification_id = $request->input('justification_id', 0);
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
         $type = $request->input('type', 1);
@@ -132,6 +134,9 @@ class CovidSampleController extends Controller
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
         $samples = CovidSampleView::where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
@@ -195,6 +200,7 @@ class CovidSampleController extends Controller
             return back();            
         }
 
+        $justification_id = $request->input('justification_id', 0);
         $facility_id = $request->input('facility_id', 0);
         $facility = Facility::find($facility_id);
         $type = 2;
@@ -207,6 +213,9 @@ class CovidSampleController extends Controller
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
@@ -265,6 +274,7 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
+        $justification_id = $request->input('justification_id', 0);
 
         $date_start = $request->input('from_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -274,6 +284,9 @@ class CovidSampleController extends Controller
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
