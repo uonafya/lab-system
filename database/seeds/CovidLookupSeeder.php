@@ -135,7 +135,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 110, 'name' => 'Lamada Hotel', 'email' => 'jnyamweru@gmail.com'],
 			['id' => 111, 'name' => 'JKUAT', 'email' => 'jnyamweru@gmail.com'],
 			['id' => 112, 'name' => 'Batian Peak Apartments', 'email' => 'gichanajk@yahoo.com'],
-			['id' => 113, 'name' => 'Korinda Prison', 'email' => ''],
+			['id' => 113, 'name' => 'Korinda Prison', 'email' => 'otirehilary@yahoo.com'],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
@@ -144,6 +144,12 @@ class CovidLookupSeeder extends Seeder
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
 		// return;
+
+		// osbp/bus - busia
+		// bus/tn - malaba
+		// bus/mty/pris - prison
+		// bus/fh - food handlers clmt
+		// bus/ts - alupe
 
 
 
