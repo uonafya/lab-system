@@ -75,7 +75,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 50, 'name' => 'Migori county referral hospital', 'email' => ''],
 			['id' => 51, 'name' => 'Rapta / Raotha / Raphta', 'email' => ''], 
 			['id' => 52, 'name' => 'Crown Plaza', 'email' => ''],
-			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => 'martine.makanga@materkenya.com,mmuhati@materkenya.com'],
+			['id' => 53, 'name' => 'Mater Hospital (MMH)', 'email' => 'martin.makanga@materkenya.com,mmuhati@materkenya.com'],
 			['id' => 54, 'name' => 'Sultan Hamud', 'email' => 'daviekiuluku@yahoo.com'],
 			['id' => 55, 'name' => 'Sheraton', 'email' => ''],
 			['id' => 56, 'name' => 'Four Points JKIA', 'email' => 'neemandege@gmail.com'],
@@ -119,12 +119,37 @@ class CovidLookupSeeder extends Seeder
 			['id' => 94, 'name' => 'Naivasha hospital', 'email' => 'naivashahospital@gmail.com,lizkiptoo@gmail.com'],
 			['id' => 95, 'name' => 'Kiambu Level 5', 'email' => 'scmohkiambu@gmail.com'],
 			['id' => 96, 'name' => 'Kwibancha', 'email' => ''],
+			['id' => 97, 'name' => 'Red Cross', 'email' => ''],
+			['id' => 98, 'name' => 'Namanga Port', 'email' => ''],
+			['id' => 99, 'name' => 'Busia border point', 'email' => 'kimelijoshua@gmail.com'],
+			['id' => 100, 'name' => 'Malaba border point', 'email' => 'walelaeve@gmail.com'],
+			['id' => 101, 'name' => 'Nairobi Remand Prison Health Centre', 'email' => 'kisivuliazech@gmail.com,petvich@yahoo.com'],
+			['id' => 102, 'name' => 'Langata Women\'s Prison', 'email' => 'kisivuliazech@gmail.com,petvich@yahoo.com'],
+			['id' => 103, 'name' => 'National Youth Service', 'email' => ''],
+			['id' => 104, 'name' => 'Embu KSG', 'email' => 'kanginjiru11@gmail.com,patnjuki08@gmail.com'],
+			['id' => 105, 'name' => 'Ongata Rongai', 'email' => 'eligach2017@gmail.com,jacksonsitoya@gmail.com,ericjmose@gmail.com'],
+			['id' => 106, 'name' => 'Dagoretti', 'email' => 'rirutalab2015@gmail.com'],
+			['id' => 107, 'name' => 'Pearl Hotel', 'email' => 'erastonyabugah@gmail.com,shilaho74@gmail.com'],
+			['id' => 108, 'name' => 'Glory Palace Hotel', 'email' => 'erastonyabugah@gmail.com,shilaho74@gmail.com'],
+			['id' => 109, 'name' => 'KMTC Ngong', 'email' => 'tiaratish@gmail.com'],
+			['id' => 110, 'name' => 'Lamada Hotel', 'email' => 'jnyamweru@gmail.com'],
+			['id' => 111, 'name' => 'JKUAT', 'email' => 'jnyamweru@gmail.com'],
+			['id' => 112, 'name' => 'Batian Peak Apartments', 'email' => 'gichanajk@yahoo.com'],
+			['id' => 113, 'name' => 'Korinda Prison', 'email' => 'otirehilary@yahoo.com'],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
+			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 			// ['id' => , 'name' => '', 'email' => ''],
 		]);
-
 		// return;
+
+		// osbp/bus - busia
+		// bus/tn - malaba
+		// bus/mty/pris - prison
+		// bus/fh - food handlers clmt
+		// bus/ts - alupe
 
 
 
