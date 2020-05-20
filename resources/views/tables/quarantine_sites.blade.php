@@ -23,8 +23,8 @@
                                 @foreach($quarantine_sites as $key => $quarantine_site)
                                     <tr>
                                         <td> {{ $key+1 }} </td>
-                                        <td> {{ $quarantine_sites->name }} </td>
-                                        <td> {{ $quarantine_sites->email }} </td>
+                                        <td> {{ $quarantine_site->name }} </td>
+                                        <td> {{ $quarantine_site->email }} </td>
                                         <td>
                                             <a href="{{ url('/quarantine_site/' . $quarantine_site->id . '/edit' ) }} " target='_blank'>Edit</a>
                                         </td>
