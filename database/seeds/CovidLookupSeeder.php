@@ -127,7 +127,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 102, 'name' => 'Langata Women\'s Prison', 'email' => 'kisivuliazech@gmail.com,petvich@yahoo.com'],
 			['id' => 103, 'name' => 'National Youth Service', 'email' => ''],
 			['id' => 104, 'name' => 'Embu KSG', 'email' => 'kanginjiru11@gmail.com,patnjuki08@gmail.com'],
-			['id' => 105, 'name' => 'Ongata Rongai', 'email' => 'eligach2017@gmail.com, jacksonsitoya@gmail.com,ericjmose@gmail.com'],
+			['id' => 105, 'name' => 'Ongata Rongai', 'email' => 'eligach2017@gmail.com,jacksonsitoya@gmail.com,ericjmose@gmail.com'],
 			['id' => 106, 'name' => 'Dagoretti', 'email' => 'rirutalab2015@gmail.com'],
 			['id' => 107, 'name' => 'Pearl Hotel', 'email' => 'erastonyabugah@gmail.com,shilaho74@gmail.com'],
 			['id' => 108, 'name' => 'Glory Palace Hotel', 'email' => 'erastonyabugah@gmail.com,shilaho74@gmail.com'],
