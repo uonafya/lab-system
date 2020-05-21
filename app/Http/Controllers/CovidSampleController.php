@@ -80,11 +80,15 @@ class CovidSampleController extends Controller
             ->paginate();
 
         $samples->setPath(url()->current());
+
+        $facility = Facility::find($facility_id);
         
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'quarantine_site_id');
+        $justifications = DB::table('covid_justifications')->get();
+        $counties = DB::table('countys')->get();
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties');
         $data['results'] = DB::table('results')->get();
         if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
@@ -121,8 +125,10 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         
+        $justification_id = $request->input('justification_id', 0);
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
+        $county_id = $request->input('county_id', 0);
         $type = $request->input('type', 1);
 
         $date_start = $request->input('from_date', 0);
@@ -132,6 +138,12 @@ class CovidSampleController extends Controller
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
         $samples = CovidSampleView::where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
+            ->when($county_id, function($query) use ($county_id){
+                return $query->where('county_id', $county_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
@@ -170,11 +182,14 @@ class CovidSampleController extends Controller
                 'Age' => $sample->age,
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
-                'Quarantine Site' => $sample->get_prop_name($quarantine_sites, 'quarantine_site_id'),
-                'Date Collected' => $sample->datecollected,
+                'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Date Collected' => $sample->my_date_format('datecollected'),
+                'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->datetested,
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($results, 'result'),
+                'Entered By' => $sample->creator->full_name,
+                'Date Entered' => $sample->my_date_format('created_at'),
             ];
         }
         if(!$data) return back();
@@ -185,17 +200,20 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [5])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site && $quarantine_site->email == '' && !in_array(env('APP_LAB'), [1, 5])){
+        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
 
+        $justification_id = $request->input('justification_id', 0);
+        $county_id = $request->input('county_id', 0);
         $facility_id = $request->input('facility_id', 0);
+        $facility = Facility::find($facility_id);
         $type = 2;
 
         $date_start = $request->input('from_date', 0);
@@ -206,6 +224,12 @@ class CovidSampleController extends Controller
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
+            ->when($county_id, function($query) use ($county_id){
+                return $query->where('county_id', $county_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
@@ -233,27 +257,39 @@ class CovidSampleController extends Controller
         }
         $lab = \App\Lab::find(env('APP_LAB'));
 
-        if(in_array(env('APP_LAB'), [5]) || (env('APP_LAB') == 1 && $quarantine_site->email == '')){
-            $mail_array = explode(',', $lab->cc_emails);
-            Mail::to($mail_array)->send(new CovidDispatch($samples));
-        }else{
-            $mail_array = explode(',', $quarantine_site->email);
-            if($lab->cc_emails){
-                $cc_array = explode(',', $lab->cc_emails);
-                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
-            }else{
-                Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
-            }
+        if($lab->cc_emails) $cc_array = explode(',', $lab->cc_emails);
+        else{
+            $cc_array = [];
         }
-        session(['toast_message' => 'The results have been sent to the quarantine site.']);
+
+        $mail_array = [];
+        if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
+        else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+
+        if(!$mail_array){
+            Mail::to($cc_array)->send(new CovidDispatch($samples));
+        }else{             
+            if($quarantine_site){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }else if($facility){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }
+            // else{
+            //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
+            // }
+        }
+        session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
     }
 
     public function multiple_results($request)
     {
+        ini_set("memory_limit", "-1");
         $user = auth()->user();
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
+        $justification_id = $request->input('justification_id', 0);
+        $county_id = $request->input('county_id', 0);
 
         $date_start = $request->input('from_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -263,6 +299,12 @@ class CovidSampleController extends Controller
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
+            ->when($justification_id, function($query) use ($justification_id){
+                return $query->where('justification', $justification_id);
+            })
+            ->when($county_id, function($query) use ($county_id){
+                return $query->where('county_id', $county_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
