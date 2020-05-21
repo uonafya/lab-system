@@ -10,6 +10,8 @@
                 column: {
                     @if(isset($stacking_false))
                         stacking: false
+                    @elseif(isset($stacking_percentage))
+                        stacking: 'percentage'
                     @else
                         stacking: 'normal'
                     @endif

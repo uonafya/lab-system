@@ -726,6 +726,7 @@ class ViralsampleController extends Controller
         if(env('APP_LAB') == 7){
             $dr_sample = \App\DrSample::where($sample->only(['datecollected', 'patient_id']))->first();
             $dr_sample->status_id = 1;
+            $dr_sample->datedispatched = date('Y-m-d');
             $dr_sample->save();
             return redirect('dr_sample/12');
         }

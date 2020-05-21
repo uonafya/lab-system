@@ -18,7 +18,8 @@ class DrDashboard
 		$counties = DB::table('counties')->get();
 		$subcounties = DB::table('districts')->get();
 		$partners = DB::table('partners')->get();
-		return compact('counties', 'subcounties', 'partners');
+		$regimen_classes = DB::table('regimen_classes')->get();
+		return compact('counties', 'subcounties', 'partners', 'regimen_classes');
 	}
 
 	public static function get_category($row)
@@ -82,34 +83,24 @@ class DrDashboard
 
 	public static function groupby_query($def=true)
 	{
-		$groupby = session('filter_groupby', 1);
+		$groupby = session('filter_groupby', 2);
 
 		switch ($groupby) {
-			case 1:
-				$select_query = "partner as div_id";
-				if($def) $select_query .= ", partnername as name";
-				$group_query = "partner";
-				break;
 			case 2:
-				$select_query = "county as div_id, countyname as name, CountyDHISCode as dhis_code, CountyMFLCode as mfl_code";
+				$select_query = "county_id as div_id, county as name";
 				$group_query = "county";
 				break;
 			case 3:
-				$select_query = "subcounty_id as div_id, subcounty as name, SubCountyDHISCode as dhis_code, SubCountyMFLCode as mfl_code";
+				$select_query = "subcounty_id as div_id, subcounty as name";
 				$group_query = "subcounty_id";
 				break;
 			case 4:
-				$select_query = "ward_id as div_id, wardname as name, WardDHISCode as dhis_code, WardMFLCode as mfl_code";
+				$select_query = "ward_id as div_id, wardname as name";
 				$group_query = "ward_id";
 				break;
 			case 5:
-				$select_query = "view_facilitys.id as div_id, name, new_name, DHIScode as dhis_code, facilitycode as mfl_code";
+				$select_query = "view_facilitys.id as div_id, name";
 				$group_query = "view_facilitys.id";
-				break;
-			case 6:
-				$select_query = "funding_agency_id as div_id";
-				if($def) $select_query .= ", funding_agency as name";
-				$group_query = "funding_agency_id";
 				break;
 			case 10:
 				$select_query = "year";

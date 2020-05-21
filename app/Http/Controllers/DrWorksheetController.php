@@ -35,6 +35,7 @@ class DrWorksheetController extends Controller
                 }
                 return $query->whereDate('dr_worksheets.created_at', $date_start);
             })
+            ->where('status_id', '!=', 4)
             ->orderBy('id', 'desc')
             ->paginate();
 

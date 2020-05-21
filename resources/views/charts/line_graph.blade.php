@@ -14,7 +14,8 @@
         @isset($stacking)
             plotOptions: {
                 column: {
-                    stacking: 'normal'
+                    // stacking: 'normal'
+                    stacking: $stacking
                 }
             },
         @endisset
