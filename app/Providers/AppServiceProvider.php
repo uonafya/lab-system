@@ -83,7 +83,7 @@ class AppServiceProvider extends ServiceProvider
 
         
         Facility::observe(FacilityObserver::class);
-        // QuarantineSite::observe(QuarantineSiteObserver::class);
+        QuarantineSite::observe(QuarantineSiteObserver::class);
     }
 
     /**
