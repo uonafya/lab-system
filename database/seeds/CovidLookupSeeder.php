@@ -12,6 +12,8 @@ class CovidLookupSeeder extends Seeder
     public function run()
     {
     	//  INSERT INTO results (id, `name`, `alias`, `name_colour`) VALUES (8, 'Presumed Positive', '', "<strong><div style='color: #ffff00;'>Presumed Positive</div></strong>");
+
+    	// return;
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
@@ -149,23 +151,13 @@ class CovidLookupSeeder extends Seeder
 			['id' => 123, 'synched' => 1, 'name' => 'St. Teresia', 'email' => null],
 			['id' => 124, 'synched' => 1, 'name' => 'St. Vincent', 'email' => null],
 			['id' => 125, 'synched' => 1, 'name' => 'Kitengela', 'email' => null],
-			// ['id' => 12, 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => 12, 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => 12, 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => 12, 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
 			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
 		]);
 		return;
 
-		// osbp/bus - busia
-		// bus/tn - malaba
-		// bus/mty/pris - prison
+		// osbp/bus - busia - id 99
+		// bus/tn - malaba - 100
+		// bus/mty/pris - prison - 113
 		// bus/fh - food handlers clmt
 		// bus/ts - alupe
 
