@@ -151,6 +151,32 @@
                 </div>
             </div>
 
+            @if(auth()->user()->lab_user)
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
+                            <center>Facility Covid-19 Contact Person</center>
+                        </div>
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-warning">
+                                Comma separated email addresses. Please ensure that there are no spaces between the email addresses.
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Covid Email Address</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control editable" name="covid_email" type="text" value="{{ $facility->covid_email ?? '' }}" id="covid_email" {{ $disabled }}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            @endif
+
             <div class="row">
             <div class="col-lg-12" 
                 @empty ($edit)
