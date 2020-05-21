@@ -363,6 +363,30 @@ class CovidWorksheetController extends Controller
     }
 
 
+    public function reverse_upload(CovidWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 3 || $worksheet->created_at->lessThan(date('Y-m-d', strtotime('-14 days')))){
+            session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            return back();
+        }
+        
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+
+        $samples_data = ['datetested' => null,  'datedispatched' => null, 'result' => null, 'interpretation' => null, 'repeatt' => 0, 'approvedby' => null, 'approvedby2' => null, 'datemodified' => null, 'dateapproved' => null, 'dateapproved2' => null, 'tat1' => null, 'tat2' => null, 'tat3' => null, 'tat4' => null];
+
+
+        // $sample_array = CovidSample::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        $samples = CovidSample::where(['worksheet_id' => $worksheet->id])->where('site_entry', '!=', 2)->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->remove_rerun();
+            $sample->fill($samples_data);
+            $sample->pre_update();
+        }
+        return back();
+    }
 
     public function upload(CovidWorksheet $worksheet)
     {
