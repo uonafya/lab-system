@@ -385,7 +385,7 @@ class CovidWorksheetController extends Controller
             $sample->fill($samples_data);
             $sample->pre_update();
         }
-        return back();
+        return redirect('covid_worksheet');
     }
 
     public function upload(CovidWorksheet $worksheet)
