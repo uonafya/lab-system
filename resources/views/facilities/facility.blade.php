@@ -259,7 +259,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
-        console.log({{ $facility ?? '' }})
+        console.log({!! $facility->toJson() !!})
 
     @endcomponent
     <script type="text/javascript">
