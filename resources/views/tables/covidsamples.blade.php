@@ -130,7 +130,7 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Justification</label>
                         <div class="col-sm-9">
@@ -144,7 +144,7 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select County</label>
                         <div class="col-sm-9">
@@ -158,8 +158,18 @@
                         </div>                        
                     </div> 
                 </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Set Start of Identifier</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="identifier">
+                        </div>                        
+                    </div> 
+                </div>
 
-            <br />
+                <br />
+
+            </div>
 
             <div class="row">
 

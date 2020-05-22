@@ -286,10 +286,13 @@ class CovidSampleController extends Controller
     {
         ini_set("memory_limit", "-1");
         $user = auth()->user();
-        $quarantine_site_id = $request->input('quarantine_site_id', 0);
-        $facility_id = $request->input('facility_id', 0);
-        $justification_id = $request->input('justification_id', 0);
-        $county_id = $request->input('county_id', 0);
+
+        extract($request->all());
+
+        // $quarantine_site_id = $request->input('quarantine_site_id', 0);
+        // $facility_id = $request->input('facility_id', 0);
+        // $justification_id = $request->input('justification_id', 0);
+        // $county_id = $request->input('county_id', 0);
 
         $date_start = $request->input('from_date', 0);
         $date_end = $request->input('to_date', 0);
@@ -307,6 +310,9 @@ class CovidSampleController extends Controller
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
+            })
+            ->when($identifier, function($query) use ($identifier){
+                return $query->where('identifier', 'like', $identifier . '%');
             })
             // ->where('identifier', 'like', 'tnz%')
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
