@@ -205,9 +205,9 @@
             @if (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
-                <li><a href="{{ url('dr_sample/index/12') }}">Samples List</a></li>
-                <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
+                <hr />
+                <li><a href="{{ url('dr_sample/index/12') }}">Samples That Failed Gel</a></li>
                 <hr />
                 <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
                 <hr />
