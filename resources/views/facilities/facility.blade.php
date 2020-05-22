@@ -5,6 +5,7 @@
 
 @section('content')
 
+
 <div class="p-lg">
     <div class="content animate-panel" data-child="hpanel">
     {{ Form::open(['url' => '/facility/' . $facility->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
