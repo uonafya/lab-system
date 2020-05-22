@@ -362,6 +362,7 @@ class FacilityController extends Controller
         if(auth()->user()->user_type_id == 5)
             $data = $request->except(['_token', 'id', '_method', 'name', 'facilitycode']);
         $facility->fill($data);
+        if($facility->covid_email) $facility->covid_email = str_replace(' ', '', $facility->covid_email);
         $facility->pre_update();
         session(['toast_message' => 'The update has been made.']);
         if(auth()->user()->user_type_id == 5) return redirect('sample/create');
