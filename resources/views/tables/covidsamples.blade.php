@@ -162,7 +162,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Set Start of Identifier</label>
                         <div class="col-sm-9">
-                            <input type="text" name="identifier">
+                            <input class="form-control" type="text" name="identifier">
                         </div>                        
                     </div> 
                 </div>
