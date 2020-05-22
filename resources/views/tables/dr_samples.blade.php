@@ -235,7 +235,7 @@
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
                                         @if($sample_status == 12)
-                                            <td> {{ $sample-> }} </td>
+                                            <td> {{ $sample->vl_sample->result ?? '' }} </td>
                                             <td> <a href="{{ url('dr_sample/vl_results/' . $sample->id ) }}"> Edit VL Results </a> </td>
                                         @else
                                             <td> {!! $sample->get_link('worksheet_id') !!} </td>
