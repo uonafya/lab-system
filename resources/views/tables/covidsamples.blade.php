@@ -160,13 +160,14 @@
                 </div>
                 <div class="col-md-6"> 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Set Start of Identifier</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label">Set Start of Identifier</label>
+                        <div class="col-sm-8">
                             <input class="form-control" type="text" name="identifier">
                         </div>                        
                     </div> 
                 </div>
 
+                <br />
                 <br />
 
             </div>
