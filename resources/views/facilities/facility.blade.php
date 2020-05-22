@@ -259,6 +259,7 @@
 @section('scripts') 
 
     @component('/tables/scripts')
+        console.log({{ $facility ?? '' }})
 
     @endcomponent
     <script type="text/javascript">
