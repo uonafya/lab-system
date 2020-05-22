@@ -357,11 +357,13 @@ class FacilityController extends Controller
         $success = 'Update was successful';
         $failed = 'Updated failed try again later';
 
+        dd($request->all());
+
         $data = $request->except(['_token', 'id', '_method']);
         if(auth()->user()->user_type_id == 5)
             $data = $request->except(['_token', 'id', '_method', 'name', 'facilitycode']);
         $facility->fill($data);
-        if($request->input('covid_email')) $facility->covid_email = $request->input('covid_email');
+        // if($request->input('covid_email')) $facility->covid_email = $request->input('covid_email');
         $facility->pre_update();
         session(['toast_message' => 'The update has been made.']);
         if(auth()->user()->user_type_id == 5) return redirect('sample/create');
