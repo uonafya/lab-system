@@ -79,6 +79,7 @@ class DrSampleController extends Controller
         $data['dr_samples']->setPath(url()->current());
         $data['myurl'] = url('dr_sample/index/' . $sample_status);
         $data['myurl2'] = url('dr_sample/index/');
+        $data['sample_status'] = $sample_status;
         $data = array_merge($data, Lookup::get_partners());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
