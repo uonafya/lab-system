@@ -15,6 +15,7 @@ class QuarantineSiteObserver
      */
     public function creating(QuarantineSite $quarantineSite)
     {
+        if($quarantineSite->email) $quarantineSite->email = str_replace(' ', '', $quarantineSite->email);
         $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
         $quarantineSite->id = $id;
     }
