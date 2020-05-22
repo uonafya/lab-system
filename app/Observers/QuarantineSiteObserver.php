@@ -15,7 +15,7 @@ class QuarantineSiteObserver
      */
     public function creating(QuarantineSite $quarantineSite)
     {
-        $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($$quarantineSite->toArray());
+        $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
         $quarantineSite->id = $id;
     }
 
