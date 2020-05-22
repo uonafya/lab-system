@@ -308,7 +308,7 @@ class CovidSampleController extends Controller
             // ->when($facility_id, function($query) use ($facility_id){
             //     return $query->where('facility_id', $facility_id);
             // })
-            ->whereNull('facility_id')
+            ->whereNull('identifier', 'like', 'tnz%')
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })            
