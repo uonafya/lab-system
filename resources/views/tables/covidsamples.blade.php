@@ -167,6 +167,15 @@
                     </div> 
                 </div>
 
+                <div class="col-md-6"> 
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Worksheet ID</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="worksheet_id">
+                        </div>                        
+                    </div> 
+                </div>
+
                 <br />
                 <br />
 
