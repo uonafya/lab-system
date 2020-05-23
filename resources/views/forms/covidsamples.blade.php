@@ -359,10 +359,15 @@
            ,
             rules: {
                 county_id: {
-                    required: "#facility_id:blank"
+                    // required: "#facility_id:blank"
+                    required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }
                 },
                 subcounty_id: {
-                    required: "#facility_id:blank"
+                    required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }
                 },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
