@@ -97,7 +97,7 @@
                 
                 <br />
 
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Facility</label>
                         <div class="col-sm-9">
@@ -110,7 +110,7 @@
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Quarantine Site</label>
                         <div class="col-sm-9">
@@ -124,6 +124,20 @@
                                     @endif
 
                                     > {{ $quarantine_site->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select County</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select_tag" name="county_id" id="county_id">
+                                <option></option>
+                                @foreach ($counties as $county)
+                                    <option value="{{ $county->id }}"> {{ $county->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -146,19 +160,25 @@
                 </div>
                 <div class="col-md-6"> 
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Select County</label>
-                        <div class="col-sm-9">
-                            <select class="form-control select_tag" name="county_id" id="county_id">
-                                <option></option>
-                                @foreach ($counties as $county)
-                                    <option value="{{ $county->id }}"> {{ $county->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <label class="col-sm-4 control-label">Set Start of Identifier</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="identifier">
                         </div>                        
                     </div> 
                 </div>
 
+                <div class="col-md-6"> 
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Worksheet ID</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="worksheet_id">
+                        </div>                        
+                    </div> 
+                </div>
+
+            </div>
+            
+            <br />
             <br />
 
             <div class="row">
@@ -170,7 +190,7 @@
                         <div class="col-sm-4">
                             <div class="input-group date">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                <input type="text" id="from_date" name="from_date" class="form-control">
+                                <input type="text" id="date_start" name="date_start" class="form-control">
                             </div>
                         </div> 
 
@@ -178,7 +198,7 @@
                         <div class="col-sm-4">
                             <div class="input-group date">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                <input type="text" id="to_date" name="to_date" class="form-control">
+                                <input type="text" id="date_end" name="date_end" class="form-control">
                             </div>
                         </div> 
 
