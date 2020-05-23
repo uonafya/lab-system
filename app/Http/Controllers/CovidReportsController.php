@@ -170,8 +170,8 @@ class CovidReportsController extends Controller
 			$sample->get_prop_name($lookups['covid_justifications'], 'justification'),
 			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
 			$sample->phone_no ?? '',
-			$sample->countyname ?? '',
-			$sample->subcountyname ?? $sample->subcounty ?? '',
+			$sample->countyname ?? $sample->county,
+			$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
 
 			$travelled,
 			$history,

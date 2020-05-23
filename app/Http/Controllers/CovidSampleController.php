@@ -135,6 +135,9 @@ class CovidSampleController extends Controller
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
+            ->when($worksheet_id, function($query) use ($worksheet_id){
+                return $query->where('worksheet_id', $worksheet_id);
+            })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
             })
@@ -219,6 +222,9 @@ class CovidSampleController extends Controller
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
+            ->when($worksheet_id, function($query) use ($worksheet_id){
+                return $query->where('worksheet_id', $worksheet_id);
+            })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
             })
@@ -291,6 +297,9 @@ class CovidSampleController extends Controller
             ->where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
+            })
+            ->when($worksheet_id, function($query) use ($worksheet_id){
+                return $query->where('worksheet_id', $worksheet_id);
             })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
