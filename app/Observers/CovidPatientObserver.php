@@ -7,14 +7,15 @@ use App\CovidPatient;
 class CovidPatientObserver
 {
     /**
-     * Handle the covid patient "created" event.
+     * Handle the covid patient "saving" event.
      *
      * @param  \App\CovidPatient  $covidPatient
      * @return void
      */
-    public function created(CovidPatient $covidPatient)
+    public function saving(CovidPatient $covidPatient)
     {
-        //
+        if($covidPatient->facility_id !$covidPatient->county_id) $covidPatient->county_id = $covidPatient->view_facility->county_id;
+        if($covidPatient->facility_id !$covidPatient->subcounty_id) $covidPatient->subcounty_id = $covidPatient->view_facility->subcounty_id;
     }
 
     /**
