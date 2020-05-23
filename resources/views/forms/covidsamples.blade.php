@@ -111,7 +111,7 @@
 
                         @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
-                        @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
@@ -407,11 +407,11 @@
                 });
             @endif
 
+
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
                 $('#county_id').removeAttr("required");
-                $('#subcounty_id').removeAttr("required");
 
                 if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("required");

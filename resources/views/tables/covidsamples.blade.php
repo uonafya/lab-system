@@ -166,8 +166,37 @@
                         </div>                        
                     </div> 
                 </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Subcounty</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select_tag" name="subcounty_id">
+                                <option></option>
+                                @foreach ($subcounties as $subcounty)
+                                    <option value="{{ $subcounty->id }}"> {{ $subcounty->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
 
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Result</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select_tag" name="result">
+                                <option></option>
+                                @foreach ($results as $result)
+                                    <option value="{{ $result->id }}"> {{ $result->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>                        
+                    </div> 
+                </div>
+
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Worksheet ID</label>
                         <div class="col-sm-8">
@@ -178,7 +207,6 @@
 
             </div>
             
-            <br />
             <br />
 
             <div class="row">
