@@ -176,12 +176,10 @@
                     </div> 
                 </div>
 
-                <br />
-                <br />
-                <br />
-                <br />
-
             </div>
+            
+            <br />
+            <br />
 
             <div class="row">
 
