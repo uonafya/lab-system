@@ -16,6 +16,11 @@ class CovidPatientObserver
     {
         if($covidPatient->facility_id && !$covidPatient->county_id) $covidPatient->county_id = $covidPatient->view_facility->county_id;
         if($covidPatient->facility_id && !$covidPatient->subcounty_id) $covidPatient->subcounty_id = $covidPatient->view_facility->subcounty_id;
+
+        if($covidPatient->county && !$covidPatient->county_id){
+            $county = \DB::table('countys')->where('name', $covidPatient->county)->first();
+            $covidPatient->county_id = $county->id ?? null;
+        }
     }
 
     /**
