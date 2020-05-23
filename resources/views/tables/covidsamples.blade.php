@@ -144,6 +144,8 @@
                         </div>                        
                     </div> 
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Justification</label>
@@ -166,6 +168,7 @@
                         </div>                        
                     </div> 
                 </div>
+
                 <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Subcounty</label>
