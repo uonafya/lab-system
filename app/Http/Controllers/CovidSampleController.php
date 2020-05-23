@@ -88,8 +88,9 @@ class CovidSampleController extends Controller
         $quarantine_sites = DB::table('quarantine_sites')->get();
         $justifications = DB::table('covid_justifications')->get();
         $counties = DB::table('countys')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties');
-        $data['results'] = DB::table('results')->get();
+        $subcounties = DB::table('districts')->get();
+        $results = DB::table('results')->get();
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties', 'subcounties', 'results');
         if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
     }
@@ -135,20 +136,26 @@ class CovidSampleController extends Controller
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
+            ->when($result, function($query) use ($result){
+                return $query->where('result', $result);
+            })
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
             })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('subcounty_id', $subcounty_id);
+            })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
-            ->when($identifier, function($query) use ($identifier){
-                return $query->where('identifier', 'like', $identifier . '%');
-            })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
                 return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
+            ->when($identifier, function($query) use ($identifier){
+                return $query->where('identifier', 'like', $identifier . '%');
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
@@ -222,11 +229,17 @@ class CovidSampleController extends Controller
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
+            ->when($result, function($query) use ($result){
+                return $query->where('result', $result);
+            })
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('subcounty_id', $subcounty_id);
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
@@ -298,11 +311,17 @@ class CovidSampleController extends Controller
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
+            ->when($result, function($query) use ($result){
+                return $query->where('result', $result);
+            })
             ->when($worksheet_id, function($query) use ($worksheet_id){
                 return $query->where('worksheet_id', $worksheet_id);
             })
             ->when($county_id, function($query) use ($county_id){
                 return $query->where('county_id', $county_id);
+            })
+            ->when($subcounty_id, function($query) use ($subcounty_id){
+                return $query->where('subcounty_id', $subcounty_id);
             })
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
