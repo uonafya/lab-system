@@ -407,6 +407,10 @@
                 });
             @endif
 
+            @if(in_array(env('APP_LAB'), [3]))
+                $('#subcounty_id').removeAttr("required");
+            @endif
+
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
