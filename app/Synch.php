@@ -1246,7 +1246,7 @@ class Synch
 			$where_query = "( receivedstatus=2 and repeatt=0 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
 		}
 
-		$samples = CovidSample::whereRaw($where_query)->where('synched', 0)->get();
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0 or datedispatched is null)")->get();
 		$today = date('Y-m-d');
 
 		foreach ($samples as $key => $sample) {
@@ -1761,7 +1761,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			// print_r($body);
+			print_r($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body));
