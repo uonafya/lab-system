@@ -14,8 +14,8 @@ class CovidPatientObserver
      */
     public function saving(CovidPatient $covidPatient)
     {
-        if($covidPatient->facility_id !$covidPatient->county_id) $covidPatient->county_id = $covidPatient->view_facility->county_id;
-        if($covidPatient->facility_id !$covidPatient->subcounty_id) $covidPatient->subcounty_id = $covidPatient->view_facility->subcounty_id;
+        if($covidPatient->facility_id && !$covidPatient->county_id) $covidPatient->county_id = $covidPatient->view_facility->county_id;
+        if($covidPatient->facility_id && !$covidPatient->subcounty_id) $covidPatient->subcounty_id = $covidPatient->view_facility->subcounty_id;
     }
 
     /**
