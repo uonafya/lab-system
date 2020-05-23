@@ -37,6 +37,7 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->telephone.'</td>';
             $table .= '<td>'.$value->telephone2.'</td>';
             $table .= '<td>'.$value->email.'</td>';
+            $table .= '<td>'.$value->covid_email.'</td>';
             $table .= '<td>'.$value->sms_printer_phoneno.'</td>';
             $table .= '<td>'.$value->contactperson.'</td>';
             $table .= '<td>'.$value->contacttelephone.'</td>';
@@ -46,7 +47,7 @@ class FacilityController extends Controller
             $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
             $table .= '</tr>';
         }
-        $columns = parent::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email','Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email', 'Covid Email', 'Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
         
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities');
     }
@@ -361,6 +362,7 @@ class FacilityController extends Controller
         if(auth()->user()->user_type_id == 5)
             $data = $request->except(['_token', 'id', '_method', 'name', 'facilitycode']);
         $facility->fill($data);
+        if($facility->covid_email) $facility->covid_email = str_replace(' ', '', $facility->covid_email);
         $facility->pre_update();
         session(['toast_message' => 'The update has been made.']);
         if(auth()->user()->user_type_id == 5) return redirect('sample/create');

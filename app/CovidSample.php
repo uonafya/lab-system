@@ -44,14 +44,14 @@ class CovidSample extends BaseModel
         return $this->hasMany('App\CovidSample', 'parentid');
     }
 
-    public function creator()
+    public function receiver()
     {
-        return $this->belongsTo('App\User', 'createdby');
+        return $this->belongsTo('App\User', 'received_by');
     }
 
-    public function canceller()
+    public function creator()
     {
-        return $this->belongsTo('App\User', 'cancelledby');
+        return $this->belongsTo('App\User', 'user_id');
     }
 
     public function approver()

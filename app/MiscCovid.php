@@ -22,7 +22,8 @@ class MiscCovid extends Common
         }
         else if($target2 == 'positive'){
             $result = 2;
-            $interpretation = 'Presumed Positive. Requires Rerun.';
+            // $interpretation = 'Presumed Positive. Requires Rerun.';
+            $interpretation = 'Presumed Positive. New Sample Required to Confirm Results.';
         }
         else if($target1 == 'negative' && $target1 == $target2){
             $result = 1;
@@ -83,9 +84,9 @@ class MiscCovid extends Common
                 ->where('parentid', '>', 0)
                 ->whereNull('datedispatched')
                 ->whereNull('worksheet_id')
-                ->where('receivedstatus', 1)
-                ->where('site_entry', '!=', 2)
                 ->whereNull('result')
+                ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => env('APP_LAB')])
+                ->where('site_entry', '!=', 2)
                 ->orderBy('covid_sample_view.id', 'desc')
                 ->limit($temp_limit)
                 ->get();
@@ -102,9 +103,9 @@ class MiscCovid extends Common
             })
             ->whereNull('datedispatched')
             ->whereNull('worksheet_id')
-            ->where('receivedstatus', 1)
-            ->where('site_entry', '!=', 2)
-            ->whereNull('result')            
+            ->whereNull('result') 
+            ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => env('APP_LAB')])
+            ->where('site_entry', '!=', 2)  
             ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
             ->orderBy('datereceived', 'asc')
@@ -123,7 +124,7 @@ class MiscCovid extends Common
 
         $create = false;
         if($count == $limit) $create = true;
-        if($count) $create = true;
+        if(!in_array(env('APP_LAB'), [3]) && $count) $create = true;
         $covid = true;
 
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
