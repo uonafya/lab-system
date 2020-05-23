@@ -5,6 +5,7 @@
 	<br />
 	<br />
 
+	{{-- 
 	@if($data->samples->today == 0) No @else {{ $data->samples->today }} @endif
 	SAMPLES WERE UPLOADED TODAY {{ date('Y-m-d') }} ON THE NASCOP STAGING ENVIRONMENT
 	
@@ -36,6 +37,9 @@
 	<br />
 
 	------------------------------------------------------------------------------------------
+	--}}
+
+	{{ $data->samples->total }} samples were uploaded on {{ date('d-M-Y', strtotime('-1 day')) }}
 
 	<br />  
 	<br />  

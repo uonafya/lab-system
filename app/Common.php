@@ -473,7 +473,7 @@ class Common
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
+    	/*$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
 
     	foreach ($batches as $batch) {
     		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->first();
@@ -481,9 +481,9 @@ class Common
 	    		$batch->synched=0;
 	    		$batch->save();    			
     		}
-    	}
+    	}*/
 
-    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7])->get();
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7, 10])->get();
 
     	foreach ($batches as $batch) {
     		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
@@ -632,7 +632,7 @@ class Common
 
 			try {				
 				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
-				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+				Mail::to($mail_array)->cc([$lab->email])->send($comm);
 			} catch (Exception $e) {
 				// dd($e->getMessage());
 			}
@@ -868,31 +868,31 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker($year, $previousMonth) {
-    	$data = Random::__getLablogsData($year, $previousMonth);
+    // public static function send_lab_tracker($year, $previousMonth) {
+    // 	$data = Random::__getLablogsData($year, $previousMonth);
 
-    	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
-        $mainRecepient = ['baksajoshua09@gmail.com'];
-        if(env('APP_ENV') == 'production') {
-        	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
-    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
-        }
+    // 	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+    //     $mainRecepient = ['baksajoshua09@gmail.com'];
+    //     if(env('APP_ENV') == 'production') {
+    //     	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+    // 		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+    //     }
         
-        if(!$mainRecepient) 
-        	return null;
+    //     if(!$mainRecepient) 
+    //     	return null;
 
-        try {
-        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
-        	->send(new LabTracker($data));
-        	$allemails = array_merge($mainRecepient, $mailinglist);
-        	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-        	return true;
-        } catch (Exception $exception) {
-        	\Log::error($exception);
-        	// print_r($exception);
-        	return false;
-        }
-    }
+    //     try {
+    //     	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
+    //     	->send(new LabTracker($data));
+    //     	$allemails = array_merge($mainRecepient, $mailinglist);
+    //     	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
+    //     	return true;
+    //     } catch (Exception $exception) {
+    //     	\Log::error($exception);
+    //     	// print_r($exception);
+    //     	return false;
+    //     }
+    // }
 
     public static function transferconsumptions() {
     	$kits = \App\Kits::get();

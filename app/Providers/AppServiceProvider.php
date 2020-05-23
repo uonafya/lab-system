@@ -19,6 +19,7 @@ use App\CovidSample;
 use App\CovidPatient;
 
 use App\Facility;
+use App\QuarantineSite;
 
 use App\Observers\MotherObserver;
 use App\Observers\BatchObserver;
@@ -35,6 +36,7 @@ use App\Observers\CovidPatientObserver;
 use App\Observers\CovidSampleObserver;
 
 use App\Observers\FacilityObserver;
+use App\Observers\QuarantineSiteObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -81,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
 
         
         Facility::observe(FacilityObserver::class);
+        QuarantineSite::observe(QuarantineSiteObserver::class);
     }
 
     /**

@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-lg-12">
                 @if($user)
-                    {{ Form::open(['url' => '/user/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    {{ Form::open(['url' => '/user/password_reset/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
                     @if($user == 'personal')
                     <input type="hidden" name="user" value="1">
                     @endif

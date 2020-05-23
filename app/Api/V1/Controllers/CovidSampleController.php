@@ -5,10 +5,9 @@ namespace App\Api\V1\Controllers;
 use App\CovidPatient;
 use App\CovidSample;
 use App\CovidTravel;
-use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
 
-class CovidSampleController extends Controller
+class CovidSampleController extends BaseController
 {
     
     /**
@@ -37,7 +36,7 @@ class CovidSampleController extends Controller
         $patient_details = get_object_vars($sample->patient);
         $p->national_patient_id = $patient_details['id'];
         unset($patient_details['original_patient_id']);
-        unset($patient_details['cif_patient_id']);
+        // unset($patient_details['cif_patient_id']);
         unset($patient_details['nhrl_patient_id']);
         unset($patient_details['date_recovered']);
         $p->fill($patient_details);
@@ -50,7 +49,7 @@ class CovidSampleController extends Controller
         $s->patient_id = $p->id;
         $s->national_sample_id = $sample->id;
         unset($s->original_sample_id);
-        unset($s->cif_sample_id);
+        // unset($s->cif_sample_id);
         unset($s->nhrl_sample_id);
         unset($s->age_category);
         $s->save();
@@ -96,5 +95,54 @@ class CovidSampleController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function transfer(ApiRequest $request)
+    {        
+        $new_samples = json_decode($request->input('samples'));
+
+        $ok = $samples = $patients = [];
+
+        foreach ($new_samples as $key => $new_sample) {
+
+            $travels = $new_sample->patient->travel ?? null;
+
+            unset($new_sample->patient->travel);
+
+            $p = new CovidPatient;
+            $p->fill(get_object_vars($new_sample->patient));
+            $p->pre_update();
+            unset($new_sample->patient);
+
+            if($travels){
+                foreach ($travels as $key => $travel) {
+                    $t = new CovidTravel;
+                    $t->fill(get_object_vars($travel));
+                    $t->patient_id = $p->id;
+                    $t->save();
+                }
+            }
+
+            $s = new CovidSample;
+            $s->fill(get_object_vars($new_sample));
+            $s->patient_id = $p->id;
+            $s->lab_id = env('APP_LAB');
+            $s->datereceived = $s->user_id = $s->received_by = $s->receivedstatus = null;
+            $s->pre_update();
+
+            $patients[] = $p;
+            $samples[] = $s;
+
+            $ok[] = $new_sample->id;
+        }
+
+        return response()->json([
+                'ok' => $ok,
+                'samples' => $samples,
+                'patients' => $patients,
+                'message' => 'The transfer was successful.',
+                'status_code' => 201,
+            ], 201);
+
     }
 }
