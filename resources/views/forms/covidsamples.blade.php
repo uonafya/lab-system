@@ -407,15 +407,11 @@
                 });
             @endif
 
-            @if(in_array(env('APP_LAB'), [3]))
-                $('#subcounty_id').removeAttr("required");
-            @endif
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
                 $('#county_id').removeAttr("required");
-                $('#subcounty_id').removeAttr("required");
 
                 if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("required");
