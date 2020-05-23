@@ -130,7 +130,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -407,15 +407,11 @@
                 });
             @endif
 
-            @if(in_array(env('APP_LAB'), [3]))
-                $('#subcounty_id').removeAttr("required");
-            @endif
 
             $("#facility_id").change(function(){
                 var val = $(this).val();
 
                 $('#county_id').removeAttr("required");
-                $('#subcounty_id').removeAttr("required");
 
                 if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("required");
