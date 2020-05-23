@@ -539,13 +539,19 @@ class CovidSampleController extends Controller
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if(starts_with($data[0], ['S', 's'])) continue;
+            
+            $quarantine_site = null;
 
             $facility = Facility::locate($data[3])->first();
-            // if(!$facility) continue;
+            if(!$facility && !is_numeric($data[3])){
+                $quarantine_site = \App\QuarantineSite::where(['name' => $data[3]])->first();
+            }
 
             $p = CovidPatient::create([
                 'identifier' => $data[3],
+                'county' => $data[4],
                 'facility_id' => $facility->id ?? 3475,
+                'quarantine_site_id' => $quarantine_site->id ?? null,
                 'patient_name' => $data[5],
                 'sex' => $data[7],
                 'justification' => $data[8],

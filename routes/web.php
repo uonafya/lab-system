@@ -130,11 +130,12 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
-
-			Route::get('cif', 'CovidSampleController@cif_samples');
-			Route::post('cif', 'CovidSampleController@set_cif_samples');
 			
 			Route::group(['middleware' => ['utype:4']], function () {
+
+				Route::get('cif', 'CovidSampleController@cif_samples');
+				Route::post('cif', 'CovidSampleController@set_cif_samples');
+				
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
 				
