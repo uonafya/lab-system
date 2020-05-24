@@ -484,7 +484,7 @@ class CovidWorksheetController extends Controller
                     if($sample_id == "COV-2_NEG") $negative_control = $data_array;
                     if($sample_id == "COV-2_POS") $positive_control = $data_array;
 
-                    $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $today]);
+                    $data_array = array_merge($data_array, ['datetested' => $today]);
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
                     // Sample::where($search)->update($data_array);
 
