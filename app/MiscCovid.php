@@ -10,7 +10,7 @@ class MiscCovid extends Common
 {
 
 
-    public static function sample_result($target1, $target2, $error=null)
+    public static function roche_sample_result($target1, $target2, $error=null)
     {
         $target1 = trim(strtolower($target1));
         $target2 = trim(strtolower($target2));
@@ -39,11 +39,33 @@ class MiscCovid extends Common
             $interpretation = 'Valid';            
         }
         else{
-            return ['result' => 3, 'interpretation' => 'Failed'];
+            $result = 3;
+            $interpretation = 'Failed';
+            $repeatt = 1;
         }
 
         // return ['result' => $result, 'interpretation' => $interpretation, 'repeatt' => 0];
         return compact('result', 'interpretation', 'repeatt', 'target1', 'target2', 'error');
+    }
+
+    public static function sample_result($interpretation, $error=null)
+    {
+        $str = strtolower($interpretation);
+        $repeatt = 0;
+
+        if(str_contains($str, ['cn'])){
+            $result = 2;
+        }
+        else if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+            $result = 1;
+        }
+        else{
+            $result = 3;
+            $interpretation = $error;
+            $repeatt = 1;
+        }
+
+        return compact('result', 'interpretation', 'repeatt');
     }
 
 
