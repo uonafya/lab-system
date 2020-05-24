@@ -323,7 +323,7 @@
                 <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
-        @elseif (Auth::user()->quarantine_site || Auth::user()->other_lab)
+        @elseif (in_array(Auth::user()->user_type_id, [11, 12, 13]) )
             <li>
                 <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
             </li>

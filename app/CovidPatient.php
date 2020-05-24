@@ -19,6 +19,11 @@ class CovidPatient extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
     public function quarantine_site()
     {
         return $this->belongsTo('App\QuarantineSite');

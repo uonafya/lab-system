@@ -130,7 +130,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -358,8 +358,16 @@
         @slot('val_rules')
            ,
             rules: {
+                county_id: {
+                    // required: "#facility_id:blank"
+                    /*required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }*/
+                },
                 subcounty_id: {
-                    required: "#facility_id:blank"
+                    /*required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }*/
                 },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
@@ -399,8 +407,11 @@
                 });
             @endif
 
+
             $("#facility_id").change(function(){
                 var val = $(this).val();
+
+                $('#county_id').removeAttr("required");
 
                 if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("required");
