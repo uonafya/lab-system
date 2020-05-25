@@ -225,4 +225,14 @@ class BaseModel extends Model
         $ret['week'] = date('W', strtotime($ret['week_start']));
         return (object)$ret;
     }
+
+    public function getLastMonth($year, $month)
+    {
+        $constructed_date = $year . '-' . $month . '-01';
+        return [
+                'year' => date('Y', strtotime("-1 Month", strtotime($constructed_date))),
+                'month' => date('m', strtotime("-1 Month", strtotime($constructed_date))),
+            ];
+
+    }
 }

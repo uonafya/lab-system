@@ -64,7 +64,7 @@ class UsersTableSeeder extends Seeder
 		// }
 
 
-
+		User::truncate();
         $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 0,
 	        'surname' => 'Kithinji',

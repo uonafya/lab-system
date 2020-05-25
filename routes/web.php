@@ -605,6 +605,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
+	Route::get('postnullallocation', 'TaskController@nullallocation')->name('null.allocation');
 	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
 	Route::post('consumption', 'TaskController@consumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
