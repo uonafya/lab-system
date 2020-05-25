@@ -560,7 +560,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('labels/{worksheet}', 'WorksheetController@labels')->name('labels');
 				Route::get('cancel/{worksheet}', 'WorksheetController@cancel')->name('cancel');
 				Route::get('rerun_worksheet/{worksheet}', 'WorksheetController@rerun_worksheet')->name('rerun_worksheet');
-				Route::get('convert/{machine_type}/{worksheet}', 'WorksheetController@convert_worksheet')->name('convert');
+				Route::get('convert/{worksheet}/{machine_type}', 'WorksheetController@convert_worksheet')->name('convert');
 
 				Route::group(['middleware' => ['only_utype:1']], function () {
 					Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
