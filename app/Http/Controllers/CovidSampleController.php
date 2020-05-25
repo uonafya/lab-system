@@ -568,7 +568,11 @@ class CovidSampleController extends Controller
 
             $p = CovidPatient::create([
                 'identifier' => $data[3],
+                'phone_no' => $data[15],
                 'county' => $data[4],
+                'subcounty' => $data[16],
+                'ward' => $data[17],
+                'residence' => $data[18],
                 'facility_id' => $facility->id ?? 3475,
                 'quarantine_site_id' => $quarantine_site->id ?? null,
                 'patient_name' => $data[5],
