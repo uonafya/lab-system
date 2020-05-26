@@ -149,6 +149,7 @@ class DrDashboardController extends Controller
 		foreach ($categories as $key => $value) {
 			$data['categories'][$key] = $value;
 
+			$i = 0;
 			foreach ($call_array as $call_key => $c) {
 				if($i==4) break;
 				$data["outcomes"][$i]["data"][$key] = (int) ($rows->where('county', $value)->where('call', $call_key)->first()->samples ?? 0);
