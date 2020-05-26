@@ -561,9 +561,9 @@ class CovidSampleController extends Controller
             
             $quarantine_site = null;
 
-            $facility = Facility::locate($data[3])->first();
-            if(!$facility && !is_numeric($data[3])){
-                $quarantine_site = \App\QuarantineSite::where(['name' => $data[3]])->first();
+            $facility = Facility::locate($data[2])->first();
+            if(!$facility && !is_numeric($data[2])){
+                $quarantine_site = \App\QuarantineSite::where(['name' => $data[2]])->first();
             }
 
             $p = CovidPatient::create([
