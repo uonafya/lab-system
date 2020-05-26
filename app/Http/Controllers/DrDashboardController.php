@@ -130,8 +130,6 @@ class DrDashboardController extends Controller
 
 		$call_array = MiscDr::$call_array;
 
-		$counties = DB::table('counties')->get();
-
 		$category_id = 0;
 
 		$res = ['LC' => 0, 'R' => 1, 'I' => 2, 'S' => 3];

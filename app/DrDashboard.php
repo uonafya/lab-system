@@ -15,7 +15,7 @@ class DrDashboard
 
 	public static function get_divisions()
 	{		
-		$counties = DB::table('counties')->get();
+		$counties = DB::table('countys')->get();
 		$subcounties = DB::table('districts')->get();
 		$partners = DB::table('partners')->get();
 		$regimen_classes = DB::table('regimen_classes')->get();
