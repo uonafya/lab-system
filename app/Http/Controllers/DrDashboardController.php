@@ -125,6 +125,10 @@ class DrDashboardController extends Controller
 			->orderBy('county_id')
 			->get();
 
+		// dd($rows);
+
+		$categories = $rows->pluck('county')->unique('county')->flatten();
+
 		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
 		$data['categories'] = [];
 
@@ -134,12 +138,22 @@ class DrDashboardController extends Controller
 
 		$res = ['LC' => 0, 'R' => 1, 'I' => 2, 'S' => 3];
 
-		foreach ($rows as $key => $row){
+		/*foreach ($rows as $key => $row){
 			if($data['categories'] && $data['categories'][$category_id] != $row->county) $category_id ++;
 
 			$out_key = $res[$row->call];
 			$data['categories'][$category_id] = $row->county;
 			$data['outcomes'][$category_id]['data'][$out_key] = (int) $row->samples;
+		}*/
+
+		foreach ($categories as $key => $value) {
+			$data['categories'][$key] = $value;
+
+			foreach ($call_array as $call_key => $c) {
+				if($i==4) break;
+				$data["outcomes"][$i]["data"][$key] = (int) ($rows->where('county', $value)->where('call', $call_key)->first()->samples ?? 0);
+				$i++;
+			}
 		}
 		return view('charts.bar_graph', $data);
 	}
