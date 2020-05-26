@@ -688,7 +688,7 @@ class ViralsampleController extends Controller
      */
     public function save_poc(Request $request, Viralsample $sample)
     {
-        if($sample->result){
+        if($sample->result && env('APP_LAB') != 7){
             $mintime = strtotime('now -5days');
             if($sample->datemodified && strtotime($sample->datemodified) < $mintime){
                 session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
