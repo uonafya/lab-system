@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DrExtractionWorksheet;
 use App\DrWorksheet;
 use App\DrPatient;
 use App\DrSample;
@@ -110,6 +111,12 @@ class DrWorksheetController extends Controller
         if($c){
             $positive_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 2]);
             $negative_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 1]);
+        }
+
+        $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
+        if(!$ext->sequencing){
+            $ext->status_id = 3;
+            $ext->save();
         }
 
         if(env('APP_LAB') == 7) return $this->download($dr_worksheet);

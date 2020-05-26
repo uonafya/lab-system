@@ -209,6 +209,7 @@
                                     <th>Reason</th>
                                     <th>Extraction Worksheet</th>
                                     @if($sample_status == 12)
+                                        <th>VL Date Tested</th>
                                         <th>VL Result</th>
                                         <th>Edit VL Result</th>
                                     @else
@@ -235,6 +236,7 @@
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
                                         @if($sample_status == 12)
+                                            <td> {{ $sample->vl_sample->datetested ?? '' }} </td>
                                             <td> {{ $sample->vl_sample->result ?? '' }} </td>
                                             <td> <a href="{{ url('dr_sample/vl_results/' . $sample->id ) }}"> Edit VL Results </a> </td>
                                         @else

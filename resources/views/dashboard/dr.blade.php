@@ -49,6 +49,18 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Heat Map </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="heat_map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection()
@@ -64,8 +76,10 @@
     function reload_page()
     {
         $("#resistance_by_drug").html("<center><div class='loader'></div></center>");
+        $("#heat_map").html("<center><div class='loader'></div></center>");
 
         $("#resistance_by_drug").load("{{ url('dr_dashboard/drug_resistance') }}");
+        $("#heat_map").load("{{ url('dr_dashboard/heat_map') }}");
 
     }
 

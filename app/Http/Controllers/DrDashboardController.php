@@ -120,15 +120,29 @@ class DrDashboardController extends Controller
 		$rows = DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')
 			->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')
 			->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
-			->selectRaw("county, dr_call_drugs.short_name_id, dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
-			->groupBy('county_id', 'short_name_id', 'call')
+			->selectRaw("county, dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
+			->groupBy('county_id', 'call')
+			->orderBy('county_id')
 			->get();
+
+		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
+		$data['categories'] = [];
 
 		$call_array = MiscDr::$call_array;
 
 		$counties = DB::table('counties')->get();
 
+		$category_id = 0;
 
+		$res = ['LC' => 0, 'R' => 1, 'I' => 2, 'S' => 3];
 
+		foreach ($rows as $key => $row){
+			if($data['categories'] && $data['categories'][$category_id] != $row->county) $category_id ++;
+
+			$out_key = $res[$row->call];
+			$data['categories'][$category_id] = $row->county;
+			$data['outcomes'][$category_id]['data'][$out_key] = (int) $row->samples;
+		}
+		return view('charts.bar_graph', $data);
 	}
 }
