@@ -78,10 +78,10 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="alert alert-success">
-                        <center> Resistance by Drug </center>
+                        <center> Heat Map </center>
                     </div>
                     <div class="panel-body no-padding">
-                        <div id="resistance_by_drug"></div>
+                        <div id="heat_map"></div>
                     </div>
                 </div>
             </div>
@@ -90,10 +90,10 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="alert alert-success">
-                        <center> Heat Map </center>
+                        <center> Resistance by Drug </center>
                     </div>
                     <div class="panel-body no-padding">
-                        <div id="heat_map"></div>
+                        <div id="resistance_by_drug"></div>
                     </div>
                 </div>
             </div>

@@ -126,6 +126,8 @@ class DrDashboardController extends DashBaseController
 			->orderBy('county_id')
 			->get();
 
+		$rows = \App\DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')->selectRaw("county, dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")->groupBy('county_id', 'call')->orderBy('county_id')->get();
+
 		// dd($rows);
 
 		$categories = $rows->pluck('county')->unique('county')->flatten();
@@ -159,7 +161,7 @@ class DrDashboardController extends DashBaseController
 
 		// dd($rows);
 
-		$categories = $rows->pluck('name')->unique('name')->flatten();
+		$categories = $rows->pluck('name')->unique()->flatten()->toArray();
 
 		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
 
