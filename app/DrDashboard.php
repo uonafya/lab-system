@@ -108,7 +108,7 @@ class DrDashboard
 				$group_query = "ward_id";
 				break;
 			case 5:
-				$select_query = "view_facilitys.id as div_id, name";
+				$select_query = "view_facilitys.id as div_id, view_facilitys.name";
 				$group_query = "view_facilitys.id";
 				break;
 			case 6:
