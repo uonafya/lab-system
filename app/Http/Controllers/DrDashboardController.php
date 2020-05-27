@@ -97,7 +97,7 @@ class DrDashboardController extends DashBaseController
 
         // session()->forget('filter_groupby');
 
-        session('filter_groupby', 2);
+        session(['filter_groupby' => 2]);
 
 		return view('dashboard.dr', DrDashboard::get_divisions());
 	}
