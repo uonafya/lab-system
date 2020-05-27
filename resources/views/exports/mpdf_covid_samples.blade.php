@@ -119,6 +119,13 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
+				<td colspan="2" class="style4 style1 comment"><strong>National ID </strong></td>
+				<td colspan="2"  ><span class="style5"> {{ $sample->patient->national_id }} </span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Phone Number </strong></td>
+				<td colspan="1" class="comment"> <span class="style5"> {{ $sample->patient->phone_no }} </span> </td>
+			</tr>
+
+			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong> DOB & Age (Years)</strong></td>
 				<td colspan="2"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
 				<td class="style4 style1 comment" colspan="2" ><strong> </strong></td>
@@ -178,7 +185,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						$sample->get_prop_name($rejected_reasons, 'rejectedreason') <br />
 						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 

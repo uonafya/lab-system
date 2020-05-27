@@ -264,7 +264,7 @@ class WorksheetController extends Controller
         return $this->show($worksheet, true);
     }
 
-    public function convert_worksheet($machine_type, Worksheet $worksheet)
+    public function convert_worksheet(Worksheet $worksheet, $machine_type)
     {
         // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
         if($worksheet->status_id != 1){

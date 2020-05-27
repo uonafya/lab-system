@@ -22,7 +22,8 @@
         "predis/predis": "^1.1",
         "mpdf/mpdf": "^7.0",
         "fideloper/proxy": "^4.0",
-        "tymon/jwt-auth": "1.0.*"
+        "tymon/jwt-auth": "1.0.*",
+        "simplesoftwareio/simple-qrcode": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
