@@ -69,6 +69,9 @@
                             @endforeach                            
                         </select>
 
+                        <select class="form-control filters" id="filter_facility">
+                        </select>
+
                     </div>
                 </div>
             </div>
@@ -151,6 +154,8 @@
             placeholder: "Select Project",
             allowClear: true
         }); 
+
+        set_select_facility("filter_facility", "{{ url('/facility/search') }}", 3, "Select Facility", false);
         
         reload_page();    
 

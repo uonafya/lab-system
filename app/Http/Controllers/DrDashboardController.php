@@ -85,7 +85,20 @@ class DrDashboardController extends DashBaseController
 
 	// Views
 	public function index()
-	{
+	{        
+        session()->forget('filter_county');
+        session()->forget('filter_subcounty');
+        session()->forget('filter_ward');
+        session()->forget('filter_facility');
+        session()->forget('filter_partner');
+        session()->forget('filter_project');
+        session()->forget('filter_drug_class');
+        session()->forget('filter_drug');
+
+        // session()->forget('filter_groupby');
+
+        session('filter_groupby', 2);
+
 		return view('dashboard.dr', DrDashboard::get_divisions());
 	}
 
@@ -154,6 +167,7 @@ class DrDashboardController extends DashBaseController
 		$rows = DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')
 			->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')
 			->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
 			->selectRaw("dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
 			->groupBy('call')
 			->when(true, $this->get_callback_no_dates('name'))
