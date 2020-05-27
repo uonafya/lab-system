@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                                        <a href="{{ url('pending') }}">
+                                        <a href="{{ route('null.allocation') }}">
                                             <button type="button" class="btn btn-default">OK</button>
                                         </a>
                                     </div>

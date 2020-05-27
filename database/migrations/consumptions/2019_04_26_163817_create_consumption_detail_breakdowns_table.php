@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateConsumptionDetailsTable extends Migration
+class CreateConsumptionDetailBreakdownsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,7 @@ class CreateConsumptionDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('consumption_details', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-        });
+        Schema::dropIfExists('consumption_detail_breakdowns');
     }
 
     /**
@@ -26,6 +23,6 @@ class CreateConsumptionDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('consumption_details');
+        Schema::dropIfExists('consumption_detail_breakdowns');
     }
 }
