@@ -18,8 +18,10 @@ class DrDashboard
 		$counties = DB::table('countys')->get();
 		$subcounties = DB::table('districts')->get();
 		$partners = DB::table('partners')->get();
-		$regimen_classes = DB::table('regimen_classes')->get();
-		return compact('counties', 'subcounties', 'partners', 'regimen_classes');
+		$drug_classes = DB::table('drug_classes')->get();
+		$drugs = DB::table('regimen_classes')->get();
+		$dr_projects = DB::table('dr_projects')->get();
+		return compact('counties', 'subcounties', 'partners', 'drug_classes', 'drugs', 'dr_projects');
 	}
 
 	public static function get_category($row)
@@ -56,6 +58,9 @@ class DrDashboard
 		if(session('filter_ward')) $query .= " AND ward_id" . self::set_division_query(session('filter_ward'));
 		if(session('filter_facility')) $query .= " AND view_facilitys.id" . self::set_division_query(session('filter_facility'));
 		if(session('filter_partner') || is_numeric(session('filter_partner'))) $query .= " AND partner_id" . self::set_division_query(session('filter_partner'));
+		if(session('filter_project')) $query .= " AND project" . self::set_division_query(session('filter_project'));
+		if(session('filter_drug_class')) $query .= " AND drug_class_id" . self::set_division_query(session('filter_drug_class'));
+		if(session('filter_drug')) $query .= " AND short_name_id" . self::set_division_query(session('filter_drug'));
 
 		return $query;
 	}
@@ -81,14 +86,18 @@ class DrDashboard
 	}
 
 
-	public static function groupby_query($def=true)
+	public static function groupby_query()
 	{
 		$groupby = session('filter_groupby', 2);
 
 		switch ($groupby) {
+			case 1:
+				$select_query = "partner as div_id, partnername as name";
+				$group_query = "partner";
+				break;
 			case 2:
 				$select_query = "county_id as div_id, county as name";
-				$group_query = "county";
+				$group_query = "county_id";
 				break;
 			case 3:
 				$select_query = "subcounty_id as div_id, subcounty as name";
@@ -102,22 +111,18 @@ class DrDashboard
 				$select_query = "view_facilitys.id as div_id, name";
 				$group_query = "view_facilitys.id";
 				break;
-			case 10:
-				$select_query = "year";
-				$group_query = "year";
-				break;
-			case 11:
-				$select_query = "financial_year";
-				$group_query = "financial_year";
+			case 6:
+				$select_query = "project.name";
+				$group_query = "project";
 				break;	
-			case 12:
-				$select_query = "year, month";
-				$group_query = "year, month";
+			case 7:
+				$select_query = "drug_class as name";
+				$group_query = "drug_class_id";
 				break;	
-			case 13:
-				$select_query = "financial_year, quarter";
-				$group_query = "financial_year, quarter";
-				break;			
+			case 8:
+				$select_query = "short_name as name";
+				$group_query = "short_name_id";
+				break;	
 			default:
 				break;
 		}

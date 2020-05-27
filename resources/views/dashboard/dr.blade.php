@@ -18,17 +18,54 @@
                 <div class="hpanel">
                     <div class="panel-body no-padding">
 
-                        <select class="form-control" id="county_id">
+                        <select class="form-control filters" id="filter_groupby">
+                            <option></option>
+                            <!-- <option value="1"> Partner </option>       -->
+                            <option value="2"> County </option>      
+                            <option value="3"> Subcounty </option>      
+                            <!-- <option value="4"> Ward </option>       -->
+                            <option value="5"> Facility </option>      
+                            <option value="6"> Project </option>      
+                            <option value="7"> Drug Class </option>      
+                            <option value="8"> Drug </option>      
+                            <!-- <option value="">  </option>       -->
+                        </select>
+
+
+
+                        <select class="form-control filters" id="filter_drug_class" multiple="multiple">
+                            <option></option>
+                            @foreach($drug_classes as $drug_class)
+                                <option value="{{ $drug_class->id }}"> {{ $drug_class->name }} </option>
+                            @endforeach                            
+                        </select>
+
+                        <select class="form-control filters" id="filter_drug" multiple="multiple">
+                            <option></option>
+                            @foreach($drugs as $drug)
+                                <option value="{{ $drug->id }}"> {{ $drug->name }} </option>
+                            @endforeach                            
+                        </select>
+
+
+                        <select class="form-control filters" id="filter_county" multiple="multiple">
                             <option></option>
                             @foreach($counties as $county)
                                 <option value="{{ $county->id }}"> {{ $county->name }} </option>
                             @endforeach                            
                         </select>
 
-                        <select class="form-control" id="subcounty_id">
+                        <select class="form-control filters" id="filter_subcounty" multiple="multiple">
                             <option></option>
                             @foreach($subcounties as $subcounty)
                                 <option value="{{ $subcounty->id }}"> {{ $subcounty->name }} </option>
+                            @endforeach                            
+                        </select>
+
+                        <select class="form-control filters" id="filter_project" multiple="multiple">
+                            <option></option>
+                            @foreach($dr_projects as $dr_project)
+                                <option value="{{ $dr_project->id }}"> {{ $dr_project->name }} </option>
                             @endforeach                            
                         </select>
 
@@ -85,17 +122,54 @@
 
     $().ready(function(){
 
-        $("#county_id").select2({
+        $("#filter_groupby").select2({
+            placeholder: "Select Group By",
+            allowClear: true
+        }); 
+
+        $("#filter_drug_class").select2({
+            placeholder: "Select Drug Class",
+            allowClear: true
+        }); 
+
+        $("#filter_drug").select2({
+            placeholder: "Select Drug",
+            allowClear: true
+        }); 
+
+        $("#filter_county").select2({
             placeholder: "Select County",
             allowClear: true
         }); 
 
-        $("#subcounty_id").select2({
+        $("#filter_subcounty").select2({
             placeholder: "Select Subcounty",
             allowClear: true
         }); 
+
+        $("#filter_project").select2({
+            placeholder: "Select Project",
+            allowClear: true
+        }); 
         
-        reload_page();
+        reload_page();    
+
+        $(".filters").change(function(){
+            em = $(this).val();
+            id = $(this).attr('id');
+
+            var posting = $.post( "{{ url('filter/any') }}", { 'session_var': id, 'value': em } );
+
+            posting.done(function( data ) {
+                // console.log(data);
+                reload_page();
+            });
+
+            posting.fail(function( data ) {
+                // console.log(data);
+                location.reload(true);
+            });
+        }); 
 
     });
     
