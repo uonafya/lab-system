@@ -185,7 +185,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						$sample->get_prop_name($rejected_reasons, 'rejectedreason') <br />
 						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 
