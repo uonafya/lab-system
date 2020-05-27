@@ -72,7 +72,7 @@ class DrDashboardController extends DashBaseController
 
 	public function filter_any(Request $request)
 	{
-		if(!session('filter_groupby')) abort(400);
+		// if(!session('filter_groupby')) abort(400);
 		$var = $request->input('session_var');
 		$val = $request->input('value');
 
