@@ -55,7 +55,7 @@ class DashBaseController extends BaseController
 
     public function get_callback($order_by=null, $having_null=null, $prepension='')
     {
-    	$groupby = session('filter_groupby', 1);
+    	$groupby = session('filter_groupby', 2);
     	$divisions_query = DrDashboard::divisions_query();
         // $date_query = DrDashboard::date_query(false, $prepension);
     	if($groupby > 9){
@@ -73,7 +73,7 @@ class DashBaseController extends BaseController
 
     public function get_callback_no_dates($order_by=null, $having_null=null)
     {
-        $groupby = session('filter_groupby', 1);
+        $groupby = session('filter_groupby', 2);
         $divisions_query = DrDashboard::divisions_query();
         $date_query = "1";
 

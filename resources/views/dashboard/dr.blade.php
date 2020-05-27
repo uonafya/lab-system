@@ -158,7 +158,7 @@
             em = $(this).val();
             id = $(this).attr('id');
 
-            var posting = $.post( "{{ url('filter/any') }}", { 'session_var': id, 'value': em } );
+            var posting = $.post( "{{ url('dr_dashboard/filter_any') }}", { 'session_var': id, 'value': em } );
 
             posting.done(function( data ) {
                 // console.log(data);
@@ -167,7 +167,7 @@
 
             posting.fail(function( data ) {
                 // console.log(data);
-                location.reload(true);
+                // location.reload(true);
             });
         }); 
 
