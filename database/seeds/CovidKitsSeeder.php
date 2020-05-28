@@ -18,30 +18,48 @@ class CovidKitsSeeder extends Seeder
         // CovidConsumptionDetail::truncate();
     	CovidKit::truncate();
         $kits = [
+            // Taqman kits
         		['material_no' => '9175431190', 'product_description' => 'Cobas® SARS-CoV-2 Test',
-        		'pack_size' => 192, 'calculated_pack_size' => 192, 'type' => 'Kit'],
+        		'pack_size' => 192, 'calculated_pack_size' => 192, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '9175440190', 'product_description' => 'Cobas® SARS-CoV-2 Control Kit',
-        		'pack_size' => 16, 'calculated_pack_size' => 1536, 'type' => 'Kit'],
+        		'pack_size' => 16, 'calculated_pack_size' => 1536, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '7002238190', 'product_description' => 'Cobas® Buffer Negative Control Kit',
-        		'pack_size' => 16, 'calculated_pack_size' => 1536, 'type' => 'Kit'],
+        		'pack_size' => 16, 'calculated_pack_size' => 1536, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '5534917001', 'product_description' => 'Cobas OMNI Processing Plate',
-        		'pack_size' => 32, 'calculated_pack_size' => 1536, 'type' => 'Kit'],
+        		'pack_size' => 32, 'calculated_pack_size' => 1536, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '5534925001', 'product_description' => 'Cobas OMNI Pipette Tips',
-        		'pack_size' => 1536, 'calculated_pack_size' => 768, 'type' => 'Kit'],
+        		'pack_size' => 1536, 'calculated_pack_size' => 768, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '5534941001', 'product_description' => 'Cobas OMNI Amplification Plate',
-        		'pack_size' => 32, 'calculated_pack_size' => 3072, 'type' => 'Kit'],
+        		'pack_size' => 32, 'calculated_pack_size' => 3072, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '6997503190', 'product_description' => 'Kit Cobas 6800/8800 Wash Reagent IVD (4.2 L)',
-        		'pack_size' => 288, 'calculated_pack_size' => 288, 'type' => 'Kit'],
+        		'pack_size' => 288, 'calculated_pack_size' => 288, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '6997511190', 'product_description' => 'Kit Cobas 6800/8800 SPEC DIL REAGENT IVD (4 x 875 mL)',
-        		'pack_size' => 1152, 'calculated_pack_size' => 1152, 'type' => 'Kit'],
+        		'pack_size' => 1152, 'calculated_pack_size' => 1152, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '6997538190', 'product_description' => 'Kit Cobas 6800/8800 LYS REAGENT IVD (4 x 875 mL)',
-        		'pack_size' => 1152, 'calculated_pack_size' => 1152, 'type' => 'Kit'],
+        		'pack_size' => 1152, 'calculated_pack_size' => 1152, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '6997546190', 'product_description' => 'Kit Cobas 6800/8800 MGP IVD',
-        		'pack_size' => 480, 'calculated_pack_size' => 480, 'type' => 'Kit'],
+        		'pack_size' => 480, 'calculated_pack_size' => 480, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '8030073001', 'product_description' => 'Solid Waste Bag Set of 20',
-        		'pack_size' => 20, 'calculated_pack_size' => 7680, 'type' => 'Kit'],
+        		'pack_size' => 20, 'calculated_pack_size' => 7680, 'type' => 'Kit', 'machine' => 1],
         		['material_no' => '6438776001', 'product_description' => 'Cobas omni Secondary Tubes 13x75 (optional)*',
-        		'pack_size' => 1500, 'calculated_pack_size' => 1500, 'type' => 'Kit'],
+        		'pack_size' => 1500, 'calculated_pack_size' => 1500, 'type' => 'Kit', 'machine' => 1],
+
+            // Abbott kits
+                ['material_no' => '09N77-090', 'product_description' => 'Abbott RealTimen SARS-COV-2 Amplification kit  4x24 amplifications', 'machine' => 2],
+                ['material_no' => '09N77-080', 'product_description' => 'Abbott RealTime SARS-COV-2 Control Kit 8 sets of 2 controls', 'machine' => 2],
+                ['material_no' => '09N77-001', 'product_description' => 'Abbott RealTime SARS-COV-2 Combined Application Discto be installed on the relevant m2000 sp and rt systems.', 'machine' => 2],
+                ['material_no' => '06K12-24', 'product_description' => 'Abbott m™ Sample Preparation System DNA Reagents 4x24 extractions', 'machine' => 2],
+                ['material_no' => '4J71-10', 'product_description' => 'Disposable Tips DiTi’s 1000ul', 'machine' => 2],
+                ['material_no' => '4J71-17', 'product_description' => 'Disposable Tips DiTi’s 200ul', 'machine' => 2],
+                ['material_no' => '4J71-45', 'product_description' => 'Biohazard Bags', 'machine' => 2],
+                ['material_no' => '4J71-20', 'product_description' => '5ml Reaction vessels', 'machine' => 2],
+                ['material_no' => '4J71-60', 'product_description' => '200ml Reagent vessels', 'machine' => 2],
+                ['material_no' => '4J71-30', 'product_description' => '96 Deep Well Plates', 'machine' => 2],
+                ['material_no' => '4J71-70', 'product_description' => 'Optical Reaction Plates  (PCR Plates)', 'machine' => 2],
+                ['material_no' => '4J71-75', 'product_description' => 'Optical Adhesive Covers', 'machine' => 2],
+                ['material_no' => '4J71-80', 'product_description' => 'Master Mix Tube', 'machine' => 2],
+
+            // Consumables Kits
         		['material_no' => 'P1', 'product_description' =>  'Oral pharyngeal swabs (Without media)', 'unit'=> 'pack', 'pack_size' => 25, 'type' => 'Consumable'],
                 ['material_no' => 'P2', 'product_description' =>  'Nasopharyngeal swabs (Without media)', 'unit'=> 'pack', 'pack_size' => 1000, 'type' => 'Consumable'],
                 ['material_no' => 'P3', 'product_description' =>  'Ziplock bags small 6*9inch', 'unit'=> 'pack', 'pack_size' => 1000, 'type' => 'Consumable'],
@@ -95,6 +113,3 @@ class CovidKitsSeeder extends Seeder
         	CovidKit::create($kit);
     }
 }
-
-
-                
