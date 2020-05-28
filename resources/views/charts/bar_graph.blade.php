@@ -47,6 +47,8 @@
                 pointFormat: '<tr><th style="color:{series.color}">{series.name}:</th>'+'<td style="text-align:right">{point.y}' + 
                 @if(isset($extra_tooltip))
                     '{point.z}'
+                @elseif(isset($point_percentage))
+                    ' Contribution <b>({point.percentage:.1f}%)</b>'
                 @else
                     ' '
                 @endif

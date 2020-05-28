@@ -178,6 +178,7 @@ class DrDashboardController extends DashBaseController
 		$categories = $rows->pluck('name')->unique()->flatten()->toArray();
 
 		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
+		$data['point_percentage'] = true;
 
 		$call_array = MiscDr::$call_array;
 
