@@ -47,13 +47,11 @@
                 pointFormat: '<tr><th style="color:{series.color}">{series.name}:</th>'+'<td style="text-align:right">{point.y}' + 
                 @if(isset($extra_tooltip))
                     '{point.z}'
-                @elseif(isset($point_percentage))
-                    ' Contribution <b>({point.percentage:.1f}%)</b>'
                 @else
                     ' '
                 @endif
-                 + '</td></tr>',
-                footerFormat: '<tr><th>Total:</th>'+'<td style="text-align:right"><b>{point.total}</b></td></tr>'+'</tbody></table>'
+                 + '</td><td> Contribution <b>({point.percentage:.1f}%)</b> </td>  </tr>',
+                footerFormat: '<tr><th>Total:</th>'+'<td style="text-align:right"><b>{point.total}</b></td><th></th>  </tr>'+'</tbody></table>'
             },
             legend: {
                 layout: 'horizontal',
