@@ -896,47 +896,41 @@ class Common
 
     public static function transferconsumptions() {
     	$kits = \App\Kits::get();
+    	$consumptionArray = [];
     	$kitArray = [];
     	// Getting first the abbott consumptions
+    	echo "==> Started bringing in the Abbott consumptions\n";
     	$abbottconsumptions = \App\Abbotprocurement::get();
     	foreach ($abbottconsumptions as $key => $consumption) {
-    		foreach ($kits as $key => $kit) {
-	    		if ($kit->machine_id == 2) {
-	    			$ending = 'ending'.$kit->alias;
-		    		$wasted = 'wasted'.$kit->alias;
-		    		$issued = 'issued'.$kit->alias;
-		    		$request = 'request'.$kit->alias;
-		    		$pos = 'pos'.$kit->alias;
-		    		$kitArray[] = [
-		    			'month' => $consumption->month,
-		    			'year' => $consumption->year,
-						'testtype' => $consumption->testtype,
-						'kit_id' => $kit->id,
-						'ending' => $consumption->$ending,
-						'wasted' => $consumption->$wasted,
-						'issued' => $consumption->$issued,
-						'pos' => $consumption->$pos,
-						'request' => $consumption->$request,
-						'datesubmitted' => $consumption->datesubmitted,
-						'submittedby' => $consumption->submittedby,
-						'lab_id' => $consumption->lab_id,
-						'comments' => $consumption->comments,
-						'issuedcomments' => $consumption->issuedcomments,
-						'approve' => $consumption->approve,
-						'disapprovereason' => $consumption->disapprovereason,
-						'synched' => $consumption->synched,
-						'datesynched' => $consumption->datesynched,
-						// 'deleted_at' => $consumption->deleted_at,
-						'created_at' => $consumption->created_at,
-						'updated_at' => $consumption->updated_at,
-		    		];
-	    		}
-	    	}
+    		$insertedCOnsumption = self::createConsumption($consumption, 2);
+			if ($insertedCOnsumption) {
+				foreach ($kits as $key => $kit) {
+	    			if ($kit->machine_id == 2) {
+		    			$ending = 'ending'.$kit->alias;
+			    		$wasted = 'wasted'.$kit->alias;
+			    		$issued = 'issued'.$kit->alias;
+			    		$request = 'request'.$kit->alias;
+			    		$pos = 'pos'.$kit->alias;
+			    		$kitArray[] = [
+			    			'consumption_id' => $insertedCOnsumption->id,
+			    			'kit_id' => $kit->id,
+							'ending_balance' => $consumption->$ending,
+							'wasted' => $consumption->$wasted,
+							'negative_adjustment' => $consumption->$issued,
+							'positive_adjustment' => $consumption->$pos,
+							'request' => $consumption->$request,
+			    		];
+		    		}
+		    	}
+			}
 		}
-
+		echo "==> Finished bringing in the Abbott consumptions\n";
 		// Finally getting the Roche consumptions
+
+    	echo "==> Started bringing in the CObas consumptions\n";
 		$months = [1,2,3,4,5,6,7,8,9,10,11,12];
 		$years = \App\Taqmanprocurement::selectRaw("max(year) as maximum, min(year) minimum")->first();
+		echo "\t Splitting the Cobas consumptions\n";
 		for ($i=$years->minimum; $i <=$years->maximum ; $i++) {
 			foreach ($months as $key => $month) {
 				$consumptions = \App\Taqmanprocurement::where('year', '=', $i)->where('month', '=', $month)->get();
@@ -950,92 +944,103 @@ class Common
 							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
 				// dd($vlsamples);
 				foreach ($consumptions as $key => $consumption) {
-					if ($consumption->testtype == 1)
-		    			$model = $eidsamples;
-		    		else if ($consumption->testtype == 2)
-		    			$model = $vlsamples;
-		    		if ($model->taqman == 0 && $model->C8800 == 0) {
+					$insertedCOnsumption = self::createConsumption($consumption, 1);
+					if ($insertedCOnsumption) {
+						if ($consumption->testtype == 1)
+			    			$model = $eidsamples;
+			    		else if ($consumption->testtype == 2)
+			    			$model = $vlsamples;
+			    		if ($model->taqman == 0 && $model->C8800 == 0) {
 
-		    		} else {
-		    			$total = $model->taqman + $model->C8800;
-		    			$taqmanratio = ($model->taqman / $total);
-		    			$C8800ratio = ($model->C8800 / $total);
-		    			if ($model->taqman > 0) {
-		    				foreach ($kits as $key => $kit) {
-								if ($kit->machine_id == 1) {
-									$ending = 'ending'.$kit->alias;
-						    		$wasted = 'wasted'.$kit->alias;
-						    		$issued = 'issued'.$kit->alias;
-						    		$request = 'request'.$kit->alias;
-						    		$pos = 'pos'.$kit->alias;
+			    		} else {
+			    			$total = $model->taqman + $model->C8800;
+			    			$taqmanratio = ($model->taqman / $total);
+			    			$C8800ratio = ($model->C8800 / $total);
+			    			if ($model->taqman > 0) {
+			    				foreach ($kits as $key => $kit) {
+									if ($kit->machine_id == 1) {
+										$ending = 'ending'.$kit->alias;
+							    		$wasted = 'wasted'.$kit->alias;
+							    		$issued = 'issued'.$kit->alias;
+							    		$request = 'request'.$kit->alias;
+							    		$pos = 'pos'.$kit->alias;
 
-						    		$kitArray[] = [
-						    			'month' => $consumption->month,
-						    			'year' => $consumption->year,
-										'testtype' => $consumption->testtype,
-										'kit_id' => $kit->id,
-										'ending' => ($consumption->$ending * $taqmanratio),
-										'wasted' => ($consumption->$wasted * $taqmanratio),
-										'issued' => ($consumption->$issued * $taqmanratio),
-										'pos' => ($consumption->$pos * $taqmanratio),
-										'request' => ($consumption->$request * $taqmanratio),
-										'datesubmitted' => $consumption->datesubmitted,
-										'submittedby' => $consumption->submittedby,
-										'lab_id' => $consumption->lab_id,
-										'comments' => $consumption->comments,
-										'issuedcomments' => $consumption->issuedcomments,
-										'approve' => $consumption->approve,
-										'disapprovereason' => $consumption->disapprovereason,
-										'synched' => $consumption->synched,
-										'datesynched' => $consumption->datesynched,
-										// 'deleted_at' => $consumption->deleted_at,
-										'created_at' => $consumption->created_at,
-										'updated_at' => $consumption->updated_at,
-						    		];
+							    		$kitArray[] = [
+							    			'consumption_id' => $insertedCOnsumption->id,
+											'kit_id' => $kit->id,
+											'ending_balance' => ($consumption->$ending * $taqmanratio),
+											'wasted' => ($consumption->$wasted * $taqmanratio),
+											'negative_adjustment' => ($consumption->$issued * $taqmanratio),
+											'positive_adjustment' => ($consumption->$pos * $taqmanratio),
+											'request' => ($consumption->$request * $taqmanratio),
+							    		];
+									}
 								}
-							}
-		    			} else if ($model->C8800 > 0) {
-		    				foreach ($kits as $key => $kit) {
-								if ($kit->machine_id == 3) {
-									$ending = 'ending'.$kit->alias;
-						    		$wasted = 'wasted'.$kit->alias;
-						    		$issued = 'issued'.$kit->alias;
-						    		$request = 'request'.$kit->alias;
-						    		$pos = 'pos'.$kit->alias;
+			    			} else if ($model->C8800 > 0) {
+			    				foreach ($kits as $key => $kit) {
+									if ($kit->machine_id == 3) {
+										$ending = 'ending'.$kit->alias;
+							    		$wasted = 'wasted'.$kit->alias;
+							    		$issued = 'issued'.$kit->alias;
+							    		$request = 'request'.$kit->alias;
+							    		$pos = 'pos'.$kit->alias;
 
-						    		$kitArray[] = [
-						    			'month' => $consumption->month,
-						    			'year' => $consumption->year,
-										'testtype' => $consumption->testtype,
-										'kit_id' => $kit->id,
-										'ending' => ($consumption->$ending * $C8800ratio),
-										'wasted' => ($consumption->$wasted * $C8800ratio),
-										'issued' => ($consumption->$issued * $C8800ratio),
-										'pos' => ($consumption->$pos * $C8800ratio),
-										'request' => ($consumption->$request * $C8800ratio),
-										'datesubmitted' => $consumption->datesubmitted,
-										'submittedby' => $consumption->submittedby,
-										'lab_id' => $consumption->lab_id,
-										'comments' => $consumption->comments,
-										'issuedcomments' => $consumption->issuedcomments,
-										'approve' => $consumption->approve,
-										'disapprovereason' => $consumption->disapprovereason,
-										'synched' => $consumption->synched,
-										'datesynched' => $consumption->datesynched,
-										// 'deleted_at' => $consumption->deleted_at,
-										'created_at' => $consumption->created_at,
-										'updated_at' => $consumption->updated_at,
-						    		];
+							    		$kitArray[] = [
+							    			'consumption_id' => $insertedCOnsumption->id,
+											'kit_id' => $kit->id,
+											'ending_balance' => ($consumption->$ending * $C8800ratio),
+											'wasted' => ($consumption->$wasted * $C8800ratio),
+											'negative_adjustment' => ($consumption->$issued * $C8800ratio),
+											'positive_adjustment' => ($consumption->$pos * $C8800ratio),
+											'request' => ($consumption->$request * $C8800ratio),
+							    		];
+									}
 								}
-							}
-		    			}		    				
-		    		}
+			    			}		    				
+			    		}
+					}
 				}
 			}
 		}
-		foreach ($kitArray as $key => $consumption) {
-			\App\Consumption::create($consumption);
+		echo "\t Inserting the Cobas consumptions\n";
+		foreach ($kitArray as $key => $consumption_detail) {
+			ConsumptionDetail::create($consumption_detail);
 		}
+
+		echo "\t Delete all future consumptions\n";
+		$consumptions = \App\Consumption::where('year', date('Y', strtotime("-1 Month", strtotime(date('Y-m-d')))))->where('month', date('m', strtotime("-1 Month", strtotime(date('Y-m-d')))))->get();
+		foreach ($consumptions as $key => $consumption) {
+			foreach ($consumption->details as $key => $detail) {
+				$detail->delete();
+			}
+			$consumption->delete();
+		}
+		echo "\t Finished deleting all future consumptions\n";
+		echo "\t Completed inserting consumptions\n";
+		return true;
+    }
+
+    private static function createConsumption($consumption, $machine)
+    {
+		if (Consumption::existing($consumption->year, $consumption->month, $consumption->type, $consumption->lab_id)->get()->isEmpty()){
+			return Consumption::create([
+						'month' => $consumption->month,
+		    			'year' => $consumption->year,
+						'type' => $consumption->testtype,
+						'datesubmitted' => $consumption->datesubmitted,
+						'submittedby' => $consumption->submittedby,
+						'lab_id' => $consumption->lab_id,
+						'comments' => $consumption->comments,
+						'issuedcomments' => $consumption->issuedcomments,
+						'approve' => $consumption->approve,
+						'disapprovereason' => $consumption->disapprovereason,
+						'synched' => $consumption->synched,
+						'datesynched' => $consumption->datesynched,
+						'created_at' => $consumption->created_at,
+						'updated_at' => $consumption->updated_at,
+					]);
+		}
+		return false;
     }
 
     public static function transferdeliveries() {
@@ -1046,19 +1051,21 @@ class Common
     	$deliveries = Abbotdeliveries::get();
     	echo "====> Begining Abbott Deliveries transfer\n";
     	foreach ($deliveries as $key => $delivery) {
-    		$insertedDelivery = self::createDelivery($delivery);
-    		foreach ($kits->where('machine_id', 2) as $key => $kit) {
-    			$lotno = $kit->alias."lotno"; $expiry = $kit->alias."expiry";
-    			$received = $kit->alias."received"; $damaged = $kit->alias."damaged";
-    			DeliveryDetail::create([
-    					'delivery_id' => $insertedDelivery->id,
-    					'kit_id' => $kit->id,
-    					'kit_type' => Kits::class,
-    					'lotno' => $delivery->$lotno,
-    					'expiry' => $delivery->$expiry,
-    					'received' => $delivery->$received,
-    					'damaged' => $delivery->$damaged,
-    				]);
+    		$insertedDelivery = self::createDelivery($delivery, 2);
+    		if ($insertedDelivery){
+    			foreach ($kits->where('machine_id', 2) as $key => $kit) {
+	    			$lotno = $kit->alias."lotno"; $expiry = $kit->alias."expiry";
+	    			$received = $kit->alias."received"; $damaged = $kit->alias."damaged";
+	    			DeliveryDetail::create([
+	    					'delivery_id' => $insertedDelivery->id,
+	    					'kit_id' => $kit->id,
+	    					'kit_type' => Kits::class,
+	    					'lotno' => $delivery->$lotno,
+	    					'expiry' => $delivery->$expiry,
+	    					'received' => $delivery->$received,
+	    					'damaged' => $delivery->$damaged,
+	    				]);
+	    		}
     		}
     		echo "\tTransfer abbott deliver " . $delivery->quarter ." " . $delivery->year . " complete\n";
     	}
@@ -1067,21 +1074,23 @@ class Common
 		$deliveries = Taqmandeliveries::get();
 		echo "====> Begining Roche Deliveries transfer\n";
 		foreach ($deliveries as $key => $delivery) {
-			$insertedDelivery = self::createDelivery($delivery);
-			foreach ($kits->where('machine_id', 2) as $key => $kit) {
-    			$lotno = $kit->alias."lotno"; $expiry = $kit->alias."expiry";
-    			$received = $kit->alias."received"; $damaged = $kit->alias."damaged";
-    			DeliveryDetail::create([
-    					'delivery_id' => $insertedDelivery->id,
-    					'kit_id' => $kit->id,
-    					'kit_type' => Kits::class,
-    					'lotno' => $delivery->$lotno,
-    					'expiry' => $delivery->$expiry,
-    					'received' => $delivery->$received,
-    					'damaged' => $delivery->$damaged,
-    				]);
-    			echo "\tTransfer Roche deliver " . $delivery->quarter ." " . $delivery->year . " complete\n";
-    		}
+			$insertedDelivery = self::createDelivery($delivery, 1);
+    		if ($insertedDelivery){
+    			foreach ($kits->where('machine_id', 2) as $key => $kit) {
+	    			$lotno = $kit->alias."lotno"; $expiry = $kit->alias."expiry";
+	    			$received = $kit->alias."received"; $damaged = $kit->alias."damaged";
+	    			DeliveryDetail::create([
+	    					'delivery_id' => $insertedDelivery->id,
+	    					'kit_id' => $kit->id,
+	    					'kit_type' => Kits::class,
+	    					'lotno' => $delivery->$lotno,
+	    					'expiry' => $delivery->$expiry,
+	    					'received' => $delivery->$received ?? 0,
+	    					'damaged' => $delivery->$damaged ?? 0,
+	    				]);
+	    			echo "\tTransfer Roche deliver " . $delivery->quarter ." " . $delivery->year . " complete\n";
+	    		}
+	    	}
     		
 			// $vlsamples = \App\Viralsample::selectRaw("count(if(viralworksheets.machine_type = 1, 1, null)) as `taqman`, count(if(viralworksheets.machine_type = 3, 1, null)) as `C8800`")
 			// 				->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
@@ -1144,25 +1153,28 @@ class Common
     		
 		}
 
-		echo "==> Begining Deliveries transfer\n";
+		echo "==> Finished Deliveries transfer\n";
+		return true;
     }
 
-    private static function createDelivery($delivery)
+    private static function createDelivery($delivery, $machine)
     {
     	if ($delivery->year == 0)
 			$delivery->year = date('Y', strtotime($delivery->datereceived));
-		return Deliveries::create([
+		if (Deliveries::existing( $delivery->year, $delivery->quarter, $delivery->type, $delivery->lab_id )->get()->isEmpty()){
+			return Deliveries::create([
 					'type' => $delivery->testtype,
 					'lab_id' => $delivery->lab_id,
 					'quarter' => $delivery->quarter,
 					'year' => $delivery->year,
-					'source' => $delivery->source,
-					'labfrom' => $delivery->labfrom,
+					'machine' => $machine,
 					'receivedby' => $delivery->receivedby ?? $delivery->enteredby ?? 0,
 					'datereceived' => $delivery->datereceived ?? $delivery->dateentered ?? date('Y-m-d'),
 					'enteredby' => $delivery->enteredby ?? $delivery->receivedby ?? 0,
 					'dateentered' => $delivery->dateentered ?? $delivery->datereceived ?? date('Y-m-d'),
 				]);
+		}
+		return false;
     }
 
     public static function resend_lab_tracker()
