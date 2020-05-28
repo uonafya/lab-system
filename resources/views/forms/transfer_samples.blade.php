@@ -38,7 +38,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                               </label>
                               <div class="col-sm-8">
-                                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                                <select class="form-control requirable" @if($pre != 'covid_') required @endif name="facility_id" id="facility_id">
                                     @if($facility)
                                         <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
                                     @endif
@@ -76,8 +76,13 @@
                                         <th id="check_all">Check</th>
 
                                         <th>Lab ID</th>
-                                        <th>Batch ID</th>
-                                        <th>Patient ID</th>
+                                        @if($pre == 'covid_')
+                                            <th>Patient ID</th>
+                                            <th>Patient Name</th>
+                                        @else
+                                            <th>Batch ID</th>
+                                            <th>Patient ID</th>
+                                        @endif
                                         <th>Facility</th>
                                         <th>Entered By</th>
                                         <th>Entry Type</th>
@@ -99,8 +104,13 @@
                                             </td>
 
                                             <td> {{ $sample->id }} </td>
-                                            <td> {!! $sample->get_link('batch_id') !!} </td>
-                                            <td> {!! $sample->get_link('patient_id') !!} </td>
+                                            @if($pre == 'covid_')
+                                                <td> {{ $sample->identifier }} </td>
+                                                <td> {{ $sample->patient_name }} </td>
+                                            @else
+                                                <td> {!! $sample->get_link('batch_id') !!} </td>
+                                                <td> {!! $sample->get_link('patient_id') !!} </td>
+                                            @endif
                                             <td> {{ $sample->facilitycode . ' ' . $sample->facilityname }} </td>
                                             @if($sample->site_entry)
                                                 <td> {{ $sample->creator->facility->name ?? '' }} </td>

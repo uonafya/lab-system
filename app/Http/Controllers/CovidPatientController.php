@@ -12,6 +12,12 @@ use DB;
 
 class CovidPatientController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('covid_allowed');   
+    }
+
     /**
      * Display a listing of the resource.
      *

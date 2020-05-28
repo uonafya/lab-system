@@ -74,6 +74,14 @@
                 @endif
                 <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
+                <li><a href="{{ url('worksheet/create/3/22') }}">Create C8800 Worksheet(24)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3/46') }}">Create C8800 Worksheet(48)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3/70') }}">Create C8800 Worksheet(72)</a></li>
+                <hr />
+                <li><a href="{{ url('worksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -200,6 +208,12 @@
                 <hr />
                 <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
+                @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
+                    <hr />
+                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
+                    <hr />
+                @endif
 
             @endif
             @if (session('testingSystem') == 'DR')
@@ -309,7 +323,7 @@
                 <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
             </li>
             <hr />
-        @elseif (Auth::user()->quarantine_site || Auth::user()->other_lab)
+        @elseif (in_array(Auth::user()->user_type_id, [11, 12, 13]) )
             <li>
                 <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
             </li>

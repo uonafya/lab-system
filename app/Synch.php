@@ -57,6 +57,13 @@ class Synch
 			'worksheets_table' => 'viralworksheets',
 			'with_array' => ['batch.creator', 'patient'],
 		],
+
+		'covid' => [
+			'misc_class' => MiscCovid::class,
+			'sample_class' => CovidSample::class,
+			'patient_class' => CovidPatient::class,
+			'with_array' => ['patient.travel'],
+		],
 	];
 
 	public static $update_arrays = [
@@ -1239,7 +1246,7 @@ class Synch
 			$where_query = "( receivedstatus=2 and repeatt=0 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
 		}
 
-		$samples = CovidSample::whereRaw($where_query)->where('synched', 0)->get();
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0 or datedispatched is null)")->get();
 		$today = date('Y-m-d');
 
 		foreach ($samples as $key => $sample) {
@@ -1297,6 +1304,40 @@ class Synch
 		}
 	}
 
+
+	public static function get_covid_samples()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('get', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
+
+	public static function set_covid_samples($samples)
+	{
+		$client = new Client(['base_uri' => self::$base]);
+
+		$response = $client->request('post', 'covid_sample/cif', [
+			'headers' => [
+				'Accept' => 'application/json',
+				'Authorization' => 'Bearer ' . self::get_token(),
+			],
+				'json' => [
+					'samples' => $sample->toJson(),
+					'lab_id' => auth()->user()->lab_id,
+				],
+		]);
+
+		$body = json_decode($response->getBody());
+		return $body;
+	}
 
 
 	public static function match_eid_patients()

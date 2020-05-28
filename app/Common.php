@@ -473,7 +473,7 @@ class Common
     	$batch_model = self::$my_classes[$type]['batch_class'];
     	$sample_model = self::$my_classes[$type]['sample_class'];
 
-    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
+    	/*$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [10])->get();
 
     	foreach ($batches as $batch) {
     		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->first();
@@ -481,9 +481,9 @@ class Common
 	    		$batch->synched=0;
 	    		$batch->save();    			
     		}
-    	}
+    	}*/
 
-    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7])->get();
+    	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7, 10])->get();
 
     	foreach ($batches as $batch) {
     		$sample = $sample_model::where(['batch_id' => $batch->id, 'synched' => 5])->update(['synched' => 0]);
@@ -632,7 +632,7 @@ class Common
 
 			try {				
 				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
-				Mail::to($mail_array)->cc([$lab->email])->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])->send($comm);
+				Mail::to($mail_array)->cc([$lab->email])->send($comm);
 			} catch (Exception $e) {
 				// dd($e->getMessage());
 			}

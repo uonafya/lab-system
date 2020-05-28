@@ -78,6 +78,17 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">High Priority</label>
+                            <div class="col-sm-8">
+                            <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                @if(isset($sample) && $sample->highpriority)
+                                    checked
+                                @endif
+                             />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -98,7 +109,9 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
+                        @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
@@ -108,7 +121,7 @@
 
 
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
+                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 
@@ -345,6 +358,17 @@
         @slot('val_rules')
            ,
             rules: {
+                county_id: {
+                    // required: "#facility_id:blank"
+                    /*required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }*/
+                },
+                subcounty_id: {
+                    /*required: function(element){
+                        return $("#facility_id").val().length == 0;
+                    }*/
+                },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
@@ -383,8 +407,11 @@
                 });
             @endif
 
+
             $("#facility_id").change(function(){
                 var val = $(this).val();
+
+                $('#county_id').removeAttr("required");
 
                 if(val == 7148 || val == '7148'){
                     $('.requirable').removeAttr("required");
