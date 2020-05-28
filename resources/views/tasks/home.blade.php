@@ -22,14 +22,6 @@
             	<div class="alert alert-danger">
 	                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
 	            </div>
-
-                @php
-                    $currentmonth = date('m');
-                    $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m-d'))));
-                    $year = date('Y');
-                    $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
-                @endphp
-                
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     @if($covidconsumption == 0)
                         <div class="alert alert-danger spacing bottom">
@@ -95,7 +87,7 @@
                     <!-- Lab performance Report -->
 
                     <!-- Lab equipment Report -->
-                   @if ($data->equipment == 0)
+                   @if ($equipment == 0)
                         <div class="alert alert-warning spacing bottom">
                             <strong><a href="{{ url('equipmentlog') }}">Click to Submit Monthly Equipment Log ( Tracker )</a></strong>
                             <p style="margin-left: 3em;"><font color="#CCCCCC"> Log on any Equipment Breakdown in Previous Month</font></p>

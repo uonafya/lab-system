@@ -42,13 +42,8 @@ class TaskController extends Controller
     public function __construct(){
         $this->year = date('Y');
         $this->month = date('m');
-
-        $this->previousYear = $this->year;
-        $this->previousMonth = $this->month - 1;
-        if ($this->month == 1) {
-            $this->previousMonth = 12;
-            $this->previousYear = $this->year-1;
-        }
+        $this->previousYear = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+        $this->previousMonth = date('m', strtotime("-1 Month", strtotime(date('Y-m-d'))));
     }
 
     public function index() 
@@ -75,11 +70,11 @@ class TaskController extends Controller
 		// 	$data['submittedkits'] = 0;
 		// }
 		
-		// $month = $this->previousMonth;
-  //       $year = $this->previousYear;
-  //       $range = '';
-  //       $quarter = parent::_getMonthQuarter(date('m'),$range);
-  //       session(['range'=>$range, 'quarter'=>$quarter]);
+		$month = $this->previousMonth;
+        $year = $this->previousYear;
+        $range = '';
+        $quarter = parent::_getMonthQuarter(date('m'),$range);
+        session(['range'=>$range, 'quarter'=>$quarter]);
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
   //       $data['requisitions'] = count($this->getRequisitions());
@@ -87,7 +82,10 @@ class TaskController extends Controller
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
-
+        $data['currentmonth'] = date('m');
+        $data['prevmonth'] = $this->previousMonth;
+        $data['year'] = date('Y');
+        $data['prevyear'] = $this->previousYear;
         // dd($this->getPreviousWeek());
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
