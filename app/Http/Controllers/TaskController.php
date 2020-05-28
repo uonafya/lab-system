@@ -9,7 +9,6 @@ use App\AllocationDetail;
 use App\AllocationDetailsBreakdown;
 use App\Consumption;
 use App\ConsumptionDetail;
-use App\ConsumptionDetailBreakdown;
 use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
@@ -60,35 +59,62 @@ class TaskController extends Controller
         //     return redirect()->route('home');
         // }
 
-    	$data['kits'] = (object)$this->getKitsEntered();
+        $pendingDeliveries = $this->getDeliveries();
+        $data['deliveries'] = $pendingDeliveries;
+        if (empty($pendingDeliveries)){
+            $pendingConsumptions = $this->getConsumptions();
+            $data['consumptions'] = $pendingConsumptions;
+        }
+  //   	$data['kits'] = (object)$this->getKitsEntered();
         
-    	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
-		{
-            $data['submittedkits'] = 1;
-            $data['consumption'] = (object)$this->getConsumption();
-		}else {
-			$data['submittedkits'] = 0;
-		}
+  //   	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
+		// {
+  //           $data['submittedkits'] = 1;
+  //           $data['consumption'] = (object)$this->getConsumption();
+		// }else {
+		// 	$data['submittedkits'] = 0;
+		// }
 		
-		$month = $this->previousMonth;
-        $year = $this->previousYear;
-        $range = '';
-        $quarter = parent::_getMonthQuarter(date('m'),$range);
-        session(['range'=>$range, 'quarter'=>$quarter]);
+		// $month = $this->previousMonth;
+  //       $year = $this->previousYear;
+  //       $range = '';
+  //       $quarter = parent::_getMonthQuarter(date('m'),$range);
+  //       session(['range'=>$range, 'quarter'=>$quarter]);
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
-        $data['requisitions'] = count($this->getRequisitions());
+  //       $data['requisitions'] = count($this->getRequisitions());
         $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
 
         // dd($this->getPreviousWeek());
-        $data = (object) $data;
         
-        return view('tasks.home', compact('data'))->with('pageTitle', 'Pending Tasks');
+        return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }
 
+    public function addKitDeliveries(Request $request, $platform = null)
+    {
+        $data = [
+                'machines' => Machine::get(),
+            ];
+        return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
+        if ($platform == null) {
+            $users = User::where('user_type_id', '<', 5)->get();
+            $data = [
+                    'users' => $users,
+                    
+                    'pending_deliveries' => $this->getDeliveries(),
+                ];
+            // dd($data); 
+            
+        } else {
+            $deliveries = $this->submitNullDeliveries($platform);
+            return redirect()->route('pending');
+        }
+    }
+
+    /*
     public function addKitDeliveries(Request $request, $platform = null)
     {
         if ($platform == null) {
@@ -206,18 +232,19 @@ class TaskController extends Controller
             }
 
             $users = User::where('user_type_id', '<', 5)->get();
-            $data = (object)[
+            $data = [
                             'users' => $users,
-                            'taqmandeliveries' => $taqdeliveries,
-                            'abbottdeliveries' => $abbottdeliveries
+                            'machines' => Machine::get(),
+                            'pending_deliveries' => $this->getDeliveries(),
                         ];
             // dd($data); 
-            return view('tasks.kitsdeliveries', compact('data'))->with('pageTitle', 'Kit Deliveries');
+            return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
         } else {
             $deliveries = $this->submitNullDeliveries($platform);
             return redirect()->route('pending');
         }
     }
+    */
 
     protected function submitNullDeliveries($platform) {
         if ($platform == 'abbott') {
@@ -641,20 +668,32 @@ class TaskController extends Controller
             
         }
         $data = DB::table('lab_equipment_mapping')->where('lab', '=', auth()->user()->lab_id)->get();
-        // dd($data);
+        
         return view('tasks.equipmentlog', compact('data'))->with('pageTitle', 'Lab Equipment Log::'.date("F", mktime(null, null, null, $month)).', '.$this->previousYear);
     }
 
-    public function getKitsEntered(){
-        // $delivery = new Deliveries;
-        // $missing_deliveries = $delivery->getLastMissingDelivery();
-        // return $missing_deliveries;
-    	$quarter = parent::_getMonthQuarter($this->month);
-    	return [
-    		'taqkits' => self::__getifKitsEntered(1,$quarter,$this->year),
-			'abkits' => self::__getifKitsEntered(2,$quarter,$this->year)
-		];
-	}
+    private function getDeliveries()
+    {
+        $model = new Deliveries;        
+        return $model->getMissingDeliveries();
+    }
+
+    private function getConsumptions()
+    {
+        $model = new Consumption;
+        return $model->getMissingConsumptions();
+    }
+
+ //    public function getKitsEntered(){
+ //        // $delivery = new Deliveries;
+ //        // $missing_deliveries = $delivery->getLastMissingDelivery();
+ //        // return $missing_deliveries;
+ //    	$quarter = parent::_getMonthQuarter($this->month);
+ //    	return [
+ //    		'taqkits' => self::__getifKitsEntered(1,$quarter,$this->year),
+	// 		'abkits' => self::__getifKitsEntered(2,$quarter,$this->year)
+	// 	];
+	// }
 
     public function getConsumption()
     {
@@ -674,15 +713,15 @@ class TaskController extends Controller
     	return $model;
     }
 
-    public static function __getifKitsEntered($platform,$quarter,$currentyear){
-        if ($platform==1)
-            $model = Taqmandeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+    // public static function __getifKitsEntered($platform,$quarter,$currentyear){
+    //     if ($platform==1)
+    //         $model = Taqmandeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
-        if ($platform==2)
-            $model = Abbotdeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
+    //     if ($platform==2)
+    //         $model = Abbotdeliveries::where('flag', 1)->where('source', '<>', 2)->where('quarter', $quarter)->whereRaw("YEAR(dateentered) = $currentyear");
 
-        return $model->count();
-    }
+    //     return $model->count();
+    // }
 
     public static function __getifConsumptionEntered($platform,$month,$currentyear){
         if ($platform==1)
