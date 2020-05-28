@@ -27,6 +27,7 @@
                     $currentmonth = date('m');
                     $year = date('Y');
                 @endphp
+
                 {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
                 {{-- Kits form --}}
                 @foreach($data->machines as $machine)
@@ -48,12 +49,14 @@
                             </thead>
                             <tbody>
                                 <input type="hidden" name="allocation-{{ $machine->id }}-{{ $testtype }}" value="{{ $machine->id }}" />
+                      
                             @php
                                 $testtypeKey = $testtypeKey;
                                 $tests = $machine->testsforLast3Months()->$testtypeKey;
                                 $qualamc = 0;
                             @endphp
                             @foreach($machine->kits as $kit)
+
                                 @php
                                     $test_factor = json_decode($kit->testFactor);
                                     $factor = json_decode($kit->factor);
@@ -63,30 +66,30 @@
                                         $amc = round($qualamc * $factor->$testtypeKey);
                                     else
                                         $amc = round($qualamc * $factor);
+
                                 @endphp
+                                    
                                 <tr>
                                     <td>{{ str_replace("REPLACE", "", $kit->name) }}</td>
                                     <td>{{ round($amc) }}</td>
-                                    @forelse($kit->consumption->where('year', $year)->where('month', $currentmonth - 1) as $consumption)
-                                        @if($consumption->testtype == $testtype)
-                                            @php
-                                                $mos = @($consumption->ending / $amc);
-                                            @endphp
-                                            <td>
-                                            @if(is_nan($mos))
-                                                {{ 0 }}
-                                            @else
-                                                {{ round($mos,1) }}
-                                            @endif
-                                            </td>
-                                            <td>{{ $consumption->ending }}</td>
-                                            @php
-                                                $recommended = ($amc * 2) - $consumption->ending;
-                                                if ($recommended < 0)
-                                                    $recommended = 0;
-                                            @endphp
-                                            <td>{{ round($recommended) }}</td>
+                                    @forelse($kit->lastMonthConsumption($testtype) as $consumption)
+                                        @php
+                                            $mos = @($consumption->ending / $amc);
+                                        @endphp
+                                        <td>
+                                        @if(is_nan($mos))
+                                            {{ 0 }}
+                                        @else
+                                            {{ round($mos) }}
                                         @endif
+                                        </td>
+                                        <td>{{ $consumption->ending }}</td>
+                                        @php
+                                            $recommended = ($amc * 2) - $consumption->ending;
+                                            if ($recommended < 0)
+                                                $recommended = 0;
+                                        @endphp
+                                        <td>{{ round($recommended) }}</td>
                                     @empty
                                         <td></td>
                                         <td></td>
@@ -102,7 +105,7 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">{{ $testtypeKey }}, {{ $machine->machine}} Allocation Comments</label>
                             <div class="col-md-8">
-                                <textarea name="allocationcomments-{{ $machine->id }}-{{ $testtype }}" class="form-control"></textarea>
+                                <textarea name="allocationcomments-{{ $machine->id }}-{{ $testtype }}" class="form-control" required="true"></textarea>
                             </div>                            
                         </div>
                     </div>
@@ -139,7 +142,7 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">Consumables Allocation Comments</label>
                             <div class="col-md-8">
-                                <textarea name="consumablecomments" class="form-control"></textarea>
+                                <textarea name="consumablecomments" class="form-control" required="true"></textarea>
                             </div>                            
                         </div>
                     </div>

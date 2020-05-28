@@ -18,13 +18,9 @@ class CreateConsumptionsTable extends Migration
             $table->bigInteger('national_id')->nullable();
             $table->tinyInteger('month')->nullable();
             $table->integer('year')->nullable();
-            $table->tinyInteger('testtype')->nullable();
-            $table->integer('kit_id');
-            $table->integer('ending')->default(0);
-            $table->integer('wasted')->default(0);
-            $table->integer('issued')->default(0);
-            $table->integer('pos')->default(0);
-            $table->integer('request')->default(0);
+            $table->tinyInteger('type')->nullable()->comment("Indicates if this is an EID, VL, Consumable delivery");
+            $table->tinyInteger('machine')->nullable();
+            $table->integer('tests')->default(0);
             $table->date('datesubmitted')->nullable();
             $table->integer('submittedby')->nullable();
             $table->tinyInteger('lab_id')->nullable();
