@@ -12,6 +12,16 @@ class Machine extends Model
     	return $this->hasMany('App\Kits');
     }
 
+    public function deliveries()
+    {
+        return $this->hasMany(Deliveries::class, 'machine', 'id');
+    }
+
+    public function consumptions()
+    {
+        return $this->hasMany(Consumption::class, 'machine', 'id');
+    }
+
     public function eid_worksheets()
     {
         return $this->hasMany(Worksheet::class, 'machine_type', 'id');
@@ -20,6 +30,26 @@ class Machine extends Model
     public function viral_worksheets()
     {
         return $this->hasMany(Viralworksheet::class, 'machine_type', 'id');
+    }
+
+    public function missingDeliveries($year, $month)
+    {
+        $data = [];
+        foreach ($this->get() as $key => $machine) {
+            if ($machine->deliveries->where('year', $year, 'month', $month)->isEmpty())
+                $data[] = $machine;
+        }
+        return $data;
+    }
+
+    public function missingConsumptions($year, $month)
+    {
+        $data = [];
+        foreach ($this->get() as $key => $machine) {
+            if ($machine->consumptions->where('year', $year, 'month', $month)->isEmpty())
+                $data[] = $machine;
+        }
+        return $data;
     }
 
     public function testsforLast3Months() {
@@ -41,6 +71,25 @@ class Machine extends Model
     	// 		->first()->tests;
 
     	return (object)['EID' => $eid, 'VL' => $vl];
+    }
+
+    public function tests_done($type, $year, $month)
+    {
+        if ($type == 'EID')
+            return Sample::selectRaw("count(*) as tests")
+                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                    ->where('worksheets.machine_type', $this->id)
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->first()->tests;
+
+        if ($type == 'VL')
+            return Viralsample::selectRaw("count(*) as tests")
+                    ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                    ->where('viralworksheets.machine_type', $this->id)
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->first()->tests;
     }
 
     public function saveNullAllocation()

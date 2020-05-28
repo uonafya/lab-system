@@ -606,15 +606,17 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
 	Route::get('postnullallocation', 'TaskController@nullallocation')->name('null.allocation');
-	Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
-	Route::post('consumption', 'TaskController@consumption');
+	Route::get('consumption/{guide?}', 'ConsumptionController@consumption')->name('consumption');
+	Route::post('consumption', 'ConsumptionController@consumption');
+	Route::post('saveconsumption', 'ConsumptionController@saveconsumption');
 	Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
 	Route::post('equipmentlog', 'TaskController@equipmentlog');
 	Route::get('/pending', 'TaskController@index')->name('pending');
 	Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
 	Route::post('/performancelog', 'TaskController@performancelog');
-	Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
-	Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+	Route::get('/kitsdeliveries/{platform?}', 'DeliveriesController@addKitDeliveries')->name('kitsdeliveries');
+	Route::post('/kitsdeliveries', 'DeliveriesController@addKitDeliveries')->name('kitsdeliveries');
+	Route::post('submitkitsdeliveries', 'DeliveriesController@saveDeliveries')->name('submitkitsdeliveries');
 	Route::prefix('covidkits')->name('covidkits.')->group(function() {
 		Route::get('/', 'CovidConsumptionController@index');
 		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
