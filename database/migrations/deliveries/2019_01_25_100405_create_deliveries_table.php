@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterDeliveriesTableRebuild extends Migration
+class CreateDeliveriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class AlterDeliveriesTableRebuild extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('deliveries');
         Schema::create('deliveries', function(Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('national_id')->nullable();
-            $table->tinyInteger('quarter')->comment('This is the quarter in which the delivery was done');
+            $table->tinyInteger('quarter')->comment('This is the quarter in which the delivery was done')->nullable();
+            $table->tinyInteger('month')->comment('This is the month in which the delivery was done. Replaced the quarterly since most of the deliveris were done in monthly basis')->nullable();
             $table->integer('year')->comment('This is the quarter in which the delivery was done');
             $table->tinyInteger('type')->nullable()->comment("Indicates if this is an EID, VL, Consumable delivery");
-            $table->tinyInteger('source')->default('3')->comment('Default source is KEMSA');
-            $table->tinyInteger('labfrom')->nullable()->comment("If Source is lab");
+            $table->tinyInteger('machine')->nullable();
             $table->tinyInteger('lab_id');
             $table->bigInteger('receivedby');
             $table->date('datereceived');

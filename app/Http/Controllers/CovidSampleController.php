@@ -568,6 +568,7 @@ class CovidSampleController extends Controller
 
             $p = CovidPatient::create([
                 'identifier' => $data[3],
+                'national_id' => $data[19],
                 'phone_no' => $data[15],
                 'county' => $data[4],
                 'subcounty' => $data[16],
