@@ -303,7 +303,7 @@ p.breakhere {page-break-before: always}
 				@if(env('APP_LAB') == 1)
 					If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
 				@elseif(env('APP_LAB') == 3)
-					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
+					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through {{ $sample->lab->labtel1 ?? '' }} / {{ $sample->lab->labtel2 ?? '' }} or {{ $sample->lab->email ?? '' }} <br />
 				@else
 					If you have questions or problems regarding samples, please contact the testing laboratory.
 				@endif
