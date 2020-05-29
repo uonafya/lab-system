@@ -27,8 +27,8 @@ class Kits extends BaseModel
     	return $this->belongsTo('App\Machine');
     }
 
-    public function consumption(){
-    	return $this->hasMany('App\Consumption', 'kit_id');
+    public function consumption_lines(){
+    	return $this->hasMany('App\ConsumptionDetail', 'kit_id');
     }
 
     public function lastMonth(){
@@ -43,5 +43,29 @@ class Kits extends BaseModel
     public function deliveredkits()
     {
         return $this->morphMany('App\DeliveryDetail', 'kit');
+    }
+
+    public function consumption_headers()
+    {
+        return $this->consumption_lines->load('header')->pluck('header')->flatten();
+    }
+
+    public function lastMonthConsumption($type = null)
+    {
+        $lastmonthYear = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));// Get the year in which last month belonged to (comes in handy especialy in January)
+        $lastmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+        $id = $this->id;
+        $lastmonth_header = $this->consumption_headers()
+                                ->where('year', $lastmonthYear)
+                                ->where('month', $lastmonth)
+                                ->where('type', $type)
+                                ->transform(function($header, $key) use ($id){
+                                    $line = $header->details->where('kit_id', $id)->first();
+                                    $line->year = $header->year;
+                                    $line->month = $header->month;
+                                    $line->type = $header->type;
+                                    return $line;
+                                });
+        return $lastmonth_header;
     }
 }

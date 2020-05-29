@@ -13,6 +13,7 @@ use App\ConsumptionDetailBreakdown;
 use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
+use App\Deliveries;
 use App\Taqmandeliveries;
 use App\Taqmanprocurement;
 use App\LabEquipmentTracker;
@@ -53,11 +54,11 @@ class TaskController extends Controller
 
     public function index() 
     {
-        if ($this->pendingTasks()) {
-            // \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
-            session(['pendingTasks'=> false]);
-            return redirect()->route('home');
-        }
+        // if ($this->pendingTasks()) {
+        //     // \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
+        //     session(['pendingTasks'=> false]);
+        //     return redirect()->route('home');
+        // }
 
     	$data['kits'] = (object)$this->getKitsEntered();
         
@@ -81,6 +82,7 @@ class TaskController extends Controller
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
+
         // dd($this->getPreviousWeek());
         $data = (object) $data;
         
@@ -414,14 +416,22 @@ class TaskController extends Controller
                 $data['testtypes'] = $this->testtypes;
                 $data['generalconsumables'] = $generalconsumables;
                 $data = (object) $data;
-                
+                // dd($data);
                 return view('forms.allocation', compact('data'))->with('pageTitle', 'Lab Allocation::'.date("F", mktime(null, null, null, $this->month)).', '.$this->year);
             } else { // Save the allocations from the previous if section
                 $saveAllocation = $this->saveAllocation($request);
+                $save_null_allocation = $this->saveNullAllocation();
                 $synch = Synch::synch_allocations();
                 return redirect()->route('pending');
             }
         }
+    }
+
+    public function nullallocation()
+    {
+        $this->saveNullAllocation();
+        $synch = Synch::synch_allocations();
+        return redirect()->route('pending');
     }
 
     protected function saveAllocation($request) {
@@ -506,6 +516,14 @@ class TaskController extends Controller
                 'breakdown_type' => GeneralConsumables::class,
                 'allocated' => $form_data[$column]
             ]);
+        }
+        return true;
+    }
+
+    protected function saveNullAllocation()
+    {
+        foreach (Machine::get() as $key => $machine) {
+            $machine->saveNullAllocation();
         }
         return true;
     }
@@ -628,6 +646,9 @@ class TaskController extends Controller
     }
 
     public function getKitsEntered(){
+        // $delivery = new Deliveries;
+        // $missing_deliveries = $delivery->getLastMissingDelivery();
+        // return $missing_deliveries;
     	$quarter = parent::_getMonthQuarter($this->month);
     	return [
     		'taqkits' => self::__getifKitsEntered(1,$quarter,$this->year),
