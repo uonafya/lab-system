@@ -531,14 +531,14 @@ class CovidSampleController extends Controller
 
     public function set_cif_samples(Request $request)
     {
-        $samples = $request->input('samples');
+        $samples = $request->input('sample_ids');
         if(!$samples){
             session(['toast_error' => 1, 'toast_message' => 'No samples selected.']);
             return back();            
         }
         \App\Synch::set_covid_samples($samples);
         session(['toast_message' => 'The sample have been set to come to the lab.']);
-        return redirect();        
+        return redirect('covid_sample');        
     }
 
 
