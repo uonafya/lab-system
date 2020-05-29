@@ -472,7 +472,7 @@ class CovidSampleController extends Controller
         }
         \App\Synch::set_covid_samples($samples);
         session(['toast_message' => 'The sample have been set to come to the lab.']);
-        return redirect();        
+        return redirect('covid_sample');        
     }
 
 
