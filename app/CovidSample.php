@@ -31,6 +31,11 @@ class CovidSample extends BaseModel
         return $this->hasMany('App\CovidTravel', 'sample_id');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab', 'lab_id');
+    }
+
 
     // Parent sample
     public function parent()
@@ -64,11 +69,6 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\User', 'approvedby2');
     }
 
-
-    public function lab()
-    {
-        return $this->belongsTo('App\Lab');
-    }
 
     public function calc_age()
     {

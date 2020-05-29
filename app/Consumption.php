@@ -13,7 +13,13 @@ class Consumption extends Model
      */
     protected $guarded = [];
 
-    public function kit() {
-    	return $this->belongsTo('App\Kits');
+   public function scopeExisting($query, $year, $month, $type, $lab_id)
+    {
+        return $query->where(['year' => $year, 'month' => $month, 'type' => $type, 'lab_id' => $lab_id]);
+    }
+
+    public function details()
+    {
+    	return $this->hasMany(ConsumptionDetail::class, 'consumption_id', 'id');
     }
 }
