@@ -495,8 +495,16 @@ class CovidWorksheetController extends Controller
 
                     $data_array = MiscCovid::sample_result($interpretation, $error);
 
-                    if($sample_id == "COV-2_NEG") $negative_control = $data_array;
-                    if($sample_id == "COV-2_POS") $positive_control = $data_array;
+                    // if($sample_id == "COV-2_NEG") $negative_control = $data_array;
+                    // if($sample_id == "COV-2_POS") $positive_control = $data_array;
+
+                    if(!is_numeric($sample_id)){
+                        $s = strtolower($sample_id);
+
+                        if(str_contains($s, 'neg')) $negative_control = $data_array;
+                        else if(str_contains($s, 'pos')) $positive_control = $data_array;
+
+                    }
 
                     $data_array = array_merge($data_array, ['datetested' => $today]);
                     // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
