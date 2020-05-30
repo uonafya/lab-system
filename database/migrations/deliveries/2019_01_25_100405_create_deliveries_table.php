@@ -22,10 +22,10 @@ class CreateDeliveriesTable extends Migration
             $table->tinyInteger('type')->nullable()->comment("Indicates if this is an EID, VL, Consumable delivery");
             $table->tinyInteger('machine')->nullable();
             $table->tinyInteger('lab_id');
-            $table->bigInteger('receivedby');
-            $table->date('datereceived');
-            $table->bigInteger('enteredby');
-            $table->date('dateentered');
+            $table->bigInteger('receivedby')->nullable();
+            $table->date('datereceived')->nullable();
+            $table->bigInteger('enteredby')->nullable();
+            $table->date('dateentered')->nullable();
             $table->tinyInteger('synched')->default(0);
             $table->dateTime('datesynched')->nullable();
             $table->softDeletes();

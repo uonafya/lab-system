@@ -26,12 +26,13 @@ class CovidConsumptionController extends Controller
         $time = collect($weeks)->first();
         $user = auth()->user();
     	$tests = $consumption->getTestsDone($time->week_start, $time->week_end);
-        $kits = CovidKit::when($user, function($query) use ($user){
+        $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
                                         if ($user->user_type_id == 12)
                                             return $query->where('type', '<>', 'Kit');
                                         else
                                             return $query->where('type', '<>', 'Manual');
-                                    })->get();
+                                    })->get()->groupby('machine');
+        
         // dd($kits);
     	return view('tasks.covid.consumption',
     		[
