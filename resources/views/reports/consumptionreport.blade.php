@@ -75,7 +75,7 @@
                                 <td>{{ $line->wastage ?? 0 }}</td>
                                 <td>{{ $line->positive ?? 0 }}</td>
                                 <td>{{ $line->negative ?? 0 }}</td>
-                                <td>{{ $line->ending ?? 0 }}</td>
+                                <td>{{ $line->ending_balance ?? 0 }}</td>
                                 <td>{{ $line->requested ?? 0 }}</td>
                 			</tr>
             			@endforeach
