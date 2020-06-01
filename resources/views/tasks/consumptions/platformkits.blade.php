@@ -83,7 +83,10 @@
                                             {{ $delivery->quantity }}
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
-                                        <td>{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}</td>
+                                        <td>
+                                            {{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}
+                                            <input class="form-control input-edit" type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
+                                        </td>
                                         <td>
                                             <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required>
                                         </td>
