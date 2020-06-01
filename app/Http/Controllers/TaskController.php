@@ -53,7 +53,7 @@ class TaskController extends Controller
         //     session(['pendingTasks'=> false]);
         //     return redirect()->route('home');
         // }
-        return redirect('/home');
+        // return redirect('/home');
 
         $pendingDeliveries = $this->getDeliveries();
         $data['deliveries'] = $pendingDeliveries;
