@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CovidKit extends BaseModel
 {
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class, 'machine', 'id');
+    }
+
     public function computekitsUsed($tests)
     {
     	if ($tests == 0 || $this->calculated_pack_size == NULL)
