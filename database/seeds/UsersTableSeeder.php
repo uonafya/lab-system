@@ -39,6 +39,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '10', 'user_type' => 'Partner'],
 		    ['id' => '11', 'user_type' => 'Quarantine Site'],
 		    ['id' => '12', 'user_type' => 'Other Lab User'],
+		    ['id' => '13', 'user_type' => 'Covid Data Clerk'],
 		]);
 
 		return;
@@ -64,7 +65,7 @@ class UsersTableSeeder extends Seeder
 		// }
 
 
-
+		User::truncate();
         $users = factory(App\User::class, 1)->create([
 	        'user_type_id' => 0,
 	        'surname' => 'Kithinji',

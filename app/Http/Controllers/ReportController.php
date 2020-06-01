@@ -440,16 +440,10 @@ class ReportController extends Controller
             $type = 'VL';
         }
         $month = $request->input('month');
-        $previousMonth = $month - 1;
-        if ($month == 1)
-            $previousMonth = 12;
-        
+        $previousMonth = date('m', strtotime("-1 Month", strtotime($request->input('year').'-'.$request->input('month'))));
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $year = $request->input('year');
-        $previousYear = $year;
-        if ($previousMonth == 12)
-            $previousYear = $year - 1;
-
+        $previousYear = date('Y', strtotime("-1 Month", strtotime($request->input('year').'-'.$request->input('month'))));
         $model->whereRaw("(`year` = $year or `year` = $previousYear)");
         $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
         $tests->whereYear('datetested', $year);

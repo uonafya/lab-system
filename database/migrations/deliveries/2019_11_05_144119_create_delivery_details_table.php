@@ -21,8 +21,8 @@ class CreateDeliveryDetailsTable extends Migration
             $table->string('kit_type', 100);
             $table->string('lotno')->nullable();
             $table->date('expiry')->nullable();
-            $table->integer('received');
-            $table->integer('damaged');
+            $table->float('received')->default(0);
+            $table->float('damaged')->default(0);
             $table->tinyInteger('synched')->default(0);
             $table->dateTime('datesynched')->nullable();
             $table->softDeletes();

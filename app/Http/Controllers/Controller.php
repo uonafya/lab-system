@@ -70,6 +70,7 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
+        return true;
         $currentmonth = date('m');
         $prevmonth = date('m')-1;
         $year = date('Y');

@@ -151,9 +151,11 @@ class CovidLookupSeeder extends Seeder
 			['id' => 123, 'synched' => 1, 'name' => 'St. Teresia', 'email' => null],
 			['id' => 124, 'synched' => 1, 'name' => 'St. Vincent', 'email' => null],
 			['id' => 125, 'synched' => 1, 'name' => 'Kitengela', 'email' => null],
-			// ['id' => , 'synched' => 1, 'name' => null, 'email' => null],
+			['id' => 149, 'synched' => 1, 'name' => 'Enoomatasiani', 'email' => null],
+			['id' => 150, 'synched' => 1, 'name' => 'Ole Kasasi', 'email' => null],
+			// ['id' => , 'synched' => 1, 'name' => '', 'email' => null],
 		]);
-		return;
+		// return;
 
 		// osbp/bus - busia - id 99
 		// bus/tn - malaba - 100
@@ -185,6 +187,8 @@ class CovidLookupSeeder extends Seeder
 			['id' => 10, 'name' => 'Truck Driver'],
 			['id' => 11, 'name' => 'Food Handlers'],
 		]);
+
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
 		DB::statement("

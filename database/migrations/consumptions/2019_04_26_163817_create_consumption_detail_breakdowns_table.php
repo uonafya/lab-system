@@ -13,10 +13,7 @@ class CreateConsumptionDetailBreakdownsTable extends Migration
      */
     public function up()
     {
-        Schema::create('consumption_detail_breakdowns', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-        });
+        Schema::dropIfExists('consumption_detail_breakdowns');
     }
 
     /**
