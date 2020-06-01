@@ -43,7 +43,7 @@ class ConsumptionController extends Controller
     {
     	$model = new Consumption;
     	$period = collect($model->getMissingConsumptions())->first();
-    	$fields = ['begining_balance', 'used', 'positive_adjustment', 'negative_adjustment', 'wasted', 'ending_balance', 'issuedcomment', 'receivedcomment'];
+    	$fields = ['begining_balance', 'used', 'positive_adjustment', 'negative_adjustment', 'wasted', 'ending', 'issuedcomment', 'receivedcomment'];
     	$machines = Machine::whereIn('id', $request->input('machine'))->get();
     	$types = TestType::get();
     	$formdata = $request->only($fields);

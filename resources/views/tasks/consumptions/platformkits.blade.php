@@ -97,7 +97,7 @@
                                             <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="0"  min="0" required>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="0">
+                                            <input type="number" class="form-control input-edit" name="ending[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="0">
                                         </td>
                                     </tr>
                                     @endforeach
