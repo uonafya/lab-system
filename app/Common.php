@@ -894,121 +894,127 @@ class Common
     //     }
     // }
 
+    private static function extractConsumptionDetails($consumption, $class, $machine)
+    {
+    	$data = [];
+    	$kits = Kits::where('machine_id', $machine)->get();
+    	$type = TestType::find($consumption->testtype)->name;
+    	$previousMonthConsumption = date('m', strtotime("-1 Month", strtotime($consumption->year.'-'.$consumption->month)));
+    	$previousYearConsumption = date('Y', strtotime("-1 Month", strtotime($consumption->year.'-'.$consumption->month)));
+    	$previousConsumption = $class::where('testtype', $consumption->testtype)
+    							->where('year', $previousYearConsumption)->where('month', $previousMonthConsumption)
+    							->first();
+    	$fields = [
+    		'begining_balance' => 'begining_balance',
+    		'used' => 'used',
+    		'pos' => 'positive_adjustment', 
+    		'issued' => 'negative_adjustment',
+    		'wasted' => 'wasted',
+    		'ending' => 'ending_balance',
+    		'request' => 'request'
+    	];
+    	foreach ($fields as $fieldkey => $field) {
+			foreach ($kits as $kitkey => $kit) {
+				$data[$kitkey]['kit_id'] = $kit->id;
+				if ($field == 'begining_balance') {
+					$column = 'ending'.$kit->alias;
+	    			$data[$kitkey][$field] = $previousConsumption->$column ?? 0;
+	    		} else if ($field == 'used') {
+	    			$column = $fieldkey.$kit->alias;
+	    			$test_factor = json_decode($kit->testFactor);
+	    			$test_factor = $test_factor->$type ?? $test_factor;
+	    			$factor = json_decode($kit->factor);
+	    			$factor = $factor->$type ?? $factor;
+	    			$data[$kitkey][$field] = round((@($consumption->tests/$test_factor)*$factor),2);
+	    		} else {
+	    			$column = $fieldkey.$kit->alias;
+	    			$data[$kitkey][$field] = $consumption->$column;
+	    		}
+    		}
+    	}
+    	
+    	return $data;
+    }
+
     public static function transferconsumptions() {
-    	$kits = \App\Kits::get();
-    	$consumptionArray = [];
-    	$kitArray = [];
-    	// Getting first the abbott consumptions
-    	echo "==> Started bringing in the Abbott consumptions\n";
-    	$abbottconsumptions = \App\Abbotprocurement::get();
-    	foreach ($abbottconsumptions as $key => $consumption) {
-    		$insertedCOnsumption = self::createConsumption($consumption, 2);
-			if ($insertedCOnsumption) {
-				foreach ($kits as $key => $kit) {
-	    			if ($kit->machine_id == 2) {
-		    			$ending = 'ending'.$kit->alias;
-			    		$wasted = 'wasted'.$kit->alias;
-			    		$issued = 'issued'.$kit->alias;
-			    		$request = 'request'.$kit->alias;
-			    		$pos = 'pos'.$kit->alias;
-			    		$kitArray[] = [
-			    			'consumption_id' => $insertedCOnsumption->id,
-			    			'kit_id' => $kit->id,
-							'ending_balance' => $consumption->$ending,
-							'wasted' => $consumption->$wasted,
-							'negative_adjustment' => $consumption->$issued,
-							'positive_adjustment' => $consumption->$pos,
-							'request' => $consumption->$request,
-			    		];
-		    		}
-		    	}
-			}
-		}
-		echo "==> Finished bringing in the Abbott consumptions\n";
+    	$newconsumptions = [];
+    	echo "==> Retrieve the abbott consumptions\n";
+    	$consumptions = Abbotprocurement::get();
+    	echo "==> Processing {$consumptions->count()} abbott consumptions\n";
+    	foreach ($consumptions as $key => $consumption) {
+    		$newconsumptions[] = [
+    						'year' => $consumption->year,
+    						'month' => $consumption->month,
+    						'type' => $consumption->testtype,
+    						'machine' => 2,
+    						'tests' => $consumption->tests,
+    						'datesubmitted' => $consumption->datesubmitted,
+    						'submittedby' => $consumption->submittedby,
+    						'lab_id' => $consumption->lab_id,
+    						'comments' => $consumption->comments,
+    						'issuedcomments' => $consumption->issuedcomments,
+    						'approve' => $consumption->approve,
+    						'disapprovereason' => $consumption->disapprovereason,
+    						'details' => self::extractConsumptionDetails($consumption, Abbotprocurement::class, 2)
+    					];
+    	}
+    	echo "==> Inserting abbott consumptions\n";
+    	foreach ($newconsumptions as $key => $consumption) {
+    		$details = $consumption['details'];
+    		unset($consumption['details']);
+    		if (Consumption::duplicate($consumption['year'], $consumption['month'], $consumption['type'], $consumption['machine'], $consumption['lab_id'])->get()->isEmpty()){
+    			$insertedConsumption = Consumption::create($consumption);
+	    		foreach ($details as $key => $detail) {
+	    			$line = new ConsumptionDetail;
+	    			$line->fill($detail);
+	    			$line->consumption_id = $insertedConsumption->id;
+	    			$line->save();
+	    		}
+    		}
+    	}
+    	$newconsumptions = [];
+    	echo "==> Finished abbott consumptions\n";
+    	
 		// Finally getting the Roche consumptions
-
-    	echo "==> Started bringing in the CObas consumptions\n";
-		$months = [1,2,3,4,5,6,7,8,9,10,11,12];
-		$years = \App\Taqmanprocurement::selectRaw("max(year) as maximum, min(year) minimum")->first();
-		echo "\t Splitting the Cobas consumptions\n";
-		for ($i=$years->minimum; $i <=$years->maximum ; $i++) {
-			foreach ($months as $key => $month) {
-				$consumptions = \App\Taqmanprocurement::where('year', '=', $i)->where('month', '=', $month)->get();
-				$vlsamples = \App\Viralsample::selectRaw("count(if(viralworksheets.machine_type = 1, 1, null)) as `taqman`, count(if(viralworksheets.machine_type = 3, 1, null)) as `C8800`")
-							->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-							->whereIn('machine_type', [1,3])
-							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
-				$eidsamples = \App\Sample::selectRaw("count(if(worksheets.machine_type = 1, 1, null)) as `taqman`, count(if(worksheets.machine_type = 3, 1, null)) as `C8800`")
-							->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-							->whereIn('machine_type', [1,3])
-							->whereYear('datetested', $i)->whereMonth('datetested', $month)->first();
-				// dd($vlsamples);
-				foreach ($consumptions as $key => $consumption) {
-					$insertedCOnsumption = self::createConsumption($consumption, 1);
-					if ($insertedCOnsumption) {
-						if ($consumption->testtype == 1)
-			    			$model = $eidsamples;
-			    		else if ($consumption->testtype == 2)
-			    			$model = $vlsamples;
-			    		if ($model->taqman == 0 && $model->C8800 == 0) {
-
-			    		} else {
-			    			$total = $model->taqman + $model->C8800;
-			    			$taqmanratio = ($model->taqman / $total);
-			    			$C8800ratio = ($model->C8800 / $total);
-			    			if ($model->taqman > 0) {
-			    				foreach ($kits as $key => $kit) {
-									if ($kit->machine_id == 1) {
-										$ending = 'ending'.$kit->alias;
-							    		$wasted = 'wasted'.$kit->alias;
-							    		$issued = 'issued'.$kit->alias;
-							    		$request = 'request'.$kit->alias;
-							    		$pos = 'pos'.$kit->alias;
-
-							    		$kitArray[] = [
-							    			'consumption_id' => $insertedCOnsumption->id,
-											'kit_id' => $kit->id,
-											'ending_balance' => ($consumption->$ending * $taqmanratio),
-											'wasted' => ($consumption->$wasted * $taqmanratio),
-											'negative_adjustment' => ($consumption->$issued * $taqmanratio),
-											'positive_adjustment' => ($consumption->$pos * $taqmanratio),
-											'request' => ($consumption->$request * $taqmanratio),
-							    		];
-									}
-								}
-			    			} else if ($model->C8800 > 0) {
-			    				foreach ($kits as $key => $kit) {
-									if ($kit->machine_id == 3) {
-										$ending = 'ending'.$kit->alias;
-							    		$wasted = 'wasted'.$kit->alias;
-							    		$issued = 'issued'.$kit->alias;
-							    		$request = 'request'.$kit->alias;
-							    		$pos = 'pos'.$kit->alias;
-
-							    		$kitArray[] = [
-							    			'consumption_id' => $insertedCOnsumption->id,
-											'kit_id' => $kit->id,
-											'ending_balance' => ($consumption->$ending * $C8800ratio),
-											'wasted' => ($consumption->$wasted * $C8800ratio),
-											'negative_adjustment' => ($consumption->$issued * $C8800ratio),
-											'positive_adjustment' => ($consumption->$pos * $C8800ratio),
-											'request' => ($consumption->$request * $C8800ratio),
-							    		];
-									}
-								}
-			    			}		    				
-			    		}
-					}
-				}
-			}
-		}
-		echo "\t Inserting the Cobas consumptions\n";
-		foreach ($kitArray as $key => $consumption_detail) {
-			ConsumptionDetail::create($consumption_detail);
-		}
-
+    	echo "==> Retrieve the Cobas consumptions\n";
+    	$consumptions = Taqmanprocurement::get();
+    	echo "==> Processing {$consumptions->count()} Cobas consumptions\n";
+    	foreach ($consumptions as $key => $consumption) {
+			$newconsumptions[] = [
+    						'year' => $consumption->year,
+    						'month' => $consumption->month,
+    						'type' => $consumption->testtype,
+    						'machine' => 1,
+    						'tests' => $consumption->tests,
+    						'datesubmitted' => $consumption->datesubmitted,
+    						'submittedby' => $consumption->submittedby,
+    						'lab_id' => $consumption->lab_id,
+    						'comments' => $consumption->comments,
+    						'issuedcomments' => $consumption->issuedcomments,
+    						'approve' => $consumption->approve,
+    						'disapprovereason' => $consumption->disapprovereason,
+    						'details' => self::extractConsumptionDetails($consumption, Taqmanprocurement::class, 1)
+    					];
+    	}
+    	echo "==> Inserting abbott consumptions\n";
+    	foreach ($newconsumptions as $key => $consumption) {
+    		$details = $consumption['details'];
+    		unset($consumption['details']);
+    		if (Consumption::duplicate($consumption['year'], $consumption['month'], $consumption['type'], $consumption['machine'], $consumption['lab_id'])->get()->isEmpty()){
+    			$insertedConsumption = Consumption::create($consumption);
+	    		foreach ($details as $key => $detail) {
+	    			$line = new ConsumptionDetail;
+	    			$line->fill($detail);
+	    			$line->consumption_id = $insertedConsumption->id;
+	    			$line->save();
+	    		}
+    		}
+    	}
+    	$newconsumptions = [];
+    	echo "==> Finished abbott consumptions\n";
+		
 		echo "\t Delete all future consumptions\n";
-		$consumptions = \App\Consumption::where('year', date('Y', strtotime("-1 Month", strtotime(date('Y-m-d')))))->where('month', date('m', strtotime("-1 Month", strtotime(date('Y-m-d')))))->get();
+		$consumptions = Consumption::where('year', date('Y', strtotime("-1 Month", strtotime(date('Y-m-d')))))->where('month', date('m', strtotime("-1 Month", strtotime(date('Y-m-d')))))->get();
 		foreach ($consumptions as $key => $consumption) {
 			foreach ($consumption->details as $key => $detail) {
 				$detail->delete();
@@ -1018,6 +1024,7 @@ class Common
 		echo "\t Finished deleting all future consumptions\n";
 		echo "\t Completed inserting consumptions\n";
 		return true;
+
     }
 
     private static function createConsumption($consumption, $machine)
@@ -1027,6 +1034,7 @@ class Common
 						'month' => $consumption->month,
 		    			'year' => $consumption->year,
 						'type' => $consumption->testtype,
+						'tests' => $consumption->tests,
 						'datesubmitted' => $consumption->datesubmitted,
 						'submittedby' => $consumption->submittedby,
 						'lab_id' => $consumption->lab_id,
