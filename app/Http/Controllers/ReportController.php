@@ -418,8 +418,9 @@ class ReportController extends Controller
                         ->where('type', $types[$request->input('types')])
                         ->where('month', $month)->first();
         $deliveries = $delivery->details ?? $delivery;
-        if ($consumption->isEmpty())
-            dd($request->all());
+        if ($consumption->isEmpty()){
+            return back();
+        }
 
         $consumption = $consumption->first();
         $data = [
@@ -427,136 +428,7 @@ class ReportController extends Controller
             'deliveries' => $deliveries
         ];
         return view('reports.consumptionreport', $data)->with('pageTitle', 'Consumption Report');  
-        // dd($consumption);
         
-        // "types" => "viralload"
-        // "platform" => "taqman"
-        // "month" => "1"
-        // "year" => "2020"
-        $data = [];
-        $kitsdisplay = Kits::when($request, function ($query) use ($request){
-                            if ($request->input('platform') == 'abbott')
-                                return $query->where('machine_id', '=', 2);
-                            else 
-                                return $query->where('machine_id', '=', 1);
-                        })->get();
-        $platform = $request->input('platform');
-        if ($platform == 'abbott') {
-            $model = Abbotprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
-            $kits = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
-            $sub = $this->abbottKits;
-        }
-        if ($platform == 'taqman') {
-            $model = Taqmanprocurement::select('*')->where('lab_id', '=', env('APP_LAB'));
-            $kits = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
-            $sub = $this->taqmanKits;
-        }
-
-
-        if($request->input('types') == 'eid') {
-            $model->where('testtype', '=', 1);
-            $kits->where('testtype', '=', 1);
-            $tests = Sample::selectRaw("count(*) as `tests`")->join("worksheets", "worksheets.id", "=", "samples.worksheet_id")->where('worksheets.lab_id', '=', env('APP_LAB'))
-                        ->where('receivedstatus', '=', '1')
-                        ->when($platform, function($query) use ($platform) {
-                            if ($platform == 'abbott')
-                                return $query->where("worksheets.machine_type", "=", 2);
-                            if ($platform == 'taqman')
-                                return $query->whereIn("worksheets.machine_type", [1,3]);
-                        });
-            $type = 'EID';
-        }
-        if($request->input('types') == 'viralload') {
-            $model->where('testtype', '=', 2);
-            $kits->where('testtype', '=', 2);
-            $tests = Viralsample::selectRaw("count(*) as `tests`")->join("viralworksheets", "viralworksheets.id", "=", "viralsamples.worksheet_id")->where('viralworksheets.lab_id', '=', env('APP_LAB'))
-                        ->where('receivedstatus', '=', '1')
-                        ->when($platform, function($query) use ($platform) {
-                            if ($platform == 'abbott')
-                                return $query->where("viralworksheets.machine_type", "=", 2);
-                            if ($platform == 'taqman')
-                                return $query->whereIn("viralworksheets.machine_type", [1,3]);
-                        });
-            $type = 'VL';
-        }
-        $month = $request->input('month');
-        $previousMonth = date('m', strtotime("-1 Month", strtotime($request->input('year').'-'.$request->input('month'))));
-        $monthName = date('F', mktime(0, 0, 0, $month, 10));
-        $year = $request->input('year');
-        $previousYear = date('Y', strtotime("-1 Month", strtotime($request->input('year').'-'.$request->input('month'))));
-        $model->whereRaw("(`year` = $year or `year` = $previousYear)");
-        $model->whereRaw("(`month` = $month or `month` = $previousMonth)");
-        $tests->whereYear('datetested', $year);
-        $tests->whereMonth('datetested', $month);
-        // $model->where('lab_id', env('APP_LAB'));
-
-        $kits->whereYear('datereceived', $year);
-        $kits->whereMonth('datereceived', $month);
-        // $kits->where('lab_id', env('APP_LAB'));
-        
-        $report = $model->get();
-        $kits = $kits->get()->first();
-        $tests = $tests->first()->tests;
-        
-        $data = json_decode(json_encode([
-                    'parent' => self::$parent,
-                    'child' => $sub,
-                    'kitsuffix' => self::$suffix
-                ]));
-        
-        $newdata = [];
-        $prevnewdata = [];
-        $kitsdata = [];
-        // dd($data);
-        // foreach ($data->parent as $parentkey => $parentvalue) {
-        //     foreach ($data->child as $childkey => $childvalue) {
-        //         $newdata[$parentvalue.$childvalue->alias] = 0;
-        //         $prevnewdata[$parentvalue.$childvalue->alias] = 0;
-        //     }
-        // }
-        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-        //     foreach ($data->child as $childkey => $childvalue) {
-        //         $kitsdata[$childvalue->alias.$kitsuffixvalue] = 0;
-        //         $kitsdata[$childvalue->alias.'lotno'] = '';
-        //     }
-        // }
-
-        // foreach ($data->parent as $parentkey => $parentvalue) {
-        //     foreach ($data->child as $childkey => $childvalue) {
-        //         foreach ($report as $reportkey => $reportvalue) {
-        //             $column = $parentvalue.$childvalue->alias;
-        //             if ($month == $reportvalue->month) {
-        //                 $newdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-        //             } else if ($previousMonth == $reportvalue->month) {
-        //                 $prevnewdata[$parentvalue.$childvalue->alias] += $reportvalue->$column;
-        //             }
-        //         }
-        //     }
-        // }
-        // foreach ($data->kitsuffix as $kitsuffixkey => $kitsuffixvalue) {
-        //     foreach ($data->child as $childkey => $childvalue) {
-        //         foreach ($kits as $kitskey => $kitsvalue) {
-        //             $column = $childvalue->alias.$kitsuffixvalue;
-        //             $columnlot = $childvalue->alias.'lotno';
-        //             $kitsdata[$childvalue->alias.$kitsuffixvalue] += $kitsvalue->$column;
-        //             $kitsdata[$childvalue->alias.'lotno'] .= $kitsvalue->$columnlot;
-        //         }
-        //     }
-        // }
-        $viewdata = (object)[
-                        'reports' => $report->where('month', $month)->first(),
-                        // 'prevreport' => $prevnewdata,
-                        'prevreport' => $report->where('month', $previousMonth)->first(),
-                        'kitsreport' => $kits,
-                        'tests' => $tests,
-                        'type' => $type,
-                        'platform' => $platform,
-                        'month' => $monthName,
-                        'year' => $year,
-                        'kits' => $kitsdisplay,
-                    ];
-        // dd($viewdata);
-        return view('reports.consumptionreport', compact('data', 'viewdata'))->with('pageTitle', 'Consumption Report');
     }
 
     public static function __getDateData($request, &$dateString)
