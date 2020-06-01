@@ -28,7 +28,7 @@ class Kits extends BaseModel
     }
 
     public function consumption_lines(){
-    	return $this->hasMany('App\ConsumptionDetail', 'kit_id');
+    	return $this->hasMany(ConsumptionDetail::class, 'kit_id', 'id');
     }
 
     public function lastMonth(){
@@ -43,6 +43,11 @@ class Kits extends BaseModel
     public function deliveredkits()
     {
         return $this->morphMany('App\DeliveryDetail', 'kit');
+    }
+
+    public function delivery_lines()
+    {
+        return $this->hasMany(DeliveryDetail::class, 'kit_id', 'id');
     }
 
     public function consumption_headers()
@@ -67,5 +72,55 @@ class Kits extends BaseModel
                                     return $line;
                                 });
         return $lastmonth_header;
+    }
+
+    public function begining_balance($type, $year, $month)
+    {
+        $lastmonthyear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        $lastmonth = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        $balance = 0;
+        if (!$this->consumption_lines->isEmpty()){
+            $balance = $this->consumption_headers()
+                            ->where('year', $lastmonthyear)->where('month', $lastmonth)
+                            ->where('type', $type)->where('machine', $this->machine_id);
+            if (!$balance->isEmpty()) {
+
+            } else {
+                return $balance->count();
+            }
+                            // ->first()->consumption_lines->where('kit_id', $this->id)
+                            // ->first()->ending_balance;
+            // dd($balance);
+        }
+        
+        return $balance;
+    }
+
+    public function getDeliveries($type, $year, $month)
+    {
+        $delivery_lines = $this->delivery_lines->load('delivery');
+        $delivery = $delivery_lines->pluck('delivery')
+                        ->where('year', $year)->where('month', $month)->where('type', $type);
+        if (!$delivery->isEmpty()){
+            $line = $delivery_lines->where('delivery_id', $delivery->first()->id)->first();
+        } else {
+            return (object)[
+                    'quantity' => 0,
+                    'lotno' => ''
+                ];
+        }
+        // dd($line);
+        return (object)[
+            'quantity' => (int)$line->received - $line->damaged,
+            'lotno' => $line->lotno ?? ''
+        ];
+    }
+
+    public function getQuantityUsed($type, $tests)
+    {
+        $factor = json_decode($this->factor);
+        $multiplierfactor = $factor->$type ?? $factor;
+        $testfactor = json_decode($this->testFactor);
+        return (@($tests/$testfactor->$type) * $multiplierfactor);
     }
 }

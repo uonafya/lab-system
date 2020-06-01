@@ -17,12 +17,13 @@ class CreateConsumptionDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('consumption_id');
             $table->integer('kit_id');
-            $table->integer('begining_balance')->default(0);
-            $table->integer('positive_adjustment')->default(0)->comment("Received from other sources eg. other labs");
-            $table->integer('wasted')->default(0);
-            $table->integer('negative_adjustment')->default(0)->comment("Given to other labs");
-            $table->integer('ending_balance')->default(0);
-            $table->integer('request')->default(0);
+            $table->float('begining_balance')->default(0);
+            $table->float('used')->default(0);
+            $table->float('positive_adjustment')->default(0)->comment("Received from other sources eg. other labs");
+            $table->float('wasted')->default(0);
+            $table->float('negative_adjustment')->default(0)->comment("Given to other labs");
+            $table->float('ending_balance')->default(0);
+            $table->float('request')->default(0);
             $table->timestamps();
         });
     }
