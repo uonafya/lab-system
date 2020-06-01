@@ -16,7 +16,6 @@ class ConsumptionSubmission
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
         if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed) {
             // Check if COVID consumption has been submitted
             $covid = new CovidConsumption;
