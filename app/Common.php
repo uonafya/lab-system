@@ -940,7 +940,7 @@ class Common
     	$newconsumptions = [];
     	echo "==> Retrieve the abbott consumptions\n";
     	$consumptions = Abbotprocurement::get();
-    	echo "==> Processing {$consumptions->count()} abbott consumptions\n";
+    	echo "\t Processing {$consumptions->count()} abbott consumptions\n";
     	foreach ($consumptions as $key => $consumption) {
     		$newconsumptions[] = [
     						'year' => $consumption->year,
@@ -958,7 +958,7 @@ class Common
     						'details' => self::extractConsumptionDetails($consumption, Abbotprocurement::class, 2)
     					];
     	}
-    	echo "==> Inserting abbott consumptions\n";
+    	echo "\t Inserting abbott consumptions\n";
     	foreach ($newconsumptions as $key => $consumption) {
     		$details = $consumption['details'];
     		unset($consumption['details']);
@@ -978,7 +978,7 @@ class Common
 		// Finally getting the Roche consumptions
     	echo "==> Retrieve the Cobas consumptions\n";
     	$consumptions = Taqmanprocurement::get();
-    	echo "==> Processing {$consumptions->count()} Cobas consumptions\n";
+    	echo "\tProcessing {$consumptions->count()} Cobas consumptions\n";
     	foreach ($consumptions as $key => $consumption) {
 			$newconsumptions[] = [
     						'year' => $consumption->year,
@@ -996,7 +996,7 @@ class Common
     						'details' => self::extractConsumptionDetails($consumption, Taqmanprocurement::class, 1)
     					];
     	}
-    	echo "==> Inserting abbott consumptions\n";
+    	echo "\tInserting abbott consumptions\n";
     	foreach ($newconsumptions as $key => $consumption) {
     		$details = $consumption['details'];
     		unset($consumption['details']);
@@ -1013,7 +1013,7 @@ class Common
     	$newconsumptions = [];
     	echo "==> Finished abbott consumptions\n";
 		
-		echo "\t Delete all future consumptions\n";
+		echo "==> Delete all future consumptions\n";
 		$consumptions = Consumption::where('year', date('Y', strtotime("-1 Month", strtotime(date('Y-m-d')))))->where('month', date('m', strtotime("-1 Month", strtotime(date('Y-m-d')))))->get();
 		foreach ($consumptions as $key => $consumption) {
 			foreach ($consumption->details as $key => $detail) {
@@ -1022,7 +1022,7 @@ class Common
 			$consumption->delete();
 		}
 		echo "\t Finished deleting all future consumptions\n";
-		echo "\t Completed inserting consumptions\n";
+		echo "==> Completed inserting consumptions\n";
 		return true;
 
     }
