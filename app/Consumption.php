@@ -23,6 +23,16 @@ class Consumption extends Model
     	return $this->hasMany(ConsumptionDetail::class, 'consumption_id', 'id');
     }
 
+    public function testtype()
+    {
+        return $this->belongsTo(TestType::class, 'type', 'id');
+    }
+
+    public function platform()
+    {
+        return $this->belongsTo(Machine::class, 'machine', 'id');
+    }
+
    public function scopeDuplicate($query, $year, $month, $type, $machine, $lab_id)
    {
       return $query->where(['year' => $year, 'month' => $month, 'type' => $type, 'machine' => $machine, 'lab_id' => $lab_id]);

@@ -10,6 +10,8 @@ use App\ViralsampleView;
 use App\Cd4SampleView;
 use App\Abbotdeliveries;
 use App\Taqmandeliveries;
+use App\Consumption;
+use App\Deliveries;
 use App\Abbotprocurement;
 use App\Taqmanprocurement;
 use Excel;
@@ -393,6 +395,44 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
+        $types = [
+                'viralload' => 2,
+                'eid' => 1,
+            ];
+        $platforms = [
+                'taqman' => 1,
+                'abbott' => 2
+            ];
+        
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $previousYear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        $previousMonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        $consumption = Consumption::with(['testtype', 'platform'])
+                        ->where('year', $year)
+                        ->where('machine', $platforms[$request->input('platform')])
+                        ->where('type', $types[$request->input('types')])
+                        ->where('month', $month)->get();
+        $delivery = Deliveries::where('year', $year)
+                        ->where('machine', $platforms[$request->input('platform')])
+                        ->where('type', $types[$request->input('types')])
+                        ->where('month', $month)->first();
+        $deliveries = $delivery->details ?? $delivery;
+        if ($consumption->isEmpty())
+            dd($request->all());
+
+        $consumption = $consumption->first();
+        $data = [
+            'consumption' => $consumption,
+            'deliveries' => $deliveries
+        ];
+        return view('reports.consumptionreport', $data)->with('pageTitle', 'Consumption Report');  
+        // dd($consumption);
+        
+        // "types" => "viralload"
+        // "platform" => "taqman"
+        // "month" => "1"
+        // "year" => "2020"
         $data = [];
         $kitsdisplay = Kits::when($request, function ($query) use ($request){
                             if ($request->input('platform') == 'abbott')
