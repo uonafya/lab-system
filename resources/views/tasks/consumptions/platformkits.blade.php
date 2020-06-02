@@ -84,7 +84,7 @@
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
                                         <td>
-                                            {{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}
+                                            {{ round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2) }}
                                             <input class="form-control input-edit" type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
                                         </td>
                                         <td>
