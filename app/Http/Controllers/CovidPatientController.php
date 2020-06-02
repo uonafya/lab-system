@@ -126,7 +126,7 @@ class CovidPatientController extends Controller
         
         $patients = CovidPatient::select('covid_patients.id', 'covid_patients.identifier AS patient', 'quarantine_sites.name')
             ->leftJoin('quarantine_sites', 'quarantine_sites.id', '=', 'covid_patients.quarantine_site_id')
-            ->whereRaw("(identifier like '" . $search . "%' OR patient_name like '" . $search . "%' )")
+            ->whereRaw("(identifier like '" . $search . "%' OR patient_name like '%" . $search . "%' )")
             // ->where('patients.synched', '!=', 2)
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
