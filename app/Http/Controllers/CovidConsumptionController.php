@@ -31,7 +31,7 @@ class CovidConsumptionController extends Controller
                                             return $query->where('type', '<>', 'Kit');
                                         else
                                             return $query->where('type', '<>', 'Manual');
-                                    })->get()->groupby('machine');
+                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
         
         // dd($kits);
     	return view('tasks.covid.consumption',
@@ -54,6 +54,15 @@ class CovidConsumptionController extends Controller
 
     public function submitConsumption(Request $request)
     {
+        if ($request->has('ending')){
+            foreach ($request->input('ending') as $key => $value) {
+                $value = (int)$value;
+                if ($value < 0){
+                    session(['toast_message' => 'No negative ending balances are allowed. Please fill in the respective kits received to proceed with this submission', 'toast_error' => true]);
+                    return back();
+                }
+            }
+        }
         $consumption = new CovidConsumption;
         $time = collect($consumption->getMissingConsumptions())->first();
         // $time = $this->getPreviousWeek();
