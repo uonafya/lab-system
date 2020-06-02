@@ -132,9 +132,12 @@ class CovidConsumption extends BaseModel
 
     public static function onetime()
     {
+        $tests = [];
         foreach (CovidConsumption::get() as $key => $consumption) {
-            $consumption->tests = json_encode(['C8800' => $consumption->tests]);
+            $tests[] = ['C8800' => $consumption->tests];
+            $consumption->tests = json_encode($tests);
             $consumption->save();
+            $tests = [];
         }
         return true;
     }
