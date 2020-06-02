@@ -124,9 +124,17 @@ class CovidConsumptionController extends Controller
 
     public function reports(Request $request, CovidConsumption $consumption)
     {
-        if (null !== $consumption->start_of_week)
-            return view('reports.covidconsumptiondetails', ['consumption' => $consumption]);
         $user = auth()->user();
+        if (null !== $consumption->start_of_week){
+
+            $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
+                                        if ($user->user_type_id == 12)
+                                            return $query->where('type', '<>', 'Kit');
+                                        else
+                                            return $query->where('type', '<>', 'Manual');
+                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
+            return view('reports.covidconsumptiondetails', ['consumption' => $consumption, 'covidkits' => $kits]);
+        }
     	return view('reports.covidconsumption',
                     ['consumptions' => CovidConsumption::when($user, function ($query) use ($user){
                                                 if ($user->user_type_id == 12)
