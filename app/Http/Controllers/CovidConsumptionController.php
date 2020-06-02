@@ -6,6 +6,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\CovidSample;
+use App\Machine;
 use App\Synch;
 use DB;
 use Illuminate\Http\Request;
@@ -73,7 +74,11 @@ class CovidConsumptionController extends Controller
         }
         
         $data = $this->buildConsumptionData($request);
-    	
+        $tests = [];
+    	foreach ($request->input('machine') as $key => $id) {
+            $machine = Machine::find($id);
+            $tests[] = [$machine->machine => $machine->getCovidTestsDone($time->week_start, $time->week_end)];
+        }
         if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
             // Start transaction!
             DB::beginTransaction();
@@ -89,7 +94,7 @@ class CovidConsumptionController extends Controller
                                 'week' => $time->week,
                                 'lab_id' => $lab
                             ]);
-                $consumption->tests = $consumption->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
+                $consumption->tests = json_encode($tests);
                 $consumption->save();
 
                 foreach ($data as $key => $detail) {
