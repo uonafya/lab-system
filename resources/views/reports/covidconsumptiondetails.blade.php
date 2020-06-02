@@ -11,12 +11,25 @@
 </style>
 <div class="content">
     <div class="row">
+    @foreach($covidkits as $machinekey => $kits)
+        @php
+            $machine = \App\Machine::find($machinekey);
+            if ($machine)
+                $machinename = $machine->machine . ' Kits';
+            else
+                $machinename = 'Consumables';
+        @endphp
         <div class="col-lg-12">
-            <div class="alert alert-info">
-                COVID-19 Consumption report for week: {{$consumption->start_of_week}} - {{$consumption->end_of_week}}
-            </div>
             <div class="hpanel">
                 <div class="panel-body table-responsive" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                    <div class="alert alert-info">
+                        <center><i class="fa fa-bolt"></i> COVID-19 <strong>{{ ucfirst($machinename) }}</strong> consumption report for the week starting {{ $consumption->start_of_week }} and ending {{ $consumption->end_of_week }}.
+                        @if($machine)
+                            <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($consumption->start_of_week, $consumption->end_of_week)) }})</strong>
+                            <input type="hidden" name="machine[]" value="{{ $machine->id }}">   
+                        @endif
+                        </center>
+                    </div>
                 	<table class="table table-striped table-bordered table-hover data-table-modified" style="font-size: 10px;margin-top: 1em;">
                 		<thead>
                 			<tr>
@@ -34,19 +47,19 @@
                 			</tr>
                 		</thead>
                 		<tbody>
-                        @foreach($consumption->details as $key => $detail)
+                        @foreach($kits as $kitkey => $kit)
                             <tr>
-                				<td>{{ $key+1 }}</td>
-                                <td>{{ $detail->kit->material_no ?? '' }}</td>
-                                <td>{{ $detail->kit->product_description ?? '' }}</td>
-                                <td>{{ $detail->begining_balance ?? '' }}</td>
-                                <td>{{ $detail->received ?? '' }}</td>
-                                <td>{{ $detail->kits_used ?? '' }}</td>
-                                <td>{{ $detail->positive ?? '' }}</td>
-                                <td>{{ $detail->negative ?? '' }}</td>
-                                <td>{{ $detail->wastage ?? '' }}</td>
-                                <td>{{ $detail->ending ?? '' }}</td>
-                                <td>{{ $detail->requested ?? '' }}</td>
+                				<td>{{ $kitkey+1 }}</td>
+                                <td>{{ $kit->material_no ?? '' }}</td>
+                                <td>{{ $kit->product_description ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->begining_balance ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->received ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->kits_used ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->positive ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->negative ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->wastage ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->ending ?? '' }}</td>
+                                <td>{{ $kit->specific_details($consumption->id)->requested ?? '' }}</td>
                 			</tr>
             			@endforeach
                 		</tbody>
@@ -54,6 +67,7 @@
                 </div>
             </div>
         </div>
+    @endforeach
     </div>
 </div>
 
