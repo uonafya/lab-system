@@ -99,7 +99,7 @@ class CovidReportsController extends Controller
 
 	private function prepareData($today_data, $last_update_data, $date)
 	{
-		$data = [[Lab::find(env('APP_LAB'))->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
+		$data = [[Lab::find(auth()->user()->lab_id)->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
