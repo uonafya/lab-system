@@ -44,21 +44,6 @@ class CovidKitsSeeder extends Seeder
         		['material_no' => '6438776001', 'product_description' => 'Cobas omni Secondary Tubes 13x75 (optional)*',
         		'pack_size' => 1500, 'calculated_pack_size' => 1500, 'type' => 'Kit', 'machine' => 3],
 
-            // Abbott kits
-                ['material_no' => '09N77-090', 'product_description' => 'Abbott RealTimen SARS-COV-2 Amplification kit  4x24 amplifications', 'machine' => 2],
-                ['material_no' => '09N77-080', 'product_description' => 'Abbott RealTime SARS-COV-2 Control Kit 8 sets of 2 controls', 'machine' => 2],
-                ['material_no' => '09N77-001', 'product_description' => 'Abbott RealTime SARS-COV-2 Combined Application Discto be installed on the relevant m2000 sp and rt systems.', 'machine' => 2],
-                ['material_no' => '06K12-24', 'product_description' => 'Abbott m™ Sample Preparation System DNA Reagents 4x24 extractions', 'machine' => 2],
-                ['material_no' => '4J71-10', 'product_description' => 'Disposable Tips DiTi’s 1000ul', 'machine' => 2],
-                ['material_no' => '4J71-17', 'product_description' => 'Disposable Tips DiTi’s 200ul', 'machine' => 2],
-                ['material_no' => '4J71-45', 'product_description' => 'Biohazard Bags', 'machine' => 2],
-                ['material_no' => '4J71-20', 'product_description' => '5ml Reaction vessels', 'machine' => 2],
-                ['material_no' => '4J71-60', 'product_description' => '200ml Reagent vessels', 'machine' => 2],
-                ['material_no' => '4J71-30', 'product_description' => '96 Deep Well Plates', 'machine' => 2],
-                ['material_no' => '4J71-70', 'product_description' => 'Optical Reaction Plates  (PCR Plates)', 'machine' => 2],
-                ['material_no' => '4J71-75', 'product_description' => 'Optical Adhesive Covers', 'machine' => 2],
-                ['material_no' => '4J71-80', 'product_description' => 'Master Mix Tube', 'machine' => 2],
-
             // Consumables Kits
         		['material_no' => 'P1', 'product_description' =>  'Oral pharyngeal swabs (Without media)', 'unit'=> 'pack', 'pack_size' => 25, 'type' => 'Consumable'],
                 ['material_no' => 'P2', 'product_description' =>  'Nasopharyngeal swabs (Without media)', 'unit'=> 'pack', 'pack_size' => 1000, 'type' => 'Consumable'],
@@ -108,6 +93,21 @@ class CovidKitsSeeder extends Seeder
                 'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
                 ['material_no' => 'M6', 'product_description' => '1000µl Sterile Filtered Pipette tips',
                 'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Manual', 'unit' => 'tips'],
+
+            // Abbott kits
+                ['material_no' => '09N77-090', 'product_description' => 'Abbott RealTimen SARS-COV-2 Amplification kit  4x24 amplifications', 'machine' => 2],
+                ['material_no' => '09N77-080', 'product_description' => 'Abbott RealTime SARS-COV-2 Control Kit 8 sets of 2 controls', 'machine' => 2],
+                ['material_no' => '09N77-001', 'product_description' => 'Abbott RealTime SARS-COV-2 Combined Application Discto be installed on the relevant m2000 sp and rt systems.', 'machine' => 2],
+                ['material_no' => '06K12-24', 'product_description' => 'Abbott m™ Sample Preparation System DNA Reagents 4x24 extractions', 'machine' => 2],
+                ['material_no' => '4J71-10', 'product_description' => 'Disposable Tips DiTi’s 1000ul', 'machine' => 2],
+                ['material_no' => '4J71-17', 'product_description' => 'Disposable Tips DiTi’s 200ul', 'machine' => 2],
+                ['material_no' => '4J71-45', 'product_description' => 'Biohazard Bags', 'machine' => 2],
+                ['material_no' => '4J71-20', 'product_description' => '5ml Reaction vessels', 'machine' => 2],
+                ['material_no' => '4J71-60', 'product_description' => '200ml Reagent vessels', 'machine' => 2],
+                ['material_no' => '4J71-30', 'product_description' => '96 Deep Well Plates', 'machine' => 2],
+                ['material_no' => '4J71-70', 'product_description' => 'Optical Reaction Plates  (PCR Plates)', 'machine' => 2],
+                ['material_no' => '4J71-75', 'product_description' => 'Optical Adhesive Covers', 'machine' => 2],
+                ['material_no' => '4J71-80', 'product_description' => 'Master Mix Tube', 'machine' => 2],
         	];
         foreach ($kits as $key => $kit)
         	CovidKit::create($kit);
