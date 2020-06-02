@@ -129,4 +129,13 @@ class CovidConsumption extends BaseModel
                         ];
         return null;
     }
+
+    public static function onetime()
+    {
+        foreach (CovidConsumption::get() as $key => $consumption) {
+            $consumption->tests = json_encode(['C8800' => $consumption->tests]);
+            $consumption->save();
+        }
+        return true;
+    }
 }
