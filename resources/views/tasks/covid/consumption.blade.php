@@ -38,7 +38,8 @@
                 <div class="alert alert-info">
                     <center><i class="fa fa-bolt"></i> Please enter <strong>{{ ucfirst($machinename) }}</strong> consumption values below for the week starting {{ $time->week_start }} and ending {{ $time->week_end }}.
                     @if($machine)
-                        <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($time->week_start, $time->week_end)) }})</strong>    
+                        <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($time->week_start, $time->week_end)) }})</strong>
+                        <input type="hidden" name="machine[]" value="{{ $machine->id }}">   
                     @endif
                     </center>
                 </div>
