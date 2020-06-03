@@ -142,6 +142,8 @@ class CovidReportsController extends Controller
 	{
 		if(!$lab_id) $lab_id = auth()->user()->lab_id;
 		$lab = Lab::find($lab_id);
+		if($lab->id != 1) dd($lab);
+
 		return [
 			$date,
 			$lab->labdesc,
