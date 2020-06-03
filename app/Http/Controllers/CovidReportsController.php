@@ -67,9 +67,9 @@ class CovidReportsController extends Controller
 
             $excel->sheet('Sheet1', function($sheet) use ($data) {
                 $sheet->fromArray($data, null, 'A1', false, false);
-                $sheet->mergeCells('A1:H1');
+                /*$sheet->mergeCells('A1:H1');
                 $sheet->mergeCells('A4:H4');
-                $sheet->mergeCells('A5:H5');
+                $sheet->mergeCells('A5:H5');*/
             });
 
         })->download('csv');
@@ -137,6 +137,7 @@ class CovidReportsController extends Controller
 		foreach ($this->get_detailed_data($today_data) as $key => $value) {
 			$data[] = $value;
 		}
+		dd($data);
 		
 		return $data;
 	}
