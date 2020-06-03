@@ -115,6 +115,7 @@ class CovidReportsController extends Controller
 				$last_update_data_other = $this->get_model($value->lab_id)->where("datetested", '<', $date)->get();
 
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
+				$data[] = [$key, $value->lab_id, $value->toJson()];
 			}
 		}
 
