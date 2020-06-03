@@ -118,7 +118,7 @@ class CovidReportsController extends Controller
 
 
 				$today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
-				$last_update_data_other = $this->get_model(15)->whereDate("datetested", '<', $date)->get();
+				$last_update_data_other = $this->get_model(15)->whereRaw("DATE(datetested) < '{$date}'")->get();
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, 15);
 
 				// $data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
@@ -143,7 +143,7 @@ class CovidReportsController extends Controller
 		if(!$lab_id) $lab_id = auth()->user()->lab_id;
 		return [
 			$date,
-			Lab::find($lab_id)->labdesc,
+			Lab::find(15)->labdesc,
 			$last_update_data->count(),
 			$today_data->count(),
 			($last_update_data->count() + $today_data->count()),
