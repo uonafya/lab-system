@@ -131,10 +131,10 @@ class CovidReportsController extends Controller
 
 	private function get_summary_data($today_data, $last_update_data, $date, $lab_id=null)
 	{
-		if(!$lab_id) $lab_id = auth()->user()->lab_id;
+		// if(!$lab_id) $lab_id = auth()->user()->lab_id;
 		return [
 			$date,
-			Lab::find($lab_id)->labdesc,
+			$lab_id ?? Lab::find(auth()->user()->lab_id)->labdesc,
 			$last_update_data->count(),
 			$today_data->count(),
 			($last_update_data->count() + $today_data->count()),
