@@ -16,6 +16,19 @@ class CovidConsumption extends BaseModel
         return $this->belongsTo(Lab::class, 'lab_id', 'id');
     }
 
+    public function getTestsDoneAttribute()
+    {
+        $total = 0;
+        $tests = (array)json_decode($this->tests);
+        foreach ($tests as $key => $machinevalue) {
+            $machinevalue = (array)$machinevalue;
+            foreach ($machinevalue as $key => $value) {
+                $total += (int)$value;
+            }
+        }
+        return $total;
+    }
+
     public function getTestsDone($start_date, $end_date)
     {
         $user = auth()->user();
@@ -128,5 +141,17 @@ class CovidConsumption extends BaseModel
                             'week' => date('W', strtotime($week))
                         ];
         return null;
+    }
+
+    public static function onetime()
+    {
+        $tests = [];
+        foreach (CovidConsumption::get() as $key => $consumption) {
+            $tests[] = ['C8800' => $consumption->tests];
+            $consumption->tests = json_encode($tests);
+            $consumption->save();
+            $tests = [];
+        }
+        return true;
     }
 }
