@@ -140,7 +140,7 @@ class CovidReportsController extends Controller
 		foreach ($this->get_detailed_data($today_data) as $key => $value) {
 			$data[] = $value;
 		}
-		dd($data);
+		// dd($data);
 		
 		return $data;
 	}
