@@ -117,6 +117,7 @@ class CovidReportsController extends Controller
 
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
 				$data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
+				$data[] = $value->toArray();
 				break;
 			}
 		}
