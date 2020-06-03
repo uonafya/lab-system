@@ -117,9 +117,9 @@ class CovidReportsController extends Controller
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
 
 
-				$today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
-				$last_update_data_other = $this->get_model(15)->whereRaw("DATE(datetested) < '{$date}'")->get();
-				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, 15);
+				// $today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				// $last_update_data_other = $this->get_model(15)->whereRaw("DATE(datetested) < '{$date}'")->get();
+				// $data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, 15);
 
 				// $data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
 				// $data[] = $value->toArray();
