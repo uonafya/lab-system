@@ -112,14 +112,17 @@ class CovidReportsController extends Controller
 			$labs = CovidSample::selectRaw('DISTINCT lab_id AS lab_id')->where('lab_id', '!=', env('APP_LAB'))->where('site_entry', '!=', 2)->get();
 
 			foreach ($labs as $key => $value) {
-				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
-				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
+				// $today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				// $last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
+				// $data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
 
-				dd($value);
 
-				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
-				$data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
-				$data[] = $value->toArray();
+				$today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				$last_update_data_other = $this->get_model(15)->whereDate("datetested", '<', $date)->get();
+				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, 15);
+
+				// $data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
+				// $data[] = $value->toArray();
 				break;
 			}
 		}
