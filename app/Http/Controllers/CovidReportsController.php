@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\CovidSampleView;
+use App\CovidSample;
 use App\Lab;
+use App\MiscCovid;
 use Carbon\Carbon;
 use Excel;
 use DB;
@@ -34,19 +36,23 @@ class CovidReportsController extends Controller
 		// Prepare the data to fill the excel
 		$data = $this->prepareData($today_data, $last_update_data, $date);
 
+		return \App\MiscCovid::csv_download($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date, false);
+
 		// Generate the excel
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
 		return back();
 	}
 
-	private function get_model()
+	private function get_model($lab_id = null)
 	{
 		$user = auth()->user();
 		return CovidSampleView::where('repeatt', 0)
 						->whereNotNull('result')
-						->when($user, function ($query) use ($user) {
-							if ($user->user_type_id == 12)
-	                            return $query->where('lab_id', '=', $user->lab_id);
+						->when($user, function ($query) use ($user, $lab_id) {
+							if ($user->user_type_id == 12 && !$lab_id){
+								return $query->where('lab_id', $user->lab_id);
+							}
+							if($lab_id) return $query->where('lab_id', $lab_id);
 						})
 						->when((env('APP_LAB') == 5), function($query){
 							return $query->orderBy('worksheet_id', 'asc')
@@ -59,14 +65,14 @@ class CovidReportsController extends Controller
 	{
 		Excel::create($title, function($excel) use ($data, $title) {
             $excel->setTitle($title);
-            $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('COVID-19 System');
+            $excel->setCreator(auth()->user()->full_name)->setCompany('COVID-19 System');
             $excel->setDescription($title);
 
             $excel->sheet('Sheet1', function($sheet) use ($data) {
                 $sheet->fromArray($data, null, 'A1', false, false);
-                $sheet->mergeCells('A1:H1');
+                /*$sheet->mergeCells('A1:H1');
                 $sheet->mergeCells('A4:H4');
-                $sheet->mergeCells('A5:H5');
+                $sheet->mergeCells('A5:H5');*/
             });
 
         })->download('csv');
@@ -99,11 +105,22 @@ class CovidReportsController extends Controller
 
 	private function prepareData($today_data, $last_update_data, $date)
 	{
-		$data = [[Lab::find(env('APP_LAB'))->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
+		$data = [[Lab::find(auth()->user()->lab_id)->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
 		$data[] = $this->get_summary_data($today_data, $last_update_data, $date);
+
+		if(env('APP_LAB') == 1 && auth()->user()->lab_id == env('APP_LAB')){
+			$labs = CovidSample::selectRaw('DISTINCT lab_id AS lab_id')->where('lab_id', '!=', env('APP_LAB'))->where('site_entry', '!=', 2)->get();
+
+			foreach ($labs as $key => $value) {
+				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
+				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
+			}
+		}
+
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
 		}
@@ -111,15 +128,20 @@ class CovidReportsController extends Controller
 		foreach ($this->get_detailed_data($today_data) as $key => $value) {
 			$data[] = $value;
 		}
+		// dd($data);
 		
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $last_update_data, $date)
+	private function get_summary_data($today_data, $last_update_data, $date, $lab_id=null)
 	{
+		if(!$lab_id) $lab_id = auth()->user()->lab_id;
+		$lab = Lab::find($lab_id);
+		// if($lab->id != 1) dd($lab);
+
 		return [
 			$date,
-			Lab::find(env('APP_LAB'))->labdesc,
+			$lab->labdesc,
 			$last_update_data->count(),
 			$today_data->count(),
 			($last_update_data->count() + $today_data->count()),
