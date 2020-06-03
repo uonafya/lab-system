@@ -116,6 +116,7 @@ class CovidReportsController extends Controller
 				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
 
+				dd($this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id));
 
 				// $today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
 				// $last_update_data_other = $this->get_model(15)->whereRaw("DATE(datetested) < '{$date}'")->get();
@@ -126,7 +127,7 @@ class CovidReportsController extends Controller
 				break;
 			}
 		}
-		return $data;
+		// return $data;
 
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
