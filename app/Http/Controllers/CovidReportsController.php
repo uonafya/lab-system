@@ -110,12 +110,11 @@ class CovidReportsController extends Controller
 
 		if(env('APP_LAB') == 1 && auth()->user()->lab_id == env('APP_LAB')){
 			$labs = CovidSample::selectRaw('DISTINCT lab_id AS lab_id')->where('lab_id', '!=', env('APP_LAB'))->where('site_entry', '!=', 2)->get();
-			// dd($labs);
 			foreach ($labs as $key => $value) {
 				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
 				$last_update_data_other = $this->get_model($value->lab_id)->where("datetested", '<', $date)->get();
 
-				$data[] = $this->get_summary_data($today_data, $last_update_data, $date, $value->lab_id);
+				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
 			}
 		}
 
