@@ -127,7 +127,7 @@ class CovidReportsController extends Controller
 				// break;
 			}
 		}
-		dd($data);
+		// dd($data);
 		// return $data;
 
 		for ($i=0; $i < 2; $i++) { 
