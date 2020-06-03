@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('covid_allowed');   
