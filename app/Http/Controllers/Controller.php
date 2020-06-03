@@ -70,35 +70,34 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        return true;
-        $currentmonth = date('m');
-        $prevmonth = date('m')-1;
-        $year = date('Y');
-        $prevyear = $year;
-        if ($currentmonth == 1) {
-            $prevmonth = 12;
-            $prevyear -= 1;
-        }
-        $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
-        if ($equipment == 0)
-            return false;
-        $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
-        if ($performance == 0)
-            return false;
+        // $currentmonth = date('m');
+        // $prevmonth = date('m')-1;
+        // $year = date('Y');
+        // $prevyear = $year;
+        // if ($currentmonth == 1) {
+        //     $prevmonth = 12;
+        //     $prevyear -= 1;
+        // }
+        // $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
+        // if ($equipment == 0)
+        //     return false;
+        // $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
+        // if ($performance == 0)
+        //     return false;
 
-        $abbot = \App\Lab::select('abbott')->where('id', auth()->user()->lab_id)->first()->abbott;
+        // $abbot = \App\Lab::select('abbott')->where('id', auth()->user()->lab_id)->first()->abbott;
         
-        if ($abbot == 1) {//Check for both abbot and taqman
-            $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
-            if ($abbottmodel == 0)
-                return false;
-        }
+        // if ($abbot == 1) {//Check for both abbot and taqman
+        //     $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
+        //     if ($abbottmodel == 0)
+        //         return false;
+        // }
                      
-        $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
-        if ($taqmanmodel == 0)
-            return false;   
+        // $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
+        // if ($taqmanmodel == 0)
+        //     return false;   
 
-        if(in_array(env('APP_LAB'), [8])) return true;
+        // if(in_array(env('APP_LAB'), [8])) return true;
         
         $time = $this->getPreviousWeek();
         $covidsubmittedstatus = 1;
