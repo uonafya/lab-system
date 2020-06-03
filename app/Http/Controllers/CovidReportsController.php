@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CovidSampleView;
 use App\CovidSample;
 use App\Lab;
+use App\MiscCovid;
 use Carbon\Carbon;
 use Excel;
 use DB;
@@ -34,6 +35,8 @@ class CovidReportsController extends Controller
 		
 		// Prepare the data to fill the excel
 		$data = $this->prepareData($today_data, $last_update_data, $date);
+
+		return \App\MiscCovid::csv_download($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date, false);
 
 		// Generate the excel
 		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
