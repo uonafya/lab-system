@@ -296,6 +296,13 @@ p.breakhere {page-break-before: always}
 
 		</table>
 
+		@if(!auth()->user()->user_type_id)
+                You can take a screen shot and save it.  <br />
+                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->id }} <br />
+                {!! QrCode::size(400)->generate($sample->id) !!}
+
+		@endif
+
 		@if($sample->site_entry != 2)
 
 			<span class="style8" > 
