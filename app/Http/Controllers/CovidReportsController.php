@@ -153,8 +153,8 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Lab ID', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
-				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
+		$data = [['Testing Lab', 'S/N', 'Lab ID', 'Name', 'Age', 'Sex', 'ID / Passport Number', 'National ID', 'Justification', 'Health Status',
+				'Telephone Number', 'Contact Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
 		$count = 1;
@@ -189,9 +189,11 @@ class CovidReportsController extends Controller
 			$sample->age,
 			$sample->gender,
 			$sample->identifier,
+			$sample->national_id,
 			$sample->get_prop_name($lookups['covid_justifications'], 'justification'),
 			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
 			$sample->phone_no ?? '',
+			$sample->contact_phone_no ?? '',
 			$sample->countyname ?? $sample->county,
 			$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
 
