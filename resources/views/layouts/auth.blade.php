@@ -12,7 +12,9 @@
     
     <title>{{ config('app.name', 'EID/VL') }}</title>
 
+    @if(env('APP_LAB') != 23)
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
+    @endif
     <link rel="stylesheet" href="{{ asset('vendor/metisMenu/dist/metisMenu.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/animate.css/animate.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />
