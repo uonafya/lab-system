@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnsAllocationTable extends Migration
+class CreateAllocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,6 @@ class AddColumnsAllocationTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('allocations');
         Schema::create('allocations', function(Blueprint $table){
             $table->bigIncrements('id');
             $table->bigInteger('national_id')->nullable();
@@ -21,6 +20,7 @@ class AddColumnsAllocationTable extends Migration
             $table->tinyInteger('testtype');
             $table->integer('year');
             $table->tinyInteger('month');
+            $table->string('order_num', 20)->after('month')->nullable();
             $table->date('datesubmitted')->nullable();
             $table->string('submittedby', 100)->nullable();
             $table->tinyInteger('lab_id')->nullable();
@@ -42,6 +42,6 @@ class AddColumnsAllocationTable extends Migration
      */
     public function down()
     {
-        //
+        // Schema::dropIfExists('allocations');
     }
 }
