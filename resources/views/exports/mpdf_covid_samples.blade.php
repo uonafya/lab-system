@@ -293,18 +293,22 @@ p.breakhere {page-break-before: always}
 					</td>
 				</tr>
 			@endif
+		
+			@if(!auth()->user()->user_type_id)
+				<tr>
+					<td colspan="5" class="style4 style1 comment">
+		                You can take a screen shot and save it.  <br />
+		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+		                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
+					</td>
+					<td colspan="2" class="style4 style1 comment">
+					</td>
+	            </tr>
+
+			@endif
 
 
 		</table>
-		
-			@if(!auth()->user()->user_type_id)
-				<!-- <tr> -->
-	                You can take a screen shot and save it.  <br />
-	                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-	                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
-	            <!-- </tr> -->
-
-			@endif
 
 		@if($sample->site_entry != 2)
 
