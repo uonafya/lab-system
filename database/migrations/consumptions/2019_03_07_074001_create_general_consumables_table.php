@@ -16,6 +16,7 @@ class CreateGeneralConsumablesTable extends Migration
         Schema::create('general_consumables', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->unit('unit')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
