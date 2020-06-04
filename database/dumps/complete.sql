@@ -986,8 +986,7 @@ LOCK TABLES `testtype` WRITE;
 INSERT INTO `testtype` VALUES (1,'EID','Qualitative'),(2,'VL','Quantitative');
 /*!40000 ALTER TABLE `testtype` ENABLE KEYS */;
 UNLOCK TABLES;
-SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 
 
 -- Dump completed on 2020-06-04 10:27:28
