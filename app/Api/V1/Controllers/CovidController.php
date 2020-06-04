@@ -45,7 +45,7 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(Str::contains(url()->current(), 'test')){
+        if(str_contains(url()->current(), 'test')){
             config(['database.default' => 'test']);
         }
 
@@ -99,7 +99,7 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(Str::contains(url()->current(), 'test')){
+        if(str_contains(url()->current(), 'test')){
             config(['database.default' => 'test']);
         }
 
@@ -148,7 +148,7 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(Str::contains(url()->current(), 'test')){
+        if(str_contains(url()->current(), 'test')){
             config(['database.default' => 'test']);
         }
 
@@ -220,7 +220,7 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(Str::contains(url()->current(), 'test')){
+        if(str_contains(url()->current(), 'test')){
             config(['database.default' => 'test']);
         }
 
