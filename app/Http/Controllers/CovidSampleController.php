@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('covid_allowed');   
@@ -185,11 +184,13 @@ class CovidSampleController extends Controller
             $data[] = [
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
+                'National ID' => $sample->national_id,
                 'Patient Name' => $sample->patient_name,
-                'Age' => $sample->age,
+                'Phone Number' => $sample->phone_no,
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Worksheet Number' => $sample->worksheet_id,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->datetested,

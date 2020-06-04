@@ -226,6 +226,13 @@
                         @if(env('APP_LAB') == 4)
 
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">Automatically Add MFL Code to CCC Number</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="automatic_mfl" value="1" checked="checked" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">Automatically Add Slash to CCC Number</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="automatic_slash" value="1" checked="checked" />
