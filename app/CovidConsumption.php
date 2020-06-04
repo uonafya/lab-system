@@ -57,6 +57,7 @@ class CovidConsumption extends BaseModel
     public function lastweekConsumption()
     {
         $time = $this->getPreviousWeek();
+        dd($time);
         return $this->whereDate('start_of_week', $time->week_start)->get();
     }
 

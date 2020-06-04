@@ -19,7 +19,6 @@ class ConsumptionSubmission
         if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed) {
             // Check if COVID consumption has been submitted
             $covid = new CovidConsumption;
-            // dd($covid->lastweekConsumption());
             if ($covid->lastweekConsumption()->isEmpty()){
                 return redirect('/pending');
             }
