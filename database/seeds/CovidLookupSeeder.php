@@ -188,7 +188,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 11, 'name' => 'Food Handlers'],
 		]);
 
-		return;
+		// return;
 
 		DB::statement("DROP TABLE IF EXISTS `covid_test_types`;");
 		DB::statement("
