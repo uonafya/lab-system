@@ -4,14 +4,18 @@ namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\BlankRequest;
-use Illuminate\Support\Str;
 
-use App\CovidPatient;
-use App\CovidSample;
-use App\CovidTravel;
+use App\CovidModels\CovidPatient;
+use App\CovidModels\CovidSample;
+use App\CovidModels\CovidTravel;
 use App\Facility;
-use App\Lab;
+use App\ViewFacility;
+use App\CovidModels\Lab;
 use DB;
+
+use App\CovidTestModels\CovidPatient as TestPatient;
+use App\CovidTestModels\CovidSample as TestSample;
+
 
 /**
  * Covid Controller resource representation.
@@ -45,11 +49,11 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(str_contains(url()->current(), 'test')){
-            config(['database.default' => 'test']);
-        }
 
-        return CovidSample::with(['patient'])
+        $sample_class = CovidSample::class;
+        if(str_contains(url()->current(), 'test')) $sample_class = TestSample::class;
+
+        return $sample_class::with(['patient'])
             ->where('repeatt', 0)
             ->when($lab->id != 11, function($query) use ($lab){
                 return $query->where('lab_id', $lab->id);
@@ -99,21 +103,25 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(str_contains(url()->current(), 'test')){
-            config(['database.default' => 'test']);
-        }
+
 
         $p = new CovidPatient;
+        if(str_contains(url()->current(), 'test')) $p = TestPatient::class;
         $p->fill($request->only(['case_id', 'nationality', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
         else{
             $p->nhrl_patient_id = $request->input('patient_id');
         }
         $p->facility_id = Facility::locate($request->input('facility'))->first()->id ?? null;
+        if($p->county){            
+            $county = DB::table('countys')->where('name', $p->county)->first();
+            $p->county_id = $county->id ?? null;
+        }
         $p->save();
 
         $s = new CovidSample;
-        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'datecollected']));
+        if(str_contains(url()->current(), 'test')) $s = TestSample::class;
+        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected']));
         $s->patient_id = $p->id;
         if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
         else{
@@ -148,15 +156,15 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(str_contains(url()->current(), 'test')){
-            config(['database.default' => 'test']);
-        }
 
         $column = 'nhrl_sample_id';
         if($lab->id == 11) $column = 'cif_sample_id';
 
+        $sample_class = CovidSample::class;
+        if(str_contains(url()->current(), 'test')) $sample_class = TestSample::class;
+
         // $s = CovidSample::findOrFail($id);
-        $s = CovidSample::where([$column => $id])->first();
+        $s = $sample_class::where([$column => $id])->first();
         if(!$s) abort(404);
         $s->load(['patient']);
 

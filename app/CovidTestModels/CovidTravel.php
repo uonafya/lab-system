@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CovidModels;
+namespace App\CovidTestModels;
 
 use Illuminate\Database\Eloquent\Model;
 
