@@ -40,7 +40,7 @@
                                         @foreach($machines as $machine)
                                             <option value="{{ $machine->id }}"> {{ $machine->machine }} </option>
                                         @endforeach
-                                        <option value="0"> Manual </option>
+                                        <!-- <option value="0"> Manual </option> -->
                                     </select>
                                 </div>
                             </div>
