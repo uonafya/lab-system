@@ -60,7 +60,7 @@ class Common
 
 
 
-	public static function csv_download($data, $file_name='page-data-export')
+	public static function csv_download($data, $file_name='page-data-export', $first_row=true)
 	{
 		if(!$data) return;
 		header('Content-Description: File Transfer');
@@ -71,12 +71,16 @@ class Common
 		$fp = fopen('php://output', 'w');
 		// ob_clean();
 
-		$first = [];
+		if($first_row){
 
-		foreach ($data[0] as $key => $value) {
-			$first[] = $key;
+			$first = [];
+
+			foreach ($data[0] as $key => $value) {
+				$first[] = $key;
+			}
+			fputcsv($fp, $first);
+
 		}
-		fputcsv($fp, $first);
 
 		foreach ($data as $key => $value) {
 			fputcsv($fp, $value);
