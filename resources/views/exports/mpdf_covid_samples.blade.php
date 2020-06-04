@@ -294,16 +294,17 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 
-			@if(!auth()->user()->user_type_id)
-				<tr>
-	                You can take a screen shot and save it.  <br />
-	                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-	                {!! QrCode::size(400)->generate($sample->national_sample_id) !!}
-	            </tr>
-
-			@endif
 
 		</table>
+		
+			@if(!auth()->user()->user_type_id)
+				<!-- <tr> -->
+	                You can take a screen shot and save it.  <br />
+	                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+	                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
+	            <!-- </tr> -->
+
+			@endif
 
 		@if($sample->site_entry != 2)
 
