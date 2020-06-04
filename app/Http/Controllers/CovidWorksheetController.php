@@ -546,6 +546,7 @@ class CovidWorksheetController extends Controller
                 }
 
                 $sample->repeatt=0;
+                $sample->datetested = $today;
 
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
