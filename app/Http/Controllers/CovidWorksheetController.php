@@ -300,6 +300,20 @@ class CovidWorksheetController extends Controller
     {
         //
     }
+    
+    public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
+    {
+        // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
+            return back();            
+        }
+        $worksheet->machine_type = $machine_type;
+        $worksheet->save();
+        session(['toast_message' => 'The worksheet has been converted.']);
+        return back();
+        // return redirect('viralworksheet/' . $worksheet->id . '/edit');
+    }
 
     public function labels(CovidWorksheet $worksheet)
     {
@@ -433,7 +447,7 @@ class CovidWorksheetController extends Controller
                 $target2 = $value[7];
                 $flag = $value[3];
 
-                $result_array = MiscCovid::sample_result($target1, $target2, $flag);
+                $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
 
 
                 MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['interpretation']);
@@ -458,7 +472,60 @@ class CovidWorksheetController extends Controller
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
-        }else{
+        }
+        // Abbott
+        else if($worksheet->machine_type == 2){
+            $data = Excel::load($file, function($reader){
+                $reader->toArray();
+            })->get();
+
+            $bool = false;
+            $positive_control = $negative_control = "Passed";
+
+            foreach ($data as $key => $value) {
+                if($value[5] == "RESULT"){
+                    $bool = true;
+                    continue;
+                }
+
+                if($bool){
+                    $sample_id = $value[1];
+                    $interpretation = $value[5];
+                    $error = $value[10];
+
+                    $data_array = MiscCovid::sample_result($interpretation, $error);
+
+                    // if($sample_id == "COV-2_NEG") $negative_control = $data_array;
+                    // if($sample_id == "COV-2_POS") $positive_control = $data_array;
+
+                    if(!is_numeric($sample_id)){
+                        $s = strtolower($sample_id);
+
+                        if(str_contains($s, 'neg')) $negative_control = $data_array;
+                        else if(str_contains($s, 'pos')) $positive_control = $data_array;
+
+                    }
+
+                    $data_array = array_merge($data_array, ['datetested' => $today]);
+                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
+                    // Sample::where($search)->update($data_array);
+
+                    $sample_id = (int) $sample_id;
+                    $sample = CovidSample::find($sample_id);
+                    if(!$sample) continue;
+
+                    $sample->fill($data_array);
+                    if($cancelled) $sample->worksheet_id = $worksheet->id;
+                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
+                    $sample->save();
+                }
+
+                if($bool && $value[5] == "RESULT") break;
+            }
+
+        }
+        else{
             session(['toast_error' => 1, 'toast_message' => 'The worksheet type is not supported.']);
             return back();
         }

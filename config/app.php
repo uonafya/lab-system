@@ -173,8 +173,6 @@ return [
         Barryvdh\Cors\ServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
-        // Barryvdh\DomPDF\ServiceProvider::class,
-        // niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
 
         /*
          * Application Service Providers...

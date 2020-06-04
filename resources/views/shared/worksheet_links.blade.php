@@ -7,17 +7,26 @@
 		Print
 	</a> | 
 	
-	@if($worksheet->machine_type == 2)
-		@if($worksheet->samples_no < 23)
-			<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
-				Convert to Roche/Taqman
-			</a> |
-		@endif
-	@else
-		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
-			Convert to Abbott
+	@if($worksheet->samples_no < 23)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
+			Convert to Roche/Taqman
 		</a> |
 	@endif
+
+	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
+		Convert to Abbott
+	</a> |
+	
+	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" target='_blank'>
+		Convert to C8800
+	</a> |
+	
+	@if($worksheet->route_name == 'viralworksheet')
+	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" target='_blank'>
+		Convert to Pantha
+	</a> |
+	@endif
+
 
 	@if(in_array(env('APP_LAB'), [1, 4, 5]))
 		<a href="{{ url($worksheet->route_name . '/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
@@ -49,6 +58,10 @@
 	</a>
 
 @elseif($worksheet->status_id == 3 || $worksheet->status_id == 5)
+
+	@if(in_array(env('APP_LAB'), [8,9]) && $worksheet->route_name == 'viralworksheet')
+		{!! $worksheet->dump_link !!}
+	@endif
 
 	<a href="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}" title="Click to view Samples in this Worksheet" target='_blank'>
 		View Results

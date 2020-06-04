@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
 
 class CovidSampleController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('covid_allowed');   
@@ -185,11 +184,13 @@ class CovidSampleController extends Controller
             $data[] = [
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
+                'National ID' => $sample->national_id,
                 'Patient Name' => $sample->patient_name,
-                'Age' => $sample->age,
+                'Phone Number' => $sample->phone_no,
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Worksheet Number' => $sample->worksheet_id,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->datetested,
@@ -531,14 +532,14 @@ class CovidSampleController extends Controller
 
     public function set_cif_samples(Request $request)
     {
-        $samples = $request->input('samples');
+        $samples = $request->input('sample_ids');
         if(!$samples){
             session(['toast_error' => 1, 'toast_message' => 'No samples selected.']);
             return back();            
         }
         \App\Synch::set_covid_samples($samples);
         session(['toast_message' => 'The sample have been set to come to the lab.']);
-        return redirect();        
+        return redirect('covid_sample');        
     }
 
 
@@ -561,14 +562,19 @@ class CovidSampleController extends Controller
             
             $quarantine_site = null;
 
-            $facility = Facility::locate($data[3])->first();
-            if(!$facility && !is_numeric($data[3])){
-                $quarantine_site = \App\QuarantineSite::where(['name' => $data[3]])->first();
+            $facility = Facility::locate($data[2])->first();
+            if(!$facility && !is_numeric($data[2])){
+                $quarantine_site = \App\QuarantineSite::where(['name' => $data[2]])->first();
             }
 
             $p = CovidPatient::create([
                 'identifier' => $data[3],
+                'national_id' => $data[19],
+                'phone_no' => $data[15],
                 'county' => $data[4],
+                'subcounty' => $data[16],
+                'ward' => $data[17],
+                'residence' => $data[18],
                 'facility_id' => $facility->id ?? 3475,
                 'quarantine_site_id' => $quarantine_site->id ?? null,
                 'patient_name' => $data[5],
