@@ -19,93 +19,93 @@
 
 <div class="row">
     <div class="col-md-12">
-    {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
-    @php
-        $kits = $covidkits->where('type', 'Kit');
-        if ($kits->isEmpty())
-            $kits = $covidkits->where('type', 'Manual');
-        $kittypes = [
-                'kits' => $kits,
-                'consumables' => $covidkits->where('type', 'Consumable')
-            ];
-    @endphp
+    {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'covid_consumption']) }}
     <input type="hidden" name="week_start" value="{{ $time->week_start }}">
     <input type="hidden" name="week_end" value="{{ $time->week_end }}">
-    @foreach($kittypes as $typekey => $kits)
+    @foreach($covidkits as $machinekey => $kits)
+        @php
+            $machine = \App\Machine::find($machinekey);
+            if ($machine)
+                $machinename = $machine->machine . ' Kits';
+            else
+                $machinename = 'Consumables';
+        @endphp
         <div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
                     <center><strong>Please enter the Kits received from KEMSA</strong></center>
                 </div>
                 <div class="alert alert-info">
-                    <center><i class="fa fa-bolt"></i> Please enter {{ ucfirst($typekey) }} consumption values below for the week starting {{ $time->week_start }} and ending {{ $time->week_end }}.
-                    @if($typekey == 'kits')
-                        <strong>(Week`s Tests:{{ number_format($tests) }})</strong>    
+                    <center><i class="fa fa-bolt"></i> Please enter <strong>{{ ucfirst($machinename) }}</strong> consumption values below for the week starting {{ $time->week_start }} and ending {{ $time->week_end }}.
+                    @if($machine)
+                        <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($time->week_start, $time->week_end)) }})</strong>
+                        <input type="hidden" name="machine[]" value="{{ $machine->id }}">   
                     @endif
                     </center>
                 </div>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;width: 100%">
-                    <thead>               
-                        <tr>
-                            <th>Material Number</th>
-                            <th>Product Description</th>
-                            @if($typekey == 'kits')
-                            <th>Pack Size</th>
-                            <th>Calculated Pack Size by Number of Tests</th>
-                            @endif
-                            <th>{{ ucfirst($typekey) }} Used</th>
-                            <th>Begining Balance</th>
-                            <th>{{ ucfirst($typekey) }} Received From KEMSA</th>
-                            <th>Positive Adjustments</th>
-                            <th>Negative Adjustments</th>
-                            <th>Losses/Wastage</th>
-                            <th>Ending Balance</th>
-                            <th>Requested {{ ucfirst($typekey) }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($kits as $kitkey => $kit)
-                        <tr>
-                            <td>{{ $kit->material_no }}</td>
-                            <td>{{ $kit->product_description }}</td>                            
-                            @if($typekey == 'kits')
-                            <td>{{ $kit->pack_size }}</td>
-                            <td>{{ $kit->calculated_pack_size }}</td>
-                            @endif
-                            @php
-                                $kitsused = $kit->computekitsUsed($tests);
-                            @endphp
-                            <td>                            
-                                <input class="form-control kits_used" type="number" name="kits_used[{{$kit->material_no}}]" id="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" required="true">
-                            </td>
-                            <td>
-                                <input class="form-control begining_balance" type="text" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance($time->week_start) ?? 0}}" required="true">
-                            </td>
-                            <td>
-                                <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
-                            </td>
-                            <td>
-                                <input class="form-control positive" type="number" name="positive[{{$kit->material_no}}]" id="positive[{{$kit->material_no}}]" value="0" min="0" required>
-                            </td>
-                            <td>
-                                <input class="form-control negative" type="number" name="negative[{{$kit->material_no}}]" id="negative[{{$kit->material_no}}]" value="0" min="0" required>
-                            </td>
-                            <td>
-                                <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
-                            </td>
-                            <td>
-                                <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}" min="0" disabled="true">
-                                <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}">
-                            </td>
-                            <td>
-                                <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;width: 100%">
+                        <thead>               
+                            <tr>
+                                <th>Material Number</th>
+                                <th>Product Description</th>
+                                @if($machinekey != '')
+                                <th>Pack Size</th>
+                                <th>Calculated Pack Size by Number of Tests</th>
+                                @endif
+                                <th>{{ ucfirst($machinename) }} Used</th>
+                                <th>Begining Balance</th>
+                                <th>{{ ucfirst($machinename) }} Received From KEMSA</th>
+                                <th>Positive Adjustments</th>
+                                <th>Negative Adjustments</th>
+                                <th>Losses/Wastage</th>
+                                <th>Ending Balance</th>
+                                <th>Requested {{ ucfirst($machinename) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($kits as $kitkey => $kit)
+                            <tr>
+                                <td>{{ $kit->material_no }}</td>
+                                <td>{{ $kit->product_description }}</td>                            
+                                @if($machinekey != '')
+                                <td>{{ $kit->pack_size }}</td>
+                                <td>{{ $kit->calculated_pack_size }}</td>
+                                @endif
+                                @php
+                                    if($machinekey != '')
+                                        $kitsused = $kit->computekitsUsed($machine->getCovidTestsDone($time->week_start, $time->week_end));
+                                @endphp
+                                <td>                            
+                                    <input class="form-control kits_used" type="number" name="kits_used[{{$kit->material_no}}]" id="kits_used[{{$kit->material_no}}]" value="{{$kitsused}}" min="0" required="true">
+                                </td>
+                                <td>
+                                    <input class="form-control begining_balance" type="text" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="{{$kit->beginingbalance($time->week_start) ?? 0}}" required="true">
+                                </td>
+                                <td>
+                                    <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
+                                </td>
+                                <td>
+                                    <input class="form-control positive" type="number" name="positive[{{$kit->material_no}}]" id="positive[{{$kit->material_no}}]" value="0" min="0" required>
+                                </td>
+                                <td>
+                                    <input class="form-control negative" type="number" name="negative[{{$kit->material_no}}]" id="negative[{{$kit->material_no}}]" value="0" min="0" required>
+                                </td>
+                                <td>
+                                    <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
+                                </td>
+                                <td>
+                                    <input class="form-control ending" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}" min="0" disabled="true">
+                                    <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     @endforeach
@@ -191,6 +191,27 @@
                 if (wastageval == '')
                     wastageval = 0;
                 updateendingbalance("wastage", wastage, (parseInt(wastageval)*-1));
+            });
+
+            $('#covid_consumption').submit(function(e){
+                console.log('Reading inputs');
+                var inputs = $(".ending");
+                for(var i = 0; i < inputs.length; i++){
+                    if ($(inputs[i]).val() < 0) {
+                        e.preventDefault();
+                        setTimeout(function(){
+                            toastr.options = {
+                                closeButton: false,
+                                progressBar: false,
+                                showMethod: 'slideDown',
+                                timeOut: 10000
+                            };
+                            toastr.error("No negative ending balances are allowed. Please fill in the respective kits received to proceed with this submission", "Warning!");
+                        });
+                        break;
+                    }
+                }
+                // console.log(inputs);
             });
         });
 

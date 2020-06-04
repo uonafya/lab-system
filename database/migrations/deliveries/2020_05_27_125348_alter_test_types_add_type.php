@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterAllocationsAddOrderNumber extends Migration
+class AlterTestTypesAddType extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AlterAllocationsAddOrderNumber extends Migration
      */
     public function up()
     {
-        Schema::table('allocations', function(Blueprint $table){
-            $table->string('order_num', 20)->after('month')->nullable();
+        Schema::table('testtype', function (Blueprint $table){
+            $table->string('type')->nullable();
         });
     }
 

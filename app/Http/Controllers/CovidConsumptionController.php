@@ -6,6 +6,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\CovidSample;
+use App\Machine;
 use App\Synch;
 use DB;
 use Illuminate\Http\Request;
@@ -26,12 +27,13 @@ class CovidConsumptionController extends Controller
         $time = collect($weeks)->first();
         $user = auth()->user();
     	$tests = $consumption->getTestsDone($time->week_start, $time->week_end);
-        $kits = CovidKit::when($user, function($query) use ($user){
+        $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
                                         if ($user->user_type_id == 12)
                                             return $query->where('type', '<>', 'Kit');
                                         else
                                             return $query->where('type', '<>', 'Manual');
-                                    })->get();
+                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
+        
         // dd($kits);
     	return view('tasks.covid.consumption',
     		[
@@ -53,6 +55,15 @@ class CovidConsumptionController extends Controller
 
     public function submitConsumption(Request $request)
     {
+        if ($request->has('ending')){
+            foreach ($request->input('ending') as $key => $value) {
+                $value = (int)$value;
+                if ($value < 0){
+                    session(['toast_message' => 'No negative ending balances are allowed. Please fill in the respective kits received to proceed with this submission', 'toast_error' => true]);
+                    return back();
+                }
+            }
+        }
         $consumption = new CovidConsumption;
         $time = collect($consumption->getMissingConsumptions())->first();
         // $time = $this->getPreviousWeek();
@@ -63,7 +74,11 @@ class CovidConsumptionController extends Controller
         }
         
         $data = $this->buildConsumptionData($request);
-    	
+        $tests = [];
+    	foreach ($request->input('machine') as $key => $id) {
+            $machine = Machine::find($id);
+            $tests[] = [$machine->machine => $machine->getCovidTestsDone($time->week_start, $time->week_end)];
+        }
         if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
             // Start transaction!
             DB::beginTransaction();
@@ -79,7 +94,7 @@ class CovidConsumptionController extends Controller
                                 'week' => $time->week,
                                 'lab_id' => $lab
                             ]);
-                $consumption->tests = $consumption->getTestsDone($consumption->start_of_week, $consumption->end_of_week);
+                $consumption->tests = json_encode($tests);
                 $consumption->save();
 
                 foreach ($data as $key => $detail) {
@@ -109,9 +124,17 @@ class CovidConsumptionController extends Controller
 
     public function reports(Request $request, CovidConsumption $consumption)
     {
-        if (null !== $consumption->start_of_week)
-            return view('reports.covidconsumptiondetails', ['consumption' => $consumption]);
         $user = auth()->user();
+        if (null !== $consumption->start_of_week){
+
+            $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
+                                        if ($user->user_type_id == 12)
+                                            return $query->where('type', '<>', 'Kit');
+                                        else
+                                            return $query->where('type', '<>', 'Manual');
+                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
+            return view('reports.covidconsumptiondetails', ['consumption' => $consumption, 'covidkits' => $kits]);
+        }
     	return view('reports.covidconsumption',
                     ['consumptions' => CovidConsumption::when($user, function ($query) use ($user){
                                                 if ($user->user_type_id == 12)

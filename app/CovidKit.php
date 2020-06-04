@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class CovidKit extends BaseModel
 {
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class, 'machine', 'id');
+    }
+
+    public function details()
+    {
+        return $this->hasMany(CovidConsumptionDetail::class, 'kit_id', 'id');
+    }
+
     public function computekitsUsed($tests)
     {
     	if ($tests == 0 || $this->calculated_pack_size == NULL)
@@ -29,6 +39,11 @@ class CovidKit extends BaseModel
     	}
     								
     	return $balance;
+    }
+
+    public function specific_details($consumption_id)
+    {
+        return $this->details->where('consumption_id', $consumption_id)->first();
     }
 
  //    private function getPreviousWeek()

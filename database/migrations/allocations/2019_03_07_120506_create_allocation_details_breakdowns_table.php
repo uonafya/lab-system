@@ -23,6 +23,7 @@ class CreateAllocationDetailsBreakdownsTable extends Migration
             $table->tinyInteger('synched')->default(0)->comment("0:Awaiting synching; 1:Synched; 2:Update awaiting synching;");
             $table->date('datesynched')->nullable();
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 

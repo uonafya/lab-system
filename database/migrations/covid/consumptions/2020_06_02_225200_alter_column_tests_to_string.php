@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterAllocationsAddMachinesAndTestType extends Migration
+class AlterColumnTestsToString extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class AlterAllocationsAddMachinesAndTestType extends Migration
      */
     public function up()
     {
-        Schema::table('allocations', function(Blueprint $table){
-            // $table->integer('machine_id')->after('national_id');
-            // $table->dropColumn('kit_id');
-            // $table->dropColumn('allocated');
-            // $table->dropColumn('issued');
+        Schema::table('covid_consumptions', function (Blueprint $table){
+            $table->string('tests')->nullable()->change();
         });
     }
 

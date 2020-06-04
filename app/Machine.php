@@ -12,6 +12,16 @@ class Machine extends Model
     	return $this->hasMany('App\Kits');
     }
 
+    public function deliveries()
+    {
+        return $this->hasMany(Deliveries::class, 'machine', 'id');
+    }
+
+    public function consumptions()
+    {
+        return $this->hasMany(Consumption::class, 'machine', 'id');
+    }
+
     public function eid_worksheets()
     {
         return $this->hasMany(Worksheet::class, 'machine_type', 'id');
@@ -20,6 +30,31 @@ class Machine extends Model
     public function viral_worksheets()
     {
         return $this->hasMany(Viralworksheet::class, 'machine_type', 'id');
+    }
+
+    public function covid_worksheets()
+    {
+        return $this->hasMany(CovidWorksheet::class, 'machine_type', 'id');
+    }
+
+    public function missingDeliveries($year, $month)
+    {
+        $data = [];
+        foreach ($this->get() as $key => $machine) {
+            if ($machine->deliveries->where('year', $year, 'month', $month)->isEmpty())
+                $data[] = $machine;
+        }
+        return $data;
+    }
+
+    public function missingConsumptions($year, $month)
+    {
+        $data = [];
+        foreach ($this->get() as $key => $machine) {
+            if ($machine->consumptions->where('year', $year, 'month', $month)->isEmpty())
+                $data[] = $machine;
+        }
+        return $data;
     }
 
     public function testsforLast3Months() {
@@ -41,6 +76,25 @@ class Machine extends Model
     	// 		->first()->tests;
 
     	return (object)['EID' => $eid, 'VL' => $vl];
+    }
+
+    public function tests_done($type, $year, $month)
+    {
+        if ($type == 'EID')
+            return Sample::selectRaw("count(*) as tests")
+                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                    ->where('worksheets.machine_type', $this->id)
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->first()->tests;
+
+        if ($type == 'VL')
+            return Viralsample::selectRaw("count(*) as tests")
+                    ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                    ->where('viralworksheets.machine_type', $this->id)
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->first()->tests;
     }
 
     public function saveNullAllocation()
@@ -86,6 +140,21 @@ class Machine extends Model
             }
         }
         return true;
+    }
+
+    public function getCovidTestsDone($start_date, $end_date)
+    {
+        $user = auth()->user();
+        return CovidSample::selectRaw("count(*) as `samples`")
+                        ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+                        ->whereBetween('datetested', [$start_date, $end_date])
+                        ->where('machine_type', $this->id)
+                        ->when($user, function($query) use ($user){
+                            if ($user->user_type_id == 12)
+                                return $query->where('covid_samples.lab_id', $user->lab_id);
+                            else
+                                return $query->where('covid_samples.lab_id', env('APP_LAB'));
+                        })->first()->samples;
     }
 
 }
