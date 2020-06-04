@@ -118,20 +118,8 @@ class CovidReportsController extends Controller
 				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
 				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
 				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
-
-				// dd($this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id));
-
-				// $today_data_other = $this->get_model(15)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
-				// $last_update_data_other = $this->get_model(15)->whereRaw("DATE(datetested) < '{$date}'")->get();
-				// $data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, 15);
-
-				// $data[] = [$key, $value->lab_id, $value->toJson(), Lab::find($value->lab_id)->toJson()];
-				// $data[] = $value->toArray();
-				// break;
 			}
 		}
-		// dd($data);
-		// return $data;
 
 		for ($i=0; $i < 2; $i++) { 
 			$data[] = [""];
@@ -165,7 +153,7 @@ class CovidReportsController extends Controller
 
 	private function get_detailed_data($alldata)
 	{
-		$data = [['Testing Lab', 'S/N', 'Lab ID', 'Name', 'Age', 'Sex', 'ID/ Passport Number', 'Justification', 'Health Status',
+		$data = [['Testing Lab', 'S/N', 'Lab ID', 'Name', 'Age', 'Sex', 'ID / Passport Number', 'National ID', 'Justification', 'Health Status',
 				'Telephone Number', 'County of Residence', 'Sub-County', 'Travel History (Y/N)',
 				'Where from', 'history of contact with confirmed case', 'Facility Name (Quarantine /health facility)', 'Name of Confirmed Case', 'Worksheet Number', 'Date Collected', 'Date Tested', 'Result', 'Test Type'
 				]];
@@ -201,6 +189,7 @@ class CovidReportsController extends Controller
 			$sample->age,
 			$sample->gender,
 			$sample->identifier,
+			$sample->national_id,
 			$sample->get_prop_name($lookups['covid_justifications'], 'justification'),
 			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
 			$sample->phone_no ?? '',
