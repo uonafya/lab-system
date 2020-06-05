@@ -32,19 +32,6 @@
                             @include('partial.select', ['model' => null, 'prop' => 'machine_type', 'prop2' => 'machine', 'required' => true, 'label' => 'Machine', 'items' => $machines, ])
 
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Machine</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" required name="machine_type" id="machine_type">
-                                        <option></option>
-                                        @foreach($machines as $machine)
-                                            <option value="{{ $machine->id }}"> {{ $machine->machine }} </option>
-                                        @endforeach
-                                        <!-- <option value="0"> Manual </option> -->
-                                    </select>
-                                </div>
-                            </div>
-
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Sample Number</label>

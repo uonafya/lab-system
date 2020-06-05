@@ -294,7 +294,7 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id)
+			@if(!auth()->user()->user_type_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                You can take a screen shot and save it.  <br />
