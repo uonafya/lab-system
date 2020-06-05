@@ -57,15 +57,30 @@ p.breakhere {page-break-before: always}
 
 		<table id="table1" align="center">
 
-			<tr>
-				<td colspan="7" align="center">
-					<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
-					<span class="style1"><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  COVID-19 RESULT FORM</span>
-					</span>
-				</td>
-			</tr>
+			@if(env('APP_LAB') == 23)
+				<tr>
+					<td colspan="7" align="center">
+						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="NASCOP"></strong> 
+						<span class="style1"><br>
+						<span class="style7">
+						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
+							P.O. BOX 7674-00100, GPO, NAIROBI <br />
+							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke
+						</span>
+						</span>
+					</td>
+				</tr>
+			@else
+				<tr>
+					<td colspan="7" align="center">
+						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						<span class="style1"><br>
+						  <span class="style7">MINISTRY OF HEALTH <br />
+						  COVID-19 RESULT FORM</span>
+						</span>
+					</td>
+				</tr>
+			@endif
 			<tr>
 				<td colspan="4" class="comment style1 style4">
 					<strong> Facility.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? $sample->patient->quarantine_site->name ?? '' }} </strong> 
@@ -294,10 +309,9 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id && $sample->result == 1)
+			@if(!auth()->user()->user_type_id && $sample->result == 1 && 0)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-		                You can take a screen shot and save it.  <br />
 		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
 		                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
 					</td>
