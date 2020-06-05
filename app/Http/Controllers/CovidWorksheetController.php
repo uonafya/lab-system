@@ -523,6 +523,39 @@ class CovidWorksheetController extends Controller
 
                 if($bool && $value[5] == "RESULT") break;
             }
+        }
+        // Manual
+        else if($worksheet->machine_type == 0){
+            $handle = fopen($file, "r");
+            while (($value = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                $sample_id = $value[0];
+
+                $sample_id = (int) $sample_id;
+                $sample = CovidSample::find($sample_id);
+                if(!$sample) continue;
+
+                $res = $value[1];
+                $sample->repeatt=0;
+
+                if(str_contains($res, ['Pos', 'pos'])){
+                    $sample->result = 2;
+                }else if(str_contains($res, ['Neg', 'neg'])){
+                    $sample->result = 1;
+                }else if(str_contains($res, ['Fai', 'fai'])){
+                    $sample->result = 3;
+                    $sample->repeatt = 1;
+                }else if(str_contains($res, ['Coll', 'coll'])){
+                    $sample->result = 5;
+                }
+
+                $sample->datetested = $today;
+
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
+                $sample->save();
+            }
 
         }
         else{
@@ -540,11 +573,11 @@ class CovidWorksheetController extends Controller
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
-        $worksheet->neg_control_interpretation = $negative_control['interpretation'];
-        $worksheet->neg_control_result = $negative_control['result'];
+        $worksheet->neg_control_interpretation = $negative_control['interpretation'] ?? null;
+        $worksheet->neg_control_result = $negative_control['result'] ?? null;
 
-        $worksheet->pos_control_interpretation = $positive_control['interpretation'];
-        $worksheet->pos_control_result = $positive_control['result'];
+        $worksheet->pos_control_interpretation = $positive_control['interpretation'] ?? null;
+        $worksheet->pos_control_result = $positive_control['result'] ?? null;
         $worksheet->daterun = $datetested;
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
