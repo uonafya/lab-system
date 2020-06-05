@@ -536,16 +536,19 @@ class CovidWorksheetController extends Controller
                 if(!$sample) continue;
 
                 $res = $value[1];
+                $sample->repeatt=0;
 
                 if(str_contains($res, ['Pos', 'pos'])){
                     $sample->result = 2;
                 }else if(str_contains($res, ['Neg', 'neg'])){
                     $sample->result = 1;
-                }else if(str_contains($res, ['Coll', 'coll', 'fai', 'Fai'])){
+                }else if(str_contains($res, ['Fai', 'fai'])){
+                    $sample->result = 3;
+                    $sample->repeatt = 1;
+                }else if(str_contains($res, ['Coll', 'coll'])){
                     $sample->result = 5;
                 }
 
-                $sample->repeatt=0;
                 $sample->datetested = $today;
 
                 if($cancelled) $sample->worksheet_id = $worksheet->id;

@@ -39,7 +39,7 @@ $api->version('v1', function (Router $api) {
 
             $api->post('covid_sample/transfer', 'CovidSampleController@transfer');
             $api->resource('covid_sample', 'CovidSampleController');
-            $api->resource('covid_patient', 'CovidPatientController');
+            // $api->resource('covid_patient', 'CovidPatientController');
 
             $api->resource('batch', 'BatchController');
             $api->resource('viralbatch', 'ViralbatchController');
@@ -78,6 +78,12 @@ $api->version('v1', function (Router $api) {
             // });
             
         // });
+                
+        $api->resource('covid', 'CovidController');
+        
+        $api->group(['prefix' => 'test'], function(Router $api) {
+            $api->resource('covid', 'CovidController');
+        });
     });
 
 
