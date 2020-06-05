@@ -3,7 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Api\V1\Requests\BlankRequest;
+use App\Api\V1\Requests\CovidRequest;
 
 use App\CovidModels\CovidPatient;
 use App\CovidModels\CovidSample;
@@ -45,7 +45,7 @@ class CovidController extends Controller
      *      }
      * })
      */
-    public function index(BlankRequest $request)
+    public function index(CovidRequest $request)
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
@@ -99,7 +99,7 @@ class CovidController extends Controller
      * })
      * @Response(201)
      */
-    public function store(BlankRequest $request)
+    public function store(CovidRequest $request)
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
@@ -152,7 +152,7 @@ class CovidController extends Controller
      *      }
      * })
      */
-    public function show(BlankRequest $request, $id)
+    public function show(CovidRequest $request, $id)
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
@@ -174,7 +174,7 @@ class CovidController extends Controller
     }
 
 
-    public function update(BlankRequest $request, $id)
+    public function update(CovidRequest $request, $id)
     {
         
     }
@@ -224,7 +224,7 @@ class CovidController extends Controller
      * })
      * @Response(201)
      */
-    public function save_multiple(BlankRequest $request)
+    public function save_multiple(CovidRequest $request)
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
@@ -281,7 +281,7 @@ class CovidController extends Controller
 
 
 
-    public function results(BlankRequest $request, $id)
+    public function results(CovidRequest $request, $id)
     {
         $apikey = $request->headers->get('apikey');
         $actual_key = env('COVID_NHRL_KEY');
@@ -342,7 +342,7 @@ class CovidController extends Controller
      * }, headers={ "apikey": "secret key" })
      * @Response(201)
      */
-    public function nhrl(BlankRequest $request)
+    public function nhrl(CovidRequest $request)
     {
         $apikey = $request->headers->get('apikey');
         $actual_key = env('COVID_NHRL_KEY');
