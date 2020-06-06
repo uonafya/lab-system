@@ -89,7 +89,8 @@
 
         @if(auth()->user()->user_type_id != 5)
 
-            {{ Form::open(['url' => $pre . 'batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+            <form action="{{ url($pre . 'batch/index') }}" class="my_form" method="POST" >
+                @csrf
 
                 @isset($to_print)
                     <input type="hidden" name="to_print" value="1">
@@ -200,9 +201,7 @@
                         </div>                
                     </div>
                 </div>
-
-            {{ Form::close() }}
-
+            </form>
         @endif
 
     @endif
@@ -220,8 +219,8 @@
                 <div class="panel-body">
                     <div class="table-responsive">
                         @if(auth()->user()->is_lab_user() && isset($batch_complete) && $batch_complete == 5)
-                        <form  method="post" action="{{ url($pre . 'batch/destroy_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
-                            {{ csrf_field() }}
+                        <form method="post" action="{{ url($pre . 'batch/destroy_multiple/') }}" onsubmit="return confirm('Are you sure you want to delete the selected batches?');">
+                            @csrf
                         @endif
                             <table class="table table-striped table-bordered table-hover @isset($datatable) data-table @endisset" >
                                 <thead>

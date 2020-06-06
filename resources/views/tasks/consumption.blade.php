@@ -32,7 +32,8 @@
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                {{ Form::open(['url' => '/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                <form action="{{ url('/consumption') }}" method="POST" class='form-horizontal'>
+                    @csrf
                 <div class="form-group">
                     <div class="form-group" style="/*display: none;" id="platformDiv">
                         <label class="col-sm-4 control-label"><center>Platform</center></label>
@@ -292,7 +293,7 @@
                         </div>
                     </div>
                 <!-- ABBOTT DIV -->
-                {{ Form::close() }}
+                </form>
             </div>
         </div>
     </div>

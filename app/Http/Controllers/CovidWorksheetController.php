@@ -421,6 +421,8 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
+        Excel::import(new CovidWorksheetImport($worksheet, $request)), $path);
+/*
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
 
@@ -583,7 +585,7 @@ class CovidWorksheetController extends Controller
         $worksheet->save();
 
         session(['toast_message' => "The worksheet has been updated with the results."]);
-
+*/
         return redirect($worksheet->route_name . '/approve/' . $worksheet->id);
     }
 

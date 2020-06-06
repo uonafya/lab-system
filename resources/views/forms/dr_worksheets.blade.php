@@ -20,15 +20,18 @@
 
 
                     @if($create)
-
-                        @if (isset($worksheet))
-                            {{ Form::open(['url' => '/dr_worksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                        @if(isset($worksheet))
+                        <form action="{{ url('/dr_worksheet/' . $worksheet->id) }}" class="form-horizontal" method="POST" target="_blank">
+                            @method('PUT')
                         @else
-                            {{ Form::open(['url'=>'/dr_worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                        <form action="{{ url('/dr_worksheet') }}" class="form-horizontal" method="POST" target="_blank">
 
                             <input type="hidden" value="{{ env('APP_LAB') }}" name="lab_id">
                             <input type="hidden" value="{{ auth()->user()->id }}" name="createdby">
+                            <input type="hidden" value="{{ $extraction_worksheet_id }}" name="extraction_worksheet_id">
                         @endif
+
+                            @csrf
 
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" >
@@ -94,9 +97,7 @@
                                 <button class="btn btn-success" type="submit">Save & Download Worksheet</button>
                             </div>
                         </div>
-
-
-                        {{ Form::close() }}
+                        </form>
 
                     @else
 

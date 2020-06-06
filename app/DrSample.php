@@ -12,6 +12,16 @@ class DrSample extends BaseModel
         return $this->belongsTo('App\Viralpatient', 'patient_id');
     }
 
+    public function facility()
+    {
+        return $this->belongsTo('App\Facility');
+    }
+
+    public function view_facility()
+    {
+        return $this->belongsTo('App\ViewFacility', 'facility_id');
+    }
+
     public function worksheet()
     {
         return $this->belongsTo('App\DrWorksheet', 'worksheet_id');
@@ -104,6 +114,12 @@ class DrSample extends BaseModel
             if($child) return true;
         }
         return false;
+    }
+
+    public function getVlSampleAttribute()
+    {
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        return $sample;
     }
 
 
@@ -283,6 +299,23 @@ class DrSample extends BaseModel
         }
 
         if($this->control) $this->save();           
+    }
+
+    public function create_vl_sample()
+    {
+        if($this->passed_gel_documentation != 0) return false;
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        if($sample) return false;
+
+        $batch = new Viralbatch;
+        $batch->fill($this->only(['facility_id', 'datereceived', 'user_id', 'lab_id', 'received_by',]));
+        $batch->save();
+
+        $sample = new Viralsample;
+        $sample->fill($this->only(['patient_id', 'datecollected', 'receivedstatus', 'prophylaxis']));
+        $sample->batch_id = $batch->id;
+        $sample->save();
+        return $sample;
     }
 
 

@@ -39,9 +39,8 @@
 
     <br />
 
-    
-
-    {{ Form::open(['url' => '/batch/index', 'method' => 'post', 'class' => 'my_form']) }}
+    <form method="post" action="{{ url('/batch/index') }}" class='my_form'>
+        @csrf
 
         @isset($to_print)
             <input type="hidden" name="to_print" value="1">
@@ -153,10 +152,7 @@
                 @endif               
             </div>
         </div>
-
-    {{ Form::close() }}
-
-    
+    </form>
     
     <div class="row">
         <div class="col-lg-12">
@@ -171,7 +167,7 @@
                 <div class="panel-body">
                     <div class="table-responsive">
                         <form  method="post" action="{{ url($pre . 'batch/summaries/') }}  " >
-                            {{ csrf_field() }}
+                            @csrf
                             <table class="table table-striped table-bordered table-hover" >
                                 <thead>
                                     <tr class="colhead">

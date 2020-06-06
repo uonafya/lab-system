@@ -9,7 +9,9 @@ use App\User;
 use App\Misc;
 use App\Lookup;
 use DB;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\WorksheetImport;
+// use Excel;
 use Illuminate\Http\Request;
 
 class WorksheetController extends Controller
@@ -418,18 +420,21 @@ class WorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/results/eid'); 
 
-        $cancelled = false;
+        Excel::import(new WorksheetImport($worksheet, $request)), $path);
+
+        /*$cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
 
         $worksheet->fill($request->except(['_token', 'upload']));
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/eid'); 
+
         $today = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
-        $sample_array = $doubles = [];
-
+        $sample_array = $doubles = [];*/
+        /*
         if($worksheet->machine_type == 2)
         {
             $date_tested = $request->input('daterun');
@@ -556,6 +561,7 @@ class WorksheetController extends Controller
             }
             fclose($handle);
         }
+        */
 
         /*if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
@@ -569,6 +575,7 @@ class WorksheetController extends Controller
         }*/
 
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        /*
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
         Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
         Sample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
@@ -584,7 +591,7 @@ class WorksheetController extends Controller
 
         Misc::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
-
+        */
         return redirect('worksheet/approve/' . $worksheet->id);
     }
 

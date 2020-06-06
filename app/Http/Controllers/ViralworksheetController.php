@@ -9,7 +9,9 @@ use App\User;
 use App\MiscViral;
 use App\Lookup;
 use DB;
-use Excel;
+// use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ViralworksheetImport;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -424,18 +426,21 @@ class ViralworksheetController extends Controller
             return back();
         }
 
-        $cancelled = false;
+        /*$cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
 
         $worksheet->fill($request->except(['_token', 'upload']));
         $file = $request->upload->path();
-        $path = $request->upload->store('public/results/vl');
-        $today = $datetested = date("Y-m-d");
-        $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
+        $path = $request->upload->store('public/results/vl');*/
 
-        $my = new MiscViral;
-        $sample_array = $doubles = [];
+        Excel::import(new ViralworksheetImport($worksheet, $request)), $path);
 
+        // $today = $datetested = date("Y-m-d");
+        // $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
+
+        // $my = new MiscViral;
+        // $sample_array = $doubles = [];
+/*
         // Abbott
         if($worksheet->machine_type == 2)
         {
@@ -654,7 +659,7 @@ class ViralworksheetController extends Controller
             fclose($handle);
 
         }
-
+*/
        /* if($doubles){
             session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
             $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
@@ -665,7 +670,7 @@ class ViralworksheetController extends Controller
                 });
             })->download('csv');
         }*/
-
+/*
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
         Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
         Viralsample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
@@ -686,9 +691,9 @@ class ViralworksheetController extends Controller
         $worksheet->uploadedby = auth()->user()->id;
 
         $worksheet->save();
-
         MiscViral::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
+*/
 
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }

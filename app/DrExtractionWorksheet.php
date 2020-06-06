@@ -35,7 +35,7 @@ class DrExtractionWorksheet extends BaseModel
      */
     public function getSequencingAttribute()
     {
-        $sample = \App\DrSample::whereNull('worksheet_id')->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $this->id])->first();
+        $sample = \App\DrSample::whereNull('worksheet_id')->where(['passed_gel_documentation' => true, 'extraction_worksheet_id' => $this->id, 'control' => 0])->first();
         if($sample) return true;
         return false;
     }
@@ -50,5 +50,13 @@ class DrExtractionWorksheet extends BaseModel
         $work = \App\DrWorksheet::whereNotIn('status_id', [3, 4])->first();
         if($work) return true;
         return false;
+    }
+
+    public function runFailed()
+    {
+        $samples = $this->sample()->where(['passed_gel_documentation' => false])->get();
+        foreach ($samples as $key => $sample) {
+            $sample->create_vl_sample();
+        }
     }
 }
