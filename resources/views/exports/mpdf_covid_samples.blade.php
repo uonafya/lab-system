@@ -309,7 +309,7 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id && $sample->result == 1 && 0)
+			@if(!auth()->user()->user_type_id && $sample->result == 1 && true == false)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
