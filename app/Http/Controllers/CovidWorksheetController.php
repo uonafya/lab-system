@@ -15,6 +15,7 @@ use App\Viralsample;
 
 use Carbon\Carbon;
 use Excel;
+use App\Imports\CovidWorksheetImport;
 
 use Illuminate\Http\Request;
 

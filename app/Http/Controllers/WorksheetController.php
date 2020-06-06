@@ -9,9 +9,8 @@ use App\User;
 use App\Misc;
 use App\Lookup;
 use DB;
-use Maatwebsite\Excel\Facades\Excel;
+use Excel;
 use App\Imports\WorksheetImport;
-// use Excel;
 use Illuminate\Http\Request;
 
 class WorksheetController extends Controller
