@@ -154,17 +154,6 @@ class WorksheetImport implements ToCollection
             }
         }
 
-        /*if($doubles){
-            session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
-            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
-        
-            Excel::create($file, function($excel) use($doubles){
-                $excel->sheet('Sheetname', function($sheet) use($doubles) {
-                    $sheet->fromArray($doubles);
-                });
-            })->download('csv');
-        }*/
-
         // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->flatten()->toArray();
         Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
         Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);

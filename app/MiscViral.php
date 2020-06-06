@@ -920,15 +920,7 @@ class MiscViral extends Common
             $data[] = $row;
         }
 
-        $filename = $worksheet_id;
-
-        if(file_exists($filename)) unlink($filename);
-
-        Excel::create($filename, function($excel) use($data) {
-            $excel->sheet('Sheetname', function($sheet) use($data) {
-                $sheet->fromArray($data);
-            });
-        })->download('csv');
+        return self::csv_download($data, $worksheet_id);
     }
 
     public static function find_no_result()
