@@ -32,6 +32,7 @@ class DrExtractionWorksheetController extends Controller
                 }
                 return $query->whereDate('dr_extraction_worksheets.created_at', $date_start);
             })
+            ->where('status_id', '!=', 4)
             ->orderBy('dr_extraction_worksheets.created_at', 'desc')
             ->get();
 
@@ -90,9 +91,20 @@ class DrExtractionWorksheetController extends Controller
      * @param  \App\DrExtractionWorksheet  $drExtractionWorksheet
      * @return \Illuminate\Http\Response
      */
-    public function show(DrExtractionWorksheet $drExtractionWorksheet)
+    public function show(DrExtractionWorksheet $drExtractionWorksheet, $print=false)
     {
-        //
+        $drExtractionWorksheet->load(['creator']);
+        
+        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id])
+                    ->orderBy('control', 'desc')
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+        $data = ['worksheet' => $drExtractionWorksheet, 'samples' => $samples, 'i' => 0, 'count' => 0];
+
+        if($print) $data['print'] = true;
+
+        return view('worksheets.dr_extraction_worksheet', $data)->with('pageTitle', 'Other Worksheets');
     }
 
     /**
@@ -127,6 +139,50 @@ class DrExtractionWorksheetController extends Controller
     public function destroy(DrExtractionWorksheet $drExtractionWorksheet)
     {
         //
+    }
+
+
+    public function print(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        return $this->show($drExtractionWorksheet, true);
+    }
+
+    /**
+     * Download the specified resource as csv.
+     *
+     * @param  \App\DrWorksheet $worksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function download(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['extraction_worksheet_id' => $drExtractionWorksheet->id, 'control' => 0])->get();
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'NAT ID' => $sample->patient->nat,
+                'Patient CCC' => $sample->patient->patient,
+                'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
+                'Full Name' => $sample->patient->patient_name,
+                'DOB' => $sample->patient->dob,
+                'Sex' => $sample->patient->gender,
+                'Date of Sample Collection' => $sample->datecollected,
+                'Sample Type' => Lookup::retrieve_val('sample_types', $sample->sampletype),
+                'Most Current HIV VL Result (copies/mL)' => $sample->vl_result1,
+                'Most Current HIV VL Result Date' => $sample->vl_date_result1,
+                'Patient Regimen' => Lookup::retrieve_val('prophylaxis', $sample->prophylaxis),
+                'Most Recent CD4 Count' => $sample->cd4_result,
+                'Patient Current Age' => $sample->age,
+                'Amount' => $sample->sample_amount,
+                'Amount Unit' => Lookup::retrieve_val('amount_units', $sample->amount_unit),
+                'Container Type' => Lookup::retrieve_val('container_types', $sample->container_type),
+                'Location Barcode' => '',
+            ];
+        }
+
+        $filename = 'bulk_template_extraction_' . $drExtractionWorksheet->id;
+
+        MiscDr::csv_download($data, $filename);
     }
 
 
@@ -172,7 +228,9 @@ class DrExtractionWorksheetController extends Controller
 
         foreach ($samples as $key => $sample){
             $sample->passed_gel_documentation = 0;
-            $sample->create_rerun();
+            // $sample->create_rerun();
+            $sample->save();
+            $sample->create_vl_sample();
         }
 
         session(['toast_message' => 'Gel documentation has been submitted.']);
@@ -197,5 +255,14 @@ class DrExtractionWorksheetController extends Controller
         session(['toast_message' => 'The worksheet has been cancelled.']);
         return back();
         // return redirect("/worksheet");
+    }
+
+    public function vl_worksheet(DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $samples = $drExtractionWorksheet->sample()->where(['passed_gel_documentation' => false])->get();
+
+        foreach ($variable as $key => $value) {
+            # code...
+        }
     }
 }

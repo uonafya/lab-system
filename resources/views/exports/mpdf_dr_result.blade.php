@@ -11,7 +11,11 @@
 
 		<div class="row" style="text-align: center;">
 			@if(env('APP_LAB') == 7)
-				<img src="https://eiddash.nascop.org/img/Result_Print_Out_Logo_NHRL.png" alt="NASCOP">
+				<img src="https://eiddash.nascop.org/img/NHRL_LOGO.png" alt="NASCOP">
+				<br />
+				<!-- <h5> National Public Health Laborotories </h5>
+				<h5> National HIV Reference Laboratory </h5>
+				<h5> HIV DR Testing Section | Drug Resistance and Molecular Surveillance Team </h5> -->
 			@else
 				<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
 				<b>
@@ -63,7 +67,7 @@
 						<td>  </td>
 					</tr>
 					<tr>
-						<td> NASCOP No. NAT </td>
+						<td> NASCOP No. NAT: {{ $sample->patient->nat }} </td>
 						<td> Requesting Clinician: {{ $sample->clinician_name }} </td>
 					</tr>
 					<tr>
@@ -91,6 +95,10 @@
 				<p>
 					Sample Test Has Failed. Please collect a new sample.
 				</p>
+			@elseif($sample->passed_gel_documentation == 0)
+				<p>
+					<b>VL Results</b> &nbsp;&nbsp;&nbsp;&nbsp; {{ $sample->vl_sample->result }}, The copies are below the sensitivity limit of the DR test assay
+				</p>
 			@else
 				<table class="table table-bordered table-hover">
 					<thead>
@@ -111,7 +119,7 @@
 								@else
 									<td>{{ $dr_call->drug_class }}  </td>
 								@endif
-									<td>{{ $dr_call->mutations_array[$key] ?? '' }}  </td>
+									<td>{{ $dr_call->mutations[$key] ?? '' }}  </td>
 									<td>{{ $call_drug->short_name }} </td>
 									<td>{{ $call_drug->resistance }} </td>
 									{!! $call_drug->resistance_cell !!}

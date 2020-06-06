@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Viralpatient;
 use App\Viralsample;
+use App\DrSample;
 use App\Lookup;
 use Illuminate\Http\Request;
 
@@ -168,13 +169,28 @@ class ViralpatientController extends Controller
         return redirect('viralpatient/index/' . $prev_facility_id);
     }
 
+    public function dr(Viralpatient $patient)
+    {        
+        $data = Lookup::get_dr();
+        $data['dr_samples'] = DrSample::select(['dr_samples.*'])
+            ->with(['patient.facility'])
+            ->where(['control' => 0, 'repeatt' => 0, 'dr_samples.patient_id' => $patient->id])
+            ->orderBy('id', 'desc')
+            ->paginate();
+
+        $data['dr_samples']->setPath(url()->current());
+        $data = array_merge($data, Lookup::get_partners());
+        return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Patient Samples'); 
+    }
+
     public function search(Request $request, $facility_id=null, $female=false)
     {
         $user = auth()->user();
-        $facility_user = false;
 
-        if($user->user_type_id == 5) $facility_user=true;
-        $string = "(facility_id='{$user->facility_id}')";
+        $string = null;
+        if($user->is_facility) $string = "(facility_id='{$user->facility_id}')";
+        else if($user->is_partner) $string = "(facilitys.partner='{$user->facility_id}')";
+        
 
         $search = $request->input('search');
         $search = addslashes($search);
@@ -183,7 +199,7 @@ class ViralpatientController extends Controller
             ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
             ->whereRaw("patient like '" . $search . "%'")
             // ->where('viralpatients.synched', '!=', 2)
-            ->when($facility_user, function($query) use ($string){
+            ->when($string, function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->when($facility_id, function($query) use ($facility_id){
@@ -191,6 +207,30 @@ class ViralpatientController extends Controller
             })
             ->when($female, function($query){
                 return $query->where('sex', 2);
+            })
+            ->paginate(10);
+
+        $patients->setPath(url()->current());
+        return $patients;
+    }
+
+    public function nat_id(Request $request)
+    {
+        $user = auth()->user();
+
+        $string = null;
+        if($user->is_facility) $string = "(facility_id='{$user->facility_id}')";
+        else if($user->is_partner) $string = "(facilitys.partner='{$user->facility_id}')";
+
+        $search = $request->input('search');
+        $search = addslashes($search);
+        
+        $patients = Viralpatient::select('viralpatients.id', 'viralpatients.patient', 'viralpatients.nat', 'facilitys.name', 'facilitys.facilitycode')
+            ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
+            ->whereRaw("nat like '" . $search . "%'")
+            // ->where('viralpatients.synched', '!=', 2)
+            ->when($string, function($query) use ($string){
+                return $query->whereRaw($string);
             })
             ->paginate(10);
 

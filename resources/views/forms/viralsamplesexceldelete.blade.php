@@ -9,7 +9,8 @@
    <div class="content">
         <div>
         @if(Auth::user()->user_type_id == 0)
-        {{ Form::open(['url' => '/viralsample/exceluploaddelete', 'method' => 'post', 'class'=>'form-horizontal', 'files' => true]) }}
+        <form action="{{ url('/viralsample/exceluploaddelete') }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
+            @csrf
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
@@ -31,7 +32,7 @@
                 </div>
             </div>
         </div>
-        {{ Form::close() }}
+        </form>
         @endif
 
       </div>

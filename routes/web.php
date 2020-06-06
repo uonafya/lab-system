@@ -28,6 +28,24 @@ Route::redirect('/nyumbani', '/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
 Route::get('labtrackertest', 'RandomController@testlabtracker');
+Route::get('/uliza', function () {
+	return view('layouts.uliza');
+});
+
+Route::prefix('uliza')->name('uliza.')->group(function(){
+	Route::get('home', 'UlizaController@home');
+	Route::get('uliza', 'UlizaController@uliza');
+	Route::get('ushauri', 'UlizaController@ushauri');
+	Route::get('trainsmart', 'UlizaController@trainsmart');
+	Route::get('echo', 'UlizaController@echo_page');
+	Route::get('faqs', 'UlizaController@faqs');
+	Route::get('contactus', 'UlizaController@contactus');
+
+	Route::get('pages', 'UlizaController@pages');
+
+	
+	Route::get('clinicalform', 'UlizaController@clinicalform');
+});
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
@@ -66,7 +84,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-	Route::middleware(['consumptionsubmitted'])->group(function(){
+	// Route::middleware(['consumptionsubmitted'])->group(function(){
 		Route::prefix('home')->name('home.')->group(function(){
 			Route::get('/', 'HomeController@index');
 			Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
@@ -301,15 +319,27 @@ Route::middleware(['auth'])->group(function(){
 
 		// Start of Drug Resistance Routes
 
+		Route::prefix('dr_dashboard')->name('dr_dashboard.')->group(function () {
+			Route::get('/', 'DrDashboardController@index');
+			Route::post('filter_any', 'DrDashboardController@filter_any');
+			Route::get('drug_resistance', 'DrDashboardController@drug_resistance');
+			Route::get('heat_map', 'DrDashboardController@heat_map');
+		});			
+
 		Route::post('dr_report', 'DrReportController@reports');
 
 		Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
-			Route::group(['middleware' => ['utype:5']], function () {
+			// Route::group(['middleware' => ['utype:5']], function () {
+				Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
+				Route::get('facility/{facility_id}', 'DrSampleController@facility')->name('facility');			
 				Route::post('index', 'DrSampleController@sample_search');
-				Route::put('{drSample}', 'DrSampleController@update')->name('update');
+				Route::post('search', 'DrSampleController@search');
+
+				// Route::put('{drSample}', 'DrSampleController@update')->name('update');
+				Route::get('vl_results/{drSample}', 'DrSampleController@vl_results')->name('vl_results');
 				Route::get('results/{drSample}/{print?}', 'DrSampleController@results')->name('results');
 				Route::get('download_results/{drSample}', 'DrSampleController@download_results')->name('download_results');
-			});
+			// });
 		});
 
 		Route::group(['middleware' => ['utype:4']], function () {
@@ -317,11 +347,14 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 				Route::get('create/{patient}', 'DrSampleController@create_from_patient');
+				Route::get('email/{drSample}', 'DrSampleController@email');
 				Route::get('report', 'DrSampleController@susceptability')->name('report');
-				Route::get('index/{sample_status?}/{date_start?}/{date_end?}/{facility_id?}/{subcounty_id?}/{partner_id?}', 'DrSampleController@index');
 			});
+		});
 
-			Route::resource('dr_sample', 'DrSampleController', ['except' => ['update']]);
+		Route::resource('dr_sample', 'DrSampleController');
+
+		Route::group(['middleware' => ['utype:4']], function () {
 
 
 			Route::prefix('dr_extraction_worksheet')->name('dr_extraction_worksheet.')->group(function () {
@@ -331,7 +364,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('create/{limit}', 'DrExtractionWorksheetController@create')->name('create_any');
 				Route::get('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation_form')->name('upload');
 				Route::put('gel_documentation/{drExtractionWorksheet}', 'DrExtractionWorksheetController@gel_documentation')->name('upload');
+				Route::get('download/{drExtractionWorksheet}', 'DrExtractionWorksheetController@download')->name('download');
 
+				Route::get('print/{drExtractionWorksheet}', 'DrExtractionWorksheetController@print')->name('print');
 				Route::get('cancel/{drExtractionWorksheet}', 'DrExtractionWorksheetController@cancel')->name('cancel');
 
 			});
@@ -342,7 +377,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('index/{state?}/{date_start?}/{date_end?}', 'DrWorksheetController@index')->name('list');
 
-				// Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
+				Route::get('create/{extraction_worksheet_id}', 'DrWorksheetController@create')->name('create_any');
 				Route::get('upload/{worksheet}', 'DrWorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'DrWorksheetController@save_results')->name('save_results');
 
@@ -366,6 +401,97 @@ Route::middleware(['auth'])->group(function(){
 		});
 
 		// End of Drug Resistance Routes
+
+
+		Route::group(['middleware' => ['only_utype:2']], function () {
+			Route::prefix('email')->name('email.')->group(function () {
+				Route::get('preview/{email}', 'EmailController@demo')->name('demo');
+				Route::post('preview/{email}', 'EmailController@demo_email')->name('demo_email');
+
+				Route::get('download_attachment/{email}', 'EmailController@download_attachment');
+				Route::get('attachment/{email}', 'EmailController@add_attachment');
+				Route::post('attachment/{email}', 'EmailController@save_attachment');
+				Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
+			});
+			Route::resource('email', 'EmailController');
+
+			Route::get('lab', 'RandomController@labcontacts')->name('lab.edit');
+			Route::put('lab', 'RandomController@savelabcontact')->name('lab.update');
+
+			Route::resource('muser', 'MuserController');
+		});
+
+		Route::group(['middleware' => ['only_utype:1']], function() {
+			Route::get('lablogs/{year?}/{month?}', 'RandomController@lablogs')->name('lablogs');
+			Route::post('lablogs', 'RandomController@lablogs');
+			Route::get('equipmentbreakdown', 'RandomController@equipmentbreakdown')->name('equipmentbreakdown');
+			Route::post('equipmentbreakdown', 'RandomController@equipmentbreakdown');
+		});
+		
+		Route::group(['middleware' => ['utype:4']], function () {
+			Route::get('facility/served', 'FacilityController@served');
+			Route::get('facility/withoutemails', 'FacilityController@withoutemails')->name('withoutemails');
+			Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
+			Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
+			Route::get('facility/lab', 'FacilityController@lab')->name('facility.lab');
+		});		
+		Route::resource('facility', 'FacilityController');
+
+		Route::get('/home', 'HomeController@index')->name('home');
+
+		Route::get('reports', 'ReportController@index')->name('reports');
+		Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
+		Route::post('reports', 'ReportController@generate')->name('reports');
+		Route::post('reports/kitsconsumption', 'ReportController@consumption');
+		Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
+
+		Route::get('reports/kits', 'KitsController@kits')->name('report.kits');
+		Route::post('reports/kitdeliveries', 'KitsController@kits');
+		Route::get('report/allocation/{allocation?}/{type?}/{approval?}', 'KitsController@allocation')->name('report.allocation');
+		Route::put('kitallocation/{allocation}/edit', 'KitsController@editallocation');
+		Route::get('printallocation/{allocation}/{testtype}', 'KitsController@printallocation');
+
+		Route::prefix('patient')->name('patient.')->group(function () {
+			Route::post('search/{facility_id?}', 'PatientController@search');
+			Route::get('index/{facility_id?}', 'PatientController@index');	
+
+			// Merging of patients	
+			Route::get('{patient}/merge', 'PatientController@merge');		
+			Route::put('{patient}/merge', 'PatientController@merge_patients');	
+
+			// Transfer patient to a new facility	
+			Route::get('{patient}/transfer', 'PatientController@transfer');		
+			Route::put('{patient}/transfer', 'PatientController@transfer_patient');
+		});
+		Route::resource('patient', 'PatientController');
+
+		Route::get('allocation', 'TaskController@allocation')->name('allocation');
+		Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
+		Route::get('consumption/{guide?}', 'TaskController@consumption')->name('consumption');
+		Route::post('consumption', 'TaskController@consumption');
+		Route::get('equipmentlog', 'TaskController@equipmentlog')->name('equipmentlog');
+		Route::post('equipmentlog', 'TaskController@equipmentlog');
+		Route::get('/pending', 'TaskController@index')->name('pending');
+		Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
+		Route::post('/performancelog', 'TaskController@performancelog');
+		Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		
+
+		Route::prefix('viralpatient')->name('viralpatient.')->group(function () {
+			Route::post('search/{facility_id?}/{female?}', 'ViralpatientController@search');
+			Route::post('nat_id', 'ViralpatientController@nat_id');
+			Route::get('index/{facility_id?}', 'ViralpatientController@index');	
+			Route::get('dr/{patient}', 'ViralpatientController@dr');	
+
+			// Merging of patients	
+			Route::get('{patient}/merge', 'ViralpatientController@merge');		
+			Route::put('{patient}/merge', 'ViralpatientController@merge_patients');	
+
+			// Transfer patient to a new facility	
+			Route::get('{patient}/transfer', 'ViralpatientController@transfer');		
+			Route::put('{patient}/transfer', 'ViralpatientController@transfer_patient');
+		});
 
 		Route::group(['middleware' => ['only_utype:2']], function () {
 			Route::prefix('email')->name('email.')->group(function () {
@@ -618,7 +744,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			Route::resource('viralworksheet', 'ViralworksheetController');
 		});
-	});
+	// });
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');

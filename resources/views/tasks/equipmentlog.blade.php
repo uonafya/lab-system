@@ -31,10 +31,11 @@
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 4%;">
         @if(isset($now))
-        {{ Form::open(['url' => '/equipmentbreakdown', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        <form action="{{ url('/equipmentbreakdown') }}" method="POST" class='form-horizontal'>
         @else
-        {{ Form::open(['url' => '/equipmentlog', 'method' => 'post', 'class'=>'form-horizontal']) }}
+        <form action="{{ url('/equipmentlog') }}" method="POST" class='form-horizontal'>
         @endif
+            @csrf
             <div class="alert alert-warning">
                 <center>
                     <font color="#4183D7">
@@ -124,7 +125,7 @@
             <center>
                 <button class="btn btn-success" type="submit" name="submit" value="submit" style="margin-bottom: 3em;margin-top: 1em;font-size: 14px;">Submit Lab Equipment Log</button>
             </center>
-        {{ Form::close() }}
+        </form>
         </div>
     </div>
 </div>

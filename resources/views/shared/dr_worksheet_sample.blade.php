@@ -27,7 +27,7 @@
 						<br> Control (Water)
 					@else
 						<br /> <b>Facility:</b> {{ $sample->patient->facility->name ?? '' }}
-						<br /> <b>Patient:</b> {{ $sample->patient->patient ?? '' }}
+						<br /> <b>Patient:</b> {{ $sample->patient->nat ?? $sample->patient->patient ?? '' }}
 					@endif
 				</td>
 	@endforeach

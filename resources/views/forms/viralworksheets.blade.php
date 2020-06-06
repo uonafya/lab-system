@@ -23,7 +23,8 @@
 
 
             @if (isset($worksheet))
-                {{ Form::open(['url' => '/viralworksheet/' . $worksheet->id, 'method' => 'put', 'class'=>'form-horizontal', 'target' => '_blank']) }}
+                <form action="{{ url('/viralworksheet/' . $worksheet->id) }}" class="form-horizontal" method="POST" target="_blank">
+                    @method('PUT')
             @else
 
                 @if(env('APP_LAB') == 8)
@@ -43,7 +44,7 @@
                         </div>
                     </div>
 
-                    {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                    <form action="{{ url('/viralworksheet') }}" class="form-horizontal" method="POST" target="_blank" id='worksheets_form'>
 
                 @endif
 
@@ -62,7 +63,7 @@
                 </div>
                 
                 @if(env('APP_LAB') != 8)
-                    {{ Form::open(['url'=>'/viralworksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheets_form', 'target' => '_blank']) }}
+                    <form action="{{ url('/viralworksheet') }}" class="form-horizontal" method="POST" target="_blank" id='worksheets_form'>
                 @endif
 
                 <input type="hidden" value="{{ $machine_type }}" name="machine_type" >
@@ -86,6 +87,8 @@
                     @endif
                 @endif
             @endif
+
+            @csrf
 
             <div class="row">
                 <div class="col-lg-9 col-lg-offset-1">
@@ -231,9 +234,7 @@
                     </div>
                 </div>
             </div>
-
-            {{ Form::close() }}
-
+            </form>
         @else
 
             <div class="row">

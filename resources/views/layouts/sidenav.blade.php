@@ -34,7 +34,7 @@
             </li> -->--}}
         @endif
         
-        @if (in_array(Auth::user()->user_type_id, [0,1,4]))
+        @if (Auth::user()->is_lab_user())
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -221,19 +221,19 @@
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
                 <hr />
+                <li><a href="{{ url('dr_sample/index/12') }}">Samples That Failed Gel</a></li>
+                <hr />
                 <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
                 <hr />
                 @if(env('APP_LAB') != 7)
                     <li><a href="{{ url('dr_patient') }}">Potential DR Patients List</a></li>
                     <hr />
                 @endif
-                <!-- <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
-                <hr /> -->
-                <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet (Bulk Template)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
@@ -254,75 +254,86 @@
                     <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                 </a>
             </li> -->
-        @elseif (Auth::user()->user_type_id == 5)
-            <li>
-                <a href="{{ url('patient') }}">EID Patient List</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralpatient') }}">VL Patient List</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/create') }}">Add EID Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
-            </li>
-            <hr />
-            <li>
-                <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
-            </li>
-            <hr>
-            <li>
-                <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
-            </li>
-            <hr>
-            <li>
-                <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
-            </li>
-            <li>
-                <a href="https://eiddash.nascop.org/download/poc">POC User Guide</a>
-            </li>
-            <li>
-                <a href="https://eiddash.nascop.org/download/eid_req">EID Form</a>
-            </li>
-            <li>
-                <a href="https://eiddash.nascop.org/download/vl_req">VL Form</a>
-            </li>
-            <li>
-                <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
-            </li>
-            <hr />
+<<<<<<< HEAD
+        @elseif (in_array(Auth::user()->user_type_id, [5,10]))
+            @if(env('APP_LAB') == 7)
+                <li>
+                    <a href="{{ url('dr_sample/create') }}">Add DR Sample</a>
+                </li>
+                <li>
+                    <a href="{{ url('dr_sample') }}">DR Sample List</a>
+                </li>
+                <li>
+                    <a href="{{ url('dr_sample/index/1') }}">DR Results</a>
+                </li>
+
+            @else
+                <li>
+                    <a href="{{ url('patient') }}">EID Patient List</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralpatient') }}">VL Patient List</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create') }}">Add EID Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
+                </li>
+                <li>
+                    <a href="https://eiddash.nascop.org/download/poc">POC User Guide</a>
+                </li>
+                <li>
+                    <a href="https://eiddash.nascop.org/download/eid_req">EID Form</a>
+                </li>
+                <li>
+                    <a href="https://eiddash.nascop.org/download/vl_req">VL Form</a>
+                </li>
+                <li>
+                    <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
+                </li>
+
+            @endif
+
         @elseif (in_array(Auth::user()->user_type_id, [11, 12, 13]) )
             <li>
                 <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
@@ -500,7 +511,7 @@
             <hr />
         @endif
         --}}
-        @if (!(Auth::user()->user_type_id == 5))
+        @if (!in_array(Auth::user()->user_type_id,[5]) || env('APP_LAB') == 7)
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
@@ -522,18 +533,27 @@
             <hr />
         @endif
         @if(Auth::user()->user_type_id != 2)
-            @if(Auth::user()->facility_user)
-                <!-- Covid Searches -->
-                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li> 
-                <!-- EID Searches -->
-                <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
-                <!-- VL Searches -->
-                <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
-                <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+            @if(in_array(Auth::user()->user_type_id, [5,10]))
+                @if(env('APP_LAB') == 7)
+                    <!-- DR Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_dr_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
+                @else
+                    <!-- Covid Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li> 
+                    <!-- EID Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a></li>
+                    <!-- VL Searches -->
+                    <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+                @endif
+                
             @elseif(Auth::user()->quarantine_site || Auth::user()->other_lab)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
@@ -570,6 +590,11 @@
                     <li><a href="#"><select class="form-control" id="sibebar_cd4medrecNo_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4facility_search"></select></a></li>
+                @elseif(Session('testingSystem') == 'DR')
+                    <li><a href="#"><select class="form-control" id="sidebar_dr_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
                 @endif
             @endif
         @endif
