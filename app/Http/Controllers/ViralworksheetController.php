@@ -432,7 +432,7 @@ class ViralworksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/vl');*/
 
-        Excel::import(new ViralworksheetImport($worksheet, $request)), $path);
+        Excel::import(new ViralworksheetImport($worksheet, $request), $path);
 
         // $today = $datetested = date("Y-m-d");
         // $nc = $nc_int = $lpc = $lpc_int = $hpc = $hpc_int = $nc_units = $hpc_units = $lpc_units =  NULL;
