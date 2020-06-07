@@ -428,9 +428,9 @@ class ViralworksheetController extends Controller
         /*$cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
 
-        $worksheet->fill($request->except(['_token', 'upload']));
+        $worksheet->fill($request->except(['_token', 'upload']));*/
         $file = $request->upload->path();
-        $path = $request->upload->store('public/results/vl');*/
+        $path = $request->upload->store('public/results/vl');
 
         $c = new ViralworksheetImport($worksheet, $request);
         Excel::import($c, $path);

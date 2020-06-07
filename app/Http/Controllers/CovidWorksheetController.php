@@ -422,6 +422,8 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/results/covid'); 
         $c = new CovidWorksheetImport($worksheet, $request);
 
         Excel::import($c, $path);
@@ -430,8 +432,6 @@ class CovidWorksheetController extends Controller
         if($worksheet->status_id == 4) $cancelled =  true;
 
         $worksheet->fill($request->except(['_token', 'upload']));
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/covid'); 
         $today = $datemodified = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
