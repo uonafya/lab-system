@@ -192,7 +192,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('rerun_worksheet/{worksheet}', 'CovidWorksheetController@rerun_worksheet')->name('rerun_worksheet');
 				Route::get('convert/{worksheet}/{machine_type}', 'CovidWorksheetController@convert_worksheet')->name('convert');
 
-				Route::group(['middleware' => ['only_utype:1']], function () {
+				Route::group(['middleware' => ['only_utype:1,13']], function () {
 					Route::get('cancel_upload/{worksheet}', 'CovidWorksheetController@cancel_upload')->name('cancel_upload');
 					Route::get('reverse_upload/{worksheet}', 'CovidWorksheetController@reverse_upload')->name('reverse_upload');
 					Route::get('upload/{worksheet}', 'CovidWorksheetController@upload')->name('upload');
