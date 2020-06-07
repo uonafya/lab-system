@@ -201,7 +201,7 @@ class CovidSampleController extends Controller
             ];
         }
         if(!$data) return back();
-        return MiscCovid::csv_download($data);
+        return MiscCovid::csv_download($data, 'covid_samples');
     }
 
     public function email_multiple($request)

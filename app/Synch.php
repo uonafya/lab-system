@@ -30,6 +30,7 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
@@ -241,6 +242,33 @@ class Synch
 		// dd($body);
 	}
 
+	public static function covid_login()
+	{
+		Cache::store('file')->forget('api_token');
+		$client = new Client(['base_uri' => self::$cov_base]);
+
+		$response = $client->request('post', 'auth/login', [
+            'http_errors' => false,
+            'debug' => false,
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+			'json' => [
+				'email' => env('COV_USERNAME', null),
+				'password' => env('COV_PASSWORD', null),
+			],
+		]);
+		$status_code = $response->getStatusCode();
+		if($status_code > 399)
+			return json_decode($response->getBody());
+
+		$body = json_decode($response->getBody());
+		// dd($body);
+		Cache::store('file')->put('covid_api_token', $body->token, 60);
+
+		// dd($body);
+	}
+
 	public static function get_token()
 	{
 		if(Cache::store('file')->has('api_token')){}
@@ -248,6 +276,15 @@ class Synch
 			self::login();
 		}
 		return Cache::store('file')->get('api_token');
+	}
+
+	public static function get_covid_token()
+	{
+		if(Cache::store('file')->has('covid_api_token')){}
+		else{
+			self::covid_login();
+		}
+		return Cache::store('file')->get('covid_api_token');
 	}
 
 	public static function synch_eid_patients()
@@ -1234,7 +1271,7 @@ class Synch
 
 	public static function synch_covid()
 	{
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1267,7 +1304,7 @@ class Synch
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer ' . self::get_token(),
+					'Authorization' => 'Bearer ' . self::get_covid_token(),
 				],
 				'json' => [
 					'sample' => $sample->toJson(),
