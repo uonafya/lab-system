@@ -17,8 +17,8 @@
                     Create Worklist of {{ $worklist_type }} Samples To Be Run {{ date('d-M-Y') }}
                 </div>
                 <div class="panel-body">
-
-                    {{ Form::open(['url' => '/worklist', 'method' => '[post]', 'class'=>'form-horizontal']) }}
+                    <form action="{{ url('/worklist') }}" class="form-horizontal" method="POST">
+                        @csrf
 
                         @if($worklist_type == "Eid")
                             <input type="hidden" value=1 name="testtype">
@@ -83,10 +83,7 @@
                                 <button class="btn btn-danger" type="submit" name="submit_type" value="rejected">Cancel Worklist Creation</button>
                             </div>                        
                         </div>
-
-                    {{ Form::close() }}
-
-
+                    </form>
                 </div>
             </div>
         </div>

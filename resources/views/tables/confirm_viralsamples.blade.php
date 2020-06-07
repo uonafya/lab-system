@@ -21,7 +21,7 @@
                     <div class="table-responsive">
                         <form  method="post" action="{{ url('viralsample/nhrl') }}"
                             class="confirmSubmit">
-                            {{ csrf_field() }}
+                            @csrf
 
                             <table class="table table-striped table-bordered table-hover data-table" >
                                 <thead>

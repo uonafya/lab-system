@@ -72,11 +72,11 @@
                                                 <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
 
                                                 @if(!$sample->result)
-
-                                                    {{ Form::open(['url' => $pre . 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
-                                                        <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                                    {{ Form::close() }}
-
+                                                    <form action="{{ url($pre . 'sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                    </form>
                                                 @endif
                                             @endif
                                         </td>

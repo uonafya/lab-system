@@ -113,6 +113,19 @@ class Common
     	return \App\Viralpatient::class;
     }
 
+    public static function downloadCSV($data, $filename='export.csv')
+    {
+    	$f = fopen('php://output', 'w');
+    	fputcsv($f, array_keys($data[0]));
+
+    	foreach ($data as $line) {
+    		fputcsv($f, $line);
+    	}
+    	header('Content-Type: application/csv');
+    	header('Content-Disposition: attachment; filename="'.$filename.'";');
+    	fpassthru($f);
+    }
+
 	public static function get_days($start, $finish, $with_holidays=true)
 	{
 		if(!$start || !$finish) return null;
@@ -311,6 +324,7 @@ class Common
 
         if($samples->isEmpty()){
         	$worklist = \App\Worklist::find($worklist_id);
+        	if(!$worklist) return;
         	$worklist->status_id = 3;
         	$worklist->pre_update();
         }

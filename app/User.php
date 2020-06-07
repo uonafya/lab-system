@@ -78,6 +78,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $query->whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org');
     }
+
+    public function scopeCovidLabUser($query)
+    {
+        return $query->whereIn('user_type_id', [1, 4, 13])->where('email', '!=', 'rufus.nyaga@ken.aphl.org');
+    }
     
 
     /**
@@ -88,6 +93,36 @@ class User extends Authenticatable implements JWTSubject
     public function getFullNameAttribute()
     {
         return "{$this->surname} {$this->oname}";
+    }
+
+    public function getIsLabUserAttribute()
+    {
+        if(in_array($this->user_type_id, [0, 1, 4])) return true;
+        return false;
+    }
+
+    public function getIsAdminAttribute()
+    {
+        if(in_array($this->user_type_id, [0, 2])) return true;
+        return false;
+    }
+
+    public function getIsFacilityAttribute()
+    {
+        if($this->user_type_id == 5) return true;
+        return false;
+    }
+
+    public function getIsPartnerAttribute()
+    {
+        if($this->user_type_id == 10) return true;
+        return false;
+    }
+
+    public function getIsNotLabUserAttribute()
+    {
+        if(in_array($this->user_type_id, [5,10])) return true;
+        return false;
     }
 
     public function facility()

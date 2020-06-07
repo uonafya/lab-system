@@ -56,9 +56,11 @@
                                             <a href="{{ url('/email/' . $email->id . '/edit' ) }} " target='_blank'>Edit</a>
                                         </td>
                                         <td>
-                                            {{ Form::open(['url' => 'email/' . $email->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following email?')"]) }}
-                                                <button type="submit" class="btn btn-xs btn-primary">Delete</button> 
-                                            {{ Form::close() }}
+                                            <form action="{{ url('email/' . $email->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following email?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
