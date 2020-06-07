@@ -19,11 +19,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistance;
 
+// use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DrSusceptabilityExport;
+use App\Exports\DrDetailedReportExport;
+
 
 
 class DrReportController extends Controller
 {
-
+/*
 	public function date_filter($request, $column)
 	{
 		return function($query) use($request, $column){
@@ -75,10 +79,19 @@ class DrReportController extends Controller
 			return $query->where($column, $param);			
 		};
 	}
-
+*/
 	public function reports(Request $request)
 	{
-		return $this->susceptability($request);
+		// return $this->susceptability($request);
+        $type = $request->input('types');
+
+        if($type == 'susceptibility'){
+            return new DrSusceptabilityExport($request);
+        }
+        else if($type == 'detailed'){
+            return new DrDetailedReportExport($request);
+        }
+
 	}
 
     public function susceptability($request)

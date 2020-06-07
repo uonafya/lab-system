@@ -42,7 +42,7 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '13', 'user_type' => 'Covid Data Clerk'],
 		]);
 
-		return;
+		// return;
 
 		// $old_users = DB::connection('old')->table('users')->get();
 
@@ -135,20 +135,20 @@ class UsersTableSeeder extends Seeder
 	    	]);
 	    }
 
-    	// $facilitys = DB::table('facilitys')->get();
+    	$facilitys = DB::table('facilitys')->get();
 
-    	// $i=0;
-    	// $data= null;
+    	$i=0;
+    	$data= null;
 
-    	// foreach ($facilitys as $key => $facility) {
-    	// 	$fac = factory(App\User::class, 1)->create([
-		   //      'user_type_id' => 5,
-		   //      'surname' => '',
-		   //      'oname' => '',
-		   //      'facility_id' => $facility->id,
-		   //      'email' => 'facility' . $facility->id . '@nascop-lab.com',
-		   //      'password' => encrypt($facility->name)
-	    // 	]);
-    	// }
+    	foreach ($facilitys as $key => $facility) {
+    		$fac = factory(App\User::class, 1)->create([
+		        'user_type_id' => 5,
+		        'surname' => '',
+		        'oname' => '',
+		        'facility_id' => $facility->id,
+		        'email' => 'facility' . $facility->id . '@nascop-lab.com',
+		        'password' => encrypt($facility->name)
+	    	]);
+    	}
     }
 }

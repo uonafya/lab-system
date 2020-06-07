@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Common;
 use App\Sample;
 use App\SampleView;
 use App\Viralsample;
@@ -605,17 +606,8 @@ class ReportController extends Controller
                 // else
                     $dataArray[] = $report->toArray();
             }
-            
-            Excel::create($title, function($excel) use ($dataArray, $title) {
-                $excel->setTitle($title);
-                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('EID/VL System');
-                $excel->setDescription($title);
 
-                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
-                    $sheet->fromArray($dataArray, null, 'A1', false, false);
-                });
-
-            })->download('csv');
+            return Common::csv_download($dataArray, $title);
         } else {
             session(['toast_message' => 'No data available for the criteria provided']);
         }
@@ -646,16 +638,7 @@ class ReportController extends Controller
                 $dataArray[] = $report->toArray();
             }
             
-            Excel::create($title, function($excel) use ($dataArray, $title) {
-                $excel->setTitle($title);
-                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                $excel->setDescription($title);
-
-                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
-                    $sheet->fromArray($dataArray, null, 'A1', false, false);
-                });
-
-            })->download('csv');
+            return Common::csv_download($dataArray, $title);
         } else {
             session(['toast_message' => 'No data available for the criteria provided']);
         }

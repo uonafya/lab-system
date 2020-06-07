@@ -32,7 +32,8 @@
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                {{ Form::open(['url' => '/saveconsumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                <form action="/saveconsumption" method="POST" class="form-horizontal" >
+                    @csrf
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><center>Consumed in the month</center></label>
                         <div class="col-sm-8">
@@ -129,7 +130,7 @@
                         <button class="btn btn-primary" type="submit" name="discard" value="add">Discard Changes</button>
                         </center>
                     </div>
-                {{ Form::close() }}
+                </form>
             </div>
         </div>
     </div>

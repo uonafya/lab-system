@@ -34,7 +34,8 @@
                             <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                 <tbody>
                                     <tr>
-                                        {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_dateSelect_form']) }}
+                                        <form action="{{ url('/reports/dateselect') }}" class="form-horizontal" method="POST" id='reports_dateSelect_form'>
+                                            @csrf
                                         <td>Select Date:</td>
                                         <input type="hidden" name="samples_log" value="1">
                                         <td>
@@ -46,10 +47,11 @@
                                         <td>
                                             <button class="btn btn-default" id="specificDateBtn">Download Report</button>
                                         </td>
-                                        {{ Form::close() }}
+                                        </form>
                                     </tr>
                                     <tr>
-                                        {{ Form::open(['url'=>'/reports/dateselect', 'method' => 'post', 'id' => 'reports_dateRange_form']) }}
+                                        <form action="{{ url('/reports/dateselect') }}" class="form-horizontal" method="POST" id='reports_dateRange_form'>
+                                            @csrf
                                         <td>Select Date Range From: </td>
                                         <input type="hidden" name="samples_log" value="1">
                                         <td>
@@ -68,7 +70,7 @@
                                         <td>
                                             <button class="btn btn-default" id="dateRangeBtn">Download Report</button>
                                         </td>
-                                        {{ Form::close() }}
+                                        </form>
                                     </tr>
                                 </tbody>
                             </table>
@@ -88,10 +90,11 @@
                         </div>
                         @endif
                         @if(session('testingSystem') == 'DR')
-                        {{ Form::open(['url'=>'/dr_report', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
+                        <form action="{{ url('/dr_report') }}" class="form-horizontal" method="POST" id='reports_form'>
                         @else
-                        {{ Form::open(['url'=>'/reports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
+                        <form action="{{ url('/reports') }}" class="form-horizontal" method="POST" id='reports_form'>
                         @endif
+                            @csrf
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-sm-3 control-label">
@@ -256,7 +259,14 @@
                             <label class="col-sm-3 control-label">Select Report Type</label>
                             <div class="col-sm-9">
                                 @if(Session('testingSystem') == 'DR')
-                                <label> <input type="radio" name="types" value="susceptibility" class="i-checks" required> Susceptibility Report </label>
+                                    <label> 
+                                        <input type="radio" name="types" value="susceptibility" class="i-checks" required> 
+                                        Susceptibility Report 
+                                    </label>
+                                    <label> 
+                                        <input type="radio" name="types" value="detailed" class="i-checks" required> 
+                                        Detailed Report 
+                                    </label>
                                 @else
                                 <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
@@ -290,8 +300,8 @@
                                 <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
                                 <button class="btn btn-default">Reset Options</button>
                             </center>
-                        </div>                  
-                        {{ Form::close() }}
+                        </div>           
+                        </form>
                     </div>
                 </div>
             </div>

@@ -79,7 +79,6 @@
 	<a href="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
 		Update Results (In Case of Accidental Cancellation)
 	</a> | 
-
 	{!! $worksheet->delete_form !!}
 
 @else

@@ -19,7 +19,8 @@
 
 <div class="row">
     <div class="col-md-12">
-    {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'covid_consumption']) }}
+    <form action="/covidkits/consumption" method="POST" class="form-horizontal" id="covid_consumption" >
+    @csrf
     <input type="hidden" name="week_start" value="{{ $time->week_start }}">
     <input type="hidden" name="week_end" value="{{ $time->week_end }}">
     @foreach($covidkits as $machinekey => $kits)
@@ -119,7 +120,7 @@
             </div>
         </div>
     </div>    
-    {{ Form::close() }}
+    </form>
     </div>
 </div>
 @endsection

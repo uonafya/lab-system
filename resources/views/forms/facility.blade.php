@@ -21,7 +21,8 @@
         <div>
             <div class="row">
                 <div class="col-lg-12">
-                {{ Form::open(['url' => '/facility', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                <form action="{{ url('/facility') }}" class="form-horizontal" method="POST">
+                    @csrf
                     <div class="hpanel">
                         <div class="panel-heading" style="padding-bottom: 2px;padding-top: 4px;">
                             <center>Facility Information</center>
@@ -131,7 +132,7 @@
                             </div>
                         </center>
                     </div>
-                {{ Form::close() }}
+                </form>
                 </div>
             </div>
         </div>

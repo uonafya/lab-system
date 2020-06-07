@@ -181,6 +181,38 @@
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['CD4worksheetFor2ndApproval']) }}">{{ $widgets['CD4worksheetFor2ndApproval'] }}</span>
 		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
+		                @elseif(Session('testingSystem') == 'DR')
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_pending_receipt']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_receipt']) }}">{{ $widgets['dr_pending_receipt'] }}</span>
+		                        <a href="{{ url('dr_sample/index/11') }}">Samples Pending Approval for testing.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_pending_testing']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_testing']) }}">{{ $widgets['dr_pending_testing'] }}</span>
+		                        <a href="{{ url('dr_worksheet/create') }}">Pending Testing.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_pending_update']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_update']) }}">{{ $widgets['dr_pending_update'] }}</span>
+		                        <a href="{{ url('dr_worksheet/index/1') }}">Pending AB Files Upload.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_awaiting_hyrax']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_awaiting_hyrax']) }}">{{ $widgets['dr_awaiting_hyrax'] }}</span>
+		                        <a href="{{ url('dr_worksheet') }}">Pending Hyrax.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_requires_action']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_requires_action']) }}">{{ $widgets['dr_requires_action'] }}</span>
+		                        <a href="{{ url('dr_worksheet') }}">Pending Chromatogram Edits.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_pending_approval']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_approval']) }}">{{ $widgets['dr_pending_approval'] }}</span>
+		                        <a href="{{ url('dr_worksheet') }}">Pending Approval.</a>
+		                    </li>
+
 						@endif
 						@if(in_array(Session('testingSystem'), ['EID', 'Viralload']))
 							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)

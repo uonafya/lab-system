@@ -33,39 +33,41 @@
                             <table cellpadding="1" cellspacing="1" class="table table-condensed">
                                 <tbody>
                                     <tr>
-                                        {{ Form::open(['url'=>'/cd4/reports/dateselect', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_dateSelect_form']) }}
-                                        <td>Select Date:</td>
-                                        <td>
-                                            <div class="input-group date">
-                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" id="specificDate" required class="form-control lockable" name="specificDate">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-default" id="specificDateBtn">Download Report</button>
-                                        </td>
-                                        {{ Form::close() }}
+                                        <form action="{{ url('/cd4/reports/dateselect') }}" class="form-horizontal" method="POST" id='reports_dateSelect_form'>
+                                            @csrf
+                                            <td>Select Date:</td>
+                                            <td>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" id="specificDate" required class="form-control lockable" name="specificDate">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-default" id="specificDateBtn">Download Report</button>
+                                            </td>
+                                        </form>
                                     </tr>
                                     <tr>
-                                        {{ Form::open(['url'=>'/cd4/reports/dateselect', 'method' => 'post', 'id' => 'reports_dateRange_form']) }}
-                                        <td>Select Date Range From: </td>
-                                        <td>
-                                            <div class="input-group date">
-                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" id="fromDate" required class="form-control lockable" name="fromDate">
-                                            </div>
-                                        </td>
-                                        <td><center>To:</center></td>
-                                        <td>
-                                            <div class="input-group date">
-                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                <input type="text" id="toDate" required class="form-control lockable" name="toDate">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-default" id="dateRangeBtn">Download Report</button>
-                                        </td>
-                                        {{ Form::close() }}
+                                        <form action="{{ url('/cd4/reports/dateselect') }}" class="form-horizontal" method="POST" id='reports_dateRange_form'>
+                                            @csrf
+                                            <td>Select Date Range From: </td>
+                                            <td>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" id="fromDate" required class="form-control lockable" name="fromDate">
+                                                </div>
+                                            </td>
+                                            <td><center>To:</center></td>
+                                            <td>
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input type="text" id="toDate" required class="form-control lockable" name="toDate">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-default" id="dateRangeBtn">Download Report</button>
+                                            </td>
+                                        </form>
                                     </tr>
                                 </tbody>
                             </table>
@@ -81,173 +83,174 @@
                         <div class="alert alert-warning">
                             <center>Please select Overall <strong>or Province or County or District or Facility & Period To generate the report based on your criteria.</strong></center>
                         </div>
-                        {{ Form::open(['url'=>'/cd4/reports/generate', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'reports_form']) }}
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" class="i-checks" value="overall">Overall
-                                </label>
+                        <form action="{{ url('/cd4/reports/generate') }}" class="form-horizontal" method="POST" id='reports_form'>
+                            @csrf
+                            <div class="form-group">
+                                <div class="row">
+                                    <label class="col-sm-3 control-label">
+                                        <input type="radio" name="category" class="i-checks" value="overall">Overall
+                                    </label>
+                                    <div class="col-sm-9">
+                                        << For all samples tested in Lab >>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-3 control-label">
+                                        <input type="radio" name="category" value="county" class="i-checks">Select County
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="report_county_search" name="county"></select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-3 control-label">
+                                        <input type="radio" name="category" value="subcounty" class="i-checks">Select Sub County
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="report_district_search" name="district"></select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-3 control-label">
+                                        <input type="radio" name="category" value="facility" class="i-checks">Select Facility
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="report_facility_search" name="facility"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Select Period</label>
+                                <div class="col-sm-10">
+                                    <!-- <select class="form-control" id="period">
+                                        <option selected="true" disabled="true">Select Time Frame</option>
+                                        <option value="weekly">Date Range</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="quarterly">Quarterly</option>
+                                        <option value="annually">Annually</option>
+                                    </select> -->
+                                    <label> <input type="radio" name="period" value="range"> Date Range </label>
+                                    <label> <input type="radio" name="period" value="monthly"> Monthly </label>
+                                    <label> <input type="radio" name="period" value="quarterly"> Quarterly </label>
+                                    <label> <input type="radio" name="period" value="annually"> Annually </label>
+                                </div>
+                                <div class="row" id="periodSelection" style="display: none;">
+                                    <div class="col-md-9  col-md-offset-3" id="rangeSelection">
+                                        <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Select Date Range From: </th>
+                                                    <td>
+                                                        <div class="input-group date">
+                                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                            <input type="text" id="fromDateCat" class="form-control lockable" name="fromDate">
+                                                        </div>
+                                                    </td>
+                                                    <td><center>To:</center></td>
+                                                    <td>
+                                                        <div class="input-group date">
+                                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                            <input type="text" id="toDateCat" class="form-control lockable" name="toDate">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-9  col-md-offset-3" id="monthSelection">
+                                        <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Select Year and Month </th>
+                                                    <td>
+                                                        <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                            <option selected="true" disabled="true">Select a Year</option>
+                                                            @for ($i = 0; $i <= 6; $i++)
+                                                                @php
+                                                                    $year=gmdate('Y')-$i
+                                                                @endphp
+                                                            <option value="{{ $year }}">{{ $year }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" id="month" name="month" style="width: 100%;">
+                                                            <option selected="true" disabled="true">Select a Month</option>
+                                                            @for($i = 1; $i <= 12; ++$i)
+                                                                <option value="{{ $i }}">{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                    <div class="col-md-9  col-md-offset-3" id="quarterSelection">
+                                        <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Select Year and Quarter </th>
+                                                    <td>
+                                                        <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                            <option selected="true" disabled="true">Select a Year</option>
+                                                            @for ($i = 0; $i <= 6; $i++)
+                                                                @php
+                                                                    $year=gmdate('Y')-$i
+                                                                @endphp
+                                                            <option value="{{ $year }}">{{ $year }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" id="quarter" name="quarter" style="width: 100%;">
+                                                            <option selected="true" disabled="true">Select a Quarter</option>
+                                                            @for ($i = 1; $i <= 4; $i++)
+                                                                <option value="Q{{ $i }}">Q{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                    <div class="col-md-9  col-md-offset-3" id="yearSelection">
+                                        <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Select Year </th>
+                                                    <td>
+                                                        <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                            <option selected="true" disabled="true">Select a Year</option>
+                                                           @for ($i = 0; $i <= 6; $i++)
+                                                                @php
+                                                                    $year=gmdate('Y')-$i
+                                                                @endphp
+                                                            <option value="{{ $year }}">{{ $year }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Select Report Type</label>
                                 <div class="col-sm-9">
-                                    << For all samples tested in Lab >>
+                                    <label> <input type="radio" name="types" value="all" class="i-checks"> ALL </label>
+                                    <label> <input type="radio" name="types" value="less500" class="i-checks"> &lt; 500 cells/ul   </label>
+                                    <label> <input type="radio" name="types" value="above500" class="i-checks"> &gt; 500 cells/ul   </label>
                                 </div>
                             </div>
-                            <div class="row">
-                                <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" value="county" class="i-checks">Select County
-                                </label>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="report_county_search" name="county"></select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" value="subcounty" class="i-checks">Select Sub County
-                                </label>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="report_district_search" name="district"></select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-sm-3 control-label">
-                                    <input type="radio" name="category" value="facility" class="i-checks">Select Facility
-                                </label>
-                                <div class="col-sm-9">
-                                    <select class="form-control" id="report_facility_search" name="facility"></select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Select Period</label>
-                            <div class="col-sm-10">
-                                <!-- <select class="form-control" id="period">
-                                    <option selected="true" disabled="true">Select Time Frame</option>
-                                    <option value="weekly">Date Range</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="quarterly">Quarterly</option>
-                                    <option value="annually">Annually</option>
-                                </select> -->
-                                <label> <input type="radio" name="period" value="range"> Date Range </label>
-                                <label> <input type="radio" name="period" value="monthly"> Monthly </label>
-                                <label> <input type="radio" name="period" value="quarterly"> Quarterly </label>
-                                <label> <input type="radio" name="period" value="annually"> Annually </label>
-                            </div>
-                            <div class="row" id="periodSelection" style="display: none;">
-                                <div class="col-md-9  col-md-offset-3" id="rangeSelection">
-                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
-                                        <tbody>
-                                            <tr>
-                                                <th>Select Date Range From: </th>
-                                                <td>
-                                                    <div class="input-group date">
-                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                        <input type="text" id="fromDateCat" class="form-control lockable" name="fromDate">
-                                                    </div>
-                                                </td>
-                                                <td><center>To:</center></td>
-                                                <td>
-                                                    <div class="input-group date">
-                                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                        <input type="text" id="toDateCat" class="form-control lockable" name="toDate">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-md-9  col-md-offset-3" id="monthSelection">
-                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
-                                        <tbody>
-                                            <tr>
-                                                <th>Select Year and Month </th>
-                                                <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
-                                                        <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 0; $i <= 6; $i++)
-                                                            @php
-                                                                $year=gmdate('Y')-$i
-                                                            @endphp
-                                                        <option value="{{ $year }}">{{ $year }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control" id="month" name="month" style="width: 100%;">
-                                                        <option selected="true" disabled="true">Select a Month</option>
-                                                        @for($i = 1; $i <= 12; ++$i)
-                                                            <option value="{{ $i }}">{{ date("F", strtotime(date("Y") ."-". $i ."-01")) }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>    
-                                </div>
-                                <div class="col-md-9  col-md-offset-3" id="quarterSelection">
-                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
-                                        <tbody>
-                                            <tr>
-                                                <th>Select Year and Quarter </th>
-                                                <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
-                                                        <option selected="true" disabled="true">Select a Year</option>
-                                                        @for ($i = 0; $i <= 6; $i++)
-                                                            @php
-                                                                $year=gmdate('Y')-$i
-                                                            @endphp
-                                                        <option value="{{ $year }}">{{ $year }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control" id="quarter" name="quarter" style="width: 100%;">
-                                                        <option selected="true" disabled="true">Select a Quarter</option>
-                                                        @for ($i = 1; $i <= 4; $i++)
-                                                            <option value="Q{{ $i }}">Q{{ $i }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>    
-                                </div>
-                                <div class="col-md-9  col-md-offset-3" id="yearSelection">
-                                    <table cellpadding="1" cellspacing="1" class="table table-condensed">
-                                        <tbody>
-                                            <tr>
-                                                <th>Select Year </th>
-                                                <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
-                                                        <option selected="true" disabled="true">Select a Year</option>
-                                                       @for ($i = 0; $i <= 6; $i++)
-                                                            @php
-                                                                $year=gmdate('Y')-$i
-                                                            @endphp
-                                                        <option value="{{ $year }}">{{ $year }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>    
-                                </div>
-                            </div>
-                        </div> 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Select Report Type</label>
-                            <div class="col-sm-9">
-                                <label> <input type="radio" name="types" value="all" class="i-checks"> ALL </label>
-                                <label> <input type="radio" name="types" value="less500" class="i-checks"> &lt; 500 cells/ul   </label>
-                                <label> <input type="radio" name="types" value="above500" class="i-checks"> &gt; 500 cells/ul   </label>
-                            </div>
-                        </div>
 
-                        <div class="form-group">
-                            <center>
-                                <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
-                                <button class="btn btn-default">Reset Options</button>
-                            </center>
-                        </div>                  
-                        {{ Form::close() }}
+                            <div class="form-group">
+                                <center>
+                                    <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
+                                    <button class="btn btn-default">Reset Options</button>
+                                </center>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

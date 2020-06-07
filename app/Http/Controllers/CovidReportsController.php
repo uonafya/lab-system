@@ -37,10 +37,6 @@ class CovidReportsController extends Controller
 		$data = $this->prepareData($today_data, $last_update_data, $date);
 
 		return \App\MiscCovid::csv_download($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date, false);
-
-		// Generate the excel
-		$this->generateExcel($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date);
-		return back();
 	}
 
 	private function get_model($lab_id = null)
@@ -59,23 +55,6 @@ class CovidReportsController extends Controller
 									->orderBy('run', 'desc')
 									->orderBy('covid_sample_view.id', 'asc');
 						});
-	}
-
-	private function generateExcel($data, $title)
-	{
-		Excel::create($title, function($excel) use ($data, $title) {
-            $excel->setTitle($title);
-            $excel->setCreator(auth()->user()->full_name)->setCompany('COVID-19 System');
-            $excel->setDescription($title);
-
-            $excel->sheet('Sheet1', function($sheet) use ($data) {
-                $sheet->fromArray($data, null, 'A1', false, false);
-                /*$sheet->mergeCells('A1:H1');
-                $sheet->mergeCells('A4:H4');
-                $sheet->mergeCells('A5:H5');*/
-            });
-
-        })->download('csv');
 	}
 
 	private function filterDate($model, $request)
