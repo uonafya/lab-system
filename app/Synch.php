@@ -526,6 +526,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
+		if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -579,6 +580,10 @@ class Synch
 						$my->save_tat($sampleview_class, $sample_class, $batch->id);
 					}
 				}
+
+				$token = self::get_token();
+				if($type == 'covid') $token = self::get_covid_token();
+
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
@@ -1297,7 +1302,7 @@ class Synch
 				$child->set_tat();
 				$child->save();
 			}
-			continue;
+			// continue;
 			unset($sample->child);
 			$sample->load(['patient.travel', 'child']);
 
@@ -1345,12 +1350,12 @@ class Synch
 
 	public static function get_covid_samples()
 	{
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
 
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
 			],
 		]);
 
@@ -1360,12 +1365,12 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
 
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
 			],
 				'json' => [
 					'samples' => $samples,
