@@ -215,6 +215,7 @@ class Cd4WorksheetController extends Controller
             $worksheet->status_id = 2;
             $worksheet->save();
             
+            
             if ($worksheet) {
                 session(['toast_message' => 'Import done, Results Updated successfully, Please Confirm and Approve the updated results below']);
                 return redirect('cd4/worksheet/confirm/'.$worksheet->id);
