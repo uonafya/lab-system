@@ -1260,6 +1260,7 @@ class Synch
 				$child->set_tat();
 				$child->save();
 			}
+			continue;
 			unset($sample->child);
 			$sample->load(['patient.travel', 'child']);
 

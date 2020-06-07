@@ -78,6 +78,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $query->whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org');
     }
+
+    public function scopeCovidLabUser($query)
+    {
+        return $query->whereIn('user_type_id', [1, 4, 13])->where('email', '!=', 'rufus.nyaga@ken.aphl.org');
+    }
     
 
     /**

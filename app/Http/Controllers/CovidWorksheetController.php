@@ -410,7 +410,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
         $worksheet->load(['creator']);
-        $users = User::labUser()->get();
+        $users = User::covidLabUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -650,6 +650,11 @@ class CovidWorksheetController extends Controller
         if(env('APP_LAB') == 3 && !auth()->user()->covid_allowed){
             session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);                        
+        }
+
+        if(env('APP_LAB') == 5 && $worksheet->reviewedby && !auth()->user()->covid_approver){
+            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+            return redirect($worksheet->route_name);
         }
 
         foreach ($samples as $key => $value) {
