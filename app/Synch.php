@@ -264,7 +264,7 @@ class Synch
 
 		$body = json_decode($response->getBody());
 		// dd($body);
-		Cache::store('file')->put('api_token', $body->token, 60);
+		Cache::store('file')->put('covid_api_token', $body->token, 60);
 
 		// dd($body);
 	}
@@ -276,6 +276,15 @@ class Synch
 			self::login();
 		}
 		return Cache::store('file')->get('api_token');
+	}
+
+	public static function get_covid_token()
+	{
+		if(Cache::store('file')->has('covid_api_token')){}
+		else{
+			self::covid_login();
+		}
+		return Cache::store('file')->get('covid_api_token');
 	}
 
 	public static function synch_eid_patients()
@@ -1262,7 +1271,7 @@ class Synch
 
 	public static function synch_covid()
 	{
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1295,7 +1304,7 @@ class Synch
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer ' . self::get_token(),
+					'Authorization' => 'Bearer ' . self::get_covid_token(),
 				],
 				'json' => [
 					'sample' => $sample->toJson(),
