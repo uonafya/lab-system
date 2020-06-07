@@ -422,7 +422,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
-        Excel::import(new CovidWorksheetImport($worksheet, $request), $path);
+        Excel::import(new CovidWorksheetImport($worksheet, $request)), $path);
 /*
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
