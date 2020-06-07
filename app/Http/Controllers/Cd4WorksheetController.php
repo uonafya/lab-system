@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Cd4Worksheet;
 use App\Cd4Sample;
 use App\Lookup;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\Cd4WorksheetImport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

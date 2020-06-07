@@ -9,7 +9,7 @@ use App\User;
 use App\Misc;
 use App\Lookup;
 use DB;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\WorksheetImport;
 use Illuminate\Http\Request;
 

@@ -14,7 +14,7 @@ use App\Sample;
 use App\Viralsample;
 
 use Carbon\Carbon;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CovidWorksheetImport;
 
 use Illuminate\Http\Request;
