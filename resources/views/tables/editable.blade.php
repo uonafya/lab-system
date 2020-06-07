@@ -34,7 +34,9 @@
 		            </div>
             	</div>
                 <div class="panel-body">
-            	    {{ Form::open(['url' => '/facility/'.$function, 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    <form action="{{ url('/facility/'.$function) }}" class='form-horizontal' method="POST">
+                        @csrf
+                        @method('PUT')
                         <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;" >
                             <thead>
                                 <tr class="colhead">
@@ -54,7 +56,7 @@
                                 <button class="btn btn-success" type="submit">Update Facilities List</button>
                             </div>
                         </div>
-                    {{ Form::close() }}
+                    </form>
                 </div>
             </div>
         </div>

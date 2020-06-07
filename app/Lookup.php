@@ -565,7 +565,7 @@ class Lookup
     {
         return [
             'sample' => ['test_type', 'amrs_location', 'provider_identifier', 'order_no', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'comments', 'labcomment', 'sample_type', 'receivedstatus', 'rejectedreason', 'datecollected', 'datereceived', 'datetested', 'result', 'age', 'highpriority'],
-            'patient' => ['identifier_type', 'identifier', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'subcounty_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no', 'quarantine_site_id'],
+            'patient' => ['identifier_type', 'identifier', 'national_id', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'subcounty_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no', 'quarantine_site_id'],
         ];
     }
 
@@ -637,58 +637,60 @@ class Lookup
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
 
-            // Cache::put('facilities', $facilities, 60);
-            Cache::put('amrs_locations', $amrs_locations, 60);
-            Cache::put('genders', $genders, 60);
-            Cache::put('received_statuses', $received_statuses, 60);
-            Cache::put('languages', $languages, 60);
+            $minutes = 60*60;
 
-            Cache::put('rejected_reasons', $rejected_reasons, 60);
-            Cache::put('feedings', $feedings, 60);
-            Cache::put('iprophylaxis', $iprophylaxis, 60);
-            Cache::put('interventions', $interventions, 60);
-            Cache::put('entry_points', $entry_points, 60);
-            Cache::put('hiv_statuses', $hiv_statuses, 60);
-            Cache::put('pcr_types', $pcr_types, 60);
-            Cache::put('results', $results, 60);
+            // Cache::put('facilities', $facilities, $minutes);
+            Cache::put('amrs_locations', $amrs_locations, $minutes);
+            Cache::put('genders', $genders, $minutes);
+            Cache::put('received_statuses', $received_statuses, $minutes);
+            Cache::put('languages', $languages, $minutes);
 
-            Cache::put('viral_rejected_reasons', $viral_rejected_reasons, 60);
-            Cache::put('pmtct_types', $pmtct_types, 60);
-            Cache::put('prophylaxis', $prophylaxis, 60);
-            Cache::put('interventions', $interventions, 60);
-            Cache::put('justifications', $justifications, 60);
-            Cache::put('sample_types', $sample_types, 60);
-            // Cache::put('regimen_lines', $regimen_lines, 60);
-            Cache::put('vl_result_guidelines', $vl_result_guidelines, 60);
+            Cache::put('rejected_reasons', $rejected_reasons, $minutes);
+            Cache::put('feedings', $feedings, $minutes);
+            Cache::put('iprophylaxis', $iprophylaxis, $minutes);
+            Cache::put('interventions', $interventions, $minutes);
+            Cache::put('entry_points', $entry_points, $minutes);
+            Cache::put('hiv_statuses', $hiv_statuses, $minutes);
+            Cache::put('pcr_types', $pcr_types, $minutes);
+            Cache::put('results', $results, $minutes);
 
-            Cache::put('machines', $machines, 60);
-            Cache::put('actions', $actions, 60);
-            Cache::put('worksheet_sampletypes', $worksheet_sampletypes, 60);
-            Cache::put('dilutions', $dilutions, 60);
-            Cache::put('worksheet_statuses', $worksheet_statuses, 60);
+            Cache::put('viral_rejected_reasons', $viral_rejected_reasons, $minutes);
+            Cache::put('pmtct_types', $pmtct_types, $minutes);
+            Cache::put('prophylaxis', $prophylaxis, $minutes);
+            Cache::put('interventions', $interventions, $minutes);
+            Cache::put('justifications', $justifications, $minutes);
+            Cache::put('sample_types', $sample_types, $minutes);
+            // Cache::put('regimen_lines', $regimen_lines, $minutes);
+            Cache::put('vl_result_guidelines', $vl_result_guidelines, $minutes);
+
+            Cache::put('machines', $machines, $minutes);
+            Cache::put('actions', $actions, $minutes);
+            Cache::put('worksheet_sampletypes', $worksheet_sampletypes, $minutes);
+            Cache::put('dilutions', $dilutions, $minutes);
+            Cache::put('worksheet_statuses', $worksheet_statuses, $minutes);
 
             if(in_array(env('APP_LAB'), [1, 7])){
-                Cache::put('dr_rejected_reasons', $dr_rejected_reasons, 60);
-                Cache::put('drug_resistance_reasons', $drug_resistance_reasons, 60);
-                Cache::put('dr_primers', $dr_primers, 60);
-                Cache::put('dr_patient_statuses', $dr_patient_statuses, 60);
-                Cache::put('dr_projects', $dr_projects, 60);
-                Cache::put('tb_treatment_phases', $tb_treatment_phases, 60);
-                Cache::put('clinical_indications', $clinical_indications, 60);
-                Cache::put('arv_toxicities', $arv_toxicities, 60);
-                Cache::put('other_medications', $other_medications, 60);
-                Cache::put('container_types', $container_types, 60);
-                Cache::put('amount_units', $amount_units, 60);
+                Cache::put('dr_rejected_reasons', $dr_rejected_reasons, $minutes);
+                Cache::put('drug_resistance_reasons', $drug_resistance_reasons, $minutes);
+                Cache::put('dr_primers', $dr_primers, $minutes);
+                Cache::put('dr_patient_statuses', $dr_patient_statuses, $minutes);
+                Cache::put('dr_projects', $dr_projects, $minutes);
+                Cache::put('tb_treatment_phases', $tb_treatment_phases, $minutes);
+                Cache::put('clinical_indications', $clinical_indications, $minutes);
+                Cache::put('arv_toxicities', $arv_toxicities, $minutes);
+                Cache::put('other_medications', $other_medications, $minutes);
+                Cache::put('container_types', $container_types, $minutes);
+                Cache::put('amount_units', $amount_units, $minutes);
             }
 
             if(env('APP_LAB') == 5) {
                 // CD4 Lookup Data
-                Cache::put('cd4rejected_reasons', $cd4rejected_reasons, 60);
-                Cache::put('cd4sample_statuses', $cd4sample_statuses, 60);
+                Cache::put('cd4rejected_reasons', $cd4rejected_reasons, $minutes);
+                Cache::put('cd4sample_statuses', $cd4sample_statuses, $minutes);
             }
             
-            Cache::put('partners', $partners, 60);
-            Cache::put('subcounties', $subcounties, 60);
+            Cache::put('partners', $partners, $minutes);
+            Cache::put('subcounties', $subcounties, $minutes);
         }		
 	}
 

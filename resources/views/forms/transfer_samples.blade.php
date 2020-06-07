@@ -19,8 +19,8 @@
                 </div>
                 <div class="panel-body">
 
-
-                    {{ Form::open(['url' => $pre . 'sample/transfer_samples', 'method' => 'post', 'id' => 'approve_batch_form', 'class'=>'form-horizontal', ]) }}
+                    <form action="{{ url($pre . 'sample/transfer_samples') }}" class="form-horizontal" method="POST" id='approve_batch_form'>
+                        @csrf
 
 
                         <!-- <div class="alert alert-warning">
@@ -140,10 +140,7 @@
                                 <button class="btn btn-success" type="submit" id="accept_samples" name="submit_type" value="accepted">Transfer Samples</button>
                             </div>                        
                         </div>
-
-                    {{ Form::close() }}
-
-
+                    </form>
                 </div>
             </div>
         </div>

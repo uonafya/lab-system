@@ -19,7 +19,7 @@
                 </div>
                 <div class="panel-body">
                     <form  method="post" action="{{ url('dr_worksheet/approve/' . $worksheet->id) }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to approve the below test results as final results?');" >
-                        {{ method_field('PUT') }} {{ csrf_field() }}
+                        {{ method_field('PUT') }} @csrf
 
                         <div class="table-responsive">
 

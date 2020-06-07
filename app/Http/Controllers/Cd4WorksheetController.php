@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Cd4Worksheet;
 use App\Cd4Sample;
 use App\Lookup;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\Cd4WorksheetImport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -143,7 +144,7 @@ class Cd4WorksheetController extends Controller
         if ($request->method() == "PUT") {
             $file = $request->upload->path();
             $path = $request->upload->store('public/results/cd4'); 
-            $data = Excel::load($file, function($reader){
+            /*$data = Excel::load($file, function($reader){
                 $reader->toArray();
             })->get();
             // dd($data);
@@ -204,13 +205,16 @@ class Cd4WorksheetController extends Controller
                     // dd($sample);
                     $sample->save();
                 }
-            }
+            }*/
 
+            $c = new Cd4WorksheetImport($worksheet);
+            Excel::import($c, $path);
             $worksheet->uploadedby = auth()->user()->id;
             $worksheet->daterun = date('Y-m-d');
             $worksheet->dateuploaded = date('Y-m-d');
             $worksheet->status_id = 2;
             $worksheet->save();
+            
             
             if ($worksheet) {
                 session(['toast_message' => 'Import done, Results Updated successfully, Please Confirm and Approve the updated results below']);

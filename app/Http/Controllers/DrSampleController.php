@@ -6,17 +6,20 @@ use App\DrSample;
 use App\DrSampleView;
 use App\DrPatient;
 use App\Viralpatient;
+use App\Viralsample;
 use App\User;
 use App\Lookup;
 use App\MiscDr;
 
 use DB;
 use Excel;
+use Exception;
 use Mpdf\Mpdf;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\DrugResistanceResult;
 use App\Mail\DrugResistance;
 
 
@@ -31,20 +34,26 @@ class DrSampleController extends Controller
     {
         $user = auth()->user();
         $date_column = "datereceived";
-        if(in_array($sample_status, [1, 6])) $date_column = "datedispatched";
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        if(in_array($sample_status, [1, 2, 3])) $date_column = "datedispatched";
+        else if(in_array($sample_status, [11, 12])) $date_column = "dr_samples.created_at";
+
+        $string=null;
+        if($user->is_facility) $string = "(user_id='{$user->id}' OR dr_samples.facility_id='{$user->facility_id}')";
+        else if($user->is_partner) $string = "(facilitys.partner='{$user->facility_id}')";
+        
 
         $data = Lookup::get_dr();
         $data['dr_samples'] = DrSample::select(['dr_samples.*'])
             ->with(['patient.facility'])
-            ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
-            ->leftJoin('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
+            // ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
+            ->leftJoin('facilitys', 'dr_samples.facility_id', '=', 'facilitys.id')
             ->where(['control' => 0, 'repeatt' => 0])
-            ->when(($user->user_type_id == 5), function($query) use ($string){
+            ->when($string, function($query) use ($string){
                 return $query->whereRaw($string);
             })
             ->when($sample_status, function($query) use ($sample_status){
                 if($sample_status == 11) return $query->whereNull('datereceived');
+                if($sample_status == 12) return $query->where('passed_gel_documentation', 0);
                 return $query->where('status_id', $sample_status);
             })
             ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
@@ -56,7 +65,7 @@ class DrSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when($facility_id, function($query) use ($facility_id){
-                return $query->where('facility_id', $facility_id);
+                return $query->where('dr_samples.facility_id', $facility_id);
             })
             ->when($subcounty_id, function($query) use ($subcounty_id){
                 return $query->where('facilitys.district', $subcounty_id);
@@ -70,6 +79,7 @@ class DrSampleController extends Controller
         $data['dr_samples']->setPath(url()->current());
         $data['myurl'] = url('dr_sample/index/' . $sample_status);
         $data['myurl2'] = url('dr_sample/index/');
+        $data['sample_status'] = $sample_status;
         $data = array_merge($data, Lookup::get_partners());
         return view('tables.dr_samples', $data)->with('pageTitle', 'Drug Resistance Samples');        
     }
@@ -97,6 +107,11 @@ class DrSampleController extends Controller
         if($submit_type == 'excel') return $this->susceptability($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         return redirect("dr_sample/index/{$sample_status}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
+    }
+
+    public function facility($facility_id)
+    {
+        return redirect("dr_sample/index/0/0/0/{$facility_id}");        
     }
 
     /**
@@ -181,6 +196,7 @@ class DrSampleController extends Controller
         $drSample->fill($data);
 
         $drSample->patient_id = $viralpatient->id;
+        $drSample->facility_id = $viralpatient->facility_id;
 
         if(!$viralpatient) $viralpatient = $drSample->patient;
 
@@ -261,7 +277,6 @@ class DrSampleController extends Controller
         $others = $request->input('other_medications_text');
         $other_medications = $request->input('other_medications');
         $others = explode(',', $others);
-        $drSample->other_medications = array_merge($other_medications, $others);
         if(is_array($others) && is_array($other_medications)) $drSample->other_medications = array_merge($other_medications, $others);
         else{
             $drSample->other_medications = $others;
@@ -282,7 +297,7 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        if($drSample->worksheet_id){
+        if($drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
             return back();
         }
@@ -307,6 +322,13 @@ class DrSampleController extends Controller
     }
 
 
+    public function vl_results(DrSample $drSample)
+    {
+        $sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->firstOrFail();
+        return redirect('viralsample/' . $sample->id . '/edit_result');
+    }
+
+
     public function results(DrSample $drSample, $print=false)
     {
         $drSample->load(['dr_call.call_drug']);
@@ -326,6 +348,22 @@ class DrSampleController extends Controller
         $view_data = view('exports.mpdf_dr_result', $data)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+    }
+
+
+    public function email(DrSample $drSample)
+    {
+        $facility = $drSample->facility; 
+        $mail_array = array('joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com');
+        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
+        if(!$mail_array) return null;
+
+        $new_mail = new DrugResistanceResult($drSample);
+        Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
+            ->send($new_mail);
+
+        session(['toast_message' => "The results have been sent to the facility."]);
+        return back();
     }
 
 
@@ -422,6 +460,26 @@ class DrSampleController extends Controller
                 }
             });
         })->download('xlsx');
+    }
+
+    public function search(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}' OR user_id='{$user->id}')";
+
+        $samples = DrSample::select('id')
+            ->whereRaw("id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
     }
 
 }

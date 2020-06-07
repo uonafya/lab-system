@@ -57,15 +57,30 @@ p.breakhere {page-break-before: always}
 
 		<table id="table1" align="center">
 
-			<tr>
-				<td colspan="7" align="center">
-					<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
-					<span class="style1"><br>
-					  <span class="style7">MINISTRY OF HEALTH <br />
-					  COVID-19 RESULT FORM</span>
-					</span>
-				</td>
-			</tr>
+			@if(env('APP_LAB') == 23)
+				<tr>
+					<td colspan="7" align="center">
+						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="NASCOP"></strong> 
+						<span class="style1"><br>
+						<span class="style7">
+						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
+							P.O. BOX 7674-00100, GPO, NAIROBI <br />
+							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke
+						</span>
+						</span>
+					</td>
+				</tr>
+			@else
+				<tr>
+					<td colspan="7" align="center">
+						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						<span class="style1"><br>
+						  <span class="style7">MINISTRY OF HEALTH <br />
+						  COVID-19 RESULT FORM</span>
+						</span>
+					</td>
+				</tr>
+			@endif
 			<tr>
 				<td colspan="4" class="comment style1 style4">
 					<strong> Facility.: {{ $sample->patient->facility->county ?? '' }} &nbsp;&nbsp; {{ $sample->patient->facility->name ?? $sample->patient->quarantine_site->name ?? '' }} </strong> 
@@ -116,6 +131,13 @@ p.breakhere {page-break-before: always}
 						{{ $sample->patient->patient_name }}	
 					</span>
 				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" class="style4 style1 comment"><strong>National ID </strong></td>
+				<td colspan="2"  ><span class="style5"> {{ $sample->patient->national_id }} </span></td>
+				<td class="style4 style1 comment" colspan="2" ><strong> Phone Number </strong></td>
+				<td colspan="1" class="comment"> <span class="style5"> {{ $sample->patient->phone_no }} </span> </td>
 			</tr>
 
 			<tr>
@@ -178,7 +200,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. </strong></td>
 
 					<td colspan="4" class="style4 style1 comment">
-						{{-- $sample->get_prop_name($rejected_reasons, 'rejectedreason') --}}
+						$sample->get_prop_name($rejected_reasons, 'rejectedreason') <br />
 						The sample was not fit for testing. Kindly collect a new sample.
 					</td>
 
@@ -286,6 +308,19 @@ p.breakhere {page-break-before: always}
 					</td>
 				</tr>
 			@endif
+		
+			@if(!auth()->user()->user_type_id && $sample->result == 1 && true == false)
+				<tr>
+					<td colspan="5" class="style4 style1 comment">
+		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+		                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
+					</td>
+					<td colspan="2" class="style4 style1 comment">
+					</td>
+	            </tr>
+
+			@endif
+
 
 		</table>
 
@@ -296,7 +331,7 @@ p.breakhere {page-break-before: always}
 				@if(env('APP_LAB') == 1)
 					If you have questions or problems regarding samples, please contact the KEMRI-NAIROBI Lab at eid-nairobi@googlegroups.com <br />
 				@elseif(env('APP_LAB') == 3)
-					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through 0726156679 or eid-alupe@googlegroups.com <br />
+					If you have questions or problems regarding samples, please contact the KEMRI ALUPE HIV Laboratory through {{ $sample->lab->labtel1 ?? '' }} / {{ $sample->lab->labtel2 ?? '' }} or {{ $sample->lab->email ?? '' }} <br />
 				@else
 					If you have questions or problems regarding samples, please contact the testing laboratory.
 				@endif

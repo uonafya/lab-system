@@ -19,7 +19,6 @@
 @section('content')
     <div class="content">
         <div>
-
             
             <form action="{{ url('/user/' . ($user->id ?? '')) }}" class="form-horizontal" method="POST">
                 @if(isset($user))
@@ -128,13 +127,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Surname</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" name="surname" id="surname" type="text" value="{{ $user->surname ?? '' }}">
+                                        <input class="form-control" required name="surname" id="surname" type="text" value="{{ $user->surname ?? '' }}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Other Name(s)</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" name="oname" id="oname" type="text" value="{{ $user->oname ?? '' }}">
+                                        <input class="form-control" required name="oname" id="oname" type="text" value="{{ $user->oname ?? '' }}">
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +203,7 @@
                 if(val == 10){
                     $("#partners").show();
                     $('#partner_select').attr("required", "required");
-                    $('#partner_select').removeAttr("disabled");  
+                    $('#partner_select').removeAttr("disabled"); 
                 }else if(val == 11){
                     $("#quarantines").show();
                     $('#quarantine_select').attr("required", "required");

@@ -9,12 +9,14 @@
    <div class="content">
         <div>
 
-
-        @if (isset($viralsample))
-            {{ Form::open(['url' => '/viralsample/' . $viralsample->id, 'method' => 'put', 'class'=>'form-horizontal']) }}
+        @if(isset($viralsample))
+        <form action="{{ url('/viralsample/' . $viralsample->id) }}" class="form-horizontal" method="POST" id='samples_form'>
+            @method('PUT')
         @else
-            {{ Form::open(['url'=>'/viralsample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+        <form action="{{ url('/viralsample') }}" class="form-horizontal" method="POST" id='samples_form'>
         @endif
+
+            @csrf
 
         <input type="hidden" value=0 name="new_patient" id="new_patient">
 
@@ -224,6 +226,13 @@
                         </div>
 
                         @if(env('APP_LAB') == 4)
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Automatically Add MFL Code to CCC Number</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="automatic_mfl" value="1" checked="checked" />
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Automatically Add Slash to CCC Number</label>
@@ -716,10 +725,10 @@
                 </div>
             </div>
         </div>
+        </form>
 
-        {{ Form::close() }}
 
-      </div>
+    </div>
     </div>
 
 @endsection

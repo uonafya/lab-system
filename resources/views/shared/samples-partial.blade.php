@@ -51,10 +51,11 @@
 	                <td> <a href="{{ url('sample/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>
 	                <td> <a href="{{ url('sample/' . $sample->id . '/edit') }}"> Edit</a> </td>
 	                <td> 
-	                    {{ Form::open(['url' => 'sample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?');"]) }}
+                        <form action="{{ url('sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                            @csrf
+                            @method('DELETE')
 	                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-	                    {{ Form::close() }} 
-	                    
+	                    </form>
 	                </td>
 				</tr>
 			@endforeach

@@ -144,27 +144,17 @@ class Machine extends Model
 
     public function getCovidTestsDone($start_date, $end_date)
     {
-        $worksheets = $this->covid_worksheets->load('sample');
-        if ($worksheets->isEmpty())
-            return 0;
-        // This can be replaced with whereBetween which is available from laravel 5.8
-        $dates = [];
-        $loopdate = $start_date;
-        while (strtotime($loopdate) <= strtotime($end_date)) {
-            $dates[] = $loopdate;
-            $loopdate = date('Y-m-d', strtotime("+1 Day", strtotime($loopdate)));
-        }
-
         $user = auth()->user();
-        return $worksheets->pluck('sample')->flatten()
-                        ->whereIn('datetested', $dates)
-                        ->whereNotIn('receivedstatus', [2])
-                        ->when($user, function($sample) use ($user){
+        return CovidSample::selectRaw("count(*) as `samples`")
+                        ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+                        ->whereBetween('datetested', [$start_date, $end_date])
+                        ->where('machine_type', $this->id)
+                        ->when($user, function($query) use ($user){
                             if ($user->user_type_id == 12)
-                                return $sample->where('lab_id', $user->lab_id);
+                                return $query->where('covid_samples.lab_id', $user->lab_id);
                             else
-                                return $sample->where('lab_id', env('APP_LAB'));
-                        })->count();
+                                return $query->where('covid_samples.lab_id', env('APP_LAB'));
+                        })->first()->samples;
     }
 
 }

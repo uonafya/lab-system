@@ -19,7 +19,8 @@
 
 <div class="row">
     <div class="col-md-12">
-    {{ Form::open(['url' => '/covidkits/consumption', 'method' => 'post', 'class'=>'form-horizontal']) }}
+    <form action="/covidkits/consumption" method="POST" class="form-horizontal" id="covid_consumption" >
+    @csrf
     <input type="hidden" name="week_start" value="{{ $time->week_start }}">
     <input type="hidden" name="week_end" value="{{ $time->week_end }}">
     @foreach($covidkits as $machinekey => $kits)
@@ -38,7 +39,8 @@
                 <div class="alert alert-info">
                     <center><i class="fa fa-bolt"></i> Please enter <strong>{{ ucfirst($machinename) }}</strong> consumption values below for the week starting {{ $time->week_start }} and ending {{ $time->week_end }}.
                     @if($machine)
-                        <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($time->week_start, $time->week_end)) }})</strong>    
+                        <strong>(Week`s Tests:{{ number_format($machine->getCovidTestsDone($time->week_start, $time->week_end)) }})</strong>
+                        <input type="hidden" name="machine[]" value="{{ $machine->id }}">   
                     @endif
                     </center>
                 </div>
@@ -94,7 +96,7 @@
                                     <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
                                 </td>
                                 <td>
-                                    <input class="form-control" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}" min="0" disabled="true">
+                                    <input class="form-control ending" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}" min="0" disabled="true">
                                     <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="{{@($kit->beginingbalance($time->week_start)-$kitsused)}}">
                                 </td>
                                 <td>
@@ -118,7 +120,7 @@
             </div>
         </div>
     </div>    
-    {{ Form::close() }}
+    </form>
     </div>
 </div>
 @endsection
@@ -190,6 +192,27 @@
                 if (wastageval == '')
                     wastageval = 0;
                 updateendingbalance("wastage", wastage, (parseInt(wastageval)*-1));
+            });
+
+            $('#covid_consumption').submit(function(e){
+                console.log('Reading inputs');
+                var inputs = $(".ending");
+                for(var i = 0; i < inputs.length; i++){
+                    if ($(inputs[i]).val() < 0) {
+                        e.preventDefault();
+                        setTimeout(function(){
+                            toastr.options = {
+                                closeButton: false,
+                                progressBar: false,
+                                showMethod: 'slideDown',
+                                timeOut: 10000
+                            };
+                            toastr.error("No negative ending balances are allowed. Please fill in the respective kits received to proceed with this submission", "Warning!");
+                        });
+                        break;
+                    }
+                }
+                // console.log(inputs);
             });
         });
 

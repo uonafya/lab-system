@@ -5,30 +5,31 @@
 @endsection
 
 @section('custom_css')
-	<style type="text/css">
-		.hpanel .panel-body .spacing {
-			margin-bottom: 1em;
-		}
+    <style type="text/css">
+        .hpanel .panel-body .spacing {
+            margin-bottom: 1em;
+        }
         .hpanel .panel-body .bottom {
             border-bottom: 1px solid #eaeaea;
         }
-	</style>
+    </style>
 @endsection
 
 @section('content')
 <div class="row">
         <div class="col-md-12">
             <div class="hpanel" style="margin-top: 1em;margin-right: 20%;margin-bottom: 3em;">
-            	<div class="alert alert-danger">
-	                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
-	            </div>
+                <div class="alert alert-danger">
+                    <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
+                </div>
 
                 @php
                     $currentmonth = date('m');
                     $year = date('Y');
                 @endphp
 
-                {{ Form::open(['url' => '/allocation', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                <form action="/allocation" method="POST" class="form-horizontal">                    
+                @csrf
                 {{-- Kits form --}}
                 @foreach($data->machines as $machine)
                     @foreach($data->testtypes as $testtypeKey => $testtype)
@@ -150,7 +151,7 @@
                 <center>
                     <button type="submit" name="kits-form" class="btn btn-primary btn-lg" value="true" style="margin-top: 2em;margin-bottom: 2em; width: 200px; height: 30px;">Allocate</button>
                 </center>
-                {{ Form::close() }}
+                </form>
             </div>
         </div>
     </div>
@@ -173,7 +174,6 @@
                 @endforeach
             @endforeach
         });
-
         function computevalues(testtype, machine, qualvalue) {
             @foreach($data->machines as $machine)
                 if ("{{ $machine->id }}" == machine) {
@@ -196,4 +196,3 @@
         }
     </script>
 @endsection
-
