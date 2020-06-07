@@ -207,7 +207,8 @@ class Cd4WorksheetController extends Controller
                 }
             }*/
 
-            Excel::import(new Cd4WorksheetImport($worksheet), $path);
+            $c = new Cd4WorksheetImport($worksheet);
+            Excel::import($c, $path);
             $worksheet->uploadedby = auth()->user()->id;
             $worksheet->daterun = date('Y-m-d');
             $worksheet->dateuploaded = date('Y-m-d');
