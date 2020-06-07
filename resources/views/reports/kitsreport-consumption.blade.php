@@ -3,7 +3,8 @@
         Please select the parameters from the options below to generate the Submitted Kits Consumption query.
     </div>
     <div style="margin-top: 2em;">
-    {{ Form::open(['url'=>'/reports/kitsconsumption', 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'reports_consumption']) }}
+    <form action="{{ url('/reports/kitsconsumption') }}" class="form-horizontal" method="POST" id='reports_consumption'>
+        @csrf
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
@@ -52,6 +53,6 @@
                 <button type="reset" class="btn btn-default">Reset Options</button>
             </center>
         </div>  
-    {{ Form::close() }}
+    </form>
     </div>
 </div>

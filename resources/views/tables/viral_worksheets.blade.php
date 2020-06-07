@@ -18,7 +18,7 @@
                 </div>
                 <div class="panel-body">
                     <form  method="post" action="{{ url('batch/complete_dispatch') }}  " name="worksheetform"  onSubmit="return confirm('Are you sure you want to dispatch the selected batches?');" >
-                        {{ csrf_field() }}
+                        @csrf
 
                         <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>

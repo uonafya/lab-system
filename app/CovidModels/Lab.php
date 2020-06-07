@@ -1,10 +1,8 @@
 <?php
 
-namespace App;
+namespace App\CovidModels;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Lab extends Model
+class Lab extends BaseModel
 {
-    //
+
 }

@@ -68,7 +68,10 @@ class DashboardCacher
 
     public static function dashboard()
     {
-    	self::cacher();
+        if (env('APP_LAB') == 7) self::nhrl_cacher();
+        else{
+        	self::cacher();
+        }
 
         $data['get_style'] = function($val=null)
         {
@@ -129,6 +132,15 @@ class DashboardCacher
                 'CD4resultsForUpdate' => Cache::get('CD4resultsForUpdate'),
                 'CD4resultsForDispatch' => Cache::get('CD4resultsForDispatch'),
                 'CD4worksheetFor2ndApproval' => Cache::get('CD4worksheetFor2ndApproval')
+            ]);
+        } else if (session('testingSystem') == 'DR') {
+            return array_merge($data, [
+                'dr_pending_receipt' => Cache::get('dr_pending_receipt'),
+                'dr_pending_testing' => Cache::get('dr_pending_testing'),
+                'dr_pending_update' => Cache::get('dr_pending_update'),
+                'dr_awaiting_hyrax' => Cache::get('dr_awaiting_hyrax'),
+                'dr_requires_action' => Cache::get('dr_requires_action'),
+                'dr_pending_approval' => Cache::get('dr_pending_approval'),
             ]);
         }
     }
@@ -393,11 +405,66 @@ class DashboardCacher
         return AllocationDetail::where('approve', '=', 2)->count();
     }
 
+    public static function nhrl_cacher()
+    {
+        // if(Cache::has('dr_pending_receipt')) return true;
+
+        $minutes = (15*60);
+
+        $pending_receipt = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->join('users', 'users.id', '=', 'dr_samples.user_id')
+            ->where('user_type_id', 5)
+            ->where('control', 0)
+            ->whereNull('datereceived')
+            ->first()->my_count;
+
+        $pending_testing = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->whereNotNull('datereceived')
+            ->where('datereceived', '>', date('Y-m-d', strtotime('-3 months')))
+            ->where('control', 0)
+            ->whereNull('worksheet_id')
+            ->first()->my_count;
+
+        $pending_update = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->whereNotNull('worksheet_id')
+            ->where('control', 0)
+            ->whereNull('datetested')
+            ->first()->my_count;
+
+        $awaiting_hyrax = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->whereNotNull('worksheet_id')
+            ->where('control', 0)
+            ->whereIn('status_id', [4,5,7])
+            ->first()->my_count;
+
+        $requires_action = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->whereNotNull('worksheet_id')
+            ->where('control', 0)
+            ->where('status_id', 6)
+            ->first()->my_count;
+
+        $pending_approval = DrSample::selectRaw("COUNT(dr_samples.id) as `my_count`")
+            ->whereNotNull('worksheet_id')
+            ->whereNull('datedispatched')
+            ->where('control', 0)
+            ->where('status_id', '<', 4)
+            ->first()->my_count;
+
+
+        Cache::put('dr_pending_receipt', $pending_receipt, $minutes);
+        Cache::put('dr_pending_testing', $pending_testing, $minutes);
+        Cache::put('dr_pending_update', $pending_update, $minutes);
+        Cache::put('dr_awaiting_hyrax', $awaiting_hyrax, $minutes);
+        Cache::put('dr_requires_action', $requires_action, $minutes);
+        Cache::put('dr_pending_approval', $pending_approval, $minutes);
+        // Cache::put('dr_', $pendingSamples, $minutes);
+    }
+
     public static function cacher()
     {
     	if(Cache::has('vl_pendingSamples')) return true;
 
-    	$minutes = 5;
+    	$minutes = (5*60);
 
 		$pendingSamples = self::pendingSamplesAwaitingTesting();
         $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);

@@ -675,6 +675,7 @@ class ViralsampleController extends Controller
             return redirect('viralbatch/site_approval/' . $batch->id);
         }
 
+
         return redirect('viralbatch/' . $batch->id);
     }
 
@@ -687,7 +688,7 @@ class ViralsampleController extends Controller
      */
     public function save_poc(Request $request, Viralsample $sample)
     {
-        if($sample->result){
+        if($sample->result && env('APP_LAB') != 7){
             $mintime = strtotime('now -5days');
             if($sample->datemodified && strtotime($sample->datemodified) < $mintime){
                 session(['toast_message' => 'The result cannot be changed as it was first updated long ago.', 'toast_error' => 1]);
@@ -709,17 +710,26 @@ class ViralsampleController extends Controller
         }
 
         $sample->pre_update();
+
         MiscViral::check_batch($sample->batch_id);
         MiscViral::check_worklist(ViralsampleView::class, $sample->worksheet_id);
 
         $batch = $sample->batch;
-        $batch->lab_id = $request->input('lab_id');
+        if($batch->site_entry == 2) $batch->lab_id = $request->input('lab_id');
         if($batch->batch_complete == 2){
             $batch->datedispatched = date('Y-m-d');
             $batch->batch_complete = 1;
         }
         $batch->pre_update();
         session(['toast_message' => 'The sample has been updated.']);
+
+        if(env('APP_LAB') == 7){
+            $dr_sample = \App\DrSample::where($sample->only(['datecollected', 'patient_id']))->first();
+            $dr_sample->status_id = 1;
+            $dr_sample->datedispatched = date('Y-m-d');
+            $dr_sample->save();
+            return redirect('dr_sample/12');
+        }
 
         return redirect('viralsample/list_poc');        
     }
@@ -1118,13 +1128,7 @@ class ViralsampleController extends Controller
         session(['toast_message' => "{$created_rows} samples have been created."]);
 
         if($existing_rows){
-
-            Excel::create("samples_that_were_already_existing", function($excel) use($existing_rows) {
-                $excel->sheet('Sheetname', function($sheet) use($existing_rows) {
-                    $sheet->fromArray($existing_rows);
-                });
-            })->download('csv');
-
+            return MiscViral::csv_download($existing_rows, "samples_that_were_already_existing");
         }
 
         return redirect('/viralbatch');        

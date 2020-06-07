@@ -26,7 +26,9 @@
                         <center>Test Outcome Report [ All Tested Samples ]</center>
                     </div>
                     <div class="panel-body">
-                       {{ Form::open(['url'=>'/covidreports', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'covid_reports_form']) }}
+
+                       <form action="/covidreports" method="POST" class="form-horizontal" id="covid_reports_form" >
+                        @csrf
                         {{-- <div class="form-group">
                             <label class="col-sm-2 control-label">Select Period</label>
                             <div class="col-sm-10">
@@ -167,8 +169,8 @@
                                 <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
                                 <button class="btn btn-default">Reset Options</button>
                             </center>
-                        </div>                  
-                        {{ Form::close() }}
+                        </div>  
+                        </form>                
                     </div>
                 </div>
             </div>

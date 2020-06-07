@@ -80,7 +80,7 @@
 
                     
                     <form  method="post" action="{{ url('viralbatch/transfer/' . $batch->id) }}"  class="confirmSubmit" confirm_message="Are you sure you would like to transfer the selected samples?">
-                        {{ csrf_field() }}
+                        @csrf
 
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" >

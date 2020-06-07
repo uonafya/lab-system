@@ -942,12 +942,7 @@ class BatchController extends Controller
 
         $filename = "DISPATCH REPORT FOR EID RESULTS DISPATCHED BETWEEN {$date_start} AND {$date_end}";
 
-        Excel::create($filename, function($excel) use($data) {
-            $excel->sheet('Sheetname', function($sheet) use($data) {
-                $sheet->fromArray($data);
-            });
-        })->download('csv');
-
+        return Misc::csv_download($data, $filename);
     }
 
     public function convert_to_site_entry(Batch $batch)

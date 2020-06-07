@@ -26,8 +26,12 @@ class FacilityController extends Controller
                             ->where('facilitys.flag', '=', 1)
                             ->get();*/
 
-        $facilities = ViewFacility::all();
+        $facilities = ViewFacility::when((env('APP_LAB') == 7), function($query){ 
+            return $query->with(['facility_user']);
+        })->get();
         $table = '';
+        $user = auth()->user();
+        if($user->user_type_id == 5) abort(403);
         foreach ($facilities as $key => $value) {
             $table .= '<tr>';
             $table .= '<td>'.$value->facilitycode.'</td>';
@@ -44,7 +48,10 @@ class FacilityController extends Controller
             $table .= '<td>'.$value->contacttelephone2.'</td>';
             $table .= '<td>'.$value->ContactEmail.'</td>';
             $table .= '<td>'.$value->G4Sbranchname.'</td>';
-            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|<a href="'.route('facility.edit',$value->id).'">Edit</a></td>';
+            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|
+                        <a href="'.route('facility.edit',$value->id).'">Edit</a>';
+            if(env('APP_LAB') == 7 && $user->is_lab_user()) $table .= '|<a target="_blank" href="'.url('user/passwordReset/' . md5($value->facility_user->id)).'">Edit Login</a>';
+            $table .= '</td>';
             $table .= '</tr>';
         }
         $columns = parent::_columnBuilder(['MFL Code','Facility Name','County','Sub-county','Facility Phone 1','Facility Phone 2','Facility Email', 'Covid Email', 'Facility SMS Printer','Contact Person Names','Contact Phone 1','Contact Phone 2','Contact Email','G4S Branch','Task']);
@@ -460,11 +467,16 @@ class FacilityController extends Controller
 
         $poc = false;
         if($div_id == "#lab_id") $poc = true;
+
+        $user = auth()->user();
         
         $facilities = \App\ViewFacility::select('id', 'name', 'facilitycode', 'county')
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->when($poc, function($query){
                 return $query->where(['poc' => 1]);
+            })
+            ->when(($user && $user->is_partner), function($query) use ($user){
+                return $query->where(['partner_id' => $user->facility_id]);
             })
             ->paginate(10);
 

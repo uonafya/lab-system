@@ -64,10 +64,7 @@
                         <li class="">
                             <a href="{{ url('home') }}">Dashboard</a>
                         </li>
-                    @elseif(Session('testingSystem') == 'Covid')
-                        <li class="">
-                            <a href="{{ url('home') }}">Home</a>
-                        </li>
+                    @elseif(Session('testingSystem') == 'Covid') 
                         <li class="">
                             <a href="{{ url('covid_sample') }}">Samples</a>
                         </li>
@@ -85,6 +82,34 @@
                         </li>
                         <li class="">
                             <a href="{{ url('covidkits/reports') }}">Kits</a>
+                        </li>
+
+                    @elseif(session('testingSystem') == 'DR')
+                        <li class="">
+                            <a href="{{ url('home') }}">Home</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('dr_dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('dr_worksheet') }}">Sequencing Worksheets</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
+                        </li>    
+                        @if(auth()->user()->is_admin)
+                            <li>
+                                <a href="{{ url('user') }}">Users</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('facility') }}">Facilities</a>
+                            </li>
+                        @endif   
+                        <li class="">
+                            <a href="{{ url('reports') }}">Report</a>
                         </li>
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
@@ -164,6 +189,7 @@
                                     <li class="">
                                         <a href="{{ route('dashboard') }}">Dashboard</a>
                                     </li>
+
                                     <li class="">
                                         @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                                             <a href="{{ url('reports/kits') }}">Kits
@@ -173,6 +199,7 @@
                                             </a>       
                                         @endif    
                                     </li>
+                                    
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
                                             <a href="{{ url('user') }}">Users</a>
@@ -260,8 +287,31 @@
                     </li>
                 @elseif(session('testingSystem') == 'DR')
                     <li class="">
+                        <a href="{{ url('home') }}">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_worksheet') }}">Sequencing Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
+                    </li>    
+                    @if(auth()->user()->is_admin)
+                        <li>
+                            <a href="{{ url('user') }}">Users</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('facility') }}">Facilities</a>
+                        </li>
+                    @endif 
+                    <li class="">
                         <a href="{{ url('reports') }}">Report</a>
-                    </li>                          
+                    </li>                       
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
@@ -426,7 +476,7 @@
 
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        {{ csrf_field() }}
+                        @csrf
                     </form>
 
                 </li>

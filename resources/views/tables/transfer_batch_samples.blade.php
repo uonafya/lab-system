@@ -60,7 +60,7 @@
 
                     
                     <form  method="post" action="{{ url('batch/transfer/' . $batch->id) }}"  class="confirmSubmit" confirm_message="Are you sure you would like to transfer the selected samples?">
-                        {{ csrf_field() }}
+                        @csrf
 
 
                         <div class="table-responsive">

@@ -104,9 +104,11 @@
                                         <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">View</a> |
                                         <a href="{{ url('/viralsample/' . $sample->id . '/edit') }} ">Edit</a> |
 
-                                        {{ Form::open(['url' => 'viralsample/' . $sample->id, 'method' => 'delete', 'onSubmit' => "return confirm('Are you sure you want to delete the following sample?')"]) }}
+                                        <form action="{{ url('viralsample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                                            @csrf
+                                            @method('DELETE')
                                             <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-                                        {{ Form::close() }}
+                                        </form>
                                     </td>
                                 </tr>
                             </tbody>
