@@ -24,7 +24,7 @@
         "mpdf/mpdf": "^7.0",
         "fideloper/proxy": "^4.0",
         "tymon/jwt-auth": "1.0.*",
-        "simplesoftwareio/simple-qrcode": "^2.0",
+        "simplesoftwareio/simple-qrcode": "^3.0",
         "laravel/helpers": "^1.1",
         "dingo/api": "^2"
     },
