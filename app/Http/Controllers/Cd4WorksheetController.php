@@ -207,12 +207,14 @@ class Cd4WorksheetController extends Controller
                 }
             }*/
 
-            Excel::import(new Cd4WorksheetImport($worksheet), $path);
+            $c = new Cd4WorksheetImport($worksheet);
+            Excel::import($c, $path);
             $worksheet->uploadedby = auth()->user()->id;
             $worksheet->daterun = date('Y-m-d');
             $worksheet->dateuploaded = date('Y-m-d');
             $worksheet->status_id = 2;
             $worksheet->save();
+            
             
             if ($worksheet) {
                 session(['toast_message' => 'Import done, Results Updated successfully, Please Confirm and Approve the updated results below']);

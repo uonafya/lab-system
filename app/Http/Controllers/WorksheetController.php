@@ -422,7 +422,8 @@ class WorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/eid'); 
 
-        Excel::import(new WorksheetImport($worksheet, $request), $path);
+        $c = new WorksheetImport($worksheet, $request);
+        Excel::import($c, $path);
 
         /*$cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
