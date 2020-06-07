@@ -40,7 +40,7 @@ class ViralworksheetImport implements ToCollection
         // Abbott
         if($worksheet->machine_type == 2)
         {
-            $date_tested = $this->daterun 
+            $date_tested = $this->daterun;
             $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);            
 
             $bool = false;
