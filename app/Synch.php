@@ -30,6 +30,7 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
@@ -228,6 +229,33 @@ class Synch
 			'json' => [
 				'email' => env('MASTER_USERNAME', null),
 				'password' => env('MASTER_PASSWORD', null),
+			],
+		]);
+		$status_code = $response->getStatusCode();
+		if($status_code > 399)
+			return json_decode($response->getBody());
+
+		$body = json_decode($response->getBody());
+		// dd($body);
+		Cache::store('file')->put('api_token', $body->token, 60);
+
+		// dd($body);
+	}
+
+	public static function covid_login()
+	{
+		Cache::store('file')->forget('api_token');
+		$client = new Client(['base_uri' => self::$cov_base]);
+
+		$response = $client->request('post', 'auth/login', [
+            'http_errors' => false,
+            'debug' => false,
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+			'json' => [
+				'email' => env('COV_USERNAME', null),
+				'password' => env('COV_PASSWORD', null),
 			],
 		]);
 		$status_code = $response->getStatusCode();
