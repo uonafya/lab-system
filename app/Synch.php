@@ -250,6 +250,7 @@ class Synch
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
             'debug' => false,
+            // 'verify' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -590,6 +591,7 @@ class Synch
 						'Accept' => 'application/json',
 						'Authorization' => 'Bearer ' . self::get_token(),
 					],
+					// 'verify' => false,
 					'json' => [
 						$key => $models->toJson(),
 						'lab_id' => env('APP_LAB', null),
@@ -1311,6 +1313,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_covid_token(),
 				],
+				// 'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
