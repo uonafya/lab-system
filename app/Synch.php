@@ -251,6 +251,7 @@ class Synch
             'http_errors' => false,
             'debug' => false,
             // 'verify' => false,
+            // 'timeout' => 2,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
