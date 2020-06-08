@@ -73,13 +73,13 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit received" name="received[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0">
+                                            <input class="form-control input-sm input-edit received" name="received[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" id="received[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ json_encode($kit->id) }}', '{{ $machine->machine }}', this, 'received')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit damaged" name="damaged[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0">
+                                            <input class="form-control input-sm input-edit damaged" name="damaged[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" id="damaged[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ json_encode($kit->id) }}', '{{ $machine->machine }}', this, 'damaged')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-sm input-edit used" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0">
+                                            <input class="form-control input-sm input-edit used" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" id="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" required type="number" min="0" value="0">
                                         </td>
                                     </tr>
                                     
@@ -147,5 +147,29 @@
     $().ready(function() {
         
     });
+
+    const computevaluesforotherkits = (testtype, kitalias, kit, machine, element, type) => {        
+        if (kitalias == 'qualkit') {
+            $.get("{{ url('kitsdeliveries/"+machine+"') }}", {type:testtype, kit:kit, value:element.value, elementtype:type}, function(data) {
+                data.forEach(function(val,index) {
+                    $('input[name="' + val.element + '"').val(val.value);
+                    let received = 0;
+                    let damaged = 0;
+                    if(type=='received'){
+                        let damagedelement = val.element.replace(type, "damaged");
+                        damaged = $('input[name="' + damagedelement + '"').val();
+                        received = $('input[name="' + val.element + '"').val();
+                    } else {
+                        damaged = $('input[name="' + val.element + '"').val();
+                        let receivedelement = val.element.replace(type, "received");
+                        received = $('input[name="' + receivedelement + '"').val();
+                    }
+                    let used = received-damaged;
+                    let usedelement = val.element.replace(type, "used");
+                    $('input[name="' + usedelement + '"').val(used.toFixed(2));
+                });
+            });
+        }
+    }
 </script>
 @endsection

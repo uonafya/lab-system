@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kits extends BaseModel
 {
+
+    // protected $hidden = ['testFactor', 'factor'];
 	protected $year;
     protected $previousYear;
     protected $month;
-    protected $previousMonth;
+    public $previousMonth;
 
     public function __construct(){
         $this->year = date('Y');
@@ -21,6 +23,18 @@ class Kits extends BaseModel
             $this->previousMonth = 12;
             $this->previousYear = $this->year-1;
         }
+    }
+
+    // public function getTestFactorAttribute()
+    // {
+    //     dd($this);
+    //     if (null !== $this->testFactor)
+    //         return json_decode($this->testFactor);
+    //     return '';
+    // }
+
+    public function getMultiplierFactorAttribute() {
+        return json_decode($this->factor);
     }
 
     public function machine() {

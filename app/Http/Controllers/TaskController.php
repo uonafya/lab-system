@@ -55,39 +55,38 @@ class TaskController extends Controller
         }
         // return redirect('/home');
 
-  //       $pendingDeliveries = $this->getDeliveries();
-  //       $data['deliveries'] = $pendingDeliveries;
-  //       if (empty($pendingDeliveries)){
-  //           $pendingConsumptions = $this->getConsumptions();
-  //           $data['consumptions'] = $pendingConsumptions;
-  //       }
-  // //   	$data['kits'] = (object)$this->getKitsEntered();
+        $pendingDeliveries = $this->getDeliveries();
+        $data['deliveries'] = $pendingDeliveries;
+        if (empty($pendingDeliveries)){
+            $pendingConsumptions = $this->getConsumptions();
+            $data['consumptions'] = $pendingConsumptions;
+        }
+  //   	$data['kits'] = (object)$this->getKitsEntered();
         
-  // //   	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
-		// // {
-  // //           $data['submittedkits'] = 1;
-  // //           $data['consumption'] = (object)$this->getConsumption();
-		// // }else {
-		// // 	$data['submittedkits'] = 0;
-		// // }
+  //   	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
+		// {
+  //           $data['submittedkits'] = 1;
+  //           $data['consumption'] = (object)$this->getConsumption();
+		// }else {
+		// 	$data['submittedkits'] = 0;
+		// }
 		
-		// $month = $this->previousMonth;
-  //       $year = $this->previousYear;
-  //       $range = '';
-  //       $quarter = parent::_getMonthQuarter(date('m'),$range);
-  //       session(['range'=>$range, 'quarter'=>$quarter]);
-  //       $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
-  //       $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
-  // //       $data['requisitions'] = count($this->getRequisitions());
+		$month = $this->previousMonth;
+        $year = $this->previousYear;
+        $range = '';
+        $quarter = parent::_getMonthQuarter(date('m'),$range);
+        session(['range'=>$range, 'quarter'=>$quarter]);
+        $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
+        $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
+  //       $data['requisitions'] = count($this->getRequisitions());
         $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
         $covidconsumption = new CovidConsumption;
         $data['time'] = $covidconsumption->getMissingConsumptions();
-        // $data['currentmonth'] = date('m');
-        // $data['prevmonth'] = $this->previousMonth;
-        // $data['year'] = date('Y');
-        // $data['prevyear'] = $this->previousYear;
-        // dd($this->getPreviousWeek());
+        $data['currentmonth'] = date('m');
+        $data['prevmonth'] = $this->previousMonth;
+        $data['year'] = date('Y');
+        $data['prevyear'] = $this->previousYear;
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }
