@@ -7,32 +7,35 @@
 		Print
 	</a> | 
 	
-	@if($worksheet->samples_no < 23)
+	@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
 			Convert to Roche/Taqman
 		</a> |
 	@endif
 
+	@if($worksheet->machine_type != 2)
 	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
 		Convert to Abbott
 	</a> |
-	
+	@endif
+
+	@if($worksheet->machine_type != 3)
 	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" target='_blank'>
 		Convert to C8800
 	</a> |
+	@endif
 	
-	@if($worksheet->route_name == 'viralworksheet')
+	@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
 	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" target='_blank'>
 		Convert to Pantha
 	</a> |
 	@endif
 
 
-	@if(in_array(env('APP_LAB'), [1, 4, 5]))
-		<a href="{{ url($worksheet->route_name . '/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
-			Print Labels
-		</a> | 
-	@endif
+	<br />
+	<a href="{{ url($worksheet->route_name . '/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
+		Print Labels
+	</a> | 
 
 	<a href="{{ url($worksheet->route_name . '/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet" OnClick="return confirm('Are you sure you want to Cancel Worksheet {{$worksheet->id}}?');">		
 		Cancel
