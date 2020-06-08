@@ -22,11 +22,7 @@
 				<td>
 					<div align="left">
 						<span style="font-size: 8px;"> P.ID: {{ $sample->patient->identifier ?? $sample->patient }} </span>	
-						@if($sample->id < 1000)
-							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
-						@else
-							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
-						@endif
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->barcode, 'C128') }}" alt="barcode" height="30" width="80"  />
 						<br />
 
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
@@ -44,11 +40,7 @@
 				<td>
 					<div align="left">
 						<span style="font-size: 8px;"> P.ID: {{ $sample->patient->identifier ?? $sample->patient }} </span>	
-						@if($sample->id < 1000)
-							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
-						@else
-							<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode"  height="30" width="80"  />
-						@endif
+						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->barcode, 'C128') }}" alt="barcode" height="30" width="80"  />
 						<br />
 						<span style="font-size: 11px;"> Lab ID: {{ $sample->id }} </span>		
 					</div>			
@@ -66,11 +58,7 @@
 							Patient ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
 						</span>
 					@endif
-					@if($sample->id < 1000)
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG('00000' . $sample->id, 'C128') }}" alt="barcode" 
-					@else
-						<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->id, 'C128') }}" alt="barcode" 
-					@endif
+					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->barcode, 'C128') }}" alt="barcode" 
 					@if(in_array(env('APP_LAB'), [5]))
 						height="50" width="250"
 					@else

@@ -43,17 +43,23 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-
-
-
-                            <div class="form-group">
-                                <div class="col-sm-8 col-sm-offset-4">
-                                    <button class="btn btn-success" type="submit">Submit</button>
-                                </div>
-                            </div>
-
-
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Select CSV</span>
+                                <span class="fileinput-exists">Change</span>
+                                <input id="upload" type="file" required accept=".csv" name="upload" >
+                            </span>
+                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                         </div>
+
+
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-4">
+                                <button class="btn btn-success" type="submit">Submit</button>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>

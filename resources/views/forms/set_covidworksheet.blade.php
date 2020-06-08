@@ -31,8 +31,6 @@
 
                             @include('partial.select', ['model' => null, 'prop' => 'machine_type', 'prop2' => 'machine', 'required' => true, 'label' => 'Machine', 'items' => $machines, ])
 
-
-
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Sample Number</label>
                                 <div class="col-sm-8">
@@ -40,6 +38,7 @@
                                         <option></option>
                                         <option value="22">24</option>
                                         <option value="46">48</option>
+                                        <option value="70">72</option>
                                         <option value="94">96</option>
                                     </select>
                                 </div>
