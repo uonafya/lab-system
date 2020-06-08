@@ -32,7 +32,6 @@
 	@endif
 
 
-	<br />
 	<a href="{{ url($worksheet->route_name . '/labels/' . $worksheet->id) }}" title="Click to Print Worksheet Labels">
 		Print Labels
 	</a> | 
