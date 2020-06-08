@@ -26,7 +26,8 @@
 		                <center><i class="fa fa-bolt"></i> Please enter the Kit Delivery details to keep track of deliveries and consumption.</center>
 	            </div>
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                    {{ Form::open(['url' => '/kitsdeliveries', 'method' => 'post', 'class'=>'form-horizontal']) }}
+                    <form action="{{ url('/kitsdeliveries') }}" method="POST" class='form-horizontal'>
+                        @csrf
                         <div class="form-group">
                             <label class="col-sm-4 control-label"><center>Received for the Quarter</center></label>
                             <div class="col-sm-8">
@@ -844,8 +845,7 @@
 
                         </div>
                         <!-- ABBOTT kits -->
-
-                    {{ Form::close() }}
+                    </form>
                 </div>
         </div>
     </div>

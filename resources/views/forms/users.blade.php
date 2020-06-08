@@ -19,7 +19,6 @@
 @section('content')
     <div class="content">
         <div>
-
             
             <form action="{{ url('/user/' . ($user->id ?? '')) }}" class="form-horizontal" method="POST">
                 @if(isset($user))
@@ -204,7 +203,7 @@
                 if(val == 10){
                     $("#partners").show();
                     $('#partner_select').attr("required", "required");
-                    $('#partner_select').removeAttr("disabled");  
+                    $('#partner_select').removeAttr("disabled"); 
                 }else if(val == 11){
                     $("#quarantines").show();
                     $('#quarantine_select').attr("required", "required");

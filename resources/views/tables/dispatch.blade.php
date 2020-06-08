@@ -26,7 +26,7 @@
                             @endif
 
                           >
-                            {{ csrf_field() }}
+                            @csrf
 
                             @if($batch_list)
                                 <input type="hidden" name="final_dispatch" value=1>

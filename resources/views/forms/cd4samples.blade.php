@@ -25,14 +25,17 @@
     <div class="content">
         <div>
         @if(!isset($view))
-            @if (isset($sample))
-                {{ Form::open(['url' => '/cd4/sample/' . $sample->id, 'method' => 'put', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+
+            @if(isset($sample))
+            <form class="form-horizontal" method="POST" id='samples_form' action="{{ url('/cd4/sample/' . $sample->id) }}">
+                @method('PUT')
             @else
-                {{ Form::open(['url'=>'/cd4/sample', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'samples_form']) }}
+            <form class="form-horizontal" method="POST" id='samples_form' action="{{ url('/cd4/sample/') }}">
             @endif
-        @endif
-        @if(!isset($view))
-        <input type="hidden" value=0 name="new_patient" id="new_patient">
+
+                @csrf
+
+            <input type="hidden" value=0 name="new_patient" id="new_patient">
         @endif
 
         <div class="row">
@@ -419,7 +422,7 @@
         @endisset
 
         @if(!isset($view))
-        {{ Form::close() }}
+        </form>
         @endif
       </div>
     </div>

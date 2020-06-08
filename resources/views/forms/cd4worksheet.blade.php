@@ -22,7 +22,8 @@
                     </div>
                     <div class="table-responsive">
                     @if(!isset($data->view))
-                    	{{ Form::open(['url' => '/cd4/worksheet', 'method' => 'post', 'class'=>'form-horizontal', 'id' => 'worksheet_form']) }}
+                        <form action="{{ url('/cd4/worksheet') }}" class="form-horizontal" method="POST" id='worksheet_form'>
+                            @csrf
                     @endif
                    	@if(!isset($data->view) && $data->samples->count() == 0)
                    		<center><div class="alert alert-warning">No samples availabe to run a worksheet</div></center>
@@ -150,7 +151,7 @@
 		                </div>
 		            @endif
 		            @if(!isset($data->view))
-	                    {{ Form::close() }}
+                        </form>
 	                @endif
                     </div>
                 </div>

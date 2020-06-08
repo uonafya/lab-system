@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DrExtractionWorksheet;
 use App\DrWorksheet;
 use App\DrPatient;
 use App\DrSample;
@@ -35,8 +36,9 @@ class DrWorksheetController extends Controller
                 }
                 return $query->whereDate('dr_worksheets.created_at', $date_start);
             })
-            ->orderBy('dr_worksheets.created_at', 'desc')
-            ->get();
+            ->where('status_id', '!=', 4)
+            ->orderBy('id', 'desc')
+            ->paginate();
 
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
@@ -49,22 +51,23 @@ class DrWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create($extraction_worksheet_id)
-    public function create()
+    // public function create()
+    public function create($extraction_worksheet_id)
     {
-        // $samples = DrSample::selectRaw("dr_samples.*")
-        //                 ->join('drug_resistance_reasons', 'drug_resistance_reasons.id', '=', 'dr_samples.dr_reason_id')
-        //                 ->orderBy('drug_resistance_reasons.rank', 'asc')
-        //                 ->whereNull('worksheet_id')
-        //                 ->where('receivedstatus', 1)
-        //                 ->limit(16)
-        //                 ->get();
-
-        // $samples->load(['patient.facility']);
-        // $data['dr_samples'] = $samples;
+        $samples = DrSampleView::whereNull('worksheet_id')
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        // ->orderBy('control', 'desc')
+                        ->orderBy('run', 'desc')
+                        ->orderBy('id', 'asc')
+                        ->limit(16)
+                        ->get();
 
         $data = Lookup::get_dr();
-        $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
+        $data['samples'] = $samples;
+        $data['create'] = $samples->count();
+        $data['extraction_worksheet_id'] = $extraction_worksheet_id;
+
+        // $data = array_merge($data, MiscDr::get_worksheet_samples(null, 30));
         return view('forms.dr_worksheets', $data);
     }
 
@@ -78,10 +81,18 @@ class DrWorksheetController extends Controller
     {
         $limit = 16;
         $c = $request->input('control_samples');
+        $extraction_worksheet_id = $request->input('extraction_worksheet_id');
         if($c) $limit = 14;
-        $data = MiscDr::get_worksheet_samples($request->input('samples'), $limit);
 
-        if(!$data['create']){
+        $samples = DrSampleView::whereNull('worksheet_id')
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        // ->orderBy('control', 'desc')
+                        ->orderBy('run', 'desc')
+                        ->orderBy('id', 'asc')
+                        ->limit($limit)
+                        ->get();
+
+        if(!$samples->count()){
             session(['toast_error' => 1, 'toast_message' => 'The sequencing woksheet could not be created.']);
             return back();
         }
@@ -89,7 +100,7 @@ class DrWorksheetController extends Controller
         $dr_worksheet = new DrWorksheet;
         $dr_worksheet->fill($request->except(['_token', 'samples', 'control_samples']));
         $dr_worksheet->save();
-        $samples = $data['samples'];
+        // $samples = $data['samples'];
 
         foreach ($samples as $s) {
             $sample = DrSample::find($s->id);
@@ -100,6 +111,12 @@ class DrWorksheetController extends Controller
         if($c){
             $positive_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 2]);
             $negative_control = DrSample::create(['worksheet_id' => $dr_worksheet->id, 'patient_id' => 0, 'control' => 1]);
+        }
+
+        $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
+        if(!$ext->sequencing){
+            $ext->status_id = 3;
+            $ext->save();
         }
 
         if(env('APP_LAB') == 7) return $this->download($dr_worksheet);
@@ -180,9 +197,10 @@ class DrWorksheetController extends Controller
 
         foreach ($samples as $key => $sample) {
             $data[] = [
-                'Patient ID' => $sample->patient->nat,
+                'NAT ID' => $sample->patient->nat,
+                'Patient CCC' => $sample->patient->patient,
                 'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
-                'Full Name' => $sample->patient->patient_names,
+                'Full Name' => $sample->patient->patient_name,
                 'DOB' => $sample->patient->dob,
                 'Sex' => $sample->patient->gender,
                 'Date of Sample Collection' => $sample->datecollected,
@@ -201,11 +219,7 @@ class DrWorksheetController extends Controller
 
         $filename = 'bulk_template_' . $worksheet->id;
 
-        Excel::create($filename, function($excel) use($data){
-            $excel->sheet('Sheetname', function($sheet) use($data) {
-                $sheet->fromArray($data);
-            });
-        })->download('csv');
+        return MiscDr::csv_download($data, $filename);
     }
 
 
@@ -252,6 +266,7 @@ class DrWorksheetController extends Controller
             ]);
             return back();
         }
+        $worksheet->sample()->update(['datetested' => $worksheet->dateuploaded]);
         
         return redirect('dr_worksheet');
     }

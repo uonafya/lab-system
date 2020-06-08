@@ -14,7 +14,8 @@ use App\Sample;
 use App\Viralsample;
 
 use Carbon\Carbon;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CovidWorksheetImport;
 
 use Illuminate\Http\Request;
 
@@ -409,7 +410,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
         $worksheet->load(['creator']);
-        $users = User::labUser()->get();
+        $users = User::covidLabUser()->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 
@@ -421,12 +422,16 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/results/covid'); 
+        $c = new CovidWorksheetImport($worksheet, $request);
+
+        Excel::import($c, $path);
+/*
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
 
         $worksheet->fill($request->except(['_token', 'upload']));
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/covid'); 
         $today = $datemodified = $datetested = date("Y-m-d");
         $positive_control = $negative_control = null;
 
@@ -536,16 +541,19 @@ class CovidWorksheetController extends Controller
                 if(!$sample) continue;
 
                 $res = $value[1];
+                $sample->repeatt=0;
 
                 if(str_contains($res, ['Pos', 'pos'])){
                     $sample->result = 2;
                 }else if(str_contains($res, ['Neg', 'neg'])){
                     $sample->result = 1;
-                }else if(str_contains($res, ['Coll', 'coll', 'fai', 'Fai'])){
+                }else if(str_contains($res, ['Fai', 'fai'])){
+                    $sample->result = 3;
+                    $sample->repeatt = 1;
+                }else if(str_contains($res, ['Coll', 'coll'])){
                     $sample->result = 5;
                 }
 
-                $sample->repeatt=0;
                 $sample->datetested = $today;
 
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
@@ -580,7 +588,7 @@ class CovidWorksheetController extends Controller
         $worksheet->save();
 
         session(['toast_message' => "The worksheet has been updated with the results."]);
-
+*/
         return redirect($worksheet->route_name . '/approve/' . $worksheet->id);
     }
 
@@ -642,6 +650,11 @@ class CovidWorksheetController extends Controller
         if(env('APP_LAB') == 3 && !auth()->user()->covid_allowed){
             session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);                        
+        }
+
+        if(env('APP_LAB') == 5 && $worksheet->reviewedby && !auth()->user()->covid_approver){
+            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+            return redirect($worksheet->route_name);
         }
 
         foreach ($samples as $key => $value) {

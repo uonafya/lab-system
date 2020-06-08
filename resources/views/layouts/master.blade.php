@@ -101,13 +101,13 @@
                                 </p>
                             </center>
                         </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
-                                Switch to Viralload
-                            </button>
-                        </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-success" id="sysSwitch" value="Viralload" style="margin-top:.5em;">
+                                    Switch to Viralload
+                                </button>
+                            </div>
                     </div>
-                        @if(in_array(env('APP_LAB'), [1, 7]))
+                        @if(in_array(env('APP_LAB'), [1]))
                             @if(Auth()->user()->user_type_id < 2)
                             <div class="col-md-1">
                                 <button class="btn btn-success" id="drswitch" style="margin-top:.5em;">
@@ -189,9 +189,12 @@
 
         current = "<?= @session('testingSystem')?>";
         if(current != ''){
-            if(current == 'DR') { test = 'EID';text = '<strong>DRUG RESISTANCE</strong>'; } 
+            if(current == 'DR') { test = 'Viralload';text = '<strong>DRUG RESISTANCE</strong>'; } 
             else if(current == 'EID'){ test = 'Viralload'; text = '<strong>EARLY INFANT DIGNOSIS</strong>'; } 
-            @if(!in_array(env('APP_LAB'), [8])) 
+            @if(in_array(env('APP_LAB'), [7])) 
+                else if (current == 'Viralload'){ test = 'Covid'; text = '<strong>VIRAL LOAD</strong>'; }    
+                else if (current == 'Covid'){ test = 'DR'; text = '<strong>Covid-19</strong>'; }         
+            @elseif(!in_array(env('APP_LAB'), [8])) 
                 else if (current == 'Viralload'){ test = 'Covid'; text = '<strong>VIRAL LOAD</strong>'; } 
                 else if (current == 'Covid'){ test = 'EID'; text = '<strong>Covid-19</strong>'; }
             @else
@@ -199,9 +202,9 @@
             @endif
             else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
 
-            if(current == 'DR'){
+            /*if(current == 'DR'){
                 $("#drswitch").hide();
-            }
+            }*/
             // else {test = 'Viralload';text = '<strong>EARLY INFANT DIGNOSIS</strong>';}
             $("#sysSwitch").html("Switch to "+test);
             $("#sysSwitch").val(test);

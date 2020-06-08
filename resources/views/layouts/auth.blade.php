@@ -62,8 +62,11 @@
         @case(9)
             <img src="{{ asset('img/knhnascoplogo.png') }}">
             @break
+        @case(23)
+            <img src="{{ asset('img/kulogo.png') }}">
+            @break
         @default
-            <img src="{{ asset('img/kemri_nascoplogo.png') }}">
+            <img src="{{ asset('img/nascoplogo.png') }}">
     @endswitch
     {{-- <img src="{{ asset(env('LOGO', 'img/nascoplogo.png') ) }}"> --}}
 </div>

@@ -22,7 +22,9 @@
             <div class="row">
                 <div class="col-lg-12">
                 @if($user)
-                    {{ Form::open(['url' => '/user/password_reset/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id), 'method' => 'put', 'class'=>'form-horizontal']) }}
+                    <form action="{{ url('/user/password_reset/'.md5(($user == 'personal') ? Auth()->user()->id : $user->id)) }}" class="form-horizontal" method="POST">
+                        @csrf
+                        @method('PUT')
                     @if($user == 'personal')
                     <input type="hidden" name="user" value="1">
                     @endif
@@ -78,7 +80,7 @@
                             </div>
                         </center>
                     </div>
-                {{ Form::close() }}
+                </form>
                 @else
                     <div class="hpanel">
                         <div class="panel-body" style="padding-bottom: 6px;">

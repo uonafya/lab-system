@@ -18,9 +18,19 @@ class UserController extends Controller
     public function index()
     {
         $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+        if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Action']);
+
         $row = "";
 
-        $users = User::select('users.*','user_types.user_type')->join('user_types', 'user_types.id', '=', 'users.user_type_id')->where('users.user_type_id', '<>', 5)->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
+        $users = User::select('users.*','user_types.user_type')
+            ->join('user_types', 'user_types.id', '=', 'users.user_type_id')
+            ->when(true, function($query){
+                if(env('APP_LAB') != 7) return $query->where('users.user_type_id', '<>', 5);
+                return $query->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
+                    ->addSelect('facilitys.name', 'facilitycode');
+            })            
+            ->where('users.email', '!=', 'rufus.nyaga@ken.aphl.org')
+            ->get();
 
         foreach ($users as $key => $value) {
             $id = md5($value->id);
@@ -33,11 +43,17 @@ class UserController extends Controller
             $row .= '<tr>';
             $row .= '<td>'.($key+1).'</td>';
             $row .= '<td>'.$value->full_name.'</td>';
+            if(env('APP_LAB') == 7){
+                $row .= '<td>'.$value->facilitycode.'</td>';                
+                $row .= '<td>'.$value->name.'</td>';                
+            }
             $row .= '<td>'.$value->email.'</td>';
             $row .= '<td>'.$value->user_type.'</td>';
             $row .= '<td>'.date('l, d F Y', strtotime($value->last_access)).'</td>';
+            if(env('APP_LAB') != 7){
             $row .= '<td>'. $alocationNotificationStatus .'</td>';
             $row .= '<td>'. $allocationNotificationDate .'</td>';
+            }
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
         }
@@ -52,6 +68,9 @@ class UserController extends Controller
      */
     public function create()
     {
+        /*$accounts = UserType::whereNull('deleted_at')->when((env('APP_LAB') != 7), function($query){ 
+            return $query->where('id', '<>', 5);
+        })->get();*/
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
         $quarantine_sites = DB::table('quarantine_sites')->get();
@@ -123,6 +142,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         if($request->input('password') == "") { // No password for edit
+
             $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id']);
             
             $user = User::find($id);
@@ -162,7 +182,10 @@ class UserController extends Controller
 
     public function delete($id) {
         $user = self::__unHashUser($id);
-        $user->delete();
+        if(!$user->facility_id) $user->delete();
+        else{
+            session(['toast_error' => 1, 'toast_message' => 'You cannot delete this user. Update the password to lock the account.']);
+        }
 
         return back();
     }
