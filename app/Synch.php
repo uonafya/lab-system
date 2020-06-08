@@ -251,6 +251,7 @@ class Synch
             'http_errors' => false,
             'debug' => false,
             // 'verify' => false,
+            // 'timeout' => 2,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
@@ -260,6 +261,7 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
+		return $status_code;
 		if($status_code > 399)
 			return json_decode($response->getBody());
 
