@@ -106,7 +106,7 @@ class CovidController extends Controller
 
 
         $p = new CovidPatient;
-        if(str_contains(url()->current(), 'test')) $p = TestPatient::class;
+        if(str_contains(url()->current(), 'test')) $p = new TestPatient;
         $p->fill($request->only(['case_id', 'nationality', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
         else{
@@ -120,7 +120,7 @@ class CovidController extends Controller
         $p->save();
 
         $s = new CovidSample;
-        if(str_contains(url()->current(), 'test')) $s = TestSample::class;
+        if(str_contains(url()->current(), 'test')) $s = new TestSample;
         $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected']));
         $s->patient_id = $p->id;
         if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
