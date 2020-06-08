@@ -40,6 +40,7 @@
                                         <option></option>
                                         <option value="22">24</option>
                                         <option value="46">48</option>
+                                        <option value="70">72</option>
                                         <option value="94">96</option>
                                     </select>
                                 </div>
