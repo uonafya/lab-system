@@ -261,7 +261,6 @@ class Synch
 			],
 		]);
 		$status_code = $response->getStatusCode();
-		return $status_code;
 		if($status_code > 399)
 			return json_decode($response->getBody());
 
