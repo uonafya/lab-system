@@ -657,7 +657,7 @@ class CovidSampleController extends Controller
                 'datedispatched' => date('Y-m-d', strtotime($data[3])),
                 'dateapproved' => date('Y-m-d', strtotime($data[3])),
                 'receivedstatus' => 1,
-                'sample_type' => $s;
+                'sample_type' => $s,
                 'result' => $data[19],
             ]);
             $created_rows++;
