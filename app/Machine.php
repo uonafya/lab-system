@@ -84,7 +84,7 @@ class Machine extends Model
         $returnValue = 0;
         $data = [];
         $data = $this->getTestsFromStorage($year, $month);
-        
+        dd($data);
         $returnValue = $data[$type][$this->id][$year][$month];
         return $returnValue;
     }
