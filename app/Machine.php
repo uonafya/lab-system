@@ -83,26 +83,8 @@ class Machine extends Model
     {
         $returnValue = 0;
         $data = [];
-        // $data = $this->getTestsFromStorage($year, $month);
-        $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
-                    ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-                    ->whereYear('datetested', $year)
-                    ->whereMonth('datetested', $month)
-                    ->groupBy('machine_type')
-                    ->get();
-        foreach ($vltests as $key => $test) {
-            $data['VL'][$test->machine_type][$year][$month] = $test->tests;
-        }
-
-        $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
-                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-                    ->whereYear('datetested', $year)
-                    ->whereMonth('datetested', $month)
-                    ->groupBy('machine_type')
-                    ->get();
-        foreach ($eidtests as $key => $test) {
-            $data['EID'][$test->machine_type][$year][$month] = $test->tests;
-        }
+        $data = $this->getTestsFromStorage($year, $month);
+        
         dd($data);
         // dd($data);
         // foreach ($data as $key => $value) {
@@ -134,41 +116,31 @@ class Machine extends Model
 
     private function getTestsFromStorage($year, $month)
     {
-        $pointer = date('Y-m', strtotime($year . '-' . $month));
-        // dd(Cache::get($pointer));
-        // dd($eidtests);
-        // if (!Cache::get($pointer)) {
-        //     $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
-        //             ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-        //             ->whereYear('datetested', $year)
-        //             ->whereMonth('datetested', $month)
-        //             ->groupBy('machine_type')
-        //             ->get();
-        //     dd($eidtests);
-        //     $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
-        //             ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-        //             ->whereYear('datetested', $year)
-        //             ->whereMonth('datetested', $month)
-        //             ->groupBy('machine_type')
-        //             ->get();
-        //     $data = [
-        //         'EID' => [
-        //                 'testtype' => 'EID',
-        //                 'year' => $year,
-        //                 'month' => $month,
-        //                 'data' => $eidtests
-        //             ],
-        //         'VL' => [
-        //                 'testtype' => 'VL',
-        //                 'year' => $year,
-        //                 'month' => $month,
-        //                 'data' => $vltests
-        //             ]
-        //         ];
-        //     Cache::put($pointer, $data, 100);
-        // }
+        if (!session('tests')) {
+            $data = [];
+            $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
+                    ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->groupBy('machine_type')
+                    ->get();
+            foreach ($vltests as $key => $test) {
+                $data['VL'][$test->machine_type][$year][$month] = $test->tests;
+            }
+
+            $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+                        ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                        ->whereYear('datetested', $year)
+                        ->whereMonth('datetested', $month)
+                        ->groupBy('machine_type')
+                        ->get();
+            foreach ($eidtests as $key => $test) {
+                $data['EID'][$test->machine_type][$year][$month] = $test->tests;
+            }
+            $set = session(['tests' => $data]);
+        }
         
-        // return Cache::get($pointer);
+        return session('tests');
     }
 
     public function saveNullAllocation()
