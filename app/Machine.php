@@ -84,6 +84,7 @@ class Machine extends Model
         $returnValue = 0;
         $data = $this->getTestsFromStorage($year, $month);
         foreach ($data as $key => $value) {
+            dd($value);
             if ($value['testtype'] == $type){
                 $dataset = $value['data'];
                 $machinedata = $dataset->where('machine_type', $this->id)->first();
