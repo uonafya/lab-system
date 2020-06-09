@@ -269,7 +269,7 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->approver->full_name ?? '' }} </strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<img src="{{ $sample->approver->user_signature ?? null }}" height="20" width="40" alt="SIGNATURE">
+							<img src="{{ $sample->approver->user_signature ?? null }}" height="60" width="120" alt="SIGNATURE">
 						</center>					
 					</td>
 				</tr>				
@@ -321,11 +321,11 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id && $sample->result == 1 && true == false)
+			@if(!auth()->user()->user_type_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
+		                {!! QrCode::size(150)->generate($sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
