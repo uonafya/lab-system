@@ -92,7 +92,7 @@ class Machine extends Model
         //         $returnValue = $machinedata->tests;
         //     }
         // }
-        dd($returnValue);
+        // dd($returnValue);
         return $returnValue;
         // if ($type == 'EID')
         //     return Sample::selectRaw("count(*) as tests")
