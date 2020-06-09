@@ -81,7 +81,7 @@ class Machine extends Model
 
     public function tests_done($type, $year, $month)
     {
-        return 'Hair';
+        return 0;
         // $returnValue = 0;
         // $data = $this->getTestsFromStorage($year, $month);
         // dd($data);
