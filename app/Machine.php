@@ -115,7 +115,7 @@ class Machine extends Model
             $set = session(['tests' => $data]);
         }
         
-        return session('tests');
+        return sessio()->pull('tests');
     }
 
     public function saveNullAllocation()
