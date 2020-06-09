@@ -105,39 +105,39 @@ class Machine extends Model
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
         return $pointer;
-        if(!Cache::get($pointer)){
-            $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
-                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-                    ->whereYear('datetested', $year)
-                    ->whereMonth('datetested', $month)
-                    ->groupBy('machine_type')
-                    ->first();
+        // if(!Cache::get($pointer)){
+        //     $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+        //             ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+        //             ->whereYear('datetested', $year)
+        //             ->whereMonth('datetested', $month)
+        //             ->groupBy('machine_type')
+        //             ->first();
 
 
-            $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
-                        ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-                        ->whereYear('datetested', $year)
-                        ->whereMonth('datetested', $month)
-                        ->groupBy('machine_type')
-                        ->first();
-            $data = [
-                        [
-                            'testtype' => 'EID',
-                            'year' => $year,
-                            'month' => $month,
-                            'data' => $eidtests
-                        ],
-                        [
-                            'testtype' => 'VL',
-                            'year' => $year,
-                            'month' => $month,
-                            'data' => $vltests
-                        ]
-                    ];
+        //     $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
+        //                 ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+        //                 ->whereYear('datetested', $year)
+        //                 ->whereMonth('datetested', $month)
+        //                 ->groupBy('machine_type')
+        //                 ->first();
+        //     $data = [
+        //                 [
+        //                     'testtype' => 'EID',
+        //                     'year' => $year,
+        //                     'month' => $month,
+        //                     'data' => $eidtests
+        //                 ],
+        //                 [
+        //                     'testtype' => 'VL',
+        //                     'year' => $year,
+        //                     'month' => $month,
+        //                     'data' => $vltests
+        //                 ]
+        //             ];
 
-            Cache::put($pointer), $data, 100);
-        }
-        return Cache::get($pointer);
+        //     Cache::put($pointer), $data, 100);
+        // }
+        // return Cache::get($pointer);
     }
 
     public function saveNullAllocation()
