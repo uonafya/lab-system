@@ -60,7 +60,7 @@ p.breakhere {page-break-before: always}
 			@if(env('APP_LAB') == 23)
 				<tr>
 					<td colspan="7" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="NASCOP"></strong> 
+						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="NASCOP" width="90" height="48"></strong> 
 						<span class="style1"><br>
 						<span class="style7">
 						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
