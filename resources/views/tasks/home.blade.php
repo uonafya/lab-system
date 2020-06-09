@@ -74,7 +74,7 @@
                     <!-- Kit and kits consumption -->
 
                     <!-- Lab performance Report -->
-                    {@if ($performance == 0)
+                    @if ($performance == 0)
                         <div class="alert alert-warning spacing bottom">
                         	<strong><a href="{{ url('performancelog') }}">Click to Submit Monthly Lab Performance Log ( Tracker )</a></strong>
                         	<p style="margin-left: 3em;"><font color="#CCCCCC">Log on any Back logs and Reasons for the previous month</font></p>
