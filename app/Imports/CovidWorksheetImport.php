@@ -75,6 +75,7 @@ class CovidWorksheetImport implements ToCollection
         }
         // Abbott
         else if($worksheet->machine_type == 2){
+            $bool = false;
             foreach ($collection as $key => $value) {
                 if($value[5] == "RESULT"){
                     $bool = true;

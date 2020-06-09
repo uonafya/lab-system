@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class ViewModel extends Model
 {
 
+
+    public function getBarcodeAttribute()
+    {
+        $l = strlen($this->id);
+        if($l < 5) return '00000' . $this->id;
+        return $this->id;
+    }
+    
     public function facility()
     {
         return $this->belongsTo('App\Facility');

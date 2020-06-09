@@ -254,7 +254,6 @@
                     <span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}</span>
                 </a>
             </li> -->
-<<<<<<< HEAD
         @elseif (in_array(Auth::user()->user_type_id, [5,10]))
             @if(env('APP_LAB') == 7)
                 <li>
