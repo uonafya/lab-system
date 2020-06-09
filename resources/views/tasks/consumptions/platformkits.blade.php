@@ -98,7 +98,7 @@
                                             <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="0"  min="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'negative_adjustment')">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="0">
+                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="{{ ($kit->begining_balance($type->id, $period->year, $period->month)+$delivery->quantity-round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2)) }}">
                                         </td>
                                     </tr>
                                     @endforeach
