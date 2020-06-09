@@ -48,7 +48,7 @@ class ConsumptionController extends Controller
                 	'types' => TestType::get(),
                 	'users' => User::where('user_type_id', '<', 5)->get()
     			];
-    		
+    		dd($data);
     		return view('tasks.consumptions.platformkits', $data)->with('pageTitle', 'Kit Consumptions');
     	}
 
