@@ -117,44 +117,24 @@ class Machine extends Model
                     ->whereMonth('datetested', $month)
                     ->groupBy('machine_type')
                     ->get();
-            $data = [[
+            $data = [
+                'EID' => [
                         'testtype' => 'EID',
                         'year' => $year,
                         'month' => $month,
                         'data' => $eidtests
                     ],
-                    [
+                'VL' => [
                         'testtype' => 'VL',
                         'year' => $year,
                         'month' => $month,
                         'data' => $vltests
                     ]
                 ];
+            Cache::put($pointer), $data, 100);
         }
         
-        return $data;
-        // if(!Cache::get($pointer)){
-
-
-        //
-        //     $data = [
-        //                 [
-        //                     'testtype' => 'EID',
-        //                     'year' => $year,
-        //                     'month' => $month,
-        //                     'data' => $eidtests
-        //                 ],
-        //                 [
-        //                     'testtype' => 'VL',
-        //                     'year' => $year,
-        //                     'month' => $month,
-        //                     'data' => $vltests
-        //                 ]
-        //             ];
-
-        //     Cache::put($pointer), $data, 100);
-        // }
-        // return Cache::get($pointer);
+        return Cache::get($pointer);
     }
 
     public function saveNullAllocation()
