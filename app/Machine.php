@@ -111,19 +111,20 @@ class Machine extends Model
                     ->whereMonth('datetested', $month)
                     ->groupBy('machine_type')
                     ->first();
-            return $eidtests;
+            $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
+                        ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                        ->whereYear('datetested', $year)
+                        ->whereMonth('datetested', $month)
+                        ->groupBy('machine_type')
+                        ->first();
+            return $vltests;
         }
         dd(Cache::get($pointer));
         return $pointer;
         // if(!Cache::get($pointer)){
 
 
-        //     $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
-        //                 ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-        //                 ->whereYear('datetested', $year)
-        //                 ->whereMonth('datetested', $month)
-        //                 ->groupBy('machine_type')
-        //                 ->first();
+        //
         //     $data = [
         //                 [
         //                     'testtype' => 'EID',
