@@ -92,7 +92,8 @@ class Machine extends Model
 
     private function getTestsFromStorage($year, $month)
     {
-        if (!session('tests')) {
+        $reference = 'tests' . $year . '-' . $month;
+        if (!session($reference)) {
             $data = [];
             $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
                     ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
@@ -113,10 +114,10 @@ class Machine extends Model
             foreach ($eidtests as $key => $test) {
                 $data['EID'][$test->machine_type][$year][$month] = $test->tests;
             }
-            $set = session(['tests' => $data]);
+            $set = session([$reference => $data]);
         }
         
-        return Session::pull('tests');
+        return session($reference);
     }
 
     public function saveNullAllocation()
