@@ -83,7 +83,7 @@ class Machine extends Model
     {
         $returnValue = 0;
         $data = $this->getTestsFromStorage($year, $month);
-        // dd($data);
+        dd($data);
         // foreach ($data as $key => $value) {
         //     dd($value);
         //     if ($value['testtype'] == $type){
@@ -114,7 +114,8 @@ class Machine extends Model
     private function getTestsFromStorage($year, $month)
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
-        return $pointer;
+        return Cache::get($pointer);
+        // return $pointer;
         // dd(Cache::get($pointer));
         // if (!Cache::get($pointer)) {
         //     $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
