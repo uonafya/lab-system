@@ -159,6 +159,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
 				
+				Route::get('wrp/upload', 'CovidSampleController@wrp_sample_page');
+				Route::post('wrp/upload', 'CovidSampleController@upload_wrp_samples');
+				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			

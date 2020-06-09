@@ -599,6 +599,73 @@ class CovidSampleController extends Controller
         return redirect('/home');        
     }
 
+    public function wrp_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
+    }
+
+    public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'case_id') continue;
+
+            $column = 'quarantine_site_id';
+            if($data[5] > 100) $column = 'facility_id';
+
+            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[5]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[4],
+                $column => $data[5],
+                'patient_name' => $data[6],
+                'sex' => $data[8],
+                'national_id' => $data[9],
+                'phone_no' => $data[10],
+                'county' => $data[11],
+                'subcounty' => $data[12],                
+            ]);
+            $p->save();
+
+            $sample_type = $data[18];
+            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
+            else if(str_contains($sample_type, 'Oro')) $s = 3;
+            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            else{
+                $s = null;
+            }
+
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => 18,
+                'site_entry' => 0,
+                'age' => $data[6],
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => date('Y-m-d', strtotime($data[1])),
+                'datereceived' => date('Y-m-d', strtotime($data[2])),
+                'datetested' => date('Y-m-d', strtotime($data[3])),
+                'datedispatched' => date('Y-m-d', strtotime($data[3])),
+                'dateapproved' => date('Y-m-d', strtotime($data[3])),
+                'receivedstatus' => 1,
+                'sample_type' => $s;
+                'result' => $data[19],
+            ]);
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
+    }
+
 
     // Transfer Between Remote Labs
     public function transfer_samples_form($facility_id=null)
