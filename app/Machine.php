@@ -85,33 +85,8 @@ class Machine extends Model
         $data = [];
         $data = $this->getTestsFromStorage($year, $month);
         
-        dd($data);
-        // dd($data);
-        // foreach ($data as $key => $value) {
-        //     dd($value);
-        //     if ($value['testtype'] == $type){
-        //         $dataset = $value['data'];
-        //         $machinedata = $dataset->where('machine_type', $this->id)->first();
-        //         $returnValue = $machinedata->tests;
-        //     }
-        // }
-        // dd($returnValue);
+        $returnValue = $data[$type][$this->id][$year][$month];
         return $returnValue;
-        // if ($type == 'EID')
-        //     return Sample::selectRaw("count(*) as tests")
-        //             ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-        //             ->where('worksheets.machine_type', $this->id)
-        //             ->whereYear('datetested', $year)
-        //             ->whereMonth('datetested', $month)
-        //             ->first()->tests;
-
-        // if ($type == 'VL')
-        //     return Viralsample::selectRaw("count(*) as tests")
-        //             ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-        //             ->where('viralworksheets.machine_type', $this->id)
-        //             ->whereYear('datetested', $year)
-        //             ->whereMonth('datetested', $month)
-        //             ->first()->tests;
     }
 
     private function getTestsFromStorage($year, $month)
