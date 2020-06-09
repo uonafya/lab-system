@@ -528,7 +528,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
+		// if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -584,13 +584,13 @@ class Synch
 				}
 
 				$token = self::get_token();
-				if($type == 'covid') $token = self::get_covid_token();
+				// if($type == 'covid') $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer ' . self::get_token(),
+						'Authorization' => 'Bearer ' . $token,
 					],
 					// 'verify' => false,
 					'json' => [
@@ -1279,7 +1279,8 @@ class Synch
 
 	public static function synch_covid()
 	{
-		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$cov_base]);
+		$client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1312,7 +1313,8 @@ class Synch
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer ' . self::get_covid_token(),
+					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
+					'Authorization' => 'Bearer ' . self::get_token(),
 				],
 				// 'verify' => false,
 				'json' => [
@@ -1354,12 +1356,14 @@ class Synch
 
 	public static function get_covid_samples()
 	{
-		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$cov_base]);
+		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
+				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 		]);
 
@@ -1369,12 +1373,14 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
-		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$cov_base]);
+		$client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
+				'Authorization' => 'Bearer ' . self::get_token(),
 			],
 				'json' => [
 					'samples' => $samples,
