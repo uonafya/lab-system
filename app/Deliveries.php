@@ -28,8 +28,10 @@ class Deliveries extends BaseModel
       $year = $this->selectRaw("max(`year`) as `year`")->get()->first()->year;
       // This will only apply for the first month this logic is run alone
       if ($this->whereNotNull('month')->get()->isEmpty()){
+         dd('Where does not month exists');
          $month = $this->selectRaw("month(datereceived) as month")->where('year', '=', $year)->get()->max('month');
       } else {
+         dd('Where month exists');
          $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
       }
       dd($year);
