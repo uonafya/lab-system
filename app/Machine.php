@@ -80,6 +80,7 @@ class Machine extends Model
 
     public function tests_done($type, $year, $month)
     {
+        return 0;
         if ($type == 'EID')
             return Sample::selectRaw("count(*) as tests")
                     ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
