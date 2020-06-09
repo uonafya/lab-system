@@ -167,11 +167,6 @@
             }
         }
 
-        const fillElementValues = (val, type) => {
-            let domElementValue = val.value;
-            $('input[name="' + val.element + '"').val(domElementValue.toFixed(2));
-        }
-
         const computeEndingBalance = (element, val) => {
             let beginingDOMElement = val.element.replace(element, "begining_balance");
             let begining_balance = $('input[name="' + beginingDOMElement + '"').val();
