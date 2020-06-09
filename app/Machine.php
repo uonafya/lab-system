@@ -82,8 +82,15 @@ class Machine extends Model
     public function tests_done($type, $year, $month)
     {
         $returnValue = 0;
-        $data = $this->getTestsFromStorage($year, $month);
-        dd($data);
+        // $data = $this->getTestsFromStorage($year, $month);
+        $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
+                    ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->groupBy('machine_type')
+                    ->get();
+        dd($vltests);
+        // dd($data);
         // foreach ($data as $key => $value) {
         //     dd($value);
         //     if ($value['testtype'] == $type){
@@ -114,9 +121,8 @@ class Machine extends Model
     private function getTestsFromStorage($year, $month)
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
-        return Cache::get($pointer);
-        // return $pointer;
         // dd(Cache::get($pointer));
+        // dd($eidtests);
         // if (!Cache::get($pointer)) {
         //     $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
         //             ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
@@ -124,6 +130,7 @@ class Machine extends Model
         //             ->whereMonth('datetested', $month)
         //             ->groupBy('machine_type')
         //             ->get();
+        //     dd($eidtests);
         //     $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
         //             ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
         //             ->whereYear('datetested', $year)
@@ -144,7 +151,7 @@ class Machine extends Model
         //                 'data' => $vltests
         //             ]
         //         ];
-        //     Cache::put($pointer), $data, 100);
+        //     Cache::put($pointer, $data, 100);
         // }
         
         // return Cache::get($pointer);
