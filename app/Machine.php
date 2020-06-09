@@ -82,6 +82,7 @@ class Machine extends Model
     public function tests_done($type, $year, $month)
     {
         $returnValue = 0;
+        $data = [];
         // $data = $this->getTestsFromStorage($year, $month);
         $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
                     ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
@@ -89,7 +90,20 @@ class Machine extends Model
                     ->whereMonth('datetested', $month)
                     ->groupBy('machine_type')
                     ->get();
-        dd($vltests);
+        foreach ($vltests as $key => $test) {
+            $data['VL'][$test->machine_type][$year][$month] = $test->tests;
+        }
+
+        $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->groupBy('machine_type')
+                    ->get();
+        foreach ($eidtests as $key => $test) {
+            $data['EID'][$test->machine_type][$year][$month] = $test->tests;
+        }
+        dd($data);
         // dd($data);
         // foreach ($data as $key => $value) {
         //     dd($value);
