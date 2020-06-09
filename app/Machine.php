@@ -104,15 +104,18 @@ class Machine extends Model
     private function getTestsFromStorage($year, $month)
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
+        if (!Cache::get($pointer)) {
+            $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->groupBy('machine_type')
+                    ->first();
+            return $eidtests;
+        }
         dd(Cache::get($pointer));
         return $pointer;
         // if(!Cache::get($pointer)){
-        //     $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
-        //             ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-        //             ->whereYear('datetested', $year)
-        //             ->whereMonth('datetested', $month)
-        //             ->groupBy('machine_type')
-        //             ->first();
 
 
         //     $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
