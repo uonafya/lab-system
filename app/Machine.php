@@ -105,7 +105,7 @@ class Machine extends Model
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
 
-        if(!Cache::has($pointer)){
+        if(!Cache::get($pointer)){
             $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
                     ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
                     ->whereYear('datetested', $year)
