@@ -114,6 +114,7 @@ class Machine extends Model
     private function getTestsFromStorage($year, $month)
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
+        dd(Cache::get($pointer));
         if (!Cache::get($pointer)) {
             $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
                     ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
