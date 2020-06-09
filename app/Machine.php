@@ -114,6 +114,7 @@ class Machine extends Model
     private function getTestsFromStorage($year, $month)
     {
         $pointer = date('Y-m', strtotime($year . '-' . $month));
+        return $pointer;
         dd(Cache::get($pointer));
         if (!Cache::get($pointer)) {
             $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
@@ -145,7 +146,7 @@ class Machine extends Model
             Cache::put($pointer), $data, 100);
         }
         
-        // return Cache::get($pointer);
+        return Cache::get($pointer);
     }
 
     public function saveNullAllocation()
