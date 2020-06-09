@@ -261,6 +261,18 @@ p.breakhere {page-break-before: always}
 						</center>					
 					</td>
 				</tr>
+				@elseif(env('APP_LAB') == 23)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }} </strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<img src="{{ $sample->approver->user_signature ?? null }}" alt="SIGNATURE">
+						</center>					
+					</td>
+				</tr>				
 				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
