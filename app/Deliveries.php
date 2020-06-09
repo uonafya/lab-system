@@ -32,7 +32,7 @@ class Deliveries extends BaseModel
       } else {
          $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
       }
-      dd($month);
+      dd($year);
       $latestdate = (object)[
                            'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
                            'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
