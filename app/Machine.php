@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 class Machine extends Model
 {
@@ -115,7 +116,7 @@ class Machine extends Model
             $set = session(['tests' => $data]);
         }
         
-        return sessio()->pull('tests');
+        return Session::pull('tests');
     }
 
     public function saveNullAllocation()
