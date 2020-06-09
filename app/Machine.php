@@ -113,6 +113,7 @@ class Machine extends Model
 
     private function getTestsFromStorage($year, $month)
     {
+        return 1;
         $pointer = date('Y-m', strtotime($year . '-' . $month));
         dd(Cache::get($pointer));
         if (!Cache::get($pointer)) {
