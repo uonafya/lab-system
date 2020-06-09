@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Consumption;
 use App\ConsumptionDetail;
+use App\Kits;
 use App\Machine;
 use App\TestType;
 use App\User;
@@ -16,8 +17,29 @@ class ConsumptionController extends Controller
     {
         if ($guide != null)
             return redirect('http://lab-2.test.nascop.org/download/consumption');
+
         $model = new Consumption;
-    	$period = collect($model->getMissingConsumptions())->first();
+        $period = collect($model->getMissingConsumptions())->first();
+        
+        if ($request->ajax()) {
+            $testtype = TestType::find($request->input('type'));
+            $kit = Kits::find($request->input('kit'));
+            $machine = $kit->load('machine.kits')->machine;
+            $kits = $machine->kits;
+            $data = [];
+            foreach ($kits as $key => $kitvalue) {
+                $type = $testtype->name;
+                $factor = $kitvalue->multiplier_factor->$type ?? $kitvalue->multiplier_factor;
+                $data[] = [
+                            'element' => $request->input('elementtype').'['.$machine->machine.']['.$type.']['.$kitvalue->id.']',
+                            'value' => round($request->input('value')*$factor, 2),
+                            'used' => $kit->getQuantityUsed($type, $machine->tests_done($type, $request->input('year'), $request->input('month'))),
+                            'received' => $kit->getDeliveries($testtype->id, $request->input('year'), $request->input('month'))->quantity ?? 0
+                        ];
+            }
+            return response()->json($data);
+        }
+        
 
     	if ($request->method() == 'POST') {
     		$data = [
