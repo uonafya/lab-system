@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Machine extends Model
 {
@@ -80,6 +81,8 @@ class Machine extends Model
 
     public function tests_done($type, $year, $month)
     {
+        $data = $this->getTestsFromStorage($year, $month);
+        dd($data);
         return 0;
         if ($type == 'EID')
             return Sample::selectRaw("count(*) as tests")
@@ -96,6 +99,45 @@ class Machine extends Model
                     ->whereYear('datetested', $year)
                     ->whereMonth('datetested', $month)
                     ->first()->tests;
+    }
+
+    private function getTestsFromStorage($year, $month)
+    {
+        $pointer = date('Y-m', strtotime($year . '-' . $month));
+
+        if(!Cache::has($pointer)){
+            $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                    ->whereYear('datetested', $year)
+                    ->whereMonth('datetested', $month)
+                    ->groupBy('machine_type')
+                    ->first();
+
+
+            $vltests = Viralsample::Viralsample("count(*) as tests, viralworksheets.machine_type")
+                        ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
+                        ->whereYear('datetested', $year)
+                        ->whereMonth('datetested', $month)
+                        ->groupBy('machine_type')
+                        ->first();
+            $data = [
+                        [
+                            'testtype' => 'EID',
+                            'year' => $year,
+                            'month' => $month,
+                            'data' => $eidtests
+                        ],
+                        [
+                            'testtype' => 'VL',
+                            'year' => $year,
+                            'month' => $month,
+                            'data' => $vltests
+                        ]
+                    ];
+
+            Cache::put($pointer), $data, 100);
+        }
+        return Cache::get($pointer);
     }
 
     public function saveNullAllocation()
