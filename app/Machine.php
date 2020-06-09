@@ -82,16 +82,16 @@ class Machine extends Model
     public function tests_done($type, $year, $month)
     {
         $returnValue = 0;
-        $data = $this->getTestsFromStorage($year, $month);
-        dd($data);
-        foreach ($data as $key => $value) {
-            dd($value);
-            if ($value['testtype'] == $type){
-                $dataset = $value['data'];
-                $machinedata = $dataset->where('machine_type', $this->id)->first();
-                $returnValue = $machinedata->tests;
-            }
-        }
+        // $data = $this->getTestsFromStorage($year, $month);
+        // dd($data);
+        // foreach ($data as $key => $value) {
+        //     dd($value);
+        //     if ($value['testtype'] == $type){
+        //         $dataset = $value['data'];
+        //         $machinedata = $dataset->where('machine_type', $this->id)->first();
+        //         $returnValue = $machinedata->tests;
+        //     }
+        // }
         dd($returnValue);
         return $returnValue;
         // if ($type == 'EID')
