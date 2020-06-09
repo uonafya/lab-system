@@ -83,6 +83,7 @@ class Machine extends Model
     {
         $returnValue = 0;
         $data = $this->getTestsFromStorage($year, $month);
+        dd($data);
         foreach ($data as $key => $value) {
             dd($value);
             if ($value['testtype'] == $type){
