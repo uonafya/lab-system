@@ -70,6 +70,7 @@ class ConsumptionController extends Controller
     	$types = TestType::get();
     	$formdata = $request->only($fields);
         $tests = $request->input('tests');
+        dd($tests);
     	foreach ($machines as $machineskey => $machine) {
     		foreach ($types as $typeskey => $typesvalue) {
     			$data[$machine->machine][$typeskey] = [
