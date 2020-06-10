@@ -218,6 +218,9 @@ class CovidSampleController extends Controller
             return back();            
         }
 
+        $county = $subcounty = null;
+        // if($)
+
 
         $facility = Facility::find($facility_id);
         $type = 2;
@@ -395,6 +398,7 @@ class CovidSampleController extends Controller
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
         $sample->patient_id = $patient->id;
+        if(auth()->user()->lab_id == 1) $sample->kemri_id = $request->input('kemri_id');
         $sample->save();
 
         $travels = $request->input('travel');
@@ -478,6 +482,7 @@ class CovidSampleController extends Controller
         $data = Lookup::covid_arrays();
 
         $covidSample->fill($request->only($data['sample']));
+        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
         $covidSample->pre_update();
 
 

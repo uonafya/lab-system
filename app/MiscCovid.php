@@ -53,7 +53,8 @@ class MiscCovid extends Common
         $str = strtolower($interpretation);
         $repeatt = 0;
 
-        if(str_contains($str, ['cn'])){
+        // if(str_contains($str, ['cn', 'dc'])){
+        if(preg_match("/[0-9]/", $interpretation)){
             $result = 2;
         }
         else if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
