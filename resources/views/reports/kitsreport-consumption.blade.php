@@ -8,16 +8,18 @@
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
-                <label> <input type="radio" name="types" value="eid" class="i-checks"> EID </label>
-                <label> <input type="radio" name="types" value="viralload" class="i-checks"> VIRALLOAD </label>
+            @foreach($data['testtypes'] as $type)
+                <label> <input type="radio" name="types" value="{{ $type->id }}" class="i-checks"> {{ $type->name }} </label>
+            @endforeach
             </div>
         </div>
         <hr />
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Platform</label>
             <div class="col-sm-9">
-                <label> <input type="radio" name="platform" value="abbott" class="i-checks"> ABBOTT </label>
-                <label> <input type="radio" name="platform" value="taqman" class="i-checks"> TAQMAN </label>
+            @foreach($data['platforms'] as $platform)
+                <label><input type="radio" name="platform" value="{{ $platform->id }}" class="i-checks"> {{ strtoupper($platform->machine) }} </label>
+            @endforeach
             </div>
         </div>
         <hr />

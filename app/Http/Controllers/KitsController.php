@@ -8,6 +8,8 @@ use App\Taqmandeliveries;
 use App\Allocation;
 use App\AllocationDetail;
 use App\AllocationDetailsBreakdown;
+use App\TestType;
+use App\Machine;
 
 use Mpdf\Mpdf;
 
@@ -134,6 +136,7 @@ class KitsController extends Controller
                 return back();
             }
         }
+        
         $allocationSQL = "`allocations`.`id`, `year`, `month`, `testtype`,
                         COUNT(IF(approve=0, 1, NULL)) AS `pending`,
                         COUNT(IF(approve=1, 1, NULL)) AS `approved`,
@@ -155,8 +158,11 @@ class KitsController extends Controller
                         $badge = "danger";
                 }
                 return $badge;
-            }
+            },
+            'testtypes' => TestType::get(),
+            'platforms' => Machine::get()
         ];
+        // dd($data);
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 
