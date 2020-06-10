@@ -127,7 +127,7 @@ class LoginController extends Controller
         if($user->user_type_id == 7) return "/sample/list_poc";
         if($user->user_type_id == 8) return "/viralsample/nhrl";
         if(in_array($user->user_type_id, [11, 12, 13]) ){
-            session(['testingSystem' => 'covid']);
+            session(['testingSystem' => 'Covid']);
             return "/covid_sample/create";
         }
         if($user->other_lab) return "/covid_sample";
