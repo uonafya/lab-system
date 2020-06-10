@@ -648,7 +648,6 @@ class CovidSampleController extends Controller
                 $s = null;
             }
 
-
             $s = CovidSample::create([
                 'patient_id' => $p->id,
                 'lab_id' => 18,
