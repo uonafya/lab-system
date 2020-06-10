@@ -102,9 +102,8 @@ class Kits extends BaseModel
                             ->where('year', $lastmonthyear)->where('month', $lastmonth)
                             ->where('type', $type)
                             ->where('machine', $this->machine_id);
-            dd($balance);
             if (!$balance->isEmpty()) {
-
+                dd($balance->first());
             } else {
                 return $balance->count();
             }
