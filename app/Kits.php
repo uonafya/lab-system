@@ -125,7 +125,7 @@ class Kits extends BaseModel
         }
         // dd($line);
         return (object)[
-            'quantity' => (int)$line->received - $line->damaged,
+            'quantity' => (float)((float)$line->received - (float)$line->damaged),
             'lotno' => $line->lotno ?? ''
         ];
     }

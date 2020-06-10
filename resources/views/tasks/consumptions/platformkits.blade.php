@@ -81,7 +81,7 @@
                                             <input class="form-control input-edit" type="number" name="begining_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->begining_balance($type->id, $period->year, $period->month) }}" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'begining_balance')">
                                         </td>
                                         <td>
-                                            {{ $delivery->quantity }}
+                                            {{ round($delivery->quantity, 2) }}
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
                                         <td>
