@@ -93,9 +93,6 @@ class Kits extends BaseModel
         $lastmonthyear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $lastmonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $balance = 0;
-        // $details = ConsumptionDetail::with(['header' => function ($query) use ($type, $lastmonthyear, $lastmonth){
-        //                     $query->where('year',$lastmonthyear)->where('month', $lastmonth)->where('type', $type);
-        //                 }])->get();
         
         if (!$this->consumption_lines->isEmpty()){
             $balance = $this->consumption_headers()
@@ -103,13 +100,10 @@ class Kits extends BaseModel
                             ->where('type', $type)
                             ->where('machine', $this->machine_id);
             if (!$balance->isEmpty()) {
-                dd($balance->first()/*->details->where('kit_id', $this->id)*/);
+                $balance = $balance->first()->details->where('kit_id', $this->id)->ending_balance;
             } else {
                 return $balance->count();
             }
-                            // ->first()->consumption_lines->where('kit_id', $this->id)
-                            // ->first()->ending_balance;
-            // dd($balance);
         }
         
         return $balance;
