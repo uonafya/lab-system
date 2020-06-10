@@ -173,9 +173,9 @@
             let beginingDOMElement = val.element.replace(element, "begining_balance");
             let begining_balance = $('input[name="' + beginingDOMElement + '"').val();
             let receivedDOMElement = val.element.replace(element, "received");
-            let received = $('input[name="' + beginingDOMElement + '"').val();
+            let received = $('input[name="' + receivedDOMElement + '"').val();
             let usedDOMElement = val.element.replace(element, "used");
-            let used = $('input[name="' + beginingDOMElement + '"').val();
+            let used = $('input[name="' + usedDOMElement + '"').val();
             let wastedDOMElement = val.element.replace(element, "wasted");
             let wasted = $('input[name="' + wastedDOMElement + '"').val();
             let positive_adjustmentDOMElement = val.element.replace(element, "positive_adjustment");
