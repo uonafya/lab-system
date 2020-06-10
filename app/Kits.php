@@ -105,7 +105,6 @@ class Kits extends BaseModel
                 return $balance->count();
             }
         }
-        dd($balance);
         return $balance;
     }
 
