@@ -27,7 +27,7 @@
 	
 	@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
 	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" target='_blank'>
-		Convert to Pantha
+		Convert to Panther
 	</a> |
 	@endif
 

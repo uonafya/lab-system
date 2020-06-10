@@ -159,6 +159,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
 				
+				// Route::get('wrp/upload', 'CovidSampleController@wrp_sample_page');
+				// Route::post('wrp/upload', 'CovidSampleController@upload_wrp_samples');
+				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			
@@ -178,7 +181,7 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('covid_patient', 'CovidPatientController');
 
-		Route::group(['middleware' => ['utype:4']], function () {
+		Route::group(['middleware' => ['only_utype:1,4,13']], function () {
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 				Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
