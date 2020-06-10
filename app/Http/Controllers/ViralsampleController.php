@@ -702,7 +702,7 @@ class ViralsampleController extends Controller
 
         $sample->fill($request->except(['_token', 'lab_id', 'result_2']));
 
-        if(!$sample->result) $sample->result = $request->input('result_2');
+        if(!$sample->result || $request->input('result_2')) $sample->result = $request->input('result_2');
 
         if(!$sample->result){
             session(['toast_message' => 'Please set a result value.', 'toast_error' => 1]);

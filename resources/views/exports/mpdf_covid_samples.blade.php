@@ -59,16 +59,21 @@ p.breakhere {page-break-before: always}
 
 			@if(env('APP_LAB') == 23)
 				<tr>
+					<td colspan="3">
+						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 						
+					</td>
+					<td colspan="4" align="center">
+						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong> 
+					</td>
+				</tr>
+				<tr>
 					<td colspan="7" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="NASCOP"></strong> 
-						<span class="style1"><br>
-						<span class="style7">
+						<span class="style1 style7"><br>
 						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
 							P.O. BOX 7674-00100, GPO, NAIROBI <br />
 							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke
 						</span>
-						</span>
-					</td>
+					</td>					
 				</tr>
 			@else
 				<tr>
@@ -261,6 +266,29 @@ p.breakhere {page-break-before: always}
 						</center>					
 					</td>
 				</tr>
+				@elseif(env('APP_LAB') == 23)
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Test Performed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->worksheet->runner->full_name ?? '' }} </strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<img src="{{ $sample->worksheet->runner->user_signature ?? null }}" height="60" width="120" alt="SIGNATURE">
+						</center>					
+					</td>
+				</tr>				
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Result Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->approver->full_name ?? '' }} </strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<img src="{{ $sample->approver->user_signature ?? null }}" height="60" width="120" alt="SIGNATURE">
+						</center>					
+					</td>
+				</tr>				
 				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
@@ -309,11 +337,11 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id && $sample->result == 1 && true == false)
+			@if(!auth()->user()->user_type_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(200)->generate($sample->national_sample_id) !!}
+		                {!! QrCode::size(150)->generate($sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
