@@ -177,6 +177,12 @@
             let negative_adjustmentDOMElement = val.element.replace(element, "negative_adjustment");
             let negative_adjustment = $('input[name="' + negative_adjustmentDOMElement + '"').val();
             let endingpositives = (parseFloat(begining_balance)+parseFloat(val.received)+parseFloat(positive_adjustment));
+
+            console.log('<<--------------------------------------------------------------->>>');
+            console.log(begining_balance + ' - ' + val.received + ' - ' + positive_adjustment);
+            console.log(wasted + ' - ' + val.used + ' - ' + negative_adjustment);
+            console.log('<<--------------------------------------------------------------->>>');
+            
             let endingnegatives = (parseFloat(wasted)+parseFloat(val.used)+parseFloat(negative_adjustment));
             let ending = (endingpositives-endingnegatives);
             
