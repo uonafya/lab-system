@@ -94,6 +94,7 @@ class Kits extends BaseModel
         $lastmonth = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $balance = 0;
         if (!$this->consumption_lines->isEmpty()){
+            dd($this->consumption_lines);
             $balance = $this->consumption_headers()
                             ->where('year', $lastmonthyear)->where('month', $lastmonth)
                             ->where('type', $type)->where('machine', $this->machine_id);
