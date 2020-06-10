@@ -92,7 +92,6 @@ class ConsumptionController extends Controller
 		    			}
 	    			}
 	    		}
-                dd($data);
     		}
     	}
 
