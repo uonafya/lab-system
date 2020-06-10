@@ -47,6 +47,7 @@
                         @foreach($types as $type)
                             `<div class="alert alert-danger">
                                 <center><i class="fa fa-bolt"></i> Please enter {{ $machine->machine }} {{ $type->name }} values below. <strong>(Tests:{{ number_format($machine->tests_done($type->name, $period->year, $period->month)) }})</strong></center>
+                                <input type="hidden" name="tests[{{$machine->machine}}][{{$type->name}}]" value="{{ $machine->tests_done($type->name, $period->year, $period->month) }}">
                             </div>
                             <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
                                 <thead>               

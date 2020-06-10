@@ -69,6 +69,7 @@ class ConsumptionController extends Controller
     	$machines = Machine::whereIn('id', $request->input('machine'))->get();
     	$types = TestType::get();
     	$formdata = $request->only($fields);
+        $tests = $request->input('tests');
     	foreach ($machines as $machineskey => $machine) {
     		foreach ($types as $typeskey => $typesvalue) {
     			$data[$machine->machine][$typeskey] = [
@@ -76,6 +77,7 @@ class ConsumptionController extends Controller
 	    					'month' => $period->month,
 	    					'type' => $typesvalue->id,
 	    					'machine' => $machine->id,
+                            'tests' => $tests[$machine->machine][$typesvalue->name],
 	    					'lab_id' => env('APP_LAB'),
 	    					'submittedby' => auth()->user()->id,
 	    					'datesubmitted' => date('Y-m-d'),
