@@ -77,7 +77,7 @@ class DeliveriesController extends Controller
 	    		foreach ($fields as $fieldskey => $fieldsvalue) {
 	    			foreach ($machine->kits as $kitskey => $kitsvalue) {
 	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_id'] = $kitsvalue->id;
-	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_type'] = Kit::class;
+	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_type'] = Kits::class;
 	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id][$fieldsvalue] = $formdata[$fieldsvalue][$machine->machine][$typesvalue->name][$kitsvalue->id];
 	    			}
 	    		}
