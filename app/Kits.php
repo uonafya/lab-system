@@ -94,7 +94,7 @@ class Kits extends BaseModel
         $lastmonth = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $balance = 0;
         $details = ConsumptionDetail::with(['header' => function ($query) use ($type, $lastmonthyear, $lastmonth){
-                            $query->where('year',$lastmonthyear)->where('month', $lastmonth)->where('type', $type)
+                            $query->where('year',$lastmonthyear)->where('month', $lastmonth)->where('type', $type);
                         }])->get();
         dd($details);
         if (!$this->consumption_lines->isEmpty()){
