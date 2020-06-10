@@ -100,7 +100,7 @@ class Kits extends BaseModel
                             ->where('type', $type)
                             ->where('machine', $this->machine_id);
             if (!$balance->isEmpty()) {
-                $balance = $balance->first()->details->where('kit_id', $this->id)->ending_balance;
+                $balance = $balance->first()->details->where('kit_id', $this->id)/*->ending_balance*/;
             } else {
                 return $balance->count();
             }
