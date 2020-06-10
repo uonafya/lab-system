@@ -161,6 +161,7 @@
                         $('input[name="' + val.element + '"').val(val.value);
                         let domElementValue = val.value;
                         $('input[name="' + val.element + '"').val(domElementValue.toFixed(2));
+                        console.log(val);
                         computeEndingBalance(type, val);
                     });
                 });
@@ -182,7 +183,7 @@
             console.log(begining_balance + ' - ' + val.received + ' - ' + positive_adjustment);
             console.log(wasted + ' - ' + val.used + ' - ' + negative_adjustment);
             console.log('<<--------------------------------------------------------------->>>');
-            
+
             let endingnegatives = (parseFloat(wasted)+parseFloat(val.used)+parseFloat(negative_adjustment));
             let ending = (endingpositives-endingnegatives);
             
