@@ -288,6 +288,10 @@ class CovidSampleController extends Controller
                 $county = DB::table('countys')->where('id', $subcounty->county)->first();
                 if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));
             }
+            else if($county_id){
+                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));                
+            }
         }
 
         if(!$mail_array){
