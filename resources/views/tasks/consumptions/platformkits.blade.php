@@ -82,11 +82,12 @@
                                         </td>
                                         <td>
                                             {{ round($delivery->quantity, 2) }}
+                                            <input type="hidden" name="received[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ round($delivery->quantity, 2) }}">
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
                                         <td>
                                             {{ round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2) }}
-                                            <input class="form-control input-edit" type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
+                                            <input type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
                                         </td>
                                         <td>
                                             <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'wasted')">
@@ -171,20 +172,24 @@
         const computeEndingBalance = (element, val) => {
             let beginingDOMElement = val.element.replace(element, "begining_balance");
             let begining_balance = $('input[name="' + beginingDOMElement + '"').val();
+            let receivedDOMElement = val.element.replace(element, "received");
+            let received = $('input[name="' + beginingDOMElement + '"').val();
+            let usedDOMElement = val.element.replace(element, "used");
+            let used = $('input[name="' + beginingDOMElement + '"').val();
             let wastedDOMElement = val.element.replace(element, "wasted");
             let wasted = $('input[name="' + wastedDOMElement + '"').val();
             let positive_adjustmentDOMElement = val.element.replace(element, "positive_adjustment");
             let positive_adjustment = $('input[name="' + positive_adjustmentDOMElement + '"').val();
             let negative_adjustmentDOMElement = val.element.replace(element, "negative_adjustment");
             let negative_adjustment = $('input[name="' + negative_adjustmentDOMElement + '"').val();
-            let endingpositives = (parseFloat(begining_balance)+parseFloat(val.received)+parseFloat(positive_adjustment));
+            let endingpositives = (parseFloat(begining_balance)+parseFloat(received)+parseFloat(positive_adjustment));
 
             console.log('<<--------------------------------------------------------------->>>');
-            console.log(begining_balance + ' - ' + val.received + ' - ' + positive_adjustment);
-            console.log(wasted + ' - ' + val.used + ' - ' + negative_adjustment);
+            console.log(begining_balance + ' - ' + received + ' - ' + positive_adjustment);
+            console.log(wasted + ' - ' + used + ' - ' + negative_adjustment);
             console.log('<<--------------------------------------------------------------->>>');
 
-            let endingnegatives = (parseFloat(wasted)+parseFloat(val.used)+parseFloat(negative_adjustment));
+            let endingnegatives = (parseFloat(wasted)+parseFloat(used)+parseFloat(negative_adjustment));
             let ending = (endingpositives-endingnegatives);
             
             let endingelement = val.element.replace(element, "ending_balance");
