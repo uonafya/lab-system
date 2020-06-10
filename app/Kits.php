@@ -100,7 +100,7 @@ class Kits extends BaseModel
         if (!$this->consumption_lines->isEmpty()){
             $balance = $this->consumption_headers();
                             ->where('year', $lastmonthyear)->where('month', $lastmonth)
-                            ->where('type', $type);
+                            ->where('type', $type)
                             ->where('machine', $this->machine_id);
             dd($balance);
             if (!$balance->isEmpty()) {
