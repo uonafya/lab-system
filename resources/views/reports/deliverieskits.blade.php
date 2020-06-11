@@ -24,7 +24,7 @@
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-heading" class="alert alert-warning">
-                    <h5> {{ $delivery->testtype->name }} {{ $delivery->platform->machine }} Kits delivered on {{ $delivery->year }}, {{ $delivery->month }} </h5>
+                    <h5> {{ $delivery->testtype->name }} {{ $delivery->platform->machine }} Kits delivered on {{ $delivery->year }}, {{ date('F', mktime(0, 0, 0, $delivery->month)) }} </h5>
                 </div>
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     <table class="table table-striped table-bordered table-hover" style="font-size: 10px;margin-top: 1em;">
