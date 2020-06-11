@@ -9,7 +9,7 @@
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
             @foreach($data['testtypes'] as $type)
-                <label> <input type="radio" name="types" value="{{ $type->id }}" class="i-checks"> {{ $type->name }} </label>
+                <label> <input type="radio" name="types" value="{{ $type->id }}" class="i-checks" required> {{ $type->name }} </label>
             @endforeach
             </div>
         </div>
@@ -18,7 +18,7 @@
             <label class="col-sm-3 control-label">Platform</label>
             <div class="col-sm-9">
             @foreach($data['platforms'] as $platform)
-                <label><input type="radio" name="platform" value="{{ $platform->id }}" class="i-checks"> {{ strtoupper($platform->machine) }} </label>
+                <label><input type="radio" name="platform" value="{{ $platform->id }}" class="i-checks" required> {{ strtoupper($platform->machine) }} </label>
             @endforeach
             </div>
         </div>
