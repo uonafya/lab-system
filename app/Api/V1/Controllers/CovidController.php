@@ -140,7 +140,7 @@ class CovidController extends Controller
         // if(str_contains(url()->current(), 'test')) $s = new TestSample;
         $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
         if(!$s) $s = new $sample_class;
-        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected']));
+        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected', 'datetested']));
         $s->patient_id = $p->id;
         $s->$sample_column = $request->input('specimen_id');
         // if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');

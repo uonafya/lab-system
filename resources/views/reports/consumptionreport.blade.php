@@ -57,6 +57,9 @@
                 		</thead>
                 		<tbody>
                         @foreach($consumption->details as $key => $line)
+                        @php
+                            //dd($line);
+                        @endphp
                             <tr>
                 				<td>{{ $key+1 }}</td>
                                 <td>{{ $line->kit->name ?? '' }}</td>
@@ -64,19 +67,21 @@
                                 <td>{{ $line->begining_balance ?? 0 }}</td>
                                 <td>
                                     @php
-                                        $delivery = $deliveries->where('kit_id', $line->kit_id)->first();
+                                        $netreceived = 0;
+                                        if(null !== $deliveries){
+                                            $delivery = $deliveries->where('kit_id', $line->kit_id)->first();
+                                            $netreceived = ($delivery->received - $delivery->damaged);
+                                        }
                                     @endphp
-                                    @isset($delivery)
-                                    {{ $delivery->received - $delivery->damaged }}
-                                    @endisset
+                                    {{ $netreceived }}
                                 </td>
                                 <td>{{ $delivery->lotno ?? '' }}</td>
-                                <td>{{ $line->kits_used ?? 0 }}</td>
-                                <td>{{ $line->wastage ?? 0 }}</td>
-                                <td>{{ $line->positive ?? 0 }}</td>
-                                <td>{{ $line->negative ?? 0 }}</td>
+                                <td>{{ $line->used ?? 0 }}</td>
+                                <td>{{ $line->wasted ?? 0 }}</td>
+                                <td>{{ $line->positive_adjustment ?? 0 }}</td>
+                                <td>{{ $line->negative_adjustment ?? 0 }}</td>
                                 <td>{{ $line->ending_balance ?? 0 }}</td>
-                                <td>{{ $line->requested ?? 0 }}</td>
+                                <td>{{ $line->request ?? 0 }}</td>
                 			</tr>
             			@endforeach
                 		</tbody>

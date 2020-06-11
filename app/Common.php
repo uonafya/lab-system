@@ -1102,7 +1102,7 @@ class Common
 		foreach ($deliveries as $key => $delivery) {
 			$insertedDelivery = self::createDelivery($delivery, 1);
     		if ($insertedDelivery){
-    			foreach ($kits->where('machine_id', 2) as $key => $kit) {
+    			foreach ($kits->where('machine_id', 1) as $key => $kit) {
 	    			$lotno = $kit->alias."lotno"; $expiry = $kit->alias."expiry";
 	    			$received = $kit->alias."received"; $damaged = $kit->alias."damaged";
 	    			DeliveryDetail::create([

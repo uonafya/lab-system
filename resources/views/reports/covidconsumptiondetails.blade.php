@@ -14,10 +14,13 @@
     @foreach($covidkits as $machinekey => $kits)
         @php
             $machine = \App\Machine::find($machinekey);
-            if ($machine)
+            if ($machine) {
                 $machinename = $machine->machine . ' Kits';
-            else
-                $machinename = 'Consumables';
+            } else {            
+                $machinename = $machinekey;
+                if ($machinekey == '')
+                    $machinename = 'Consumables';
+            }
         @endphp
         <div class="col-lg-12">
             <div class="hpanel">

@@ -396,27 +396,18 @@ class ReportController extends Controller
 
     public function consumption(Request $request)
     {
-        $types = [
-                'viralload' => 2,
-                'eid' => 1,
-            ];
-        $platforms = [
-                'taqman' => 1,
-                'abbott' => 2
-            ];
-        
         $year = $request->input('year');
         $month = $request->input('month');
         $previousYear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $previousMonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $consumption = Consumption::with(['testtype', 'platform'])
                         ->where('year', $year)
-                        ->where('machine', $platforms[$request->input('platform')])
-                        ->where('type', $types[$request->input('types')])
+                        ->where('machine', $request->input('platform'))
+                        ->where('type', $request->input('types'))
                         ->where('month', $month)->get();
         $delivery = Deliveries::where('year', $year)
-                        ->where('machine', $platforms[$request->input('platform')])
-                        ->where('type', $types[$request->input('types')])
+                        ->where('machine', $request->input('platform'))
+                        ->where('type', $request->input('types'))
                         ->where('month', $month)->first();
         $deliveries = $delivery->details ?? $delivery;
         if ($consumption->isEmpty()){
