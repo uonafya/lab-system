@@ -5,7 +5,7 @@
     <div style="margin-top: 2em;">
     <form action="{{ url('/reports/kitdeliveries') }}" class="form-horizontal" method="POST" id='reports_kits'>
         @csrf
-        <div class="form-group spacing-div-form">
+        {{--<div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
             @foreach($data['testtypes'] as $type)
@@ -14,7 +14,7 @@
             </div>
         </div>
         <hr />
-        {{--<div class="form-group spacing-div-form">
+        <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Kit Source</label>
             <div class="col-sm-9">
                 <label> <input type="radio" name="source" value="scms" class="i-checks" required> SCMS </label>
@@ -22,7 +22,7 @@
                 <label> <input type="radio" name="source" value="lab" class="i-checks" required> Other Lab </label>
             </div>
         </div>
-        <hr />--}}
+        <hr />
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Platform</label>
             <div class="col-sm-9">
@@ -31,7 +31,7 @@
             @endforeach
             </div>
         </div>
-        <hr />
+        <hr />--}}
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">
                 Received in the <br/>
@@ -122,20 +122,12 @@
             </div>
         </div>
         <hr />
-        <div class="form-group spacing-div-form">
-            <label class="col-sm-3 control-label">Format</label>
-            <div class="col-sm-9">
-                <label> <input type="radio" name="format" value="html" class="i-checks" required> HTML </label>
-                <label> <input type="radio" name="format" value="excel" class="i-checks" required> EXCEL </label>
-            </div>
-        </div>
-        <hr />
 
-            <div class="form-group">
-            <center>
-                <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
-                <button type="reset" class="btn btn-default">Reset Options</button>
-            </center>
+        <div class="form-group">
+        <center>
+            <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
+            <button type="reset" class="btn btn-default">Reset Options</button>
+        </center>
         </div>  
     </form>
     </div>

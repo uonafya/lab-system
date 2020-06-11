@@ -72,30 +72,8 @@ class KitsController extends Controller
     public function kits(Request $request)
     {
         if($request->method() == 'POST') {
-            // dd(parent::_getQuarterMonths($request->input('quarter')));
-            // dd($request->all());
-            // $platform = $request->input('platform');
-            // if ($platform == 'abbott') 
-            //     $model = Abbotdeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
-            // if ($platform == 'taqman')
-            //     $model = Taqmandeliveries::select('*')->where('lab_id', '=', env('APP_LAB'));
-            
-            // if($request->input('types') == 'eid') 
-            //     $model->where('testtype', '=', 1);
-            // if($request->input('types') == 'viralload') 
-            //     $model->where('testtype', '=', 2);
-            
-            // if($request->input('source') == 'scms') 
-            //     $model->where('source', '=', 1);
-            // if($request->input('source') == 'lab') 
-            //     $model->where('source', '=', 2);
-            // if ($request->input('source') == 'kemsa') 
-            //     $model->where('source', '=', 3);
-            $model = Deliveries::where('machine', $request->input('platform'))
-                                ->where('type', $request->input('types'));
-
             $year = $request->input('year');
-            $model->where('year', '=', $year);
+            $model = Deliveries::where('year', '=', $year);
             if ($request->input('period') == 'monthly') {
                 $month = $request->input('month');
                 $model->where('month', '=', $month);
@@ -110,33 +88,6 @@ class KitsController extends Controller
             }
 
             return view('reports.deliverieskits', ['deliveries' => $deliveries])->with('pageTitle', '');
-            // dd($kits);
-            // $value = $kits->first();
-            // // dd($request->all());
-            // if ($value) {
-            //     $data['kits'] = $kits;
-            //     if ($platform == 'abbott') {
-            //         if ($request->input('format') == 'excel') {
-                        
-            //             return back();
-            //         }
-            //         $data['abbottdata'] = (object) $this->abbottKits;
-            //         $data = (object) $data;
-            //         return view('reports.abbottkits', compact('data'))->with('pageTitle', '');
-            //     }
-            //     if ($platform == 'taqman'){
-            //         if ($request->input('format') == 'excel') {
-                        
-            //             return back();
-            //         }
-            //         $data['taqmandata'] = (object) $this->taqmanKits;
-            //         $data = (object) $data;
-            //         return view('reports.taqmankits', compact('data'))->with('pageTitle', '');
-            //     }
-            // } else {
-            //     session(['toast_message'=>'No Kits Deliveries were submitted for the selected criteria']);
-            //     return back();
-            // }
         }
         
         $allocationSQL = "`allocations`.`id`, `year`, `month`, `testtype`,

@@ -39,9 +39,6 @@
                         </thead>
                         <tbody>
                         @foreach($delivery->details as $detail)
-                        @php
-                            //dd($detail);
-                        @endphp
                             <tr>
                                 <td>{{ str_replace("REPLACE", $delivery->testtype->type, $detail->kit->name) }}</td>
                                 <td>{{ $detail->kit->unit ?? '' }}</td>
