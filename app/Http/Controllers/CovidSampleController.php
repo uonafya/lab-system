@@ -208,18 +208,15 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5])){
+        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5, 6])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
-
-        $county = $subcounty = null;
-        // if($)
 
 
         $facility = Facility::find($facility_id);
@@ -283,6 +280,19 @@ class CovidSampleController extends Controller
         $mail_array = [];
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+
+        if(env('APP_LAB') == 6){
+            if($subcounty_id){
+                $subcounty = DB::table('districts')->where('id', $subcounty_id)->first();
+                if($subcounty->subcounty_emails) $mail_array = array_merge($mail_array, explode(',', $subcounty->subcounty_emails));
+                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));
+            }
+            else if($county_id){
+                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));                
+            }
+        }
 
         if(!$mail_array){
             Mail::to($cc_array)->send(new CovidDispatch($samples));
@@ -647,7 +657,6 @@ class CovidSampleController extends Controller
             else{
                 $s = null;
             }
-
 
             $s = CovidSample::create([
                 'patient_id' => $p->id,
