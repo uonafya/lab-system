@@ -105,10 +105,14 @@ class CovidController extends Controller
         if(!$lab) abort(401);
 
         $patient_class = CovidPatient::class;
+        $sample_class = CovidSample::class;
         $patient_column = 'nhrl_patient_id';
         $sample_column = 'nhrl_sample_id';
 
-        if(str_contains(url()->current(), 'test')) $p = TestPatient::class;
+        if(str_contains(url()->current(), 'test')){
+            $patient_class = TestPatient::class;
+            $sample_class = TestSample::class;
+        }
         if($lab->id == 11){
             $patient_column = 'cif_patient_id';
             $sample_column = 'cif_sample_id';            
