@@ -208,12 +208,12 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
-        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5])){
+        if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5, 6])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
@@ -280,6 +280,19 @@ class CovidSampleController extends Controller
         $mail_array = [];
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+
+        if(env('APP_LAB') == 6){
+            if($subcounty_id){
+                $subcounty = DB::table('districts')->where('id', $subcounty_id)->first();
+                if($subcounty->subcounty_emails) $mail_array = array_merge($mail_array, explode(',', $subcounty->subcounty_emails));
+                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));
+            }
+            else if($county_id){
+                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));                
+            }
+        }
 
         if(!$mail_array){
             Mail::to($cc_array)->send(new CovidDispatch($samples));
@@ -395,6 +408,7 @@ class CovidSampleController extends Controller
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
         $sample->patient_id = $patient->id;
+        if(auth()->user()->lab_id == 1) $sample->kemri_id = $request->input('kemri_id');
         $sample->save();
 
         $travels = $request->input('travel');
@@ -478,6 +492,7 @@ class CovidSampleController extends Controller
         $data = Lookup::covid_arrays();
 
         $covidSample->fill($request->only($data['sample']));
+        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
         $covidSample->pre_update();
 
 
@@ -592,6 +607,72 @@ class CovidSampleController extends Controller
                 'datereceived' => $data[12] ?? date('Y-m-d'),
                 'receivedstatus' => $data[13] ?? 1,
                 'received_by' => auth()->user()->id,
+            ]);
+            $created_rows++;
+        }
+        session(['toast_message' => "{$created_rows} samples have been created."]);
+        return redirect('/home');        
+    }
+
+    public function wrp_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
+    }
+
+    public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'case_id') continue;
+
+            $column = 'quarantine_site_id';
+            if($data[5] > 100) $column = 'facility_id';
+
+            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[5]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[4],
+                $column => $data[5],
+                'patient_name' => $data[6],
+                'sex' => $data[8],
+                'national_id' => $data[9],
+                'phone_no' => $data[10],
+                'county' => $data[11],
+                'subcounty' => $data[12],                
+            ]);
+            $p->save();
+
+            $sample_type = $data[18];
+            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
+            else if(str_contains($sample_type, 'Oro')) $s = 3;
+            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            else{
+                $s = null;
+            }
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => 18,
+                'site_entry' => 0,
+                'age' => $data[6],
+                'test_type' => $data[9],
+                'sample_type' => $data[10],
+                'datecollected' => date('Y-m-d', strtotime($data[1])),
+                'datereceived' => date('Y-m-d', strtotime($data[2])),
+                'datetested' => date('Y-m-d', strtotime($data[3])),
+                'datedispatched' => date('Y-m-d', strtotime($data[3])),
+                'dateapproved' => date('Y-m-d', strtotime($data[3])),
+                'receivedstatus' => 1,
+                'sample_type' => $s,
+                'result' => $data[19],
             ]);
             $created_rows++;
         }

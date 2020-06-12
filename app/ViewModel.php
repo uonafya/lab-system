@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class ViewModel extends Model
 {
 
+
+    public function getBarcodeAttribute()
+    {
+        $l = strlen($this->id);
+        if($l < 5) return '00000' . $this->id;
+        return $this->id;
+    }
+    
     public function facility()
     {
         return $this->belongsTo('App\Facility');
@@ -63,6 +71,7 @@ class ViewModel extends Model
         $max_date = date('Y-m-d', strtotime($data_array['datecollected'] . ' +3 days'));
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient'], 'batch_complete' => 0])
                     // ->whereBetween('datecollected', [$min_date, $max_date])
+                    ->where('created_at', '>', date('Y-m-d', strtotime('-1 month')))
                     ->whereRaw("(receivedstatus IS NULL OR receivedstatus = 1) ");
     }
 

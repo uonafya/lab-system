@@ -80,21 +80,42 @@ class Machine extends Model
 
     public function tests_done($type, $year, $month)
     {
-        if ($type == 'EID')
-            return Sample::selectRaw("count(*) as tests")
-                    ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
-                    ->where('worksheets.machine_type', $this->id)
-                    ->whereYear('datetested', $year)
-                    ->whereMonth('datetested', $month)
-                    ->first()->tests;
+        $returnValue = 0;
+        $data = [];
+        $data = $this->getTestsFromStorage($year, $month);
+        $returnValue = $data[$type][$this->id][$year][$month] ?? 0;
+        
+        return $returnValue;
+    }
 
-        if ($type == 'VL')
-            return Viralsample::selectRaw("count(*) as tests")
+    private function getTestsFromStorage($year, $month)
+    {
+        $reference = 'tests' . $year . '-' . $month;
+        if (!session($reference)) {
+            $data = [];
+            $vltests = Viralsample::selectRaw("count(*) as tests, viralworksheets.machine_type")
                     ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples.worksheet_id')
-                    ->where('viralworksheets.machine_type', $this->id)
                     ->whereYear('datetested', $year)
                     ->whereMonth('datetested', $month)
-                    ->first()->tests;
+                    ->groupBy('machine_type')
+                    ->get();
+            foreach ($vltests as $key => $test) {
+                $data['VL'][$test->machine_type][$year][$month] = $test->tests;
+            }
+
+            $eidtests = Sample::selectRaw("count(*) as tests, worksheets.machine_type")
+                        ->join('worksheets', 'worksheets.id', '=', 'samples.worksheet_id')
+                        ->whereYear('datetested', $year)
+                        ->whereMonth('datetested', $month)
+                        ->groupBy('machine_type')
+                        ->get();
+            foreach ($eidtests as $key => $test) {
+                $data['EID'][$test->machine_type][$year][$month] = $test->tests;
+            }
+            $set = session([$reference => $data]);
+        }
+        
+        return session($reference);
     }
 
     public function saveNullAllocation()

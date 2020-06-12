@@ -12,6 +12,16 @@ class Deliveries extends BaseModel
    		return $this->hasMany('App\DeliveryDetail', 'delivery_id');
    }
 
+   public function testtype()
+   {
+      return $this->belongsTo(TestType::class, 'type', 'id');
+   }
+
+   public function platform()
+   {
+      return $this->belongsTo(Machine::class, 'machine', 'id');
+   }
+
    public function scopeExisting($query, $year, $quarter, $type, $lab_id)
    {
         return $query->where(['year' => $year, 'quarter' => $quarter, 'type' => $type, 'lab_id' => $lab_id]);
@@ -36,7 +46,7 @@ class Deliveries extends BaseModel
                            'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
                            'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
                         ];
-      
+      // dd($this->selectRaw("month(datereceived) as month, year, datereceived, id")->where('year', '=', $year)->get()->toArray());
       $limit = date('Y-m', strtotime("-1 Month", strtotime(date('Y-m'))));
       $currentloopdate = $latestdate->year . '-' . $latestdate->month;
       while (strtotime($limit) >= strtotime($currentloopdate)) {

@@ -702,7 +702,7 @@ class ViralsampleController extends Controller
 
         $sample->fill($request->except(['_token', 'lab_id', 'result_2']));
 
-        if(!$sample->result) $sample->result = $request->input('result_2');
+        if(!$sample->result || $request->input('result_2')) $sample->result = $request->input('result_2');
 
         if(!$sample->result){
             session(['toast_message' => 'Please set a result value.', 'toast_error' => 1]);
@@ -956,7 +956,7 @@ class ViralsampleController extends Controller
     public function upload_site_samples(Request $request)
     {
         $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/vl');
+        // $path = $request->upload->store('public/site_samples/vl');
 
         $problem_rows = 0;
         $created_rows = 0;
