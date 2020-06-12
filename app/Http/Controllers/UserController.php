@@ -18,6 +18,7 @@ class UserController extends Controller
     public function index()
     {
         $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+        if(in_array(env('APP_LAB'), [5, 6])) $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Covid Allowed', 'Action']);
         if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Action']);
 
         $row = "";
@@ -53,6 +54,9 @@ class UserController extends Controller
             if(env('APP_LAB') != 7){
             $row .= '<td>'. $alocationNotificationStatus .'</td>';
             $row .= '<td>'. $allocationNotificationDate .'</td>';
+            }
+            if(in_array(env('APP_LAB'), [5, 6])){
+                $row .= '<td>'.$value->covid_allowed.'</td>';                
             }
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
