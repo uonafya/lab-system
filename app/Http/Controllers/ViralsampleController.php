@@ -956,7 +956,7 @@ class ViralsampleController extends Controller
     public function upload_site_samples(Request $request)
     {
         $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/vl');
+        // $path = $request->upload->store('public/site_samples/vl');
 
         $problem_rows = 0;
         $created_rows = 0;
