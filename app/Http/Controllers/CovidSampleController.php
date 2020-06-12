@@ -131,7 +131,8 @@ class CovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::where('repeatt', 0)
+        $samples = CovidSampleView::
+            /*where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
@@ -173,7 +174,10 @@ class CovidSampleController extends Controller
             })
             ->when(!$user->facility_user, function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
-            })
+            })*/
+            where(['receivedstatus' => 1])
+            ->whereNull('result')
+            ->whereNull('datedispatched')
             ->get();
 
         extract(Lookup::covid_form());
