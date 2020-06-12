@@ -56,7 +56,11 @@ class UserController extends Controller
             $row .= '<td>'. $allocationNotificationDate .'</td>';
             }
             if(in_array(env('APP_LAB'), [5, 6])){
-                $row .= '<td>'.$value->covid_allowed.'</td>';                
+                if($value->covid_allowed) $row .= '<td>True</td>'; 
+                else{
+                    $row .= '<td> </td>';
+                }
+                               
             }
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
