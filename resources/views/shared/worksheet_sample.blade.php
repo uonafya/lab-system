@@ -40,6 +40,9 @@
 		@endif
 		@if(isset($covid))
 			<br /> Name - {{ $sample->patient->patient_name }}
+			@if(env('APP_LAB') == 1)
+				<br /> Kemri ID - {{ $sample->kemri_id }}
+			@endif
 		@endif
 	</span>
 	<br />

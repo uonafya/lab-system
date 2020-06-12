@@ -123,7 +123,7 @@ class CovidController extends Controller
         // if(str_contains(url()->current(), 'test')) $p = new TestPatient;
         $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
         if(!$p) $p = new $patient_class;
-        $p->fill($request->only(['case_id', 'nationality', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
+        $p->fill($request->only(['case_id', 'nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         $p->$patient_column = $request->input('patient_id');
         // if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
         // else{
