@@ -18,6 +18,7 @@ class UserController extends Controller
     public function index()
     {
         $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Action']);
+        if(in_array(env('APP_LAB'), [5, 6])) $columns = $this->_columnBuilder(['#','Full Names','Email Address','Account Type','Last Access', 'Allocation Notification', 'Allocation Notification Date', 'Covid Allowed', 'Action']);
         if(env('APP_LAB') == 7) $columns = $this->_columnBuilder(['#','Full Names','MFL Code','Facility','Email Address','Account Type','Last Access', 'Action']);
 
         $row = "";
@@ -53,6 +54,13 @@ class UserController extends Controller
             if(env('APP_LAB') != 7){
             $row .= '<td>'. $alocationNotificationStatus .'</td>';
             $row .= '<td>'. $allocationNotificationDate .'</td>';
+            }
+            if(in_array(env('APP_LAB'), [5, 6])){
+                if($value->covid_allowed) $row .= '<td>True</td>'; 
+                else{
+                    $row .= '<td> </td>';
+                }
+                               
             }
             $row .= '<td><a href="'.$passreset.'">Reset Password</a> | <a href="'.$statusChange.'">Delete</a> | <a href="'.url('user/'.$value->id).'">Edit</a> | <a href="'.url('allocationcontact/'.$value->id).'">' . $allocationLinkText .' Allocation Contact</a></td>';
             $row .= '</tr>';
@@ -92,7 +100,7 @@ class UserController extends Controller
             return redirect()->route('user.add');
         } else {
             $user = new User;
-            $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone']));
+            $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone', 'covid_allowed']));
             if(!$user->lab_id) $user->lab_id = auth()->user()->lab_id;
             $user->save();
             session(['toast_message'=>'User created succesfully']);
@@ -143,7 +151,7 @@ class UserController extends Controller
     {
         if($request->input('password') == "") { // No password for edit
 
-            $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id']);
+            $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id', 'covid_allowed']);
             
             $user = User::find($id);
             $user->fill($userData);

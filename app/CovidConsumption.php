@@ -35,10 +35,7 @@ class CovidConsumption extends BaseModel
         return CovidSample::whereBetween('datetested', [$start_date, $end_date])
                     ->where('receivedstatus', '<>', 2)
                     ->when($user, function($query) use ($user){
-                        if ($user->user_type_id == 12)
-                            return $query->where('lab_id', '=', $user->lab_id);
-                        else
-                            return $query->where('lab_id', '=', env('APP_LAB'));
+                        return $query->where('lab_id', '=', env('APP_LAB'));
                     })->get()->count();
     }
 

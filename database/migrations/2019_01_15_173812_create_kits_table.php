@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGeneralConsumablesTable extends Migration
+class CreateKitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('general_consumables', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
+        Schema::create('kits', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->text('name');
+            $table->string('alias');
             $table->string('unit')->nullable();
-            $table->softDeletes();
+            $table->integer('machine_id');
+            $table->string('factor');
+            $table->string('testFactor');
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CreateGeneralConsumablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('general_consumables');
+        // Schema::dropIfExists('kits');
     }
 }

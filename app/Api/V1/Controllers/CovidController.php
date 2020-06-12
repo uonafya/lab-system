@@ -104,14 +104,31 @@ class CovidController extends Controller
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
 
+        $patient_class = CovidPatient::class;
+        $sample_class = CovidSample::class;
+        $patient_column = 'nhrl_patient_id';
+        $sample_column = 'nhrl_sample_id';
 
-        $p = new CovidPatient;
-        if(str_contains(url()->current(), 'test')) $p = new TestPatient;
-        $p->fill($request->only(['case_id', 'nationality', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
-        if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
-        else{
-            $p->nhrl_patient_id = $request->input('patient_id');
+        if(str_contains(url()->current(), 'test')){
+            $patient_class = TestPatient::class;
+            $sample_class = TestSample::class;
         }
+        if($lab->id == 11){
+            $patient_column = 'cif_patient_id';
+            $sample_column = 'cif_sample_id';            
+        }
+
+
+        // $p = new CovidPatient;
+        // if(str_contains(url()->current(), 'test')) $p = new TestPatient;
+        $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
+        if(!$p) $p = new $patient_class;
+        $p->fill($request->only(['case_id', 'nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
+        $p->$patient_column = $request->input('patient_id');
+        // if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
+        // else{
+        //     $p->nhrl_patient_id = $request->input('patient_id');
+        // }
         $p->facility_id = Facility::locate($request->input('facility'))->first()->id ?? null;
         if($p->county){            
             $county = DB::table('countys')->where('name', $p->county)->first();
@@ -119,14 +136,17 @@ class CovidController extends Controller
         }
         $p->save();
 
-        $s = new CovidSample;
-        if(str_contains(url()->current(), 'test')) $s = new TestSample;
-        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected']));
+        // $s = new CovidSample;
+        // if(str_contains(url()->current(), 'test')) $s = new TestSample;
+        $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
+        if(!$s) $s = new $sample_class;
+        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected', 'datetested']));
         $s->patient_id = $p->id;
-        if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
-        else{
-            $s->nhrl_sample_id = $request->input('specimen_id');
-        }
+        $s->$sample_column = $request->input('specimen_id');
+        // if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
+        // else{
+        //     $s->nhrl_sample_id = $request->input('specimen_id');
+        // }
         
         $s->lab_id = $lab->id;
         $s->save();
