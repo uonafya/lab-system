@@ -246,7 +246,7 @@ class CovidReportsController extends Controller
 				}
 			}
 			$current_lab = null;
-			if($sample->lab_id != env('APP_LAB')) $current_lab = Lab::find(env('APP_LAB'))->labdesc
+			if($sample->lab_id != env('APP_LAB')) $current_lab = Lab::find(env('APP_LAB'))->labdesc;
 
 			$data[] = [
 				$current_lab ?? $lab,
