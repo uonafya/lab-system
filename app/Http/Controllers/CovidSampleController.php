@@ -75,6 +75,7 @@ class CovidSampleController extends Controller
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
+            ->where('repeatt', 0)
             ->orderBy('covid_sample_view.id', 'desc')
             ->paginate();
 
@@ -174,6 +175,9 @@ class CovidSampleController extends Controller
             ->when(!$user->facility_user, function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
+            // where(['receivedstatus' => 1])
+            // ->whereNull('result')
+            // ->whereNull('datedispatched')
             ->get();
 
         extract(Lookup::covid_form());

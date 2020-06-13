@@ -8,6 +8,12 @@ class CovidSampleView extends BaseModel
 {
 	protected $table = "covid_sample_view";
 
+    protected $casts = [
+        'symptoms' => 'array',
+        'observed_signs' => 'array',
+        'underlying_conditions' => 'array',     
+    ];
+    
 	public function patient()
     {
         return $this->belongsTo('App\CovidPatient', 'patient_id');
