@@ -47,6 +47,7 @@
                         @foreach($types as $type)
                             `<div class="alert alert-danger">
                                 <center><i class="fa fa-bolt"></i> Please enter {{ $machine->machine }} {{ $type->name }} values below. <strong>(Tests:{{ number_format($machine->tests_done($type->name, $period->year, $period->month)) }})</strong></center>
+                                <input type="hidden" name="tests[{{$machine->machine}}][{{$type->name}}]" value="{{ $machine->tests_done($type->name, $period->year, $period->month) }}">
                             </div>
                             <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
                                 <thead>               
@@ -78,27 +79,28 @@
                                         <td>{{ $kit->name }}</td>
                                         <td>{{ $kit->unit }}</td>
                                         <td>
-                                            <input class="form-control input-edit" type="text" name="begining_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->begining_balance($type->id, $period->year, $period->month) }}" >
+                                            <input class="form-control input-edit" type="number" name="begining_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->begining_balance($type->id, $period->year, $period->month) }}" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'begining_balance')">
                                         </td>
                                         <td>
-                                            {{ $delivery->quantity }}
+                                            {{ round($delivery->quantity, 2) }}
+                                            <input type="hidden" name="received[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ round($delivery->quantity, 2) }}">
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
                                         <td>
                                             {{ round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2) }}
-                                            <input class="form-control input-edit" type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
+                                            <input type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required>
+                                            <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'wasted')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="positive_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required>
+                                            <input class="form-control input-edit" type="number" name="positive_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'positive_adjustment')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="0"  min="0" required>
+                                            <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="0"  min="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'negative_adjustment')">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="0">
+                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="{{ ($kit->begining_balance($type->id, $period->year, $period->month)+$delivery->quantity-round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2)) }}">
                                         </td>
                                     </tr>
                                     @endforeach
@@ -153,5 +155,46 @@
         $(function(){
             
         });
+
+        const computevaluesforotherkits = (testtype, kitalias, kit, machine, element, type) => {  
+            if (kitalias == 'qualkit') {
+                $.get("{{ url('consumption') }}", {type:testtype, kit:kit, value:element.value, elementtype:type, year:'{{$period->year}}', month:'{{$period->month}}'}, function(data) {
+                    data.forEach(function(val,index) {
+                        $('input[name="' + val.element + '"').val(val.value);
+                        let domElementValue = val.value;
+                        $('input[name="' + val.element + '"').val(domElementValue.toFixed(2));
+                        console.log(val);
+                        computeEndingBalance(type, val);
+                    });
+                });
+            }
+        }
+
+        const computeEndingBalance = (element, val) => {
+            let beginingDOMElement = val.element.replace(element, "begining_balance");
+            let begining_balance = $('input[name="' + beginingDOMElement + '"').val();
+            let receivedDOMElement = val.element.replace(element, "received");
+            let received = $('input[name="' + receivedDOMElement + '"').val();
+            let usedDOMElement = val.element.replace(element, "used");
+            let used = $('input[name="' + usedDOMElement + '"').val();
+            let wastedDOMElement = val.element.replace(element, "wasted");
+            let wasted = $('input[name="' + wastedDOMElement + '"').val();
+            let positive_adjustmentDOMElement = val.element.replace(element, "positive_adjustment");
+            let positive_adjustment = $('input[name="' + positive_adjustmentDOMElement + '"').val();
+            let negative_adjustmentDOMElement = val.element.replace(element, "negative_adjustment");
+            let negative_adjustment = $('input[name="' + negative_adjustmentDOMElement + '"').val();
+            let endingpositives = (parseFloat(begining_balance)+parseFloat(received)+parseFloat(positive_adjustment));
+
+            console.log('<<--------------------------------------------------------------->>>');
+            console.log(begining_balance + ' - ' + received + ' - ' + positive_adjustment);
+            console.log(wasted + ' - ' + used + ' - ' + negative_adjustment);
+            console.log('<<--------------------------------------------------------------->>>');
+
+            let endingnegatives = (parseFloat(wasted)+parseFloat(used)+parseFloat(negative_adjustment));
+            let ending = (endingpositives-endingnegatives);
+            
+            let endingelement = val.element.replace(element, "ending_balance");
+            $('input[name="' + endingelement + '"').val(ending.toFixed(2));
+        }
     </script>
 @endsection

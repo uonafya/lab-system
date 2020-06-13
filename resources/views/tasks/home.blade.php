@@ -39,7 +39,7 @@
                         </div>
                     @endif
                     <!-- Kit and kits consumption -->
-                    {{--@if(sizeof($deliveries) > 0)
+                    @if(sizeof($deliveries) > 0)
                         <div class="alert alert-warning spacing  bottom">
                         	<strong><a href="{{ url('kitsdeliveries') }}">Click to Add Kit Deliveries for the previous {{ sizeof($deliveries) }} month(s)</a></strong>
                         	<p style="margin-left: 3em;">
@@ -96,7 +96,7 @@
                         <div class="alert alert-success spacing bottom">
                             <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Lab Monthly Equipment Log ( Tracker ) Submitted</a></strong>
                         </div>
-                    @endif--}}
+                    @endif
                     <!-- Lab equipment Report -->
                 </div>
             </div>

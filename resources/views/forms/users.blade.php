@@ -116,6 +116,25 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if(in_array(env('APP_LAB'), [5, 6]))
+
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Allowed to Access Covid System
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                        </label>
+
+                                        <div class="col-sm-4">
+                                            <label> <input type="radio" class="i-checks" name="covid_allowed" value="1"/> True </label>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <label> <input type="radio" class="i-checks" name="covid_allowed" value="0"/> False </label>
+                                        </div>
+
+                                    </div> 
+
+                                @endif
                                 
                             </div>
                         </div>

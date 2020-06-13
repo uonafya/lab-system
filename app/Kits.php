@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kits extends BaseModel
 {
+
+    // protected $hidden = ['testFactor', 'factor'];
 	protected $year;
     protected $previousYear;
     protected $month;
-    protected $previousMonth;
+    public $previousMonth;
 
     public function __construct(){
         $this->year = date('Y');
@@ -21,6 +23,18 @@ class Kits extends BaseModel
             $this->previousMonth = 12;
             $this->previousYear = $this->year-1;
         }
+    }
+
+    // public function getTestFactorAttribute()
+    // {
+    //     dd($this);
+    //     if (null !== $this->testFactor)
+    //         return json_decode($this->testFactor);
+    //     return '';
+    // }
+
+    public function getMultiplierFactorAttribute() {
+        return json_decode($this->factor);
     }
 
     public function machine() {
@@ -77,22 +91,20 @@ class Kits extends BaseModel
     public function begining_balance($type, $year, $month)
     {
         $lastmonthyear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
-        $lastmonth = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        $lastmonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $balance = 0;
+        
         if (!$this->consumption_lines->isEmpty()){
             $balance = $this->consumption_headers()
                             ->where('year', $lastmonthyear)->where('month', $lastmonth)
-                            ->where('type', $type)->where('machine', $this->machine_id);
+                            ->where('type', $type)
+                            ->where('machine', $this->machine_id);
             if (!$balance->isEmpty()) {
-
+                $balance = $balance->first()->details->where('kit_id', $this->id)->first()->ending_balance;
             } else {
                 return $balance->count();
             }
-                            // ->first()->consumption_lines->where('kit_id', $this->id)
-                            // ->first()->ending_balance;
-            // dd($balance);
         }
-        
         return $balance;
     }
 
@@ -111,7 +123,7 @@ class Kits extends BaseModel
         }
         // dd($line);
         return (object)[
-            'quantity' => (int)$line->received - $line->damaged,
+            'quantity' => (float)((float)$line->received - (float)$line->damaged),
             'lotno' => $line->lotno ?? ''
         ];
     }

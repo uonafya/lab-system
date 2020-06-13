@@ -274,7 +274,7 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->worksheet->runner->full_name ?? '' }} </strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<img src="{{ $sample->worksheet->runner->user_signature ?? null }}" height="60" width="120" alt="SIGNATURE">
+							<img src="{{ $sample->worksheet->runner->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
 				</tr>				
@@ -285,7 +285,7 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->approver->full_name ?? '' }} </strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<img src="{{ $sample->approver->user_signature ?? null }}" height="60" width="120" alt="SIGNATURE">
+							<img src="{{ $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
 				</tr>				
@@ -341,7 +341,7 @@ p.breakhere {page-break-before: always}
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(150)->generate($sample->national_sample_id) !!}
+		                {!! QrCode::size(100)->generate($sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
