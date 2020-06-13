@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Deliveries;
 use App\DeliveryDetail;
-use App\Kit;
+use App\Kits;
 use App\Machine;
 use App\TestType;
 use App\User;
@@ -14,6 +14,23 @@ class DeliveriesController extends Controller
 {
     public function addKitDeliveries(Request $request, $platform = null)
     {
+        if ($platform) {
+            $testtype = TestType::find($request->input('type'));
+            $kit = Kits::find($request->input('kit'));
+            $machine = $kit->load('machine.kits')->machine;
+            $kits = $machine->kits;
+            $data = [];
+            foreach ($kits as $key => $kitvalue) {
+                $type = $testtype->name;
+                $factor = $kitvalue->multiplier_factor->$type ?? $kitvalue->multiplier_factor;
+                $data[] = [
+                            'element' => $request->input('elementtype').'['.$machine->machine.']['.$type.']['.$kitvalue->id.']',
+                            'value' => round($request->input('value')*$factor, 2)
+                        ];
+            }
+            return response()->json($data);
+        }
+
     	$model = new Deliveries;
     	$period = collect($model->getMissingDeliveries())->first();
     	if ($request->method() == 'POST') {
@@ -60,7 +77,7 @@ class DeliveriesController extends Controller
 	    		foreach ($fields as $fieldskey => $fieldsvalue) {
 	    			foreach ($machine->kits as $kitskey => $kitsvalue) {
 	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_id'] = $kitsvalue->id;
-	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_type'] = Kit::class;
+	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id]['kit_type'] = Kits::class;
 	    				$data[$machine->machine][$typeskey]['details'][$kitsvalue->id][$fieldsvalue] = $formdata[$fieldsvalue][$machine->machine][$typesvalue->name][$kitsvalue->id];
 	    			}
 	    		}

@@ -46,7 +46,11 @@ width:1180px;
 			<tr class="odd">
 				<td colspan="8">
 					<center>
-						ABBOTT M2000 SPRT TEMPLATE	
+						@if($worksheet->machine_type == 4)
+							PANTHER
+						@else
+							ABBOTT M2000 SPRT TEMPLATE	
+						@endif
 
 						@if($worksheet->cdcworksheetno)
 							({{ $worksheet->cdcworksheetno }})

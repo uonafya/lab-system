@@ -26,21 +26,29 @@ class CovidConsumptionController extends Controller
 
         $time = collect($weeks)->first();
         $user = auth()->user();
-    	$tests = $consumption->getTestsDone($time->week_start, $time->week_end);
+    	
         $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
                                         if ($user->user_type_id == 12)
                                             return $query->where('type', '<>', 'Kit');
                                         else
                                             return $query->where('type', '<>', 'Manual');
-                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
-        
-        // dd($kits);
-    	return view('tasks.covid.consumption',
-    		[
-                'covidkits' => $kits,
-                'tests' => $tests,
-                'time' => $time
-            ]);
+                                    })->orderBy('machine', 'desc')->get();/*->groupby('machine');*/
+        if ($user->user_type_id == 12){
+            $kits = $kits->groupby('type')->sortKeysDesc();
+            $tests = $consumption->getTestsDone($time->week_start, $time->week_end);
+            return view('tasks.covid.manualconsumption', [
+                            'covidkits' => $kits,
+                            'tests' => $tests,
+                            'time' => $time
+                        ]);
+        } else {
+            $kits = $kits->groupby('machine');
+            return view('tasks.covid.consumption',
+                        [
+                            'covidkits' => $kits,
+                            'time' => $time
+                        ]);
+        }
     }
 
     public function pending()
@@ -74,11 +82,17 @@ class CovidConsumptionController extends Controller
         }
         
         $data = $this->buildConsumptionData($request);
+        
         $tests = [];
-    	foreach ($request->input('machine') as $key => $id) {
-            $machine = Machine::find($id);
-            $tests[] = [$machine->machine => $machine->getCovidTestsDone($time->week_start, $time->week_end)];
+        if (!$request->has('machine')) {
+            $tests[] = ['Manual' => $request->input('tests')];
+        } else {
+            foreach ($request->input('machine') as $key => $id) {
+                $machine = Machine::find($id);
+                $tests[] = [$machine->machine => $machine->getCovidTestsDone($time->week_start, $time->week_end)];
+            }
         }
+    	
         if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
             // Start transaction!
             DB::beginTransaction();
@@ -132,7 +146,11 @@ class CovidConsumptionController extends Controller
                                             return $query->where('type', '<>', 'Kit');
                                         else
                                             return $query->where('type', '<>', 'Manual');
-                                    })->orderBy('machine', 'desc')->get()->groupby('machine');
+                                    })->orderBy('machine', 'desc')->get();
+            if ($user->user_type_id == 12)
+                $kits = $kits->groupby('type')->sortKeysDesc();
+            else
+                $kits = $kits->groupby('machine');
             return view('reports.covidconsumptiondetails', ['consumption' => $consumption, 'covidkits' => $kits]);
         }
     	return view('reports.covidconsumption',

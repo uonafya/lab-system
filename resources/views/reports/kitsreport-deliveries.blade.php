@@ -5,11 +5,12 @@
     <div style="margin-top: 2em;">
     <form action="{{ url('/reports/kitdeliveries') }}" class="form-horizontal" method="POST" id='reports_kits'>
         @csrf
-        <div class="form-group spacing-div-form">
+        {{--<div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Select Test Type</label>
             <div class="col-sm-9">
-                <label> <input type="radio" name="types" value="eid" class="i-checks" {{ $eidtestingSys }} required> EID </label>
-                <label> <input type="radio" name="types" value="viralload" class="i-checks" {{ $viraltestingSys }} required> VIRALLOAD </label>
+            @foreach($data['testtypes'] as $type)
+                <label> <input type="radio" name="types" value="{{ $type->id }}" class="i-checks" required> {{ $type->name }} </label>
+            @endforeach
             </div>
         </div>
         <hr />
@@ -25,11 +26,12 @@
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">Platform</label>
             <div class="col-sm-9">
-                <label> <input type="radio" name="platform" value="abbott" class="i-checks" required> ABBOTT </label>
-                <label> <input type="radio" name="platform" value="taqman" class="i-checks" required> TAQMAN </label>
+            @foreach($data['platforms'] as $platform)
+                <label><input type="radio" name="platform" value="{{ $platform->id }}" class="i-checks" required> {{ strtoupper($platform->machine) }} </label>
+            @endforeach
             </div>
         </div>
-        <hr />
+        <hr />--}}
         <div class="form-group spacing-div-form">
             <label class="col-sm-3 control-label">
                 Received in the <br/>
@@ -120,20 +122,12 @@
             </div>
         </div>
         <hr />
-        <div class="form-group spacing-div-form">
-            <label class="col-sm-3 control-label">Format</label>
-            <div class="col-sm-9">
-                <label> <input type="radio" name="format" value="html" class="i-checks" required> HTML </label>
-                <label> <input type="radio" name="format" value="excel" class="i-checks" required> EXCEL </label>
-            </div>
-        </div>
-        <hr />
 
-            <div class="form-group">
-            <center>
-                <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
-                <button type="reset" class="btn btn-default">Reset Options</button>
-            </center>
+        <div class="form-group">
+        <center>
+            <button type="submit" class="btn btn-default" id="generate_report">Generate Report</button>
+            <button type="reset" class="btn btn-default">Reset Options</button>
+        </center>
         </div>  
     </form>
     </div>

@@ -1306,8 +1306,20 @@ class Synch
 				$child->set_tat();
 				$child->save();
 			}
-			// continue;
-			unset($sample->child);
+		}
+
+		foreach ($samples as $key => $sample) {
+			/*if($sample->parentid) $sample = $sample->parent;
+			$sample->datedispatched = $sample->datedispatched ?? $today;
+			$sample->set_tat();
+			$sample->save();
+
+			foreach ($sample->child as $key => $child) {
+				$child->datedispatched = $child->datedispatched ?? $today;
+				$child->set_tat();
+				$child->save();
+			}
+			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
 			$response = $client->request('post', 'covid_sample', [
