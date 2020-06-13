@@ -196,7 +196,7 @@ class CovidReportsController extends Controller
 	private function nphl_upload($date)
 	{
 		$user = auth()->user();
-		$lab = Lab::find(env('APP_LAB'))->labdesc,
+		$lab = Lab::find(env('APP_LAB'))->labdesc;
 		$samples = CovidSampleView::where('repeatt', 0)
 						->whereIn('result', [1,2])
 						->where('datedispatched', $date)
