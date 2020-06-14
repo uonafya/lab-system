@@ -23,6 +23,7 @@
 	                <center><i class="fa fa-bolt"></i> Please note that you CANNOT access the main system until the below pending tasks have been completed.</center>
 	            </div>
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                @if(!in_array(env('APP_LAB'), [8]))
                     @if($covidconsumption == 0)
                         <div class="alert alert-danger spacing bottom">
                             <strong><a href="{{ url('covidkits') }}">Click to Submit Last Week`s COVID Consumptions</a></strong>
@@ -38,6 +39,7 @@
                             <strong><a href="#" style="color: black;">Previous COVID consumptions Submitted</a></strong>
                         </div>
                     @endif
+                @endif
                     <!-- Kit and kits consumption -->
                     @if(sizeof($deliveries) > 0)
                         <div class="alert alert-warning spacing  bottom">
