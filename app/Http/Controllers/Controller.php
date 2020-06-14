@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Abbotdeliveries;
-use App\Abbotprocurement;
 use App\Allocation;
+use App\Consumption;
 use App\CovidConsumption;
+use App\Deliveries;
 use App\LabEquipmentTracker;
 use App\LabPerformanceTracker;
-use App\Taqmandeliveries;
-use App\Taqmanprocurement;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -44,39 +42,27 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        // $currentmonth = date('m');
-        // $prevmonth = date('m')-1;
-        // $year = date('Y');
-        // $prevyear = $year;
-        // if ($currentmonth == 1) {
-        //     $prevmonth = 12;
-        //     $prevyear -= 1;
-        // }
-        // $equipment = LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
-        // if ($equipment == 0)
-        //     return false;
-        // $performance = LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count();
-        // if ($performance == 0)
-        //     return false;
-
-        // $abbot = \App\Lab::select('abbott')->where('id', auth()->user()->lab_id)->first()->abbott;
+        $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
+        $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
         
-        // if ($abbot == 1) {//Check for both abbot and taqman
-        //     $abbottmodel = Abbotprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
-        //     if ($abbottmodel == 0)
-        //         return false;
-        // }
-                     
-        // $taqmanmodel = Taqmanprocurement::where('month', $prevmonth)->where('year', $prevyear)->count();
-        // if ($taqmanmodel == 0)
-        //     return false;   
+        if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+            return false;
+        
+        if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+            return false;
 
-        // if(in_array(env('APP_LAB'), [8])) return true;
+        if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+            return false;
+
+        if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+            return false;
+
+        if(in_array(env('APP_LAB'), [8])) return true;
         
         $time = $this->getPreviousWeek();
         $covidsubmittedstatus = 1;
-        if (CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
-            !in_array(env('APP_LAB'), [8]) && 
+        if (!in_array(env('APP_LAB'), [8]) && 
+            CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
             auth()->user()->covid_consumption_allowed) {
             return false;
         }
