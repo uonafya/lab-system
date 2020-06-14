@@ -79,10 +79,13 @@ class TaskController extends Controller
         $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
         $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
   //       $data['requisitions'] = count($this->getRequisitions());
-        $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
+        if (!in_array(env('APP_LAB'), [8])){
+            $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
-        $covidconsumption = new CovidConsumption;
-        $data['time'] = $covidconsumption->getMissingConsumptions();
+            $covidconsumption = new CovidConsumption;
+            $data['time'] = $covidconsumption->getMissingConsumptions();   
+        }
+        
         $data['currentmonth'] = date('m');
         $data['prevmonth'] = $this->previousMonth;
         $data['year'] = date('Y');
