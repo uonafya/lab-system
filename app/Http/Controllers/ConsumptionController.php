@@ -99,7 +99,7 @@ class ConsumptionController extends Controller
     	foreach ($data as $machinekey => $machinevalue) {
     		foreach ($machinevalue as $consumptionkey => $consumption) {
 	    		if (Consumption::duplicate($consumption['year'], $consumption['month'], $consumption['type'], $consumption['machine'], $consumption['lab_id'])->get()->isEmpty()) {
-	    			$details = $consumption['details'];
+	    			$details = $consumption['details'] ?? null;
 		    		unset($consumption['details']);
 		    		$saveconsumption = Consumption::create($consumption);
 		    		$this->saveConsumptionDetails($saveconsumption, $details);
