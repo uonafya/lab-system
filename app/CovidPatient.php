@@ -6,7 +6,6 @@ use DB;
 
 class CovidPatient extends BaseModel
 {
-
 	protected $dates = ['dob', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death'];
 
     public function travel()
