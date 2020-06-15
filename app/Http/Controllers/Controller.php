@@ -54,7 +54,7 @@ class Controller extends BaseController
             return false;
 
         $model = new Deliveries;        
-        dd($model->getMissingDeliveries());
+        dd($model->getMissingDeliveriesTestFn());
         dd(Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get());
         if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
