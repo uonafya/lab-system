@@ -73,7 +73,7 @@ $api->version('v1', function (Router $api) {
             $api->post('crag', 'CragController@partial');
             // $api->post('crag_complete', 'CragController@complete_result');
 
-            $api->group(['middleware' => 'api.throttle', 'limit' => 10, 'expires' => 1], function(Router $api) {
+            $api->group(['middleware' => 'api.throttle', 'limit' => 100, 'expires' => 1], function(Router $api) {
                 $api->post('function', 'FunctionController@data_functions');
             });
             

@@ -42,6 +42,7 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
+        if(env('APP_LAB') == 3) return true;
 	if (!auth()->user()->covid_consumption_allowed)
 		return true;
         $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
