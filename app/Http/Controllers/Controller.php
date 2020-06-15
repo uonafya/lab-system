@@ -47,7 +47,7 @@ class Controller extends BaseController
         $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
         $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
         
-        dd($prevmonth);
+        dd(LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count());
         if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
             return false;
         
