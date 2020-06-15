@@ -47,6 +47,7 @@ class Controller extends BaseController
         $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
         $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
         
+        dd($prevmonth);
         if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
             return false;
         
@@ -62,7 +63,6 @@ class Controller extends BaseController
         if(in_array(env('APP_LAB'), [8, 3])) return true;
         
         $time = $this->getPreviousWeek();
-        dd($time);
         $covidsubmittedstatus = 1;
         if (!in_array(env('APP_LAB'), [8]) && 
             CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
