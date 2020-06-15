@@ -74,8 +74,8 @@ class Deliveries extends BaseModel
                            'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
                            'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
                         ];
-      return $latestdate;
-      // dd($this->selectRaw("month(datereceived) as month, year, datereceived, id")->where('year', '=', $year)->get()->toArray());
+      // return $latestdate;
+      dd($this->selectRaw("month(datereceived) as month, year, datereceived, id")->where('year', '=', $year)->get()->toArray());
       $limit = date('Y-m', strtotime("-1 Month", strtotime(date('Y-m'))));
       $currentloopdate = $latestdate->year . '-' . $latestdate->month;
       while (strtotime($limit) >= strtotime($currentloopdate)) {
