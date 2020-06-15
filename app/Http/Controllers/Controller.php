@@ -42,8 +42,13 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
+        if(in_array(env('APP_LAB'), [3,5])) return true;
+	if (!auth()->user()->covid_consumption_allowed)
+		return true;
         $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
         $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
+
+        // if(in_array(env('APP_LAB'), [3])) return true;
         
         if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
             return false;
@@ -57,7 +62,7 @@ class Controller extends BaseController
         if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
-        if(in_array(env('APP_LAB'), [8])) return true;
+        if(in_array(env('APP_LAB'), [8, 3])) return true;
         
         $time = $this->getPreviousWeek();
         $covidsubmittedstatus = 1;
