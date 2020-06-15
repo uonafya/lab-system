@@ -60,6 +60,35 @@ class Deliveries extends BaseModel
       return $data;
 	}
 
+   public function getMissingDeliveriesTestFn()
+   {
+      $data = [];
+      $year = $this->selectRaw("max(`year`) as `year`")->get()->first()->year;
+      // This will only apply for the first month this logic is run alone
+      if ($this->whereNotNull('month')->get()->isEmpty()){
+         $month = $this->selectRaw("month(datereceived) as month")->where('year', '=', $year)->get()->max('month');
+      } else {
+         $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
+      }
+      $latestdate = (object)[
+                           'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
+                           'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
+                        ];
+      return $latestdate;
+      // dd($this->selectRaw("month(datereceived) as month, year, datereceived, id")->where('year', '=', $year)->get()->toArray());
+      $limit = date('Y-m', strtotime("-1 Month", strtotime(date('Y-m'))));
+      $currentloopdate = $latestdate->year . '-' . $latestdate->month;
+      while (strtotime($limit) >= strtotime($currentloopdate)) {
+         $data[] = (object)[
+                     'year' => date('Y', strtotime($currentloopdate)),
+                     'month' => date('m', strtotime($currentloopdate)),
+                  ];
+         $currentloopdate = date('Y-m', strtotime("+1 Month", strtotime($currentloopdate)));
+      }
+            
+      return $data;
+   }
+
 
    public function submitNullDeliveries($year, $month)
    {
