@@ -118,10 +118,10 @@ class Lookup
     {
         $value = trim($value);
         $value = strtolower($value);
-        if(str_contains($value, ['f', '2'])){
+        if(\Str::contains($value, ['f', '2'])){
             return 2;
         }
-        else if(str_contains($value, ['m', '1'])){
+        else if(\Str::contains($value, ['m', '1'])){
             return 1;
         }
         else{
@@ -133,7 +133,7 @@ class Lookup
     {
         $value = trim($value);
         $value = strtolower($value);
-        if(str_contains($value, ['n', '1'])){
+        if(\Str::contains($value, ['n', '1'])){
             return 0;
         }
         else{

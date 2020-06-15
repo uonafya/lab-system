@@ -125,13 +125,13 @@ class ViewModel extends Model
         $c = str_replace_first('app\\', '', $c);
 
         $pre = '';
-        if(str_contains($c, 'viral')) $pre = 'viral';
-        if(str_contains($c, 'dr')) $pre = 'dr_';
+        if(\Str::contains($c, 'viral')) $pre = 'viral';
+        if(\Str::contains($c, 'dr')) $pre = 'dr_';
         $user = auth()->user();
 
-        if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
-        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
-        else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
+        if(\Str::contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
+        else if(\Str::contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
+        else if(\Str::contains($attr, 'sample') || (\Str::contains($c, 'sample') && $attr == 'id')) $url = url($pre . 'sample/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
@@ -139,11 +139,11 @@ class ViewModel extends Model
 
         if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
 
-        if(str_contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
+        if(\Str::contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
 
         $text = $this->$attr;
 
-        if(str_contains($attr, 'patient')) $text = $this->patient;
+        if(\Str::contains($attr, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 

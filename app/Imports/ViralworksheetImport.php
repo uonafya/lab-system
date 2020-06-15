@@ -158,17 +158,17 @@ class ViralworksheetImport implements ToCollection
                     $name = strtolower($value[20]);
                     $result_array = MiscViral::sample_result($interpretation);
 
-                    if(str_contains($name, 'low')){
+                    if(\Str::contains($name, 'low')){
                         $lpc = $result_array['result'];
                         $lpc_int = $result_array['interpretation'];
                         $lpc_units = $result_array['units'];
                     }
-                    else if(str_contains($name, 'high')){
+                    else if(\Str::contains($name, 'high')){
                         $hpc = $result_array['result'];
                         $hpc_int = $result_array['interpretation'];
                         $hpc_units = $result_array['units'];
                     }
-                    else if(str_contains($name, 'negative')){
+                    else if(\Str::contains($name, 'negative')){
                         $nc = $result_array['result'];
                         $nc_int = $result_array['interpretation']; 
                         $nc_units = $result_array['units'];
