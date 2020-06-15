@@ -50,10 +50,10 @@ class Controller extends BaseController
         if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
             return false;
         
-        dd(LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count());
         if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
             return false;
 
+        dd(Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get());
         if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
