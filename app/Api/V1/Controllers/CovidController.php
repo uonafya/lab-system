@@ -51,7 +51,7 @@ class CovidController extends Controller
         if(!$lab) abort(401);
 
         $sample_class = CovidSample::class;
-        if(str_contains(url()->current(), 'test')) $sample_class = TestSample::class;
+        if(\Str::contains(url()->current(), 'test')) $sample_class = TestSample::class;
 
         return $sample_class::with(['patient'])
             ->where('repeatt', 0)
@@ -109,7 +109,7 @@ class CovidController extends Controller
         $patient_column = 'nhrl_patient_id';
         $sample_column = 'nhrl_sample_id';
 
-        if(str_contains(url()->current(), 'test')){
+        if(\Str::contains(url()->current(), 'test')){
             $patient_class = TestPatient::class;
             $sample_class = TestSample::class;
         }
@@ -120,7 +120,7 @@ class CovidController extends Controller
 
 
         // $p = new CovidPatient;
-        // if(str_contains(url()->current(), 'test')) $p = new TestPatient;
+        // if(\Str::contains(url()->current(), 'test')) $p = new TestPatient;
         $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
         if(!$p) $p = new $patient_class;
         $p->fill($request->only(['case_id', 'nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
@@ -137,7 +137,7 @@ class CovidController extends Controller
         $p->save();
 
         // $s = new CovidSample;
-        // if(str_contains(url()->current(), 'test')) $s = new TestSample;
+        // if(\Str::contains(url()->current(), 'test')) $s = new TestSample;
         $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
         if(!$s) $s = new $sample_class;
         $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected', 'datetested']));
@@ -181,7 +181,7 @@ class CovidController extends Controller
         if($lab->id == 11) $column = 'cif_sample_id';
 
         $sample_class = CovidSample::class;
-        if(str_contains(url()->current(), 'test')) $sample_class = TestSample::class;
+        if(\Str::contains(url()->current(), 'test')) $sample_class = TestSample::class;
 
         // $s = CovidSample::findOrFail($id);
         $s = $sample_class::where([$column => $id])->first();
@@ -248,7 +248,7 @@ class CovidController extends Controller
     {
         $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
         if(!$lab) abort(401);
-        if(str_contains(url()->current(), 'test')){
+        if(\Str::contains(url()->current(), 'test')){
             config(['database.default' => 'test']);
         }
 

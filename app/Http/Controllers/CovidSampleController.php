@@ -656,9 +656,9 @@ class CovidSampleController extends Controller
             $p->save();
 
             $sample_type = $data[18];
-            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
-            else if(str_contains($sample_type, 'Oro')) $s = 3;
-            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            if(\Str::contains($sample_type, 'Oro') && \Str::contains($sample_type, 'Naso')) $s = 1;
+            else if(\Str::contains($sample_type, 'Oro')) $s = 3;
+            else if(\Str::contains($sample_type, 'Naso')) $s = 2;
             else{
                 $s = null;
             }
