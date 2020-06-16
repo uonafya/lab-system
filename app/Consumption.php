@@ -42,6 +42,8 @@ class Consumption extends Model
     {
         $data = [];
         $year = $this->selectRaw("max(`year`) as `year`")->get()->first()->year;
+        return $year;
+        dd($year);
         $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
         
         $latestdate = (object)[
