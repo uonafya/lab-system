@@ -56,11 +56,11 @@ class Controller extends BaseController
         // $model = new Deliveries;        
         // dd($model->getMissingDeliveriesTestFn());
         // dd(Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get());
+        $model = new Consumption;
+        dd($model->getMissingConsumptions());
         if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
-        $model = new Consumption;
-        dd($model->getMissingConsumptions());
         if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
