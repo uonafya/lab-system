@@ -59,6 +59,8 @@ class Controller extends BaseController
         if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
+        $model = new Consumption;
+        dd($model->getMissingConsumptions());
         if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
             return false;
 
