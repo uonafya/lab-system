@@ -48,7 +48,7 @@ class Consumption extends Model
                            'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
                            'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
                         ];
-        // dd($latestdate);
+        return $latestdate;
         $limit = date('Y-m', strtotime("-1 Month", strtotime(date('Y-m'))));
         $currentloopdate = $latestdate->year . '-' . $latestdate->month;
         while (strtotime($limit) >= strtotime($currentloopdate)) {
