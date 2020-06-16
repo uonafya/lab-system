@@ -42,7 +42,7 @@ class Consumption extends Model
     {
         $data = [];
         $year = $this->selectRaw("max(`year`) as `year`")->get()->first()->year;
-        return $year;
+        return $this->select('year', 'month')->where('year', '=', $year)->get();
         dd($year);
         $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
         
