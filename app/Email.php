@@ -158,7 +158,7 @@ class Email extends BaseModel
         $mail_array = [];
 
         foreach ($emails as $key => $value) {
-            if(str_contains($value, '@')) $mail_array[] = trim($value);
+            if(\Str::contains($value, '@')) $mail_array[] = trim($value);
         }
         return $mail_array;
     }

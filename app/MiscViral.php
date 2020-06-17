@@ -248,33 +248,33 @@ class MiscViral extends Common
         $str = strtolower($result);
         $units="";
 
-        if(str_contains($result, ['e+'])){
+        if(\Str::contains($result, ['e+'])){
             return self::exponential_result($result);
         }
 
-        else if($str == 'failed' || $str == 'invalid' || $str == '' || str_contains($str, ['error']) || strlen($error) > 10)
+        else if($str == 'failed' || $str == 'invalid' || $str == '' || \Str::contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
             $interpretation = $error ?? $result;       
         }
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
-        else if(str_contains($result, ['<']) && str_contains($result, ['40', '30', '20', '21', '839', '150', '550']))
+        else if(\Str::contains($result, ['<']) && \Str::contains($result, ['40', '30', '20', '21', '839', '150', '550']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
-        else if(str_contains($result, ['<']))
+        else if(\Str::contains($result, ['<']))
         {
             $res= "< LDL copies/ml";
             $interpretation= $result;       
         }
-        else if(str_contains($result, ['>']))
+        else if(\Str::contains($result, ['>']))
         {
             $res= "> 10,000,000 cp/ml";
             $interpretation= $result;       
         }
-        else if(str_contains($str, ['not detected']))
+        else if(\Str::contains($str, ['not detected']))
         {
             // $res="Target Not Detected";
             $res= "< LDL copies/ml";
@@ -282,16 +282,16 @@ class MiscViral extends Common
         }
 
         // else if($result == 'Collect New Sample')
-        else if(str_contains($str, ['collect', 'new sample']))
+        else if(\Str::contains($str, ['collect', 'new sample']))
         {
             $res= "Collect New Sample";
             $interpretation="Collect New Sample";
         }
 
-        else if (str_contains($str, ['log'])) 
+        else if (\Str::contains($str, ['log'])) 
         {
             $interpretation = $result;
-            if(str_contains($str, ['<'])){
+            if(\Str::contains($str, ['<'])){
                 $res= "< LDL copies/ml";
             }
             else{
@@ -348,7 +348,7 @@ class MiscViral extends Common
             $res= "< LDL copies/ml";
             $interpretation= $result;
         }
-        else if(str_contains($result, 'e+')){
+        else if(\Str::contains($result, 'e+')){
             $a = explode('e+', $result);
             $u = explode(' ', $a[1]);
             $power = (int) $u[0];
@@ -495,9 +495,9 @@ class MiscViral extends Common
             else if($result > 5000) return ['rcategory' => 4];
         }
         $str = strtolower($result);
-        if(str_contains($str, ['not detected'])) return ['rcategory' => 1];
-        if(str_contains($str, ['ldl'])) return ['rcategory' => 1];
-        if(str_contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
+        if(\Str::contains($str, ['not detected'])) return ['rcategory' => 1];
+        if(\Str::contains($str, ['ldl'])) return ['rcategory' => 1];
+        if(\Str::contains($str, ['collect', 'invalid', 'failed'])) return ['rcategory' => 5 ];
         $data = $this->get_rcategory($result);
         if(!isset($data['rcategory'])) return [];
         if($repeatt == 0 && $data['rcategory'] == 5) $data['labcomment'] = 'Failed Test';
@@ -883,7 +883,7 @@ class MiscViral extends Common
 
         foreach ($samples as $key => $sample) {
             $res = strtolower($sample->result);
-            if(str_contains($res, ['ldl', 'target'])) $res = 0.01;
+            if(\Str::contains($res, ['ldl', 'target'])) $res = 0.01;
             $row = [
                 'Specimen Lab ID' => $sample->id,
                 'IP Code' => $sample->patient,
@@ -909,7 +909,7 @@ class MiscViral extends Common
                 $row['Specimen Lab ID'] = $sample->label_id;
             }
 
-            if(str_contains($res, ['failed', 'collect'])){
+            if(\Str::contains($res, ['failed', 'collect'])){
                 $failed[] = $row;
                 continue;
             }

@@ -214,7 +214,9 @@
                                         @endif
                                         <td> 
                                             <a href="{{ url($sample->route_name . '/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
+                                            @if($sample->route_name != 'covid_sample')
                                             <a href="{{ url($sample->route_name . '/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
+                                            @endif
                                         </td>
                                     </tr>
 

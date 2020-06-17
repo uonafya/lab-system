@@ -365,6 +365,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
+            // ->whereRaw('covid_samples.id IN (15724,15716,15736,15729,15744,15332,15787,15695,15711,15687,15721,15740,15705) ')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -655,9 +656,9 @@ class CovidSampleController extends Controller
             $p->save();
 
             $sample_type = $data[18];
-            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
-            else if(str_contains($sample_type, 'Oro')) $s = 3;
-            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            if(\Str::contains($sample_type, 'Oro') && \Str::contains($sample_type, 'Naso')) $s = 1;
+            else if(\Str::contains($sample_type, 'Oro')) $s = 3;
+            else if(\Str::contains($sample_type, 'Naso')) $s = 2;
             else{
                 $s = null;
             }
