@@ -1308,6 +1308,8 @@ class Synch
 			}
 		}
 
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(100)->get();
+
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
@@ -1328,12 +1330,14 @@ class Synch
 					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+	            'http_errors' => false,
 				// 'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
+			if($response->getStatusCode() > 399) continue;
 
 			$body = json_decode($response->getBody());
 			$sample_array = $body->sample;

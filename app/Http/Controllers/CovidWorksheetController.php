@@ -676,7 +676,7 @@ class CovidWorksheetController extends Controller
             
             $sample = CovidSample::find($samples[$key]);
             $sample->fill($data);
-            if($sample->result == 3 &&  $sample->repeatt == 0){
+            if($sample->result == 3 && $sample->repeatt == 0){
                 $sample->result = 5;
                 $sample->labcomment = 'Failed Run';
             }
