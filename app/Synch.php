@@ -1308,6 +1308,8 @@ class Synch
 			}
 		}
 
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->get();
+
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
