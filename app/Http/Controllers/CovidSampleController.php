@@ -185,7 +185,7 @@ class CovidSampleController extends Controller
         $data = [];
 
         foreach ($samples as $key => $sample) {
-            $data[] = [
+            $row = [
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
                 'National ID' => $sample->national_id,
@@ -203,6 +203,8 @@ class CovidSampleController extends Controller
                 'Entered By' => $sample->creator->full_name,
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
+            if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            $data[] = $row;
         }
         if(!$data) return back();
         return MiscCovid::csv_download($data, 'covid_samples');
