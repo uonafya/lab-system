@@ -75,6 +75,7 @@ class CovidSampleController extends Controller
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
+            ->where('repeatt', 0)
             ->orderBy('covid_sample_view.id', 'desc')
             ->paginate();
 
@@ -174,6 +175,9 @@ class CovidSampleController extends Controller
             ->when(!$user->facility_user, function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
+            // where(['receivedstatus' => 1])
+            // ->whereNull('result')
+            // ->whereNull('datedispatched')
             ->get();
 
         extract(Lookup::covid_form());
@@ -181,7 +185,7 @@ class CovidSampleController extends Controller
         $data = [];
 
         foreach ($samples as $key => $sample) {
-            $data[] = [
+            $row = [
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
                 'National ID' => $sample->national_id,
@@ -199,6 +203,8 @@ class CovidSampleController extends Controller
                 'Entered By' => $sample->creator->full_name,
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
+            if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            $data[] = $row;
         }
         if(!$data) return back();
         return MiscCovid::csv_download($data, 'covid_samples');
@@ -361,6 +367,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
+            // ->whereRaw('covid_samples.id IN (15724,15716,15736,15729,15744,15332,15787,15695,15711,15687,15721,15740,15705) ')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -651,9 +658,9 @@ class CovidSampleController extends Controller
             $p->save();
 
             $sample_type = $data[18];
-            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
-            else if(str_contains($sample_type, 'Oro')) $s = 3;
-            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            if(\Str::contains($sample_type, 'Oro') && \Str::contains($sample_type, 'Naso')) $s = 1;
+            else if(\Str::contains($sample_type, 'Oro')) $s = 3;
+            else if(\Str::contains($sample_type, 'Naso')) $s = 2;
             else{
                 $s = null;
             }

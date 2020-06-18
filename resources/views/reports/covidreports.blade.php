@@ -162,6 +162,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="daily_results_submission" class="i-checks" required> Daily Laboratory Results Submission </label>
+                                <label> <input type="radio" name="types" value="nphl_results_submission" class="i-checks" required> Daily NPHL Results Submission </label>
                             </div>
                         </div>
                         <div class="form-group">

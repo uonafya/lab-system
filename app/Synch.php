@@ -1306,8 +1306,22 @@ class Synch
 				$child->set_tat();
 				$child->save();
 			}
-			// continue;
-			unset($sample->child);
+		}
+
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(100)->get();
+
+		foreach ($samples as $key => $sample) {
+			/*if($sample->parentid) $sample = $sample->parent;
+			$sample->datedispatched = $sample->datedispatched ?? $today;
+			$sample->set_tat();
+			$sample->save();
+
+			foreach ($sample->child as $key => $child) {
+				$child->datedispatched = $child->datedispatched ?? $today;
+				$child->set_tat();
+				$child->save();
+			}
+			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
 			$response = $client->request('post', 'covid_sample', [
@@ -1316,12 +1330,14 @@ class Synch
 					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+	            'http_errors' => false,
 				// 'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
+			if($response->getStatusCode() > 399) continue;
 
 			$body = json_decode($response->getBody());
 			$sample_array = $body->sample;

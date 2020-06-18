@@ -6,7 +6,6 @@ use DB;
 
 class CovidPatient extends BaseModel
 {
-
 	protected $dates = ['dob', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death'];
 
     public function travel()
@@ -49,8 +48,8 @@ class CovidPatient extends BaseModel
     {
         if(is_numeric($value)) $this->attributes['sex'] = $value;
         else{
-            if(str_contains($value, ['F', 'f'])) $this->attributes['sex'] = 2;
-            else if(str_contains($value, ['M', 'm'])){
+            if(\Str::contains($value, ['F', 'f'])) $this->attributes['sex'] = 2;
+            else if(\Str::contains($value, ['M', 'm'])){
                 $this->attributes['sex'] = 1;
             }
         }

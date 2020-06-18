@@ -54,7 +54,7 @@ class CovidWorksheetImport implements ToCollection
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(str_contains($control, ['+'])){
+                    if(\Str::contains($control, ['+'])){
                         $positive_control = $result_array;                       
                     }else{
                         $negative_control = $result_array; 
@@ -95,8 +95,8 @@ class CovidWorksheetImport implements ToCollection
                     if(!is_numeric($sample_id)){
                         $s = strtolower($sample_id);
 
-                        if(str_contains($s, 'neg')) $negative_control = $data_array;
-                        else if(str_contains($s, 'pos')) $positive_control = $data_array;
+                        if(\Str::contains($s, 'neg')) $negative_control = $data_array;
+                        else if(\Str::contains($s, 'pos')) $positive_control = $data_array;
 
                     }
 
@@ -130,14 +130,14 @@ class CovidWorksheetImport implements ToCollection
                 $res = $value[1];
                 $sample->repeatt=0;
 
-                if(str_contains($res, ['Pos', 'pos'])){
+                if(\Str::contains($res, ['Pos', 'pos'])){
                     $sample->result = 2;
-                }else if(str_contains($res, ['Neg', 'neg'])){
+                }else if(\Str::contains($res, ['Neg', 'neg'])){
                     $sample->result = 1;
-                }else if(str_contains($res, ['Fai', 'fai'])){
+                }else if(\Str::contains($res, ['Fai', 'fai'])){
                     $sample->result = 3;
                     $sample->repeatt = 1;
-                }else if(str_contains($res, ['Coll', 'coll'])){
+                }else if(\Str::contains($res, ['Coll', 'coll'])){
                     $sample->result = 5;
                 }
 

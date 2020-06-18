@@ -1962,7 +1962,7 @@ class Random
             $sample->patient_id = $patient->id;
             $sample->datecollected = $datecollected;
             $sample->age = $row[7];
-            if(str_contains(strtolower($row[8]), ['edta'])) $sample->sampletype = 2; 
+            if(\Str::contains(strtolower($row[8]), ['edta'])) $sample->sampletype = 2; 
 
             $sample->areaname = $row[5];
             $sample->label_id = $row[1];

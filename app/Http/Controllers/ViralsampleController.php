@@ -769,7 +769,7 @@ class ViralsampleController extends Controller
         if(env('APP_LAB') == 4){
             $fac = Facility::find($facility_id);
             $str = $fac->facilitycode . '/';
-            if(!str_contains($patient, $str)) $patient = $str . $patient;
+            if(!\Str::contains($patient, $str)) $patient = $str . $patient;
         }
 
         $viralpatient = Viralpatient::where(['facility_id' => $facility_id, 'patient' => $patient])->first();        
@@ -1024,7 +1024,7 @@ class ViralsampleController extends Controller
                 $sample->patient_id = $patient->id;
                 $sample->datecollected = $datecollected;
                 $sample->age = $row[7];
-                if(str_contains(strtolower($row[8]), ['edta'])) $sample->sampletype = 2; 
+                if(\Str::contains(strtolower($row[8]), ['edta'])) $sample->sampletype = 2; 
 
                 $sample->areaname = $row[5];
                 $sample->label_id = $row[1];
@@ -1041,6 +1041,8 @@ class ViralsampleController extends Controller
         else{
             while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
 
+                $sample = $patient = $batch = null;
+
                 $facility = Facility::locate($row[3])->get()->first();
                 if(!$facility) continue;
                 $datecollected = Lookup::other_date($row[8]);
@@ -1049,7 +1051,7 @@ class ViralsampleController extends Controller
                 $existing = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $row[1], 'datecollected' => $datecollected])->first();
 
                 if($existing){
-                    $sampletype = (int) $row[7];
+                    /*$sampletype = (int) $row[7];
                     if(in_array($existing->sampletype, [3, 4]) && in_array($sampletype, [1,2,5])){
                         $s = Viralsample::find($existing->id);
                         $s->delete();
@@ -1057,24 +1059,30 @@ class ViralsampleController extends Controller
                     else{
                         $existing_rows[] = $existing->toArray();
                         continue;                        
-                    }
+                    }*/
+
+                    $sample = Viralsample::find($existing->id);
+                    $patient = $sample->patient;
+                    $batch = $sample->batch;
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
 
-                $batch = Viralbatch::withCount(['sample'])
-                                        ->where('received_by', auth()->user()->id)
-                                        ->where('datereceived', $datereceived)
-                                        ->where('input_complete', 0)
-                                        ->where('site_entry', $site_entry)
-                                        ->where('facility_id', $facility->id)
-                                        ->get()->first();
+                if(!$batch){
+                    $batch = Viralbatch::withCount(['sample'])
+                                            ->where('received_by', auth()->user()->id)
+                                            ->where('datereceived', $datereceived)
+                                            ->where('input_complete', 0)
+                                            ->where('site_entry', $site_entry)
+                                            ->where('facility_id', $facility->id)
+                                            ->get()->first();
 
-                if($batch){
-                    if($batch->sample_count > 9){
-                        unset($batch->sample_count);
-                        $batch->full_batch();
-                        $batch = null;
+                    if($batch){
+                        if($batch->sample_count > 9){
+                            unset($batch->sample_count);
+                            $batch->full_batch();
+                            $batch = null;
+                        }
                     }
                 }
 
@@ -1090,7 +1098,7 @@ class ViralsampleController extends Controller
                     $batch->save();
                 }
 
-                $patient = Viralpatient::existing($facility->id, $row[1])->get()->first();
+                if(!$patient) $patient = Viralpatient::existing($facility->id, $row[1])->get()->first();
                 if(!$patient){
                     $patient = new Viralpatient;
                 }
@@ -1106,7 +1114,7 @@ class ViralsampleController extends Controller
                 if(!$patient->dob && $row[6]) $patient->dob = Lookup::calculate_dob($datecollected, $row[6]); 
                 $patient->pre_update();
 
-                $sample = new Viralsample;
+                if(!$sample) $sample = new Viralsample;
                 $sample->batch_id = $batch->id;
                 $sample->patient_id = $patient->id;
                 $sample->datecollected = $datecollected;
