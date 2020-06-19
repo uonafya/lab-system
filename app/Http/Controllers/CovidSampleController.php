@@ -704,7 +704,6 @@ class CovidSampleController extends Controller
             $p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
-                'kemri_id' => $data[0],
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
                 'patient_name' => $data[2],
                 'sex' => $data[4],
@@ -716,6 +715,7 @@ class CovidSampleController extends Controller
             $s = new CovidSample;
             $s->fill([
                 'lab_id' => env('APP_LAB'),
+                'kemri_id' => $data[0],
                 'patient_id' => $p->id,
                 'age' => $data[3],
                 'receivedstatus' => 1,
