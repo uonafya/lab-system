@@ -1338,6 +1338,7 @@ class Synch
 				],
 			]);
 			if($response->getStatusCode() > 399) continue;
+			
 
 			$body = json_decode($response->getBody());
 			$sample_array = $body->sample;
