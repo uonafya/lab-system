@@ -42,6 +42,7 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
+        return true;
         if(in_array(env('APP_LAB'), [3,5])) return true;
 	if (!auth()->user()->covid_consumption_allowed)
 		return true;

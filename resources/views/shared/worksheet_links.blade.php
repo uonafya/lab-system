@@ -6,6 +6,12 @@
 	<a href="{{ url($worksheet->route_name . '/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
 	</a> | 
+
+	@if(!$worksheet->machine_type)
+		<a href="{{ url($worksheet->route_name . '/result_file/' . $worksheet->id) }}" title="Click to Download Worksheet Result File">
+			Results File
+		</a> | 
+	@endif
 	
 	@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>

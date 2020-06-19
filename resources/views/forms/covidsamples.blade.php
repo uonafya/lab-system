@@ -122,7 +122,11 @@
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
                         @else
-                            @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                            @if(auth()->user()->lab_id == 1)
+                                @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                            @else
+                                @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                            @endif
                         @endif
 
 
@@ -135,11 +139,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @if(env('APP_LAB') == 4)
-                            @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
-                        @else
-                            @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
-                        @endif
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -377,6 +377,9 @@
                     /*required: function(element){
                         return $("#facility_id").val().length == 0;
                     }*/
+                },
+                age: {
+                    required: '#dob:blank'
                 },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]

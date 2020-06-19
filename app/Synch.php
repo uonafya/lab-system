@@ -1279,8 +1279,8 @@ class Synch
 
 	public static function synch_covid()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1308,6 +1308,8 @@ class Synch
 			}
 		}
 
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(30)->get();
+
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
@@ -1325,15 +1327,18 @@ class Synch
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-					'Authorization' => 'Bearer ' . self::get_token(),
+					'Authorization' => 'Bearer ' . self::get_covid_token(),
+					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
+	            // 'http_errors' => false,
 				// 'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
+			if($response->getStatusCode() > 399) dd($response);
+			
 
 			$body = json_decode($response->getBody());
 			$sample_array = $body->sample;

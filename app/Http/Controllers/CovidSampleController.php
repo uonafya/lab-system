@@ -37,6 +37,7 @@ class CovidSampleController extends Controller
         // 1 - all
         // 2 - dispatched
         // 3 - from cif
+        // 4 - pending testing
         $user = auth()->user();
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
@@ -62,6 +63,7 @@ class CovidSampleController extends Controller
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched');
                 else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
+                else if($type == 4) return $query->whereNull('datetested');
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
@@ -185,7 +187,7 @@ class CovidSampleController extends Controller
         $data = [];
 
         foreach ($samples as $key => $sample) {
-            $data[] = [
+            $row = [
                 'Lab ID' => $sample->id,
                 'Identifier' => $sample->identifier,
                 'National ID' => $sample->national_id,
@@ -203,6 +205,8 @@ class CovidSampleController extends Controller
                 'Entered By' => $sample->creator->full_name,
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
+            if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            $data[] = $row;
         }
         if(!$data) return back();
         return MiscCovid::csv_download($data, 'covid_samples');
@@ -624,7 +628,7 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
     }
 
-    public function upload_wrp_samples(Request $request)
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -656,9 +660,9 @@ class CovidSampleController extends Controller
             $p->save();
 
             $sample_type = $data[18];
-            if(str_contains($sample_type, 'Oro') && str_contains($sample_type, 'Naso')) $s = 1;
-            else if(str_contains($sample_type, 'Oro')) $s = 3;
-            else if(str_contains($sample_type, 'Naso')) $s = 2;
+            if(\Str::contains($sample_type, 'Oro') && \Str::contains($sample_type, 'Naso')) $s = 1;
+            else if(\Str::contains($sample_type, 'Oro')) $s = 3;
+            else if(\Str::contains($sample_type, 'Naso')) $s = 2;
             else{
                 $s = null;
             }
@@ -683,7 +687,85 @@ class CovidSampleController extends Controller
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
         return redirect('/home');        
-    }
+    }*/
+
+
+    /*public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Lab ID') continue;
+
+            $p = new CovidPatient;
+            $p->fill([
+                'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
+                'kemri_id' => $data[0],
+                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
+                'patient_name' => $data[2],
+                'sex' => $data[4],
+                'county_id' => $data[13],
+                'subcounty_id' => $data[14],
+            ]);
+            $p->save();
+
+            $s = new CovidSample;
+            $s->fill([
+                'lab_id' => env('APP_LAB'),
+                'patient_id' => $p->id,
+                'age' => $data[3],
+                'receivedstatus' => 1,
+                'datecollected' => date('Y-m-d', strtotime($data[6])),
+                'datereceived' => date('Y-m-d', strtotime($data[7])),
+                'datetested' => date('Y-m-d', strtotime($data[8])),
+                'datedispatched' => date('Y-m-d', strtotime($data[8])),
+                'result' => $data[10],
+            ]);
+            $s->save();
+        }
+    }*/
+
+    /*public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Identifier') continue;
+
+            $p = new CovidPatient;
+            $p->fill([
+                'identifier' => $data[1] ?? $data[2] ,
+                'patient_name' => $data[2],
+                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
+                'justification' => (is_numeric($data[5]) ? null : 3 ),
+                'sex' => $data[4],
+            ]);
+            $p->save();
+
+            $s = new CovidSample;
+            $s->fill([
+                'lab_id' => env('APP_LAB'),
+                'kemri_id' => $data[0],
+                'patient_id' => $p->id,
+                'age' => $data[3],
+                'datecollected' => date('Y-m-d', strtotime($data[6])),
+                'datereceived' => date('Y-m-d', strtotime($data[7])),
+                'datetested' => date('Y-m-d', strtotime($data[8])),
+                'datedispatched' => date('Y-m-d', strtotime($data[8])),
+                'receivedstatus' => ($data[9] == 'REJECTED' ? 2 : 1),
+                'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
+                'test_type' => 1,
+            ]);
+            $s->save();
+        }
+    }*/
 
 
     // Transfer Between Remote Labs

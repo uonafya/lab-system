@@ -296,8 +296,8 @@ class MiscDr extends Common
 			}
 			else{
 				// if(starts_with($file, $sample->mid . $primer)){
-				// if(starts_with($file, $sample->mid . '-') && str_contains($file, $primer))
-				if(starts_with($file, $sample->nat . '-') && str_contains($file, $primer))
+				// if(starts_with($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				if(starts_with($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,

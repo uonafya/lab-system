@@ -134,7 +134,7 @@ class CovidWorksheetController extends Controller
     {
         $combined = $request->input('combined');
         $machine_type = $request->input('machine_type');
-        $limit = $request->input('limit', 0);
+        $limit = $request->input('limit', 94);
         $soft_limit = $request->input('soft_limit');
         $entered_by = $request->input('entered_by');
         $sampletype = $request->input('sampletype');
@@ -299,7 +299,31 @@ class CovidWorksheetController extends Controller
      */
     public function destroy(CovidWorksheet $covidWorksheet)
     {
-        //
+        if($covidWorksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        $covidWorksheet->delete();
+        return back();
+    }
+
+    public function result_file(CovidWorksheet $worksheet)
+    {
+        // if(!$worksheet->machine_type){
+        //     session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
+        //     return back();            
+        // }
+
+        $worksheet->load(['sample.patient']);
+
+        $data = [];
+        $data[] = ['Lab ID', 'Result', 'Identifier'];
+
+        foreach ($worksheet->sample as $sample) {
+            $data[] = [$sample->id, '', $sample->patient->identifier];
+        }
+        return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
@@ -459,7 +483,7 @@ class CovidWorksheetController extends Controller
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(str_contains($control, ['+'])){
+                    if(\Str::contains($control, ['+'])){
                         $positive_control = $result_array;                       
                     }else{
                         $negative_control = $result_array; 
@@ -506,8 +530,8 @@ class CovidWorksheetController extends Controller
                     if(!is_numeric($sample_id)){
                         $s = strtolower($sample_id);
 
-                        if(str_contains($s, 'neg')) $negative_control = $data_array;
-                        else if(str_contains($s, 'pos')) $positive_control = $data_array;
+                        if(\Str::contains($s, 'neg')) $negative_control = $data_array;
+                        else if(\Str::contains($s, 'pos')) $positive_control = $data_array;
 
                     }
 
@@ -543,14 +567,14 @@ class CovidWorksheetController extends Controller
                 $res = $value[1];
                 $sample->repeatt=0;
 
-                if(str_contains($res, ['Pos', 'pos'])){
+                if(\Str::contains($res, ['Pos', 'pos'])){
                     $sample->result = 2;
-                }else if(str_contains($res, ['Neg', 'neg'])){
+                }else if(\Str::contains($res, ['Neg', 'neg'])){
                     $sample->result = 1;
-                }else if(str_contains($res, ['Fai', 'fai'])){
+                }else if(\Str::contains($res, ['Fai', 'fai'])){
                     $sample->result = 3;
                     $sample->repeatt = 1;
-                }else if(str_contains($res, ['Coll', 'coll'])){
+                }else if(\Str::contains($res, ['Coll', 'coll'])){
                     $sample->result = 5;
                 }
 
@@ -676,11 +700,11 @@ class CovidWorksheetController extends Controller
             
             $sample = CovidSample::find($samples[$key]);
             $sample->fill($data);
-            if($sample->result == 3 &&  $sample->repeatt == 0){
+            if($sample->result == 3 && $sample->repeatt == 0){
                 $sample->result = 5;
                 $sample->labcomment = 'Failed Run';
             }
-            if($sample->result == 2 &&  $sample->repeatt == 0 && str_contains($sample->interpretation, ['Presumed'])){
+            if($sample->result == 2 &&  $sample->repeatt == 0 && \Str::contains($sample->interpretation, ['Presumed'])){
                 
             }
             $sample->pre_update();

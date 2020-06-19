@@ -188,6 +188,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
 				Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');
+				Route::get('result_file/{worksheet}', 'CovidWorksheetController@result_file')->name('result_file');
 				Route::get('find/{worksheet}', 'CovidWorksheetController@find')->name('find');
 				Route::get('print/{worksheet}', 'CovidWorksheetController@print')->name('print');
 				Route::get('labels/{worksheet}', 'CovidWorksheetController@labels')->name('labels');
