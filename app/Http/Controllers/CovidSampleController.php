@@ -688,8 +688,7 @@ class CovidSampleController extends Controller
     }*/
 
 
-
-    public function upload_wrp_samples(Request $request)
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -704,6 +703,7 @@ class CovidSampleController extends Controller
             $p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
+                'kemri_id' => $data[0],
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
                 'patient_name' => $data[2],
                 'sex' => $data[4],
@@ -715,7 +715,6 @@ class CovidSampleController extends Controller
             $s = new CovidSample;
             $s->fill([
                 'lab_id' => env('APP_LAB'),
-                'kemri_id' => $data[0],
                 'patient_id' => $p->id,
                 'age' => $data[3],
                 'receivedstatus' => 1,
@@ -727,7 +726,44 @@ class CovidSampleController extends Controller
             ]);
             $s->save();
         }
+    }*/
 
+    public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Identifier') continue;
+
+            $p = new CovidPatient;
+            $p->fill([
+                'identifier' => $data[1] ?? $data[2] ,
+                'patient_name' => $data[2],
+                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
+                'justification' => (is_numeric($data[5]) ? null : 3 ),
+                'sex' => $data[4],
+            ]);
+            $p->save();
+
+            $s = new CovidSample;
+            $s->fill([
+                'lab_id' => env('APP_LAB'),
+                'kemri_id' => $data[0],
+                'patient_id' => $p->id,
+                'age' => $data[3],
+                'datecollected' => date('Y-m-d', strtotime($data[6])),
+                'datereceived' => date('Y-m-d', strtotime($data[7])),
+                'datetested' => date('Y-m-d', strtotime($data[8])),
+                'datedispatched' => date('Y-m-d', strtotime($data[8])),
+                'receivedstatus' => ($data[9] == 'REJECTED' ? 2 : 1),
+                'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
+                'test_type' => 1,
+                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
+            ]);
+            $s->save();
+        }
     }
 
 
