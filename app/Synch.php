@@ -1279,8 +1279,8 @@ class Synch
 
 	public static function synch_covid()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1327,8 +1327,8 @@ class Synch
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-					'Authorization' => 'Bearer ' . self::get_token(),
+					'Authorization' => 'Bearer ' . self::get_covid_token(),
+					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
 	            'http_errors' => false,
 				// 'verify' => false,
