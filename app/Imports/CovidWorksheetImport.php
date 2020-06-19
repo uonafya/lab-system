@@ -127,17 +127,19 @@ class CovidWorksheetImport implements ToCollection
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
 
-                $res = $value[1];
+                $res = strtolower($value[1]);
                 $sample->repeatt=0;
 
-                if(\Str::contains($res, ['Pos', 'pos'])){
+
+
+                if(\Str::contains($res, ['pos'])){
                     $sample->result = 2;
-                }else if(\Str::contains($res, ['Neg', 'neg'])){
+                }else if(\Str::contains($res, ['neg'])){
                     $sample->result = 1;
-                }else if(\Str::contains($res, ['Fai', 'fai'])){
+                }else if(\Str::contains($res, ['fai'])){
                     $sample->result = 3;
                     $sample->repeatt = 1;
-                }else if(\Str::contains($res, ['Coll', 'coll'])){
+                }else if(\Str::contains($res, ['coll'])){
                     $sample->result = 5;
                 }
 

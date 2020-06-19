@@ -63,7 +63,7 @@ class CovidSampleController extends Controller
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched');
                 else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
-                else if($type == 4) return $query->whereNull('datetested');
+                else if($type == 4) return $query->whereNull('datetested')->where(['receivedstatus' => 1, 'repeatt' => 0]);
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
