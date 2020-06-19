@@ -139,7 +139,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -378,6 +378,9 @@
                         return $("#facility_id").val().length == 0;
                     }*/
                 },
+                age: {
+                    required: '#dob:blank'
+                }
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },
