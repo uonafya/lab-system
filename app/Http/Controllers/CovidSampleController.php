@@ -728,7 +728,7 @@ class CovidSampleController extends Controller
         }
     }*/
 
-    public function upload_wrp_samples(Request $request)
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -763,7 +763,7 @@ class CovidSampleController extends Controller
             ]);
             $s->save();
         }
-    }
+    }*/
 
 
     // Transfer Between Remote Labs

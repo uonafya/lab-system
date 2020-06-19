@@ -307,6 +307,24 @@ class CovidWorksheetController extends Controller
         $covidWorksheet->delete();
         return back();
     }
+
+    public function result_file(CovidWorksheet $worksheet)
+    {
+        if(!$worksheet->machine_type){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
+            return back();            
+        }
+
+        $worksheet->load(['sample.patient']);
+
+        $data = [];
+        $data[] = ['Lab ID', 'Result', 'Identifier'];
+
+        foreach ($worksheet->sample as $sample) {
+            $data[] = [$sample->id, '', $sample->patient->Identifier];
+        }
+        return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
+    }
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
     {
