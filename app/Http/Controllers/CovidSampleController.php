@@ -760,7 +760,6 @@ class CovidSampleController extends Controller
                 'receivedstatus' => ($data[9] == 'REJECTED' ? 2 : 1),
                 'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
                 'test_type' => 1,
-                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
             ]);
             $s->save();
         }
