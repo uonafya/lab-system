@@ -216,7 +216,7 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,25])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
