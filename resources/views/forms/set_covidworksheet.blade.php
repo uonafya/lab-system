@@ -112,6 +112,16 @@
 
     @component('/forms/scripts')
 
+
+        @slot('val_rules')
+           ,
+            rules: {
+                limit: {
+                    required: '#soft_limit:blank'
+                },                             
+            }
+        @endslot
+
     @endcomponent
 
 @endsection
