@@ -144,6 +144,51 @@ class ViralworksheetImport implements ToCollection
                 $sample->save();
             }
         }
+        // Panther from Alupe
+        else if($worksheet->machine_type == 4 && env('APP_LAB') == 3){
+            foreach ($collection as $key => $value) 
+            {
+                $sample_id = (int) trim($value[0]);
+
+                $interpretation = $value[3];
+
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                if($value[1] == "Control"){
+                    $name = strtolower($value[0]);
+                    $result_array = MiscViral::sample_result($interpretation);
+
+                    if(\Str::contains($name, 'low')){
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
+                    }
+                    else if(\Str::contains($name, 'high')){
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];
+                    }
+                    else if(\Str::contains($name, 'negative')){
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units'];
+                    }
+                    continue;
+                }
+
+                $result_array = MiscViral::sample_result($interpretation);
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $datetested], $result_array);
+
+                $sample = Viralsample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+
+                $sample->save();
+            }
+        }
         // Panther
         else if($worksheet->machine_type == 4){
             foreach ($collection as $key => $value) 
