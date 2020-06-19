@@ -134,7 +134,7 @@ class CovidWorksheetController extends Controller
     {
         $combined = $request->input('combined');
         $machine_type = $request->input('machine_type');
-        $limit = $request->input('limit', 0);
+        $limit = $request->input('limit', 94);
         $soft_limit = $request->input('soft_limit');
         $entered_by = $request->input('entered_by');
         $sampletype = $request->input('sampletype');
