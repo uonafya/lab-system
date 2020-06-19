@@ -715,10 +715,17 @@ class CovidSampleController extends Controller
 
             $s = new CovidSample;
             $s->fill([
+                'lab_id' => env('APP_LAB'),
                 'patient_id' => $p->id,
-
+                'age' => $data[3],
+                'receivedstatus' => 1,
+                'datecollected' => date('Y-m-d', strtotime($data[6])),
+                'datereceived' => date('Y-m-d', strtotime($data[7])),
+                'datetested' => date('Y-m-d', strtotime($data[8])),
+                'datedispatched' => date('Y-m-d', strtotime($data[8])),
+                'result' => $data[10],
             ]);
-
+            $s->save();
         }
 
     }
