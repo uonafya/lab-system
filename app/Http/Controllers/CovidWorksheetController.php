@@ -299,7 +299,31 @@ class CovidWorksheetController extends Controller
      */
     public function destroy(CovidWorksheet $covidWorksheet)
     {
-        //
+        if($covidWorksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        $covidWorksheet->delete();
+        return back();
+    }
+
+    public function result_file(CovidWorksheet $worksheet)
+    {
+        if(!$worksheet->machine_type){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
+            return back();            
+        }
+
+        $worksheet->load(['sample.patient']);
+
+        $data = [];
+        $data[] = ['Lab ID', 'Result', 'Identifier'];
+
+        foreach ($worksheet->sample as $sample) {
+            $data[] = [$sample->id, '', $sample->patient->Identifier];
+        }
+        return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
@@ -676,7 +700,7 @@ class CovidWorksheetController extends Controller
             
             $sample = CovidSample::find($samples[$key]);
             $sample->fill($data);
-            if($sample->result == 3 &&  $sample->repeatt == 0){
+            if($sample->result == 3 && $sample->repeatt == 0){
                 $sample->result = 5;
                 $sample->labcomment = 'Failed Run';
             }
