@@ -299,7 +299,13 @@ class CovidWorksheetController extends Controller
      */
     public function destroy(CovidWorksheet $covidWorksheet)
     {
-        //
+        if($covidWorksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
+        $covidWorksheet->delete();
+        return back();
     }
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
