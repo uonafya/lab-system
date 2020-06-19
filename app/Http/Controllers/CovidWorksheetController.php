@@ -321,7 +321,7 @@ class CovidWorksheetController extends Controller
         $data[] = ['Lab ID', 'Result', 'Identifier'];
 
         foreach ($worksheet->sample as $sample) {
-            $data[] = [$sample->id, '', $sample->patient->Identifier];
+            $data[] = [$sample->id, '', $sample->patient->identifier];
         }
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }
