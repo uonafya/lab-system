@@ -319,6 +319,8 @@ class CovidWorksheetController extends Controller
 
         $data = [];
         $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        $data[] = ['Negative Control'];
+        $data[] = ['Positive Control'];
 
         foreach ($worksheet->sample as $sample) {
             $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
