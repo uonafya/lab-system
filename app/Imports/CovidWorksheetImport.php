@@ -123,6 +123,7 @@ class CovidWorksheetImport implements ToCollection
             foreach ($collection as $key => $value) {
                 $sample_id = $value[0];
 
+
                 $sample_id = (int) $sample_id;
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
