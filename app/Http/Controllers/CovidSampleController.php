@@ -37,6 +37,7 @@ class CovidSampleController extends Controller
         // 1 - all
         // 2 - dispatched
         // 3 - from cif
+        // 4 - pending testing
         $user = auth()->user();
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
@@ -62,6 +63,7 @@ class CovidSampleController extends Controller
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched');
                 else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
+                else if($type == 4) return $query->whereNull('datetested');
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
