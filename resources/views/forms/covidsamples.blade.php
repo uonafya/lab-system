@@ -380,7 +380,7 @@
                 },
                 age: {
                     required: '#dob:blank'
-                }
+                },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
                 },

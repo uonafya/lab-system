@@ -626,7 +626,7 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
     }
 
-    public function upload_wrp_samples(Request $request)
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -685,6 +685,42 @@ class CovidSampleController extends Controller
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
         return redirect('/home');        
+    }*/
+
+
+
+    public function upload_wrp_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Lab ID') continue;
+
+            $p = new CovidPatient;
+            $p->fill([
+                'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
+                'kemri_id' => $data[0],
+                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
+                'patient_name' => $data[2],
+                'sex' => $data[4],
+                'county_id' => $data[13],
+                'subcounty_id' => $data[14],
+            ]);
+            $p->save();
+
+            $s = new CovidSample;
+            $s->fill([
+                'patient_id' => $p->id,
+
+            ]);
+
+        }
+
     }
 
 
