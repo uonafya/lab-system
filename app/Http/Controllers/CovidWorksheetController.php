@@ -310,10 +310,10 @@ class CovidWorksheetController extends Controller
 
     public function result_file(CovidWorksheet $worksheet)
     {
-        if(!$worksheet->machine_type){
-            session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
-            return back();            
-        }
+        // if(!$worksheet->machine_type){
+        //     session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
+        //     return back();            
+        // }
 
         $worksheet->load(['sample.patient']);
 
