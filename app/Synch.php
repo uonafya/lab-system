@@ -1308,7 +1308,7 @@ class Synch
 			}
 		}
 
-		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(100)->get();
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(30)->get();
 
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
