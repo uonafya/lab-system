@@ -290,7 +290,7 @@ class CovidSampleController extends Controller
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
 
-        if(env('APP_LAB') == 6){
+        if(in_array(env('APP_LAB'), [6,25])){
             if($subcounty_id){
                 $subcounty = DB::table('districts')->where('id', $subcounty_id)->first();
                 if($subcounty->subcounty_emails) $mail_array = array_merge($mail_array, explode(',', $subcounty->subcounty_emails));
