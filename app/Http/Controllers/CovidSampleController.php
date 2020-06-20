@@ -328,12 +328,6 @@ class CovidSampleController extends Controller
 
         $date_column = "covid_samples.datedispatched";
 
-        $ids = [];
-        for ($i=25368; $i < 25386; $i++) { 
-            $ids[] = 'KEN-KEM-20-06-' . $i;
-            if($i == 25373) $i += 9;
-        }
-
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
@@ -376,8 +370,6 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
-            ->whereIn('kemri_id', $ids)
-            // ->whereRaw('covid_samples.id IN (15724,15716,15736,15729,15744,15332,15787,15695,15711,15687,15721,15740,15705) ')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -698,7 +690,7 @@ class CovidSampleController extends Controller
     }*/
 
 
-    public function upload_wrp_samples(Request $request)
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -710,7 +702,7 @@ class CovidSampleController extends Controller
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if($data[0] == 'Lab ID') continue;
 
-            /*$p = new CovidPatient;
+            $p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
@@ -734,7 +726,7 @@ class CovidSampleController extends Controller
                 'datedispatched' => date('Y-m-d', strtotime($data[8])),
                 'result' => $data[10],
             ]);
-            $s->save();*/
+            $s->save();
 
             $p = CovidPatient::where('identifier', ($data[1] == '*' ? $data[2] : $data[1]))->first();
             if(!$p) continue;
@@ -760,7 +752,7 @@ class CovidSampleController extends Controller
             $s->pre_update();
             if($data[0] == 'KEN-KEM-20-06-19330') break;
         }
-    }
+    }*/
 
     /*public function upload_wrp_samples(Request $request)
     {
