@@ -745,7 +745,7 @@ class CovidSampleController extends Controller
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Identifier') continue;
+            if($data[0] == 'Lab ID') continue;
 
             /*$p = new CovidPatient;
             $p->fill([
@@ -772,7 +772,7 @@ class CovidSampleController extends Controller
                 'test_type' => 1,
             ]);
             $s->save();*/
-            
+
 
             $s = CovidSample::where('kemri_id', $data[0])->first();
             if(!$s) continue;
