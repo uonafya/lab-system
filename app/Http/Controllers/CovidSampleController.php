@@ -17,6 +17,7 @@ use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CovidRequest;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 
 class CovidSampleController extends Controller
@@ -712,7 +713,6 @@ class CovidSampleController extends Controller
             $p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
-                'kemri_id' => $data[0],
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
                 'patient_name' => $data[2],
                 'sex' => $data[4],
@@ -724,6 +724,7 @@ class CovidSampleController extends Controller
             $s = new CovidSample;
             $s->fill([
                 'lab_id' => env('APP_LAB'),
+                'kemri_id' => $data[0],
                 'patient_id' => $p->id,
                 'age' => $data[3],
                 'receivedstatus' => 1,
@@ -737,7 +738,7 @@ class CovidSampleController extends Controller
         }
     }*/
 
-    /*public function upload_wrp_samples(Request $request)
+    public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -746,7 +747,7 @@ class CovidSampleController extends Controller
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if($data[0] == 'Identifier') continue;
 
-            $p = new CovidPatient;
+            /*$p = new CovidPatient;
             $p->fill([
                 'identifier' => $data[1] ?? $data[2] ,
                 'patient_name' => $data[2],
@@ -770,9 +771,21 @@ class CovidSampleController extends Controller
                 'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
                 'test_type' => 1,
             ]);
-            $s->save();
+            $s->save();*/
+
+            $s = CovidSample::where('kemri_id', $data[0])->first();
+            if(!$s) continue;
+            $s->fill([
+                'datecollected' => Carbon::createFromFormat('d/m/Y', $data[6]),
+                'datereceived' => Carbon::createFromFormat('d/m/Y', $data[7]),
+                'datetested' => Carbon::createFromFormat('d/m/Y', $data[8]),
+                'datedispatched' => Carbon::createFromFormat('d/m/Y', $data[8]),
+                'dateapproved' => Carbon::createFromFormat('d/m/Y', $data[8]),
+                'dateapproved2' => Carbon::createFromFormat('d/m/Y', $data[8]),
+            ]);
+            $s->pre_update();
         }
-    }*/
+    }
 
 
     // Transfer Between Remote Labs
