@@ -698,19 +698,19 @@ class CovidSampleController extends Controller
     }*/
 
 
-    /*public function upload_wrp_samples(Request $request)
+    public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
 
         $problem_rows = 0;
         $created_rows = 0;
-
+        $i = 0;
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if($data[0] == 'Lab ID') continue;
 
-            $p = new CovidPatient;
+            /*$p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
@@ -734,20 +734,39 @@ class CovidSampleController extends Controller
                 'datedispatched' => date('Y-m-d', strtotime($data[8])),
                 'result' => $data[10],
             ]);
-            $s->save();
-        }
-    }*/
+            $s->save();*/
 
-    public function upload_wrp_samples(Request $request)
+            $p = CovidPatient::where('identifier', ($data[1] == '*' ? $data[2] : $data[1]))->first();
+            if(!$p) continue;
+
+            $s = $p->sample->first();
+
+            $s = CovidSample::where('kemri_id', $data[0])->first();
+            if(!$s) continue;
+            $s->fill([
+                'kemri_id' => $data[0],
+                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
+                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
+                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
+            ]);
+            $s->pre_update();
+            if($data[0] == 'KEN-KEM-20-06-19330') break;
+        }
+    }
+
+    /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Lab ID') continue;
+            if($data[0] == 'Identifier') continue;
 
-            /*$p = new CovidPatient;
+            $p = new CovidPatient;
             $p->fill([
                 'identifier' => $data[1] ?? $data[2] ,
                 'patient_name' => $data[2],
@@ -771,7 +790,7 @@ class CovidSampleController extends Controller
                 'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
                 'test_type' => 1,
             ]);
-            $s->save();*/
+            $s->save();
 
 
             $s = CovidSample::where('kemri_id', $data[0])->first();
@@ -786,7 +805,7 @@ class CovidSampleController extends Controller
             ]);
             $s->pre_update();
         }
-    }
+    }*/
 
 
     // Transfer Between Remote Labs
