@@ -776,12 +776,12 @@ class CovidSampleController extends Controller
             $s = CovidSample::where('kemri_id', $data[0])->first();
             if(!$s) continue;
             $s->fill([
-                'datecollected' => Carbon::createFromFormat('d/m/Y', $data[6]),
-                'datereceived' => Carbon::createFromFormat('d/m/Y', $data[7]),
-                'datetested' => Carbon::createFromFormat('d/m/Y', $data[8]),
-                'datedispatched' => Carbon::createFromFormat('d/m/Y', $data[8]),
-                'dateapproved' => Carbon::createFromFormat('d/m/Y', $data[8]),
-                'dateapproved2' => Carbon::createFromFormat('d/m/Y', $data[8]),
+                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
+                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
+                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
             ]);
             $s->pre_update();
         }
