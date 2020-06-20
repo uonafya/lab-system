@@ -772,6 +772,7 @@ class CovidSampleController extends Controller
                 'test_type' => 1,
             ]);
             $s->save();*/
+            
 
             $s = CovidSample::where('kemri_id', $data[0])->first();
             if(!$s) continue;
