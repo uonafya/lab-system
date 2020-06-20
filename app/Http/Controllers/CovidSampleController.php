@@ -743,6 +743,7 @@ class CovidSampleController extends Controller
 
             $s = CovidSample::where('kemri_id', $data[0])->first();
             if(!$s) continue;
+            try {
             $s->fill([
                 'kemri_id' => $data[0],
                 'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
@@ -752,6 +753,10 @@ class CovidSampleController extends Controller
                 'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
                 'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
             ]);
+                
+            } catch (\Exception $e) {
+                dd($data);
+            }
             $s->pre_update();
             if($data[0] == 'KEN-KEM-20-06-19330') break;
         }
