@@ -327,6 +327,12 @@ class CovidSampleController extends Controller
 
         $date_column = "covid_samples.datedispatched";
 
+        $ids = [];
+        for ($i=25368; $i < 25386; $i++) { 
+            $ids[] = 'KEN-KEM-20-06-' . $i;
+            if($i == 25373) $i += 9;
+        }
+
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
@@ -369,6 +375,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
+            ->whereIn('kemri_id', $ids)
             // ->whereRaw('covid_samples.id IN (15724,15716,15736,15729,15744,15332,15787,15695,15711,15687,15721,15740,15705) ')
             ->orderBy($date_column, 'desc')
             ->get();

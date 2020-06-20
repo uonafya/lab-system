@@ -78,6 +78,10 @@
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID', 'required' => true])
                         @endif
 
+                        @if(auth()->user()->lab_id == 25)
+                            @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
+                        @endif
+
                         @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
