@@ -34,7 +34,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Sample Number</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" required name="limit" id="limit">
+                                    <select class="form-control" id="limit" name="limit" id="limit">
                                         <option></option>
                                         <option value="22">24</option>
                                         <option value="46">48</option>
@@ -48,7 +48,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Set Sample Number</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" type="text" number="number"  name="soft_limit" min="1" max="94">
+                                    <input class="form-control" type="text" number="number" id="soft_limit"  name="soft_limit" min="1" max="94">
                                 </div>
                             </div>
 
@@ -111,6 +111,16 @@
 @section('scripts')
 
     @component('/forms/scripts')
+
+
+        @slot('val_rules')
+           ,
+            rules: {
+                limit: {
+                    required: '#soft_limit:blank'
+                },                             
+            }
+        @endslot
 
     @endcomponent
 

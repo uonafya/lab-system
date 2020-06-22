@@ -59,7 +59,7 @@
 						</span>
 					@endif
 					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->barcode, 'C128') }}" alt="barcode" 
-					@if(in_array(env('APP_LAB'), [5]))
+					@if(in_array(env('APP_LAB'), [500]))
 						height="50" width="250"
 					@else
 						height="30" width="80"

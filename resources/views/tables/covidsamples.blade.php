@@ -21,8 +21,8 @@
             <a href="{{ $myurl2 }}/0">
                 Samples Pending Receipt at the Lab
             </a>|
-            <a href="{{ $myurl2 }}/3">
-                Samples Pending Receipt at the Lab (From CIF)
+            <a href="{{ $myurl2 }}/4">
+                Samples Pending Testing
             </a>
         </div>
     </div>

@@ -1330,14 +1330,14 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_covid_token(),
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
-	            'http_errors' => false,
+	            // 'http_errors' => false,
 				// 'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
-			if($response->getStatusCode() > 399) continue;
+			if($response->getStatusCode() > 399) dd($response);
 			
 
 			$body = json_decode($response->getBody());

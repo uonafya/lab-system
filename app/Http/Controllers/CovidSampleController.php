@@ -17,6 +17,7 @@ use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CovidRequest;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 
 class CovidSampleController extends Controller
@@ -37,6 +38,7 @@ class CovidSampleController extends Controller
         // 1 - all
         // 2 - dispatched
         // 3 - from cif
+        // 4 - pending testing
         $user = auth()->user();
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
@@ -62,6 +64,7 @@ class CovidSampleController extends Controller
                 if($type == 0) return $query->whereNull('datereceived');
                 else if($type == 2) return $query->whereNotNull('datedispatched');
                 else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
+                else if($type == 4) return $query->whereNull('datetested')->where(['receivedstatus' => 1, 'repeatt' => 0]);
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
@@ -214,7 +217,7 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,25])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
@@ -287,7 +290,7 @@ class CovidSampleController extends Controller
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
 
-        if(env('APP_LAB') == 6){
+        if(in_array(env('APP_LAB'), [6,25])){
             if($subcounty_id){
                 $subcounty = DB::table('districts')->where('id', $subcounty_id)->first();
                 if($subcounty->subcounty_emails) $mail_array = array_merge($mail_array, explode(',', $subcounty->subcounty_emails));
@@ -295,7 +298,7 @@ class CovidSampleController extends Controller
                 if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));
             }
             else if($county_id){
-                $county = DB::table('countys')->where('id', $subcounty->county)->first();
+                $county = DB::table('countys')->where('id', $county_id)->first();
                 if($county->county_emails) $mail_array = array_merge($mail_array, explode(',', $county->county_emails));                
             }
         }
@@ -367,7 +370,6 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->whereNotNull('datedispatched')
-            // ->whereRaw('covid_samples.id IN (15724,15716,15736,15729,15744,15332,15787,15695,15711,15687,15721,15740,15705) ')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -695,7 +697,7 @@ class CovidSampleController extends Controller
 
         $problem_rows = 0;
         $created_rows = 0;
-
+        $i = 0;
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if($data[0] == 'Lab ID') continue;
@@ -703,7 +705,6 @@ class CovidSampleController extends Controller
             $p = new CovidPatient;
             $p->fill([
                 'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
-                'kemri_id' => $data[0],
                 'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
                 'patient_name' => $data[2],
                 'sex' => $data[4],
@@ -715,6 +716,7 @@ class CovidSampleController extends Controller
             $s = new CovidSample;
             $s->fill([
                 'lab_id' => env('APP_LAB'),
+                'kemri_id' => $data[0],
                 'patient_id' => $p->id,
                 'age' => $data[3],
                 'receivedstatus' => 1,
@@ -725,6 +727,30 @@ class CovidSampleController extends Controller
                 'result' => $data[10],
             ]);
             $s->save();
+
+            $p = CovidPatient::where('identifier', ($data[1] == '*' ? $data[2] : $data[1]))->first();
+            if(!$p) continue;
+
+            $s = $p->sample->first();
+
+            $s = CovidSample::where('kemri_id', $data[0])->first();
+            if(!$s) continue;
+            try {
+            $s->fill([
+                'kemri_id' => $data[0],
+                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
+                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
+                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
+            ]);
+                
+            } catch (\Exception $e) {
+                dd($data);
+            }
+            $s->pre_update();
+            if($data[0] == 'KEN-KEM-20-06-19330') break;
         }
     }*/
 
@@ -762,6 +788,19 @@ class CovidSampleController extends Controller
                 'test_type' => 1,
             ]);
             $s->save();
+
+
+            $s = CovidSample::where('kemri_id', $data[0])->first();
+            if(!$s) continue;
+            $s->fill([
+                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
+                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
+                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
+                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
+            ]);
+            $s->pre_update();
         }
     }*/
 

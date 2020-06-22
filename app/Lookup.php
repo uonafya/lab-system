@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class Lookup
 {
 
-    public static $double_approval = [2, 4, 5];
+    public static $double_approval = [2, 4, 5, 25];
     public static $amrs = [3, 5];
     // public static $worksheet_received = [1, 3];
     public static $worksheet_received = [1];
