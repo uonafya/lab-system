@@ -153,7 +153,7 @@
                     <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3, 5]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
