@@ -502,15 +502,19 @@ class CovidSampleController extends Controller
     {
         $data = Lookup::covid_arrays();
 
-        $covidSample->fill($request->only($data['sample']));
-        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
-        $covidSample->pre_update();
-
-
         $patient = $covidSample->patient;
         $patient->fill($request->only($data['patient']));
+        if($patient->isDirty('identifier') && $patient->sample()->where('repeatt',0)->count() > 1){
+            $patient = new CovidPatient;
+            $patient->fill($request->only($data['patient']));
+        }
         $patient->current_health_status = $request->input('health_status');
         $patient->pre_update();
+
+        $covidSample->fill($request->only($data['sample']));
+        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
+        $covidSample->patient_id = $patient->id;
+        $covidSample->pre_update();
 
         $travels = $request->input('travel');
         if($travels){
