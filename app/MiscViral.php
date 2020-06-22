@@ -1090,7 +1090,7 @@ class MiscViral extends Common
                     'regimenline' => 1,
                     'justification' => $sample->get_prop_name($justifications, 'justification', 'rank'),
                     'receivedstatus' => '',
-                    'datedispatched' => '',
+                    'datedispatched' => null,
                 ];
 
             $response = $client->request('post', '', [
