@@ -1058,11 +1058,11 @@ class MiscViral extends Common
     }
 
 
-    public static function send_to_edarp()
+    public static function machakos_edarp()
     {
         ini_set('memory_limit', "-1");
-        $prophylaxis = DB::table('viralregimen')->get();
-        $justifications = DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
+        $prophylaxis = \DB::table('viralregimen')->get();
+        $justifications = \DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
 
         $min_date = date('Y-m-d', strtotime('-1 month'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
