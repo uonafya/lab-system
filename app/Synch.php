@@ -250,7 +250,7 @@ class Synch
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
             'debug' => false,
-            // 'verify' => false,
+            'verify' => false,
             // 'timeout' => 2,
 			'headers' => [
 				'Accept' => 'application/json',
@@ -1331,7 +1331,7 @@ class Synch
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
 	            // 'http_errors' => false,
-				// 'verify' => false,
+				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
