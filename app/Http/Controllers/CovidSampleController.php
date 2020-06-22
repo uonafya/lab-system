@@ -411,9 +411,9 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->first();
+        if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
+        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
+        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
