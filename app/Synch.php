@@ -244,7 +244,7 @@ class Synch
 
 	public static function covid_login()
 	{
-		Cache::store('file')->forget('api_token');
+		Cache::store('file')->forget('covid_api_token');
 		$client = new Client(['base_uri' => self::$cov_base]);
 
 		$response = $client->request('post', 'auth/login', [
