@@ -409,7 +409,9 @@ class CovidSampleController extends Controller
     {
         $data = Lookup::covid_arrays();
 
-        $patient = new CovidPatient;
+        $patient = CovidPatient::where($request->only('national_id'))->first();
+        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->first();
+        if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
         $patient->save();
@@ -417,7 +419,7 @@ class CovidSampleController extends Controller
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
         $sample->patient_id = $patient->id;
-        if(auth()->user()->lab_id == 1) $sample->kemri_id = $request->input('kemri_id');
+        if(in_array(auth()->user()->lab_id, [1,25])) $sample->kemri_id = $request->input('kemri_id');
         $sample->save();
 
         $travels = $request->input('travel');
