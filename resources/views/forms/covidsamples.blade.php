@@ -128,6 +128,8 @@
 
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
+                        @elseif(auth()->user()->facility_user)
+
                         @else
                             @if(auth()->user()->lab_id == 1 && auth()->user()->is_covid_lab_user())
                                 @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
@@ -421,7 +423,7 @@
                 $("#patient").blur(function(){
                     var patient = $(this).val();
                     var facility = $("#facility_id").val();
-                    check_new_patient(patient, facility);
+                    // check_new_patient(patient, facility);
                 });
             @endif
 
