@@ -271,6 +271,12 @@ class CovidSampleController extends Controller
             ->when(!$user->facility_user, function($query) use ($user){
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })
+            ->when($user->facility_user, function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
             ->get();
@@ -368,6 +374,12 @@ class CovidSampleController extends Controller
             })
             ->when(!$user->facility_user, function($query) use ($user){
                 return $query->where('covid_samples.lab_id', $user->lab_id);
+            })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })
+            ->when($user->facility_user, function($query) use ($user){
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
@@ -490,6 +502,10 @@ class CovidSampleController extends Controller
     {
         $data = Lookup::covid_form();
         $covidSample->load(['patient.facility']);
+
+        $user = auth()->user();
+        if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
+
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
@@ -865,6 +881,9 @@ class CovidSampleController extends Controller
 
     public function result(CovidSample $covidSample)
     {
+        $user = auth()->user();
+        if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
+
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         return view('exports.mpdf_covid_samples', $data);

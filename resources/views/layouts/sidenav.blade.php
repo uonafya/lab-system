@@ -273,11 +273,11 @@
 
             @else
                 <li>
-                    <a href="{{ url('patient') }}">EID Patient List</a>
+                    <a href="{{ url('covid_sample/create') }}">Add Covid-19 Sample</a>
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('viralpatient') }}">VL Patient List</a>
+                    <a href="{{ url('covid_sample') }}">Covid-19 Samples</a>
                 </li>
                 <hr />
                 <li>

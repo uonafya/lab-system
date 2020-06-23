@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    @if(auth()->user()->user_type_id != 5)
+    @if(!in_array(auth()->user()->user_type_id, [5, 11]))
 
         <form action="{{ url('covid_sample/index') }}" method="POST" class="my_form">
             @csrf
@@ -318,9 +318,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach($samples as $sample)
-                                    @continue($sample->repeatt == 1 && auth()->user()->is_facility())
+                                    @continue($sample->repeatt == 1 && in_array(auth()->user()->user_type_id, [5, 11]))
                                     <tr>
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->cif_sample_id }} </td>
@@ -329,8 +328,17 @@
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
-                                        <td> {{ $sample->my_date_format('datetested') }} </td>
-                                        <td> {{ $sample->my_date_format('datedispatched') }} </td>
+
+                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
+                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
+                                            || !$sample->datedispatched))
+                                            <td></td>
+                                            <td></td>
+                                        @else
+                                            <td> {{ $sample->my_date_format('datetested') }} </td>
+                                            <td> {{ $sample->my_date_format('datedispatched') }} </td>
+                                        @endif
+
                                         @if($sample->surname == '' || !$sample->surname)
                                             <td> {{ $sample->entered_by }} </td>
                                         @else
@@ -347,11 +355,24 @@
                                             @endif
                                         </td>
 
-                                        <td> {!! $sample->get_prop_name($results, 'result', 'name_colour')  !!}</td>
+                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
+                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
+                                            || !$sample->datedispatched))
+                                            <td></td>
+                                        @else
+                                            <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
+                                        @endif
+
                                         <td>
                                             {!! $sample->edit_link !!}  |
                                             @if($sample->datedispatched)
-                                                <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
+                                                @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
+                                                     ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
+                                                        || !$sample->datedispatched))
+
+                                                @else
+                                                    <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
+                                                @endif
                                             @endif                                         
                                         </td>
                                         @if(isset($type) && in_array($type, [2, 3]))
