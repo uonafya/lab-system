@@ -234,6 +234,8 @@ class CovidWorksheetController extends Controller
         $sample_ids = $samples->pluck('id')->toArray();
         CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
 
+        if($worksheet->machine_type == 0) return redirect('/covid_worksheet');
+
         return redirect()->route('covid_worksheet.print', ['worksheet' => $worksheet->id]);
     }
 
