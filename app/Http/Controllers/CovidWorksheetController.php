@@ -120,9 +120,10 @@ class CovidWorksheetController extends Controller
     public function set_details_form()
     {
         $data = Lookup::worksheet_lookups();
+        $lab_id = auth()->user()->lab_id;
         $data['users'] = User::withTrashed()
             ->whereRaw(" id IN 
-                (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 )
+                (SELECT DISTINCT received_by FROM covid_samples WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 AND lab_id={$lab_id} )
                 ")
             // ->labUser()
             ->get();
