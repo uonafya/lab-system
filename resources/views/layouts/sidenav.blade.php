@@ -34,7 +34,8 @@
             </li> -->--}}
         @endif
         
-        @if (Auth::user()->is_lab_user())
+        @if (Auth::user()->is_covid_lab_user())
+
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -105,8 +106,8 @@
                     </li>
                     <hr />
                 @endif
-            @endif
-            @if (session('testingSystem') == 'Viralload')
+            
+            @elseif (session('testingSystem') == 'Viralload')
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -153,7 +154,7 @@
                     <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
+                @if(in_array(env('APP_LAB'), [8, 9, 2, 3, 5]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/21') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/2/0/45') }}">Create Abbott Worksheet(48)</a></li>
@@ -194,8 +195,8 @@
                     </li>
                     <hr />
                 @endif
-            @endif
-            @if (session('testingSystem') == 'Covid')
+            
+            @elseif (session('testingSystem') == 'Covid')
                 @if(in_array(env('APP_LAB'), [8, 9]))
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
@@ -215,8 +216,7 @@
                     <hr />
                 @endif
 
-            @endif
-            @if (session('testingSystem') == 'DR')
+            @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>

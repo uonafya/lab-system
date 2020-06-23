@@ -244,13 +244,13 @@ class Synch
 
 	public static function covid_login()
 	{
-		Cache::store('file')->forget('api_token');
+		Cache::store('file')->forget('covid_api_token');
 		$client = new Client(['base_uri' => self::$cov_base]);
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
             'debug' => false,
-            // 'verify' => false,
+            'verify' => false,
             // 'timeout' => 2,
 			'headers' => [
 				'Accept' => 'application/json',
@@ -1308,7 +1308,7 @@ class Synch
 			}
 		}
 
-		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(30)->get();
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(60)->get();
 
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
@@ -1330,14 +1330,14 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_covid_token(),
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
-	            'http_errors' => false,
-				// 'verify' => false,
+	            // 'http_errors' => false,
+				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
-			if($response->getStatusCode() > 399) continue;
+			if($response->getStatusCode() > 399) dd($response);
 			
 
 			$body = json_decode($response->getBody());

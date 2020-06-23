@@ -78,6 +78,10 @@
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID', 'required' => true])
                         @endif
 
+                        @if(auth()->user()->lab_id == 25)
+                            @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
+                        @endif
+
                         @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
@@ -139,7 +143,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
@@ -377,6 +381,9 @@
                     /*required: function(element){
                         return $("#facility_id").val().length == 0;
                     }*/
+                },
+                age: {
+                    required: '#dob:blank'
                 },
                 dob: {
                     lessThan: ["#datecollected", "Date of Birth", "Date Collected"]

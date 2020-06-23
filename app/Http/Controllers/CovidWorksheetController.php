@@ -134,7 +134,7 @@ class CovidWorksheetController extends Controller
     {
         $combined = $request->input('combined');
         $machine_type = $request->input('machine_type');
-        $limit = $request->input('limit', 0);
+        $limit = $request->input('limit', 94);
         $soft_limit = $request->input('soft_limit');
         $entered_by = $request->input('entered_by');
         $sampletype = $request->input('sampletype');
@@ -306,6 +306,26 @@ class CovidWorksheetController extends Controller
         // DB::table("samples")->where('worksheet_id', $worksheet->id)->update(['worksheet_id' => NULL, 'result' => NULL]);
         $covidWorksheet->delete();
         return back();
+    }
+
+    public function result_file(CovidWorksheet $worksheet)
+    {
+        // if(!$worksheet->machine_type){
+        //     session(['toast_error' => 1, 'toast_message' => 'The worksheet is not manual.']);
+        //     return back();            
+        // }
+
+        $worksheet->load(['sample.patient']);
+
+        $data = [];
+        $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        $data[] = ['Negative Control'];
+        $data[] = ['Positive Control'];
+
+        foreach ($worksheet->sample as $sample) {
+            $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+        }
+        return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
