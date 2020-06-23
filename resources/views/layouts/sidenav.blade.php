@@ -34,7 +34,7 @@
             </li> -->--}}
         @endif
         
-        @if (Auth::user()->is_covid_lab_user())
+        @if (auth()->user()->is_covid_lab_user())
 
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
@@ -221,7 +221,6 @@
                     <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
                     <hr />
                 @endif
-
             @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
