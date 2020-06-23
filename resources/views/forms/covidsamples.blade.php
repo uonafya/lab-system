@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
-                                <select class="form-control" @if(env('APP_LAB') == 4) required @endif name="facility_id" id="facility_id">
+                                <select class="form-control" @if(env('APP_LAB') == 4 || auth()->user()->facility_user) required @endif name="facility_id" id="facility_id">
                                     @if(isset($sample) && $sample->patient->facility)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endif
@@ -86,16 +86,18 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'provider_identifier', 'label' => '(*for Ampath Sites only) AMRS Provider Identifier', 'form_class' => 'ampath-div'])
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">High Priority</label>
-                            <div class="col-sm-8">
-                            <input type="checkbox" class="i-checks" name="highpriority" value="1"
-                                @if(isset($sample) && $sample->highpriority)
-                                    checked
-                                @endif
-                             />
+                        @if(auth()->user()->is_covid_lab_user())
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">High Priority</label>
+                                <div class="col-sm-8">
+                                <input type="checkbox" class="i-checks" name="highpriority" value="1"
+                                    @if(isset($sample) && $sample->highpriority)
+                                        checked
+                                    @endif
+                                 />
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                     </div>
                 </div>
@@ -111,7 +113,7 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->nationality ?? null, 'prop' => 'nationality', 'label' => 'Nationality', 'items' => $nationalities])
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->nationality ?? null, 'prop' => 'nationality', 'label' => 'Nationality', 'items' => $nationalities, 'facility_required' => true])
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
 
@@ -126,7 +128,7 @@
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
                         @else
-                            @if(auth()->user()->lab_id == 1)
+                            @if(auth()->user()->lab_id == 1 && auth()->user()->is_covid_lab_user())
                                 @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
                             @else
                                 @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
@@ -138,16 +140,16 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number', 'facility_required' => true])
 
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age (Put 0 if unknown)'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'age', 'is_number' => true, 'label' => 'Age'])
 
                         @include('partial.select', ['model' => $m, 'prop' => 'sex', 'default_val' => $sample->patient->sex ?? null, 'required' => true, 'label' => 'Sex', 'items' => $gender, 'prop2' => 'gender_description'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'residence', 'default_val' => $sample->patient->residence ?? null, 'label' => 'Area of Residence'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'residence', 'default_val' => $sample->patient->residence ?? null, 'label' => 'Area of Residence', 'facility_required' => true])
 
                     </div>
                 </div>
@@ -175,7 +177,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'date_isolation', 'label' => 'Date of Isolation', 'default_val' => $sample->patient->date_isolation ?? null,])
 
-                        @include('partial.select', ['model' => $m, 'prop' => 'health_status', 'label' => 'Health Status', 'items' => $health_statuses])
+                        @include('partial.select', ['model' => $m, 'prop' => 'health_status', 'label' => 'Health Status', 'items' => $health_statuses, 'facility_required' => true])
 
                         @include('partial.date', ['model' => $m, 'prop' => 'date_death', 'label' => 'Date of Death', 'default_val' => $sample->patient->date_death ?? null,])
 
@@ -203,7 +205,7 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'occupation', 'default_val' => $sample->patient->occupation ?? null, 'label' => 'Occupation'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'occupation', 'default_val' => $sample->patient->occupation ?? null, 'label' => 'Occupation', 'facility_required' => true])
 
                         <div class="travel_item" id="first_travel_item">
                             <div class="col-sm-4">
@@ -308,7 +310,7 @@
                             </div>--}}
                         @endif
                         
-                        @if(auth()->user()->user_type_id == 5)
+                        @if(!auth()->user()->is_covid_lab_user())
 
                             @include('partial.input', ['model' => $m, 'prop' => 'entered_by', 'label' => 'Entered By'])
 
@@ -328,7 +330,7 @@
                                 <textarea  class="form-control" name="comments">{{ $sample->comments ?? '' }}</textarea>
                             </div>
                         </div>
-                        @if(auth()->user()->lab_user)
+                        @if(auth()->user()->is_covid_lab_user())
                             <div class="form-group"><label class="col-sm-4 control-label">Lab Comments</label>
                                 <div class="col-sm-8"><textarea  class="form-control" name="labcomment">
                                     {{ $sample->labcomment ?? '' }}
