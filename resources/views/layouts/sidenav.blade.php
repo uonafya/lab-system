@@ -558,7 +558,7 @@
                     <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
                 @endif
                 
-            @elseif(Auth::user()->quarantine_site || Auth::user()->other_lab)
+            @elseif(Auth::user()->quarantine_site)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
