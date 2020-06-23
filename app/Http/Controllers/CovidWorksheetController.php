@@ -57,6 +57,7 @@ class CovidWorksheetController extends Controller
             }
             return $query->whereDate('created_at', $date_start);
         })
+        ->where('lab_id', auth()->user()->lab_id)
         ->orderBy('created_at', 'desc')
         ->paginate();
 
@@ -244,6 +245,7 @@ class CovidWorksheetController extends Controller
      */
     public function show(CovidWorksheet $covidWorksheet, $print=false)
     {
+        if($covidWorksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         $samples = $covidWorksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
         if($covidWorksheet->combined) $samples = $samples->merge($covidWorksheet->other_samples());
 
@@ -299,6 +301,7 @@ class CovidWorksheetController extends Controller
      */
     public function destroy(CovidWorksheet $covidWorksheet)
     {
+        if($covidWorksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if($covidWorksheet->status_id != 4){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
             return back();
@@ -330,6 +333,7 @@ class CovidWorksheetController extends Controller
     
     public function convert_worksheet(CovidWorksheet $worksheet, $machine_type)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
         if($worksheet->status_id != 1){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
@@ -355,6 +359,7 @@ class CovidWorksheetController extends Controller
 
     public function cancel(CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if($worksheet->status_id != 1){
             session(['toast_error' => 1, 'toast_message' => 'The worksheet is not eligible to be cancelled.']);
             return back();
@@ -376,6 +381,7 @@ class CovidWorksheetController extends Controller
 
     public function cancel_upload(CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if($worksheet->status_id != 2){
             session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
             session(['toast_error' => 1]);
@@ -406,6 +412,7 @@ class CovidWorksheetController extends Controller
 
     public function reverse_upload(CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if($worksheet->status_id != 3 || $worksheet->created_at->lessThan(date('Y-m-d', strtotime('-14 days')))){
             session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
             return back();
@@ -431,6 +438,7 @@ class CovidWorksheetController extends Controller
 
     public function upload(CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
@@ -443,6 +451,7 @@ class CovidWorksheetController extends Controller
 
     public function save_results(Request $request, CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
@@ -622,7 +631,8 @@ class CovidWorksheetController extends Controller
 
 
     public function approve_results(CovidWorksheet $worksheet)
-    {        
+    {    
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);    
         $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
 
         // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
@@ -661,6 +671,7 @@ class CovidWorksheetController extends Controller
 
     public function approve(Request $request, CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         $double_approval = Lookup::$double_approval;
         $actions = $request->input('actions');
         $samples = $request->input('samples');
@@ -743,6 +754,7 @@ class CovidWorksheetController extends Controller
 
     public function rerun_worksheet(CovidWorksheet $worksheet)
     {
+        if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
         if($worksheet->status_id != 2 || !$worksheet->failed){
             session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
             return back();
@@ -815,7 +827,7 @@ class CovidWorksheetController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $worksheets = CovidWorksheet::whereRaw("id like '" . $search . "%'")->paginate(10);
+        $worksheets = CovidWorksheet::whereRaw("id like '" . $search . "%'")->where('lab_id', auth()->user()->lab_id)->paginate(10);
         $worksheets->setPath(url()->current());
         return $worksheets;
     }
