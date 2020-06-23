@@ -1,7 +1,7 @@
 				<?php
 					if(!isset($prop2)) $prop2 = 'name';
 					$is_required = false;
-					if((isset($required) && $required) || isset($facility_required && !auth()->user()->is_covid_lab_user() )) $is_required = true;
+					if((isset($required) && $required) || (isset($facility_required) && !auth()->user()->is_covid_lab_user()) ) $is_required = true;
 				?>
 
 				<div class="form-group {{ $form_class ?? '' }} " {!! $row_attr ?? null !!}>
