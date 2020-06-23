@@ -34,7 +34,8 @@
             </li> -->--}}
         @endif
         
-        @if (Auth::user()->is_lab_user())
+        @if (auth()->user()->is_covid_lab_user())
+
             @if (session('testingSystem') == 'EID' || session('testingSystem') == null)
                 
                 <!-- <li>
@@ -105,8 +106,8 @@
                     </li>
                     <hr />
                 @endif
-            @endif
-            @if (session('testingSystem') == 'Viralload')
+            
+            @elseif (session('testingSystem') == 'Viralload')
                 <!-- <li>
                     <a href="#"><span class="nav-label">Viralload Samples</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
@@ -194,8 +195,8 @@
                     </li>
                     <hr />
                 @endif
-            @endif
-            @if (session('testingSystem') == 'Covid')
+            
+            @elseif (session('testingSystem') == 'Covid')
                 @if(in_array(env('APP_LAB'), [8, 9]))
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
@@ -208,15 +209,19 @@
                 <hr />
                 <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
+                @if(auth()->user()->other_lab)
+                    <li>
+                        <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
+                    </li>
+                    <hr />
+                @endif
                 @if(in_array(env('APP_LAB'), [1,2,3,6]))
                     <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
                     <hr />
                     <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
                     <hr />
                 @endif
-
-            @endif
-            @if (session('testingSystem') == 'DR')
+            @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
                 <li><a href="{{ url('dr_sample') }}">Samples List</a></li>
@@ -268,11 +273,11 @@
 
             @else
                 <li>
-                    <a href="{{ url('patient') }}">EID Patient List</a>
+                    <a href="{{ url('covid_sample/create') }}">Add Covid-19 Sample</a>
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('viralpatient') }}">VL Patient List</a>
+                    <a href="{{ url('covid_sample') }}">Covid-19 Samples</a>
                 </li>
                 <hr />
                 <li>
@@ -553,7 +558,7 @@
                     <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
                 @endif
                 
-            @elseif(Auth::user()->quarantine_site || Auth::user()->other_lab)
+            @elseif(Auth::user()->quarantine_site)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
