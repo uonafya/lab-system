@@ -58,7 +58,8 @@
                         <div class="alert alert-warning">
                             <center>
                                 Please fill the form correctly. <br />
-                                Fields with an asterisk(*) are mandatory.
+                                Fields with an asterisk(*) are mandatory. <br />
+                                The system will automatically pick the county and subcounty of the facility. If the patient does not hail from the subcounty or county of the facility, select a subcounty and county. 
                             </center>
                         </div>
                         <br />
@@ -368,7 +369,6 @@
         @slot('js_scripts')
             <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
         @endslot
-
 
         @slot('val_rules')
            ,
