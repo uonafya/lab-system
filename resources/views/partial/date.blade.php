@@ -5,7 +5,7 @@
                  ?>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">  {{ $label }}
-                                @if($facility_required)
+                                @if($is_required)
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 @endif
                             </label>
@@ -13,7 +13,7 @@
                                 <div class="input-group date {{ $class ?? 'date-normal' }}">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" value="{{ $default_val ?? $model->$prop ?? '' }}" id="{{ $prop }}" name="{{ $prop }}" 
-                                    @if($facility_required)
+                                    @if($is_required)
                                         required  class="form-control requirable"
                                     @else
                                         class="form-control"
