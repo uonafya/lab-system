@@ -483,7 +483,7 @@ class Nat
 		else if($suppressed == 0) $sql .= 'WHERE rcategory IN (3,4) ';
 		$sql .= 'GROUP BY f.facility_id ';
 		$sql .= 'ORDER BY f.county_id, f.subcounty_id, f.facility_id ';
-		$sql .= 'HAVING total > 0';
+		$sql .= 'HAVING totals > 0';
 
 		// return $sql;
 		return collect(DB::select($sql));
