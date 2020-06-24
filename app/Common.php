@@ -65,7 +65,7 @@ class Common
 		if(!$data) return;
 
 		if($save_file){
-			$fp = fopen(storage_path("exports/{$file_name}.csv"));
+			$fp = fopen(storage_path("exports/{$file_name}.csv"), 'w');
 		}else{
 			header('Content-Description: File Transfer');
 			header('Content-Type: application/csv');
