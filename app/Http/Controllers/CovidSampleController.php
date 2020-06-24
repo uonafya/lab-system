@@ -893,6 +893,10 @@ class CovidSampleController extends Controller
     {
         $ids = $request->input('sample_ids');
         $data = Lookup::covid_form();
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to print.", 'toast_error' => 1]);
+            return back();            
+        }
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
         return view('exports.mpdf_covid_samples', $data);
     }
