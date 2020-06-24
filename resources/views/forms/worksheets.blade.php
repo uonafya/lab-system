@@ -16,6 +16,10 @@
                     @method('PUT')
             @else
 
+                @if($machine_type == 0)
+                <form method="POST" action="/covid_worksheet" class="form-horizontal">
+                @endif
+
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="hpanel">
@@ -33,10 +37,12 @@
                     </div>                
                 </div>
 
-                @if(isset($covid))            
-                <form method="POST" action="/covid_worksheet" class="form-horizontal">
-                @else
-                <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
+                @if($machine_type != 0)
+                    @if(isset($covid))            
+                    <form method="POST" action="/covid_worksheet" class="form-horizontal">
+                    @else
+                    <form method="POST" action="/worksheet" class="form-horizontal" target="_blank">
+                    @endif
                 @endif
                     @csrf
 
