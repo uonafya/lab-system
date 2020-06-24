@@ -464,7 +464,7 @@ class Nat
 
 	public static function get_pmtct_query($suppressed=true)
 	{
-    	$sql = 'SELECT f.facility_id, count(*) as totals ';
+    	$sql = 'SELECT f.id, count(*) as totals ';
     	if($suppressed == 2) $sql .= ', f.facilitycode, f.name, f.county, f.subcounty ';
 		$sql .= 'FROM ';
 		$sql .= '(SELECT v.id, v.facility_id, v.rcategory ';
@@ -481,9 +481,9 @@ class Nat
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
 		if($suppressed == 1) $sql .= 'WHERE rcategory IN (1,2) ';
 		else if($suppressed == 0) $sql .= 'WHERE rcategory IN (3,4) ';
-		$sql .= 'GROUP BY f.facility_id ';
+		$sql .= 'GROUP BY f.id ';
 		$sql .= 'HAVING totals > 0 ';
-		$sql .= 'ORDER BY f.county_id ASC, f.subcounty_id ASC, f.facility_id ASC ';
+		$sql .= 'ORDER BY f.county_id ASC, f.subcounty_id ASC, f.id ASC ';
 
 		// return $sql;
 		return collect(DB::select($sql));
@@ -505,8 +505,8 @@ class Nat
 				'County' => $value->county,
 				'Subcounty' => $value->subcounty,
 				'PMTCT' => $value->totals,
-				'Suppressed' => $suppressed->where('facility_id', $value->facility_id)->first()->totals ?? 0,
-				'Non Suppressed' => $non_suppressed->where('facility_id', $value->facility_id)->first()->totals ?? 0,
+				'Suppressed' => $suppressed->where('id', $value->id)->first()->totals ?? 0,
+				'Non Suppressed' => $non_suppressed->where('id', $value->id)->first()->totals ?? 0,
 			];
 		}
 		self::email_csv('pmtct_data', $data);
