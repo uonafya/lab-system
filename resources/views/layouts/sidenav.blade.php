@@ -344,6 +344,10 @@
             </li>
             <hr />
             <li>
+                <a href="https://eiddash.nascop.org/download/covid_sop">Covid-19 SOP (User Guide)</a>
+            </li>
+            <hr />
+            <li>
                 <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
             </li>
             <hr />
