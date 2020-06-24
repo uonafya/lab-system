@@ -462,6 +462,58 @@ class Nat
 	}
 
 
+	public static function get_pmtct_query($suppressed=true)
+	{
+    	$sql = 'SELECT f.facility_id, count(*) as totals ';
+    	if($suppressed == 2) $sql .= ', f.facilitycode, f.name, f.county, f.subcounty ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.facility_id, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE ( datetested between '2020-01-01' and '2020-03-31' ) ";
+		$sql .= "AND patient != '' AND patient != 'null' AND patient is not null and pmtct IN (1,2) ";
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND justification != 10 and facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		if($suppressed == 1) $sql .= 'WHERE rcategory IN (1,2) ';
+		else if($suppressed == 0) $sql .= 'WHERE rcategory IN (3,4) ';
+		$sql .= 'GROUP BY f.facility_id ';
+		$sql .= 'ORDER BY f.county_id, f.subcounty_id, f.facility_id ';
+		$sql .= 'HAVING total > 0';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+
+	public static function get_pmtct()
+	{
+		$data = [];
+
+		$all = self::get_pmtct_query(2);
+		$suppressed = self::get_pmtct_query(1);
+		$non_suppressed = self::get_pmtct_query(0);
+
+		foreach ($all as $key => $value) {
+			$data[] = [
+				'Facility Name' => $value->name,
+				'Facility MFL' => $value->facilitycode,
+				'County' => $value->county,
+				'Subcounty' => $value->subcounty,
+				'PMTCT' => $value->totals,
+				'Suppressed' => $suppressed->where('facility_id', $value->facility_id)->first()->totals ?? 0,
+				'Non Suppressed' => $non_suppressed->where('facility_id', $value->facility_id)->first()->totals ?? 0,
+			];
+		}
+		self::email_csv('pmtct_data', $data);
+	}
+
+
+
 	/*
 	public static function save_gender_results()
 	{
