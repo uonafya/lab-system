@@ -82,7 +82,7 @@ p.breakhere {page-break-before: always}
 						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 						
 					</td>
 					<td colspan="4" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/amref_logo.png" alt="AMREF" width="90" height="48"></strong> 
+						<strong><img src="https://eiddash.nascop.org/img/amref_logo.jpg" alt="AMREF" width="90" height="48"></strong> 
 					</td>
 				</tr>
 				<tr>
