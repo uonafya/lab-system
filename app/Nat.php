@@ -18,13 +18,10 @@ class Nat
 
 	public static function email_csv($filename, $rows, $emails=['joelkith@gmail.com'])
 	{		
-		Excel::create($filename, function($excel) use($rows){
-			$excel->sheet('Sheetname', function($sheet) use($rows) {
-				$sheet->fromArray($rows);
-			});
-		})->store('csv');
+		Common::csv_download($rows, $filename, true, true);
 
 		$attachments = [storage_path("exports/" . $filename . ".csv")];
+
 
 		Mail::to($emails)->send(new TestMail($attachments));
 	}
