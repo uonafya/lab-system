@@ -481,9 +481,9 @@ class Nat
 		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
 		if($suppressed == 1) $sql .= 'WHERE rcategory IN (1,2) ';
 		else if($suppressed == 0) $sql .= 'WHERE rcategory IN (3,4) ';
-		$sql .= 'GROUP BY f.facility_id, f.subcounty_id, f.facility_id ';
-		$sql .= 'ORDER BY f.county_id ';
+		$sql .= 'GROUP BY f.facility_id ';
 		$sql .= 'HAVING totals > 0';
+		$sql .= 'ORDER BY f.county_id ASC, f.subcounty_id ASC, f.facility_id ASC ';
 
 		// return $sql;
 		return collect(DB::select($sql));
