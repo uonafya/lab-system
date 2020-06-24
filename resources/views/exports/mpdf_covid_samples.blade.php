@@ -303,7 +303,7 @@ p.breakhere {page-break-before: always}
 							&nbsp;&nbsp;
 							<strong> {{ $sample->final_approver->full_name ?? $sample->approver->full_name ?? '' }} </strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<img src="{{ $sample->final_approver->full_name ?? $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
+							<img src="{{ $sample->final_approver->user_signature ?? $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
 				</tr>				
