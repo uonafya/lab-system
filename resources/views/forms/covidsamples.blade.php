@@ -60,6 +60,10 @@
                                 Please fill the form correctly. <br />
                                 Fields with an asterisk(*) are mandatory. <br />
                                 The system will automatically pick the county and subcounty of the facility. If the patient does not hail from the subcounty or county of the facility, select a subcounty and county. 
+                                @if(!auth()->user()->is_covid_lab_user())
+                                    <br />
+                                    Kindly indicate on the form or sample that the data has already been filled. This will help the people at the lab know that the data has been entered.
+                                @endif
                             </center>
                         </div>
                         <br />
