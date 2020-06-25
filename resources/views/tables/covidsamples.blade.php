@@ -353,7 +353,6 @@
                                         @endif
 
                                         <td> {{ $sample->rsurname . ' ' . $sample->roname }} </td>
-
                                         <td> 
                                             @if($sample->receivedstatus == 1)
                                                 Received
