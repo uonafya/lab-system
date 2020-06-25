@@ -43,7 +43,18 @@
                         <div class="panel-body" style="padding-bottom: 6px;">
                             <div class="alert alert-warning">
                                 <center>
-                                    Acceptable results 
+                                    Acceptable results : 
+                                    <br /> Negative 
+                                    <br /> Positive  
+                                    <br /> Failed (Will go for rerun)
+                                    <br /> Collect New Sample (Will dispatch as CNS)
+                                    @if(env('APP_LAB') == 25) <br /> Inconclusive @endif
+                                    <br /> For Controls :
+                                    <br /> Negative 
+                                    <br /> Positive    
+                                    <br /> Failed
+                                    <br /> Valid
+                                    <br /> Invalid
                                 </center>
                             </div>
                         </div>

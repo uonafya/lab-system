@@ -138,7 +138,7 @@ class CovidWorksheetImport implements ToCollection
                 }else if(Str::contains($res, ['neg'])){
                     $result['result'] = 1;
                     // $sample->result = 1;
-                }else if(Str::contains($res, ['fai'])){
+                }else if(Str::contains($res, ['fai', 'invalid'])){
                     $result = ['result' => 3, 'repeatt' => 1];
                     // $sample->result = 3;
                     // $sample->repeatt = 1;
