@@ -590,6 +590,7 @@
                     <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')

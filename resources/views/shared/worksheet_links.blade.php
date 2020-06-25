@@ -19,29 +19,33 @@
 			Convert to Manual
 		</a> |
 	@endif
+
+	@if(env('APP_LAB') != 25)
 	
-	@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
-		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
-			Convert to Roche/Taqman
+		@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
+			<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
+				Convert to Roche/Taqman
+			</a> |
+		@endif
+
+		@if($worksheet->machine_type != 2)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet">
+			Convert to Abbott
 		</a> |
-	@endif
+		@endif
 
-	@if($worksheet->machine_type != 2)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet">
-		Convert to Abbott
-	</a> |
-	@endif
+		@if($worksheet->machine_type != 3)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
+			Convert to C8800
+		</a> |
+		@endif
+		
+		@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet">
+			Convert to Panther
+		</a> |
+		@endif
 
-	@if($worksheet->machine_type != 3)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
-		Convert to C8800
-	</a> |
-	@endif
-	
-	@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet">
-		Convert to Panther
-	</a> |
 	@endif
 
 

@@ -533,7 +533,7 @@ class CovidSampleController extends Controller
         $patient->pre_update();
 
         $covidSample->fill($request->only($data['sample']));
-        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
+        if(in_array(auth()->user()->lab_id, [1,25])) $covidSample->kemri_id = $request->input('kemri_id');
         $covidSample->patient_id = $patient->id;
         $covidSample->pre_update();
 
