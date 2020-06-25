@@ -35,6 +35,24 @@
             </div>                
         </div>
 
+        @if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type == 0)
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-warning">
+                                <center>
+                                    Acceptable results 
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+        @endif
+
         @if($worksheet->status_id == 4)
             
             <div class="row">

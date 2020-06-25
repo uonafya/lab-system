@@ -58,6 +58,9 @@
                                 <tr>
                                     <th>Sample ID</th>
                                     <th>Lab ID</th>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <th> KEMRI ID </th>
+                                    @endif
                                     <th>Run</th>
                                     <th>Result</th>                
                                     <th>Interpretation</th>                
@@ -71,6 +74,9 @@
                                 <tr>
                                     <td >PC</td>
                                     <td >-</td>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <td>-</td>
+                                    @endif
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#FF0000'>
@@ -92,6 +98,9 @@
                                 <tr>
                                     <td >NC</td>
                                     <td >-</td>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <td>-</td>
+                                    @endif
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#339900'> 
@@ -161,6 +170,9 @@
                                             {!! $sample->patient->hyperlink !!} 
                                         </td>
                                         <td> {{ $sample->id }}  </td>
+                                        @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                            <td> {{ $sample->kemri_id }} </td>
+                                        @endif
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
