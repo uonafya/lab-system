@@ -116,6 +116,7 @@
                         <div class="col-sm-9">
                             <select class="form-control select_tag" name="quarantine_site_id" id="quarantine_site_id">
                                 <option></option>
+                                <option value="null"> None </option>
                                 @foreach ($quarantine_sites as $quarantine_site)
                                     <option value="{{ $quarantine_site->id }}"
 

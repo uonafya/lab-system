@@ -155,6 +155,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })
             ->when($identifier, function($query) use ($identifier){
@@ -360,6 +361,7 @@ class CovidSampleController extends Controller
             })
             // ->where('identifier', 'like', 'tnz%')
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })            
             // ->whereNull('quarantine_site_id')
