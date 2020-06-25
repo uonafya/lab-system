@@ -937,6 +937,7 @@ class CovidSampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+    
 
     public function kemri_id(Request $request)
     {
