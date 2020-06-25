@@ -6,6 +6,7 @@
 		set_select_patient("sidebar_covid_kemri_id_search", "{{ url('/covid_sample/kem_id') }}", 2, "Search for KEMRI ID", true);
 		set_select("sidebar_covidlabID_search", "{{ url('/covid_sample/search') }}", 1, "Search by Covid-19 Lab ID");
 		set_select("sidebar_covid_worksheet_search", "{{ url('/covid_worksheet/search') }}", 1, "Search for Covid-19 worksheet", true);
+		
 
 		set_select("batch_search", "{{ url('/batch/search') }}", 1, "Search for batch");
 		set_select("viralbatch_search", "{{ url('/viralbatch/search') }}", 1, "Search for batch");
