@@ -153,7 +153,7 @@ class CovidPatientController extends Controller
         $search = $request->input('search');
         $search = addslashes($search);
         
-        $patients = CovidPatient::select('covid_patients.id', 'covid_patients.identifier AS patient', 'quarantine_sites.name')
+        $patients = CovidPatient::select('covid_patients.id', 'covid_patients.national_id AS patient', 'quarantine_sites.name')
             ->leftJoin('quarantine_sites', 'quarantine_sites.id', '=', 'covid_patients.quarantine_site_id')
             ->whereRaw("(national_id like '" . $search . "%' )")
             // ->where('patients.synched', '!=', 2)
