@@ -156,6 +156,21 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 
+			@if(env('APP_LAB') == 25)
+
+				<tr>
+					<td colspan="2" class="style4 style1 comment"><strong>  </strong></td>
+					<td colspan="2"> <span class="style5"> </span></td>
+					<td class="style4 style1 comment" colspan="2"><strong> Kemri ID </strong></td>
+					<td colspan="1" class="comment">
+						<span class="style5">
+							{{ $sample->kemri_id }}	
+						</span>
+					</td>
+				</tr>
+
+			@endif
+
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>National ID </strong></td>
 				<td colspan="2"  ><span class="style5"> {{ $sample->patient->national_id }} </span></td>
