@@ -592,7 +592,7 @@ class Synch
 						'Accept' => 'application/json',
 						'Authorization' => 'Bearer ' . $token,
 					],
-					// 'verify' => false,
+					'verify' => false,
 					'json' => [
 						$key => $models->toJson(),
 						'lab_id' => env('APP_LAB', null),

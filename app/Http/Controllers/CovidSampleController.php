@@ -155,6 +155,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })
             ->when($identifier, function($query) use ($identifier){
@@ -217,7 +218,7 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,25])){
+        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,23,25])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
         }
@@ -360,6 +361,7 @@ class CovidSampleController extends Controller
             })
             // ->where('identifier', 'like', 'tnz%')
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })            
             // ->whereNull('quarantine_site_id')
@@ -893,6 +895,10 @@ class CovidSampleController extends Controller
     {
         $ids = $request->input('sample_ids');
         $data = Lookup::covid_form();
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to print.", 'toast_error' => 1]);
+            return back();            
+        }
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
         return view('exports.mpdf_covid_samples', $data);
     }
