@@ -201,6 +201,9 @@ class CovidWorksheetController extends Controller
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
+        $limit = $request->input('limit');
+        $entered_by = $request->input('entered_by');
+
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $limit, $entered_by);
 
 
