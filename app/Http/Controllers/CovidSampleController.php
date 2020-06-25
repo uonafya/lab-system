@@ -937,4 +937,29 @@ class CovidSampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
+
+    public function kemri_id(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_samples.user_id='{$user->id}')";
+
+        $samples = CovidSample::select('covid_samples.id, kemri_id as patient')
+            ->whereRaw("covid_samples.kemri_id like '" . $search . "%'")
+            ->when($user->facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+                    ->where('quarantine_site_id', $user->facility_id);
+            })
+            ->where('repeatt', 0)
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
 }

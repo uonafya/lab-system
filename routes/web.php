@@ -170,6 +170,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
 			});
 			
+			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
