@@ -389,7 +389,7 @@ class Nat
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
 		$sql .= "WHERE patient != '' AND patient != 'null' AND patient is not null ";
-		// $sql .= "AND ( datetested between '2019-01-01' and '2019-12-31' ) ";
+		$sql .= "AND ( datetested between '2020-01-01' and '2020-05-30' ) ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
 			else{
@@ -456,6 +456,42 @@ class Nat
 			$data[] = $row;
 		}
 		self::email_csv('county_ovf_fine_age_suppression', $data);
+	}
+
+	public static function get_county_generalised_ages()
+	{
+		$data = [];
+		$ages = [];
+		$i=0;
+
+		$ages['less_15'] = [0, 14];
+		$ages['above_15'] = [15, 100];
+
+		$counties = DB::table('countys')->get();
+
+		foreach ($ages as $key => $value) {
+			$sup = $key . '_suppressed';
+			$nonsup = $key . '_nonsuppressed';
+			$$sup = self::get_county_ovf_ages_current_query(true, $value);
+			$$nonsup = self::get_county_ovf_ages_current_query(false, $value);
+		}
+
+		foreach ($counties as $county) {
+			$row = ['Year' => 2019, 'County' => $county->name];
+
+			foreach ($ages as $key => $value) {
+				$sup = $key . '_suppressed';
+				$nonsup = $key . '_nonsuppressed';
+
+				$row[$sup . '_non_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$sup . '_ovc'] = $$sup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+				
+				$row[$nonsup . '_non_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 0)->first()->totals ?? 0;
+				$row[$nonsup . '_ovc'] = $$nonsup->where('county_id', $county->id)->where('ovf', 1)->first()->totals ?? 0;
+			}
+			$data[] = $row;
+		}
+		self::email_csv('county_generalised_age_suppression', $data);
 	}
 
 
