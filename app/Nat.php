@@ -520,7 +520,10 @@ class Nat
 
 				$row[$sup] = $$sup->where('county_id', $county->id)->first()->totals ?? 0;				
 				$row[$nonsup] = $$nonsup->where('county_id', $county->id)->first()->totals ?? 0;
-				$row[$suppression] = round(($row[$sup] / ($row[$sup] + $row[$nonsup])), 2);
+				if(($row[$sup] + $row[$nonsup]) == 0) $row[$suppression] = 0;
+				else{
+					$row[$suppression] = round(($row[$sup] / ($row[$sup] + $row[$nonsup])), 2);
+				}
 			}
 			$data[] = $row;
 		}
