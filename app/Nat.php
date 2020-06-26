@@ -518,15 +518,19 @@ class Nat
 			foreach ($sexes as $sex => $sex_value) {
 
 				foreach ($ages as $age => $value) {
-					$sup = $age . '_' . $sex . '_suppressed';
-					$nonsup = $age . '_' . $sex . '_nonsuppressed';
-					$suppression = $age . '_' . $sex . '_suppression';
+					$sup = $age . '_suppressed';
+					$nonsup = $age . '_nonsuppressed';
+					$suppression = $age . '_suppression';
 
-					$row[$sup] = $$sup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;				
-					$row[$nonsup] = $$nonsup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;
-					if(($row[$sup] + $row[$nonsup]) == 0) $row[$suppression] = 0;
+					$sup2 = $age . '_' . $sex . '_suppressed';
+					$nonsup2 = $age . '_' . $sex . '_nonsuppressed';
+					$suppression2 = $age . '_' . $sex . '_suppression';
+
+					$row[$sup2] = $$sup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;				
+					$row[$nonsup2] = $$nonsup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;
+					if(($row[$sup2] + $row[$nonsup2]) == 0) $row[$suppression2] = 0;
 					else{
-						$row[$suppression] = round(($row[$sup] / ($row[$sup] + $row[$nonsup])) * 100, 2);
+						$row[$suppression2] = round(($row[$sup2] / ($row[$sup2] + $row[$nonsup2])) * 100, 2);
 					}
 				}
 			}
