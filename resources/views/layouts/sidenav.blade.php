@@ -215,7 +215,7 @@
                     </li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                @if(in_array(env('APP_LAB'), [1,2,3,6,25]))
                     <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
                     <hr />
                     <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
