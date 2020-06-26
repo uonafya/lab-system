@@ -460,9 +460,9 @@ class Nat
 
 	public static function get_county_gen_ages_current_query($suppressed=true, $ages=null)
 	{
-    	$sql = 'SELECT f.county_id, count(*) as totals ';
+    	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
 		$sql .= 'FROM ';
-		$sql .= '(SELECT v.id, v.facility_id, v.rcategory ';
+		$sql .= '(SELECT v.id, v.sex v.facility_id, v.rcategory ';
 		$sql .= 'FROM viralsamples_view v ';
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
@@ -485,8 +485,8 @@ class Nat
 		else{
 			$sql .= 'WHERE rcategory IN (3,4) ';
 		}
-		$sql .= 'GROUP BY f.county_id  ';
-		$sql .= 'ORDER BY f.county_id  ';
+		$sql .= 'GROUP BY f.county_id, sex  ';
+		$sql .= 'ORDER BY f.county_id, sex  ';
 
 		// return $sql;
 		return collect(DB::select($sql));
@@ -501,6 +501,8 @@ class Nat
 		$ages['less_15'] = [0, 14];
 		$ages['above_15'] = [15, 100];
 
+		$sexes = ['Male' => 1, 'Female' => 2];
+
 		$counties = DB::table('countys')->get();
 
 		foreach ($ages as $key => $value) {
@@ -513,16 +515,19 @@ class Nat
 		foreach ($counties as $county) {
 			$row = ['Year' => 2020, 'County' => $county->name];
 
-			foreach ($ages as $key => $value) {
-				$sup = $key . '_suppressed';
-				$nonsup = $key . '_nonsuppressed';
-				$suppression = $key . '_suppression';
+			foreach ($sexes as $sex => $sex_value) {
 
-				$row[$sup] = $$sup->where('county_id', $county->id)->first()->totals ?? 0;				
-				$row[$nonsup] = $$nonsup->where('county_id', $county->id)->first()->totals ?? 0;
-				if(($row[$sup] + $row[$nonsup]) == 0) $row[$suppression] = 0;
-				else{
-					$row[$suppression] = round(($row[$sup] / ($row[$sup] + $row[$nonsup])) * 100, 2);
+				foreach ($ages as $age => $value) {
+					$sup = $age . '_' . $sex '_suppressed';
+					$nonsup = $age . '_' . $sex '_nonsuppressed';
+					$suppression = $age . '_' . $sex '_suppression';
+
+					$row[$sup] = $$sup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;				
+					$row[$nonsup] = $$nonsup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;
+					if(($row[$sup] + $row[$nonsup]) == 0) $row[$suppression] = 0;
+					else{
+						$row[$suppression] = round(($row[$sup] / ($row[$sup] + $row[$nonsup])) * 100, 2);
+					}
 				}
 			}
 			$data[] = $row;
