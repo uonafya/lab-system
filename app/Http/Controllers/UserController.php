@@ -99,7 +99,12 @@ class UserController extends Controller
             session(['toast_message'=>'User already exists', 'toast_error'=>1]);
             return redirect()->route('user.add');
         } else {
-            $user = new User;
+            $user = User::where($request->only(['email']))->onlyTrashed()->first();
+            if($user) $user->deleted_at = null;
+            else{
+                $user = new User;
+            }
+
             $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone', 'covid_allowed']));
             if(!$user->lab_id) $user->lab_id = auth()->user()->lab_id;
             $user->save();
