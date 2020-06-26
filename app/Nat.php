@@ -389,7 +389,7 @@ class Nat
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
 		$sql .= 'FROM viralsamples_view ';
 		$sql .= "WHERE patient != '' AND patient != 'null' AND patient is not null ";
-		// $sql .= "AND ( datetested between '2019-01-01' and '2019-12-31' ) ";
+		$sql .= "AND ( datetested between '2020-01-01' and '2020-05-30' ) ";
 		if($ages){
 			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
 			else{
@@ -456,6 +456,87 @@ class Nat
 			$data[] = $row;
 		}
 		self::email_csv('county_ovf_fine_age_suppression', $data);
+	}
+
+	public static function get_county_gen_ages_current_query($suppressed=true, $ages=null)
+	{
+    	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
+		$sql .= 'FROM ';
+		$sql .= '(SELECT v.id, v.sex, v.facility_id, v.rcategory ';
+		$sql .= 'FROM viralsamples_view v ';
+		$sql .= 'RIGHT JOIN ';
+		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
+		$sql .= 'FROM viralsamples_view ';
+		$sql .= "WHERE patient != '' AND patient != 'null' AND patient is not null ";
+		$sql .= "AND ( datetested between '2020-01-01' and '2020-05-30' ) ";
+		if($ages){
+			if($ages[0] != 0) $sql .= "AND age >= {$ages[0]} AND age < {$ages[1]} ";
+			else{
+				$sql .= "AND age > {$ages[0]} AND age < {$ages[1]} ";
+			}
+		}
+
+		$sql .= 'AND flag=1 AND repeatt=0 AND rcategory in (1, 2, 3, 4) ';
+		$sql .= 'AND facility_id != 7148 ';
+		$sql .= 'GROUP BY patient_id) gv ';
+		$sql .= 'ON v.id=gv.id) tb ';
+		$sql .= 'JOIN view_facilitys f on f.id=tb.facility_id ';
+		if($suppressed) $sql .= 'WHERE rcategory IN (1,2) ';
+		else{
+			$sql .= 'WHERE rcategory IN (3,4) ';
+		}
+		$sql .= 'GROUP BY f.county_id, sex  ';
+		$sql .= 'ORDER BY f.county_id, sex  ';
+
+		// return $sql;
+		return collect(DB::select($sql));
+	}
+
+	public static function get_county_generalised_ages()
+	{
+		$data = [];
+		$ages = [];
+		$i=0;
+
+		$ages['less_15'] = [0, 14];
+		$ages['above_15'] = [15, 100];
+
+		$sexes = ['Male' => 1, 'Female' => 2];
+
+		$counties = DB::table('countys')->get();
+
+		foreach ($ages as $key => $value) {
+			$sup = $key . '_suppressed';
+			$nonsup = $key . '_nonsuppressed';
+			$$sup = self::get_county_gen_ages_current_query(true, $value);
+			$$nonsup = self::get_county_gen_ages_current_query(false, $value);
+		}
+
+		foreach ($counties as $county) {
+			$row = ['Year' => 2020, 'County' => $county->name];
+
+			foreach ($sexes as $sex => $sex_value) {
+
+				foreach ($ages as $age => $value) {
+					$sup = $age . '_suppressed';
+					$nonsup = $age . '_nonsuppressed';
+					$suppression = $age . '_suppression';
+
+					$sup2 = $age . '_' . $sex . '_suppressed';
+					$nonsup2 = $age . '_' . $sex . '_nonsuppressed';
+					$suppression2 = $age . '_' . $sex . '_suppression';
+
+					$row[$sup2] = $$sup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;				
+					$row[$nonsup2] = $$nonsup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;
+					if(($row[$sup2] + $row[$nonsup2]) == 0) $row[$suppression2] = 0;
+					else{
+						$row[$suppression2] = round(($row[$sup2] / ($row[$sup2] + $row[$nonsup2])) * 100, 2);
+					}
+				}
+			}
+			$data[] = $row;
+		}
+		self::email_csv('county_generalised_age_suppression', $data);
 	}
 
 

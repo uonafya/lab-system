@@ -218,10 +218,10 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,23,25])){
+        /*if(!$quarantine_site_id && !in_array(env('APP_LAB'), [1,3,5,6,23,25])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
-        }
+        }*/
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
         if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5, 6])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
@@ -230,6 +230,10 @@ class CovidSampleController extends Controller
 
 
         $facility = Facility::find($facility_id);
+        if($facility && !$facility->covid_email){
+            session(['toast_error' => 1, 'toast_message' => 'The facility does not have a Covid-19 email address set.']);
+            return back();                        
+        }
         $type = 2;
 
         $date_column = "covid_samples.datedispatched";
