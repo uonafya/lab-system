@@ -518,9 +518,9 @@ class Nat
 			foreach ($sexes as $sex => $sex_value) {
 
 				foreach ($ages as $age => $value) {
-					$sup = $age . '_' . $sex '_suppressed';
-					$nonsup = $age . '_' . $sex '_nonsuppressed';
-					$suppression = $age . '_' . $sex '_suppression';
+					$sup = $age . '_' . $sex . '_suppressed';
+					$nonsup = $age . '_' . $sex . '_nonsuppressed';
+					$suppression = $age . '_' . $sex . '_suppression';
 
 					$row[$sup] = $$sup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;				
 					$row[$nonsup] = $$nonsup->where('county_id', $county->id)->where('sex', $sex_value)->first()->totals ?? 0;
