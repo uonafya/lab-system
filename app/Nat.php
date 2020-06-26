@@ -462,7 +462,7 @@ class Nat
 	{
     	$sql = 'SELECT f.county_id, sex, count(*) as totals ';
 		$sql .= 'FROM ';
-		$sql .= '(SELECT v.id, v.sex v.facility_id, v.rcategory ';
+		$sql .= '(SELECT v.id, v.sex, v.facility_id, v.rcategory ';
 		$sql .= 'FROM viralsamples_view v ';
 		$sql .= 'RIGHT JOIN ';
 		$sql .= '(SELECT ID, patient_id, max(datetested) as maxdate ';
