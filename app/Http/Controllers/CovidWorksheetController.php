@@ -201,6 +201,9 @@ class CovidWorksheetController extends Controller
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
+        $limit = $request->input('limit');
+        $entered_by = $request->input('entered_by');
+
         $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $limit, $entered_by);
 
 
@@ -242,7 +245,7 @@ class CovidWorksheetController extends Controller
         
         $samples = $data['samples'];
         if(!isset($sample_ids)) $sample_ids = $samples->pluck('id')->toArray();
-        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+        CovidSample::whereIn('id', $sample_ids)->whereNull('worksheet_id')->update(['worksheet_id' => $worksheet->id]);
 
         if($worksheet->machine_type == 0) return redirect('/covid_worksheet');
 
@@ -333,12 +336,20 @@ class CovidWorksheetController extends Controller
         $worksheet->load(['sample.patient']);
 
         $data = [];
-        $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        else{
+            $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
+        }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
 
         foreach ($worksheet->sample as $sample) {
-            $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            if(in_array(env('APP_LAB'), [1,25])){
+                $data[] = [$sample->id, '', $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            }
+            else{
+                $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            }
         }
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }

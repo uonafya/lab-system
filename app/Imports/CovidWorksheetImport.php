@@ -132,14 +132,13 @@ class CovidWorksheetImport implements ToCollection
                 $result = [];
 
 
-
                 if(Str::contains($res, ['pos'])){
                     $result['result'] = 2;
                     // $sample->result = 2;
                 }else if(Str::contains($res, ['neg'])){
                     $result['result'] = 1;
                     // $sample->result = 1;
-                }else if(Str::contains($res, ['fai'])){
+                }else if(Str::contains($res, ['fai', 'invalid'])){
                     $result = ['result' => 3, 'repeatt' => 1];
                     // $sample->result = 3;
                     // $sample->repeatt = 1;
@@ -148,6 +147,8 @@ class CovidWorksheetImport implements ToCollection
                     // $sample->result = 5;
                 }else if(Str::contains($res, ['pass', 'valid'])){
                     $result = ['result' => 6];
+                }else if(Str::contains($res, ['inconclusive'])){
+                    $result = ['result' => 9];
                 }
 
                 if(Str::contains($raw_sample_id, ['Control'])){

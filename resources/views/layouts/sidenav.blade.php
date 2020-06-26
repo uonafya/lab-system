@@ -344,6 +344,10 @@
             </li>
             <hr />
             <li>
+                <a href="https://eiddash.nascop.org/download/covid_sop">Covid-19 SOP (User Guide)</a>
+            </li>
+            <hr />
+            <li>
                 <a href="{{ url('covid_sample/create') }}">Add Covid 19 Sample</a>
             </li>
             <hr />
@@ -586,6 +590,10 @@
                     <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
+                    @if(in_array(env('APP_LAB'), [1,25]))
+                    <li><a href="#"><select class="form-control" id="sidebar_covid_kemri_id_search"></select></a></li>
+                    @endif
                     <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')
