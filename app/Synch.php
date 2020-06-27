@@ -1330,7 +1330,7 @@ class Synch
 					'Authorization' => 'Bearer ' . self::get_covid_token(),
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
-	            // 'http_errors' => false,
+	            'http_errors' => false,
 				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),

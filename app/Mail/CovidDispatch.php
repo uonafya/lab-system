@@ -34,6 +34,7 @@ class CovidDispatch extends Mailable
         
         if(!is_dir(storage_path('app/batches/covid'))) mkdir(storage_path('app/batches/covid/'), 0777, true);
 
+        set_time_limit(300);
 
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
