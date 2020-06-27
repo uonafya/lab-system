@@ -1325,7 +1325,7 @@ class Synch
 			$sample->load(['patient.travel', 'child']);
 
 			$token = self::get_covid_token();
-			if(env('APP_LAB') == 23) $token = self::get_token()
+			if(env('APP_LAB') == 23) $token = self::get_token();
 
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
