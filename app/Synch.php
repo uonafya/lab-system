@@ -1280,7 +1280,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		// $client = new Client(['base_uri' => self::$base]);
+		if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1324,10 +1324,14 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
+			$token = self::get_covid_token();
+			if(env('APP_LAB') == 23) $token = self::get_token()
+
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer ' . self::get_covid_token(),
+					'Authorization' => 'Bearer ' . $token,
+					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
 	            'http_errors' => false,
