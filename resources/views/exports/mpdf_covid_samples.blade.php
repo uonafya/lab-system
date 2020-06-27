@@ -299,7 +299,7 @@ p.breakhere {page-break-before: always}
 						</center>					
 					</td>
 				</tr>
-				@elseif(in_array(env('APP_LAB'), [25]))
+				@elseif(in_array(env('APP_LAB'), [23, 25]))
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
