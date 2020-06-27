@@ -39,7 +39,7 @@ class CovidDispatch extends Mailable
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
-        ini_set("pcre.backtrack_limit", "5000000");
+        ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
     }
