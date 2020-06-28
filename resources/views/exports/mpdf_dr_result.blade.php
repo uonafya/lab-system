@@ -11,13 +11,14 @@
 
 		<div class="row" style="text-align: center;">
 			@if(env('APP_LAB') == 7)
-				<img src="https://eiddash.nascop.org/img/NHRL_LOGO.png" alt="NASCOP">
+				<img src="{{ public_path('img/NHRL_LOGO.png') }}" alt="NHRL">
 				<br />
 				<!-- <h5> National Public Health Laborotories </h5>
 				<h5> National HIV Reference Laboratory </h5>
 				<h5> HIV DR Testing Section | Drug Resistance and Molecular Surveillance Team </h5> -->
 			@else
-				<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"> <br />
+				<img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP">
+				<br />
 				<b>
 					MINISTRY OF HEALTH <br />
 					NATIONAL AIDS AND STD CONTROL PROGRAM (NASCOP)<br />
