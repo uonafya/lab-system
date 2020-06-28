@@ -1700,7 +1700,7 @@ class Synch
                     $f->temp_facility_id = $max_temp++;
                     $f->save();
 
-                    \App\Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
+                    Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
                 }
             }
         }
@@ -1708,7 +1708,7 @@ class Synch
         $changes = FacilityChange::where(['implemented' => 0])->get();
 
         foreach ($changes as $f) {
-            \App\Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
+            Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
             $f->implemented = 1;
             $f->save();
         }

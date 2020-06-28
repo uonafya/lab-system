@@ -401,6 +401,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+
+        $data = Lookup::covid_form();
+        $data['samples'] = $samples;
+        return view('exports.mpdf_covid_samples', $data);
+
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
@@ -408,7 +413,6 @@ class CovidSampleController extends Controller
         ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-
     }
 
     /**
