@@ -155,6 +155,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })
             ->when($identifier, function($query) use ($identifier){
@@ -217,18 +218,24 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         extract($request->all());
-        if(!$quarantine_site_id && !in_array(env('APP_LAB'), [3,5,6,25])){
+        /*if(!$quarantine_site_id && !in_array(env('APP_LAB'), [1,3,5,6,23,25])){
             session(['toast_error' => 1, 'toast_message' => 'Kindly select a quarantine site.']);
             return back();
-        }
+        }*/
         $quarantine_site = DB::table('quarantine_sites')->where('id', $quarantine_site_id)->first();
         if($quarantine_site && !$quarantine_site->email && !in_array(env('APP_LAB'), [1, 3, 5, 6])){
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
 
+        $justification = DB::table('covid_justifications')->where('id', $justification_id)->first();
+
 
         $facility = Facility::find($facility_id);
+        if($facility && !$facility->covid_email){
+            session(['toast_error' => 1, 'toast_message' => 'The facility does not have a Covid-19 email address set.']);
+            return back();                        
+        }
         $type = 2;
 
         $date_column = "covid_samples.datedispatched";
@@ -295,6 +302,7 @@ class CovidSampleController extends Controller
         $mail_array = [];
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+        else if($justification && $justification->email) $mail_array = explode(',', $justification->email);
 
         if(in_array(env('APP_LAB'), [6,25])){
             if($subcounty_id){
@@ -309,13 +317,15 @@ class CovidSampleController extends Controller
             }
         }
 
-        if(!$mail_array){
+        if(!$mail_array && $cc_array){
             Mail::to($cc_array)->send(new CovidDispatch($samples));
         }else{             
             if($quarantine_site){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
             }else if($facility){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }else if($justification){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $justification));
             }
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
@@ -360,6 +370,7 @@ class CovidSampleController extends Controller
             })
             // ->where('identifier', 'like', 'tnz%')
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                if($quarantine_site_id == 'null') return $query->whereNull('quarantine_site_id');
                 return $query->where('quarantine_site_id', $quarantine_site_id);
             })            
             // ->whereNull('quarantine_site_id')
@@ -390,6 +401,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+
+        $data = Lookup::covid_form();
+        $data['samples'] = $samples;
+        return view('exports.mpdf_covid_samples', $data);
+
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
@@ -397,7 +413,6 @@ class CovidSampleController extends Controller
         ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-
     }
 
     /**
@@ -531,7 +546,7 @@ class CovidSampleController extends Controller
         $patient->pre_update();
 
         $covidSample->fill($request->only($data['sample']));
-        if(auth()->user()->lab_id == 1) $covidSample->kemri_id = $request->input('kemri_id');
+        if(in_array(auth()->user()->lab_id, [1,25])) $covidSample->kemri_id = $request->input('kemri_id');
         $covidSample->patient_id = $patient->id;
         $covidSample->pre_update();
 
@@ -893,6 +908,10 @@ class CovidSampleController extends Controller
     {
         $ids = $request->input('sample_ids');
         $data = Lookup::covid_form();
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to print.", 'toast_error' => 1]);
+            return back();            
+        }
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
         return view('exports.mpdf_covid_samples', $data);
     }
@@ -926,6 +945,32 @@ class CovidSampleController extends Controller
                 return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
                     ->where('quarantine_site_id', $user->facility_id);
             })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+    
+
+    public function kemri_id(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_samples.user_id='{$user->id}')";
+
+        $samples = CovidSample::selectRaw('covid_samples.id, kemri_id as patient')
+            ->whereRaw("covid_samples.kemri_id like '" . $search . "%'")
+            ->when($user->facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+                    ->where('quarantine_site_id', $user->facility_id);
+            })
+            ->where('repeatt', 0)
             ->paginate(10);
 
         $samples->setPath(url()->current());

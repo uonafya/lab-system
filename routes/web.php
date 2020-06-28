@@ -170,6 +170,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
 			});
 			
+			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
@@ -177,6 +178,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
 			
 			Route::post('search/', 'CovidPatientController@search')->name('search');
+			Route::post('nat_id/', 'CovidPatientController@national_id')->name('national_id');
 
 		});
 		Route::resource('covid_patient', 'CovidPatientController');

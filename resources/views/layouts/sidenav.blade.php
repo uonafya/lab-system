@@ -215,7 +215,7 @@
                     </li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                @if(in_array(env('APP_LAB'), [1,2,3,6,25]))
                     <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
                     <hr />
                     <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
@@ -341,6 +341,10 @@
         @elseif (in_array(Auth::user()->user_type_id, [11, 12, 13]) )
             <li>
                 <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
+            </li>
+            <hr />
+            <li>
+                <a href="https://eiddash.nascop.org/download/covid_sop">Covid-19 SOP (User Guide)</a>
             </li>
             <hr />
             <li>
@@ -586,6 +590,10 @@
                     <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
+                    @if(in_array(env('APP_LAB'), [1,25]))
+                    <li><a href="#"><select class="form-control" id="sidebar_covid_kemri_id_search"></select></a></li>
+                    @endif
                     <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')

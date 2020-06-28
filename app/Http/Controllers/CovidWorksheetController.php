@@ -193,7 +193,7 @@ class CovidWorksheetController extends Controller
     public function store(Request $request)
     {
         $worksheet = new CovidWorksheet;
-        $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'sampletype']));
+        $worksheet->fill($request->except(['_token', 'limit', 'entered_by', 'sampletype', 'samples']));
         $worksheet->createdby = auth()->user()->id;
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
@@ -201,9 +201,21 @@ class CovidWorksheetController extends Controller
         $vars = $request->only(['machine_type', 'sampletype', 'limit', 'entered_by']);
         extract($vars);
 
-        $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $request->input('limit'), $request->input('entered_by'));
+        $limit = $request->input('limit');
+        $entered_by = $request->input('entered_by');
 
-        if($worksheet->combined && !$data['create']){
+        $data = MiscCovid::get_worksheet_samples($worksheet->machine_type, $limit, $entered_by);
+
+
+        if($worksheet->machine_type == 0){
+            $sample_ids = $request->input('samples');
+            if(!$sample_ids){
+                $worksheet->delete();
+                session(['toast_error' => 1, 'toast_message' => 'Please select the samples that you would like to run.']);
+                return back();            
+            }
+        }
+        else if($worksheet->combined && !$data['create']){
             $new_limit = $limit - $data['count'];
             if($worksheet->combined == 1){
                 $new_data = Misc::get_worksheet_samples($machine_type, $new_limit);
@@ -232,8 +244,8 @@ class CovidWorksheetController extends Controller
         }
         
         $samples = $data['samples'];
-        $sample_ids = $samples->pluck('id')->toArray();
-        CovidSample::whereIn('id', $sample_ids)->update(['worksheet_id' => $worksheet->id]);
+        if(!isset($sample_ids)) $sample_ids = $samples->pluck('id')->toArray();
+        CovidSample::whereIn('id', $sample_ids)->whereNull('worksheet_id')->update(['worksheet_id' => $worksheet->id]);
 
         if($worksheet->machine_type == 0) return redirect('/covid_worksheet');
 
@@ -324,12 +336,20 @@ class CovidWorksheetController extends Controller
         $worksheet->load(['sample.patient']);
 
         $data = [];
-        $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        else{
+            $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
+        }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
 
         foreach ($worksheet->sample as $sample) {
-            $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            if(in_array(env('APP_LAB'), [1,25])){
+                $data[] = [$sample->id, '', $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            }
+            else{
+                $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+            }
         }
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }

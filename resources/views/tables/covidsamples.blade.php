@@ -116,6 +116,7 @@
                         <div class="col-sm-9">
                             <select class="form-control select_tag" name="quarantine_site_id" id="quarantine_site_id">
                                 <option></option>
+                                <option value="null"> None </option>
                                 @foreach ($quarantine_sites as $quarantine_site)
                                     <option value="{{ $quarantine_site->id }}"
 
@@ -293,6 +294,9 @@
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
                                     <th rowspan="2">CIF ID</th>
+                                    @if(in_array(env('APP_LAB'), [1,25]))
+                                    <th rowspan="2">Kemri ID</th>
+                                    @endif
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
@@ -323,6 +327,9 @@
                                     <tr>
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->cif_sample_id }} </td>
+                                        @if(in_array(env('APP_LAB'), [1,25]))
+                                        <td> {{ $sample->kemri_id }} </td>
+                                        @endif
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
@@ -346,7 +353,6 @@
                                         @endif
 
                                         <td> {{ $sample->rsurname . ' ' . $sample->roname }} </td>
-
                                         <td> 
                                             @if($sample->receivedstatus == 1)
                                                 Received

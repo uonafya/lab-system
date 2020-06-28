@@ -60,15 +60,20 @@ class Common
 
 
 
-	public static function csv_download($data, $file_name='page-data-export', $first_row=true)
+	public static function csv_download($data, $file_name='page-data-export', $first_row=true, $save_file=false)
 	{
 		if(!$data) return;
-		header('Content-Description: File Transfer');
-		header('Content-Type: application/csv');
-		header("Content-Disposition: attachment; filename={$file_name}.csv");
-		// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-		
-		$fp = fopen('php://output', 'w');
+
+		if($save_file){
+			$fp = fopen(storage_path("exports/{$file_name}.csv"), 'w');
+		}else{
+			header('Content-Description: File Transfer');
+			header('Content-Type: application/csv');
+			header("Content-Disposition: attachment; filename={$file_name}.csv");
+			// header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			
+			$fp = fopen('php://output', 'w');			
+		}
 		// ob_clean();
 
 		if($first_row){
@@ -830,6 +835,8 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
+
+        	\App\CovidPatient::class,
         ];
 
 		if($also_facility){
