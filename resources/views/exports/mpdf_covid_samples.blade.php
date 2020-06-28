@@ -60,10 +60,18 @@ p.breakhere {page-break-before: always}
 			@if(env('APP_LAB') == 23)
 				<tr>
 					<td colspan="3">
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 						
+						@if(isset($print))
+						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif					
 					</td>
 					<td colspan="4" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong> 
+						@if(isset($print))
+						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
+						@else
+						<strong><img src="{{ public_path('img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
+						@endif
 					</td>
 				</tr>
 				<tr>
@@ -79,10 +87,18 @@ p.breakhere {page-break-before: always}
 			@elseif(env('APP_LAB') == 25)
 				<tr>
 					<td colspan="3">
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 						
+						@if(isset($print))
+						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif						
 					</td>
 					<td colspan="4" align="center">
+						@if(isset($print))
 						<strong><img src="https://eiddash.nascop.org/img/amref_logo.jpg" alt="AMREF" width="90" height="48"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/amref_logo.jpg') }}" alt="AMREF" width="90" height="48"></strong> 
+						@endif
 					</td>
 				</tr>
 				<tr>
