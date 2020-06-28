@@ -1280,7 +1280,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		// $client = new Client(['base_uri' => self::$base]);
+		if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1324,13 +1324,19 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
+			if(env('APP_LAB') == 23) $token = self::get_token();
+			else{
+				$token = self::get_covid_token();				
+			}
+
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
-					'Authorization' => 'Bearer ' . self::get_covid_token(),
+					'Authorization' => 'Bearer ' . $token,
+					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
 					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
-	            // 'http_errors' => false,
+	            'http_errors' => false,
 				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
@@ -1368,6 +1374,14 @@ class Synch
 			}
 
 		}
+
+		$sample_ids = CovidSample::select('covid_samples.id')
+					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+					->where('covid_samples.synched', '>', 0)
+					->where('covid_patients.synched', '=', 0)
+					->get()->pluck('id')->flatten()->toArray();
+
+		CovidSample::whereIn('id', $sample_ids)->update(['synched' => 0]);
 	}
 
 
@@ -1694,7 +1708,7 @@ class Synch
                     $f->temp_facility_id = $max_temp++;
                     $f->save();
 
-                    \App\Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
+                    Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
                 }
             }
         }
@@ -1702,7 +1716,7 @@ class Synch
         $changes = FacilityChange::where(['implemented' => 0])->get();
 
         foreach ($changes as $f) {
-            \App\Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
+            Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
             $f->implemented = 1;
             $f->save();
         }

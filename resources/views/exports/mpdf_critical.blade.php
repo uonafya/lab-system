@@ -66,7 +66,7 @@
             <table class="table" border="0" style="border: 0px; width: 100%;">
                 <tr>
                     <td align="center">
-                        <img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP">
+                        <img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP">
                     </td>
                 </tr>
                 <tr>

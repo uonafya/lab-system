@@ -198,6 +198,8 @@ class CovidSampleController extends Controller
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
+                'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
                 'Worksheet Number' => $sample->worksheet_id,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
@@ -227,6 +229,8 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The quarantine site does not have an email address set.']);
             return back();            
         }
+
+        $justification = DB::table('covid_justifications')->where('id', $justification_id)->first();
 
 
         $facility = Facility::find($facility_id);
@@ -300,6 +304,7 @@ class CovidSampleController extends Controller
         $mail_array = [];
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+        else if($justification && $justification->email) $mail_array = explode(',', $justification->email);
 
         if(in_array(env('APP_LAB'), [6,25])){
             if($subcounty_id){
@@ -314,13 +319,15 @@ class CovidSampleController extends Controller
             }
         }
 
-        if(!$mail_array){
+        if(!$mail_array && $cc_array){
             Mail::to($cc_array)->send(new CovidDispatch($samples));
         }else{             
             if($quarantine_site){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
             }else if($facility){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }else if($justification){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $justification));
             }
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
@@ -396,6 +403,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+
+        // $data = Lookup::covid_form();
+        // $data['samples'] = $samples;
+        // return view('exports.mpdf_covid_samples', $data);
+
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
@@ -403,7 +415,6 @@ class CovidSampleController extends Controller
         ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
         $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-
     }
 
     /**
@@ -892,6 +903,7 @@ class CovidSampleController extends Controller
 
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
+        $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
     }
 
@@ -904,6 +916,7 @@ class CovidSampleController extends Controller
             return back();            
         }
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
+        $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
     }
 
