@@ -402,9 +402,9 @@ class CovidSampleController extends Controller
         }
 
 
-        $data = Lookup::covid_form();
-        $data['samples'] = $samples;
-        return view('exports.mpdf_covid_samples', $data);
+        // $data = Lookup::covid_form();
+        // $data['samples'] = $samples;
+        // return view('exports.mpdf_covid_samples', $data);
 
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
@@ -901,6 +901,7 @@ class CovidSampleController extends Controller
 
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
+        $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
     }
 
@@ -913,6 +914,7 @@ class CovidSampleController extends Controller
             return back();            
         }
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
+        $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
     }
 

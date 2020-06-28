@@ -96,7 +96,11 @@ p.breakhere {page-break-before: always}
 			@else
 				<tr>
 					<td colspan="7" align="center">
+						@if(isset($print))
 						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif
 						<span class="style1"><br>
 						  <span class="style7">MINISTRY OF HEALTH <br />
 						  COVID-19 RESULT FORM</span>
