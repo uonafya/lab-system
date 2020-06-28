@@ -70,7 +70,7 @@ p.breakhere {page-break-before: always}
 						@if(isset($print))
 						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
 						@else
-						<strong><img src="{{ public_path('img/ku_result_logo.png }}" alt="KUTRRH" width="90" height="48"></strong>
+						<strong><img src="{{ public_path('img/ku_result_logo.png') }}" alt="KUTRRH" width="90" height="48"></strong>
 						@endif
 					</td>
 				</tr>
