@@ -228,6 +228,8 @@ class CovidSampleController extends Controller
             return back();            
         }
 
+        $justification = DB::table('covid_justifications')->where('id', $justification_id)->first();
+
 
         $facility = Facility::find($facility_id);
         if($facility && !$facility->covid_email){
@@ -300,6 +302,7 @@ class CovidSampleController extends Controller
         $mail_array = [];
         if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
         else if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+        else if($justification && $justification->email) $mail_array = explode(',', $justification->email);
 
         if(in_array(env('APP_LAB'), [6,25])){
             if($subcounty_id){
@@ -314,13 +317,15 @@ class CovidSampleController extends Controller
             }
         }
 
-        if(!$mail_array){
+        if(!$mail_array && $cc_array){
             Mail::to($cc_array)->send(new CovidDispatch($samples));
         }else{             
             if($quarantine_site){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
             }else if($facility){                
                 Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }else if($justification){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $justification));
             }
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
