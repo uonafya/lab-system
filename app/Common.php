@@ -835,6 +835,8 @@ class Common
 
         	\App\Viralbatch::class,
         	\App\Viralpatient::class,
+
+        	\App\CovidPatient::class,
         ];
 
 		if($also_facility){
