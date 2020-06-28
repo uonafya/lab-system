@@ -61,14 +61,14 @@ p.breakhere {page-break-before: always}
 				<tr>
 					<td colspan="3">
 						@if(isset($print))
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
 						@else
 						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
 						@endif					
 					</td>
 					<td colspan="4" align="center">
 						@if(isset($print))
-						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
+						<strong><img src="{{ asset('img/ku_result_logo.png') }}" alt="KUTRRH" width="90" height="48"></strong>
 						@else
 						<strong><img src="{{ public_path('img/ku_result_logo.png') }}" alt="KUTRRH" width="90" height="48"></strong>
 						@endif
@@ -88,14 +88,14 @@ p.breakhere {page-break-before: always}
 				<tr>
 					<td colspan="3">
 						@if(isset($print))
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
 						@else
 						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
 						@endif						
 					</td>
 					<td colspan="4" align="center">
 						@if(isset($print))
-						<strong><img src="https://eiddash.nascop.org/img/amref_logo.jpg" alt="AMREF" width="90" height="48"></strong> 
+						<strong><img src="{{ asset('img/amref_logo.jpg') }}" alt="AMREF" width="90" height="48"></strong> 
 						@else
 						<strong><img src="{{ public_path('img/amref_logo.jpg') }}" alt="AMREF" width="90" height="48"></strong> 
 						@endif

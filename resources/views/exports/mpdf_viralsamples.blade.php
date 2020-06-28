@@ -63,7 +63,11 @@ p.breakhere {page-break-before: always}
 			<tr>
 				<td colspan="8" align="center">
 					<span class="style6 style1">
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+					@if(isset($to_pdf))
+					<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+					@else
+					<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+					@endif
 					</span>
 					<span class="style1"><br />
 					<span class="style7">MINISTRY OF HEALTH <br />

@@ -51,6 +51,7 @@ class EidDispatch extends Mailable
 
         $mpdf = new Mpdf();
         $data = Lookup::get_lookups();
+        $data['to_pdf'] = true;
         $samples->load(['patient.mother', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_samples', $data)->render();
