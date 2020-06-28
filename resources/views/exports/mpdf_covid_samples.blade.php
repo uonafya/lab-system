@@ -70,7 +70,7 @@ p.breakhere {page-break-before: always}
 						@if(isset($print))
 						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
 						@else
-						<strong><img src="{{ public_path('img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong>
+						<strong><img src="{{ public_path('img/ku_result_logo.png }}" alt="KUTRRH" width="90" height="48"></strong>
 						@endif
 					</td>
 				</tr>
@@ -113,7 +113,6 @@ p.breakhere {page-break-before: always}
 				<tr>
 					<td colspan="7" align="center">
 						@if(isset($print))
-						<!-- <strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong>  -->
 						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
 						@else
 						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
