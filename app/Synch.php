@@ -1374,6 +1374,14 @@ class Synch
 			}
 
 		}
+
+		$sample_ids = CovidSample::select('covid_samples.id')
+					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+					->where('covid_samples.synched', '>', 0)
+					->where('covid_patients.synched', '=', 0)
+					->get()->pluck('id')->flatten()->toArray();
+
+		CovidSample::whereIn('id', $sample_ids)->update(['synched' => 0]);
 	}
 
 
