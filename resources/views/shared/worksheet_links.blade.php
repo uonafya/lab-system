@@ -1,34 +1,51 @@
 @if($worksheet->status_id == 1)
 
-	<a href="{{ url($worksheet->route_name . '/' . $worksheet->id) }}" title="Click to View Worksheet Details">
-		Details
-	</a> | 
-	<a href="{{ url($worksheet->route_name . '/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
-		Print
-	</a> | 
+
+	@if(!$worksheet->machine_type)
+		<a href="{{ url($worksheet->route_name . '/result_file/' . $worksheet->id) }}" title="Click to Download Worksheet Result File">
+			Results File
+		</a> | 
+	@else
+		<a href="{{ url($worksheet->route_name . '/' . $worksheet->id) }}" title="Click to View Worksheet Details">
+			Details
+		</a> | 
+		<a href="{{ url($worksheet->route_name . '/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
+			Print
+		</a> | 
+	@endif
 	
-	@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
-		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" target='_blank'>
-			Convert to Roche/Taqman
+	@if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type != 0)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/0') }}" title="Convert Worksheet" >
+			Convert to Manual
 		</a> |
 	@endif
 
-	@if($worksheet->machine_type != 2)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet" target='_blank'>
-		Convert to Abbott
-	</a> |
-	@endif
-
-	@if($worksheet->machine_type != 3)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" target='_blank'>
-		Convert to C8800
-	</a> |
-	@endif
+	@if(env('APP_LAB') != 25)
 	
-	@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
-	<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet" target='_blank'>
-		Convert to Panther
-	</a> |
+		@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
+			<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
+				Convert to Roche/Taqman
+			</a> |
+		@endif
+
+		@if($worksheet->machine_type != 2)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet">
+			Convert to Abbott
+		</a> |
+		@endif
+
+		@if($worksheet->machine_type != 3)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/3') }}" title="Convert Worksheet" >
+			Convert to C8800
+		</a> |
+		@endif
+		
+		@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet">
+			Convert to Panther
+		</a> |
+		@endif
+
 	@endif
 
 

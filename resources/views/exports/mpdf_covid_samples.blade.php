@@ -60,10 +60,18 @@ p.breakhere {page-break-before: always}
 			@if(env('APP_LAB') == 23)
 				<tr>
 					<td colspan="3">
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 						
+						@if(isset($print))
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif					
 					</td>
 					<td colspan="4" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/ku_result_logo.png" alt="KUTRRH" width="90" height="48"></strong> 
+						@if(isset($print))
+						<strong><img src="{{ asset('img/ku_result_logo.png') }}" alt="KUTRRH" width="90" height="48"></strong>
+						@else
+						<strong><img src="{{ public_path('img/ku_result_logo.png') }}" alt="KUTRRH" width="90" height="48"></strong>
+						@endif
 					</td>
 				</tr>
 				<tr>
@@ -75,10 +83,40 @@ p.breakhere {page-break-before: always}
 						</span>
 					</td>					
 				</tr>
+
+			@elseif(env('APP_LAB') == 25)
+				<tr>
+					<td colspan="3">
+						@if(isset($print))
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif						
+					</td>
+					<td colspan="4" align="center">
+						@if(isset($print))
+						<strong><img src="{{ asset('img/amref_logo.jpg') }}" alt="AMREF" width="90" height="48"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/amref_logo.jpg') }}" alt="AMREF" width="90" height="48"></strong> 
+						@endif
+					</td>
+				</tr>
+				<tr>
+					<td colspan="7" align="center">
+						<span class="style1 style7"><br>
+						  <span class="style7">AMREF <br />
+						  COVID-19 RESULT FORM</span>
+						</span>
+					</td>					
+				</tr>
 			@else
 				<tr>
 					<td colspan="7" align="center">
-						<strong><img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP"></strong> 
+						@if(isset($print))
+						<strong><img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@else
+						<strong><img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP"></strong> 
+						@endif
 						<span class="style1"><br>
 						  <span class="style7">MINISTRY OF HEALTH <br />
 						  COVID-19 RESULT FORM</span>
@@ -137,6 +175,21 @@ p.breakhere {page-break-before: always}
 					</span>
 				</td>
 			</tr>
+
+			@if(env('APP_LAB') == 25)
+
+				<tr>
+					<td colspan="2" class="style4 style1 comment"><strong>  </strong></td>
+					<td colspan="2"> <span class="style5"> </span></td>
+					<td class="style4 style1 comment" colspan="2"><strong> Kemri ID </strong></td>
+					<td colspan="1" class="comment">
+						<span class="style5">
+							{{ $sample->kemri_id }}	
+						</span>
+					</td>
+				</tr>
+
+			@endif
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>National ID </strong></td>
@@ -266,7 +319,7 @@ p.breakhere {page-break-before: always}
 						</center>					
 					</td>
 				</tr>
-				@elseif(env('APP_LAB') == 23)
+				@elseif(in_array(env('APP_LAB'), [23, 25]))
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -283,9 +336,9 @@ p.breakhere {page-break-before: always}
 						<center>
 							<strong>Result Reviewed By: </strong>
 							&nbsp;&nbsp;
-							<strong> {{ $sample->approver->full_name ?? '' }} </strong> 
+							<strong> {{ $sample->final_approver->full_name ?? $sample->approver->full_name ?? '' }} </strong> 
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<img src="{{ $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
+							<img src="{{ $sample->final_approver->user_signature ?? $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
 				</tr>				
@@ -337,10 +390,10 @@ p.breakhere {page-break-before: always}
 				</tr>
 			@endif
 		
-			@if(!auth()->user()->user_type_id && $sample->result == 1)
+			@if($sample->national_sample_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-		                <b> Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+		                <b> Attestation Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
 		                {!! QrCode::size(100)->generate($sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">

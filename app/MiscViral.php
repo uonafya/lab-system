@@ -1056,5 +1056,59 @@ class MiscViral extends Common
             
         }
     }
+
+
+    public static function machakos_edarp()
+    {
+        ini_set('memory_limit', "-1");
+        $prophylaxis = \DB::table('viralregimen')->get();
+        $justifications = \DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
+
+        $min_date = date('Y-m-d', strtotime('2 weeks'));
+        $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->select('viralsamples_view.*')
+                ->where(['repeatt' => 0, 'county_id' => 17])
+                ->where('created_at', '>', $min_date)
+                ->whereNull('receivedstatus')
+                ->get();
+
+        $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
+        foreach ($samples as $sample) {
+
+            $post_data = [
+                    'lab' => "10",
+                    'specimenlabelID' => '',
+                    'patient_identifier' => $sample->patient,
+                    'dob' => $sample->dob,
+                    'mflCode' => $sample->facilitycode,
+                    'sex' => substr($sample->gender, 0, 1),
+                    'pmtct' => $sample->pmtct,
+                    'sampletype' => $sample->sampletype,
+                    'datecollected' => $sample->datecollected,
+                    'artinitiationdate' => $sample->initiation_date,
+                    'prophylaxis' => $sample->get_prop_name($prophylaxis, 'prophylaxis', 'code'),
+                    'regimenline' => 1,
+                    'justification' => $sample->get_prop_name($justifications, 'justification', 'rank'),
+                    'receivedstatus' => '',
+                    'datedispatched' => null,
+                ];
+
+            $response = $client->request('post', '', [
+                // 'debug' => true,
+                'http_errors' => false,
+                'verify' => false,
+                'json' => $post_data,
+            ]);
+            $body = json_decode($response->getBody());
+            // return $body;
+            // print_r($body);
+            if($response->getStatusCode() > 399){
+                die();
+                print_r($post_data);
+                print_r($body);
+                return null;
+            }
+        }
+    }
     
 }

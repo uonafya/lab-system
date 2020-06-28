@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use \App\MiscCovid;
 use \App\CovidSample;
+use Str;
 
 class CovidWorksheetImport implements ToCollection
 {
@@ -54,7 +55,7 @@ class CovidWorksheetImport implements ToCollection
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
-                    if(\Str::contains($control, ['+'])){
+                    if(Str::contains($control, ['+'])){
                         $positive_control = $result_array;                       
                     }else{
                         $negative_control = $result_array; 
@@ -95,8 +96,8 @@ class CovidWorksheetImport implements ToCollection
                     if(!is_numeric($sample_id)){
                         $s = strtolower($sample_id);
 
-                        if(\Str::contains($s, 'neg')) $negative_control = $data_array;
-                        else if(\Str::contains($s, 'pos')) $positive_control = $data_array;
+                        if(Str::contains($s, 'neg')) $negative_control = $data_array;
+                        else if(Str::contains($s, 'pos')) $positive_control = $data_array;
 
                     }
 
@@ -121,27 +122,48 @@ class CovidWorksheetImport implements ToCollection
         // Manual
         else if($worksheet->machine_type == 0){
             foreach ($collection as $key => $value) {
-                $sample_id = $value[0];
+                $raw_sample_id = $value[0];
 
-                $sample_id = (int) $sample_id;
+                $sample_id = (int) $raw_sample_id;
                 $sample = CovidSample::find($sample_id);
-                if(!$sample) continue;
+                if(!$sample && !Str::contains($raw_sample_id, ['Control'])) continue;
 
-                $res = $value[1];
-                $sample->repeatt=0;
+                $res = strtolower($value[1]);
+                $result = [];
 
-                if(\Str::contains($res, ['Pos', 'pos'])){
-                    $sample->result = 2;
-                }else if(\Str::contains($res, ['Neg', 'neg'])){
-                    $sample->result = 1;
-                }else if(\Str::contains($res, ['Fai', 'fai'])){
-                    $sample->result = 3;
-                    $sample->repeatt = 1;
-                }else if(\Str::contains($res, ['Coll', 'coll'])){
-                    $sample->result = 5;
+
+                if(Str::contains($res, ['pos'])){
+                    $result['result'] = 2;
+                    // $sample->result = 2;
+                }else if(Str::contains($res, ['neg'])){
+                    $result['result'] = 1;
+                    // $sample->result = 1;
+                }else if(Str::contains($res, ['fai', 'invalid'])){
+                    $result = ['result' => 3, 'repeatt' => 1];
+                    // $sample->result = 3;
+                    // $sample->repeatt = 1;
+                }else if(Str::contains($res, ['coll'])){
+                    $result = ['result' => 5];
+                    // $sample->result = 5;
+                }else if(Str::contains($res, ['pass', 'valid'])){
+                    $result = ['result' => 6];
+                }else if(Str::contains($res, ['inconclusive'])){
+                    $result = ['result' => 9];
                 }
 
+                if(Str::contains($raw_sample_id, ['Control'])){
+                    if(Str::contains($raw_sample_id, ['Positive'])){
+                        $positive_control = $result;
+                    }
+                    else if(Str::contains($raw_sample_id, ['Negative'])){
+                        $negative_control = $result;
+                    }
+                    continue;
+                }
+
+                $sample->repeatt=0;
                 $sample->datetested = $today;
+                if($result) $sample->fill($result);
 
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;

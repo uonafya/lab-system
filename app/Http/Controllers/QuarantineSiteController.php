@@ -9,7 +9,7 @@ class QuarantineSiteController extends Controller
 {
 
     public function __construct(){
-        if(!in_array(env('APP_LAB'), [1,2,3,6])) abort(403);
+        if(!in_array(env('APP_LAB'), [1,2,3,6,25])) abort(403);
     }
 
     /**

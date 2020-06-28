@@ -170,6 +170,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
 			});
 			
+			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
@@ -177,17 +178,19 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
 			
 			Route::post('search/', 'CovidPatientController@search')->name('search');
+			Route::post('nat_id/', 'CovidPatientController@national_id')->name('national_id');
 
 		});
 		Route::resource('covid_patient', 'CovidPatientController');
 
-		Route::group(['middleware' => ['only_utype:1,4,13']], function () {
+		Route::group(['middleware' => ['only_utype:1,4,12,13']], function () {
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 				Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
 
 				Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidWorksheetController@index')->name('list');
 				Route::get('create/{machine_type}/{limit}', 'CovidWorksheetController@create')->name('create_any');
+				Route::get('result_file/{worksheet}', 'CovidWorksheetController@result_file')->name('result_file');
 				Route::get('find/{worksheet}', 'CovidWorksheetController@find')->name('find');
 				Route::get('print/{worksheet}', 'CovidWorksheetController@print')->name('print');
 				Route::get('labels/{worksheet}', 'CovidWorksheetController@labels')->name('labels');
