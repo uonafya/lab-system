@@ -736,7 +736,7 @@ class WorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
             return back();
         }
-        $worksheet->status_id = 5;
+        $worksheet->status_id = 7;
         $worksheet->save();
 
         $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
