@@ -69,7 +69,10 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            // ->when(!$user->facility_user, function($query) use ($user){
+            //     return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            // })
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
@@ -92,8 +95,9 @@ class CovidSampleController extends Controller
         $justifications = DB::table('covid_justifications')->get();
         $counties = DB::table('countys')->get();
         $subcounties = DB::table('districts')->get();
+        $labs = DB::table('labs')->get();
         $results = DB::table('results')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties', 'subcounties', 'results');
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties', 'subcounties', 'results', 'labs');
         if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
     }
@@ -176,8 +180,11 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_sample_view.lab_id', $lab_id);
             })
             // where(['receivedstatus' => 1])
             // ->whereNull('result')
@@ -277,14 +284,17 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when(!$user->facility_user, function($query) use ($user){
-                return $query->where('covid_samples.lab_id', $user->lab_id);
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_sample_view.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
@@ -385,14 +395,17 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when(!$user->facility_user, function($query) use ($user){
-                return $query->where('covid_samples.lab_id', $user->lab_id);
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
+                return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_sample_view.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')

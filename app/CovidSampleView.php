@@ -33,6 +33,11 @@ class CovidSampleView extends BaseModel
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab', 'lab_id');
+    }
     
     /**
      * Get the sample's result name
