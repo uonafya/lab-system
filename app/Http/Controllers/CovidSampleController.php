@@ -206,6 +206,8 @@ class CovidSampleController extends Controller
                 'National ID' => $sample->national_id,
                 'Patient Name' => $sample->patient_name,
                 'Phone Number' => $sample->phone_no,
+                'County' => $sample->countyname ?? $sample->county,
+                'Subcounty' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
