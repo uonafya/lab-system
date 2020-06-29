@@ -467,6 +467,12 @@ class CovidSampleController extends Controller
         $patient->current_health_status = $request->input('health_status');
         $patient->save();
 
+        $sample = CovidSample::where(['patient_id' => $patient->id])->where($request->only('datecollected'))->first();
+        if($sample){
+            session(['toast_error' => 1, 'toast_message' => 'The sample already exists.']);
+            return back();
+        }
+
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
         $sample->patient_id = $patient->id;
