@@ -220,7 +220,13 @@
                             <select class="form-control select_tag" name="lab_id" id="lab_id">
                                 <option></option>
                                 @foreach ($labs as $lab)
-                                    <option value="{{ $lab->id }}"> {{ $lab->name }} </option>
+                                    <option value="{{ $lab->id }}"
+
+                                    @if (isset($lab_id) && $lab_id == $lab->id)
+                                        selected
+                                    @endif
+
+                                    > {{ $lab->name }} </option>
                                 @endforeach
                             </select>
                         </div>                        
