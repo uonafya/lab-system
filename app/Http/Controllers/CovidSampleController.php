@@ -206,6 +206,8 @@ class CovidSampleController extends Controller
                 'National ID' => $sample->national_id,
                 'Patient Name' => $sample->patient_name,
                 'Phone Number' => $sample->phone_no,
+                'County' => $sample->countyname ?? $sample->county,
+                'Subcounty' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
@@ -464,6 +466,12 @@ class CovidSampleController extends Controller
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
         $patient->save();
+
+        $sample = CovidSample::where(['patient_id' => $patient->id])->where($request->only('datecollected'))->first();
+        if($sample){
+            session(['toast_error' => 1, 'toast_message' => 'The sample already exists.']);
+            return back();
+        }
 
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
