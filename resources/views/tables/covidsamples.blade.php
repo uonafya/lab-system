@@ -138,8 +138,7 @@
                             <select class="form-control select_tag" name="county_id" id="county_id">
                                 <option></option>
                                 @foreach ($counties as $county)
-                                    <option value="{{ $county->id }}"> {{ $county->name }}
-                                    </option>
+                                    <option value="{{ $county->id }}"> {{ $county->name }} </option>
                                 @endforeach
                             </select>
                         </div>                        
@@ -158,8 +157,7 @@
                             <select class="form-control select_tag" name="subcounty_id">
                                 <option></option>
                                 @foreach ($subcounties as $subcounty)
-                                    <option value="{{ $subcounty->id }}"> {{ $subcounty->name }}
-                                    </option>
+                                    <option value="{{ $subcounty->id }}"> {{ $subcounty->name }} </option>
                                 @endforeach
                             </select>
                         </div>                        
@@ -173,8 +171,7 @@
                             <select class="form-control select_tag" name="result">
                                 <option></option>
                                 @foreach ($results as $result)
-                                    <option value="{{ $result->id }}"> {{ $result->name }}
-                                    </option>
+                                    <option value="{{ $result->id }}"> {{ $result->name }} </option>
                                 @endforeach
                             </select>
                         </div>                        
@@ -195,25 +192,37 @@
             <br />
 
             <div class="row">
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Select Justification</label>
                         <div class="col-sm-9">
                             <select class="form-control select_tag" name="justification_id" id="justification_id">
                                 <option></option>
                                 @foreach ($justifications as $justification)
-                                    <option value="{{ $justification->id }}"> {{ $justification->name }}
-                                    </option>
+                                    <option value="{{ $justification->id }}"> {{ $justification->name }} </option>
                                 @endforeach
                             </select>
                         </div>                        
                     </div> 
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-4"> 
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Set Start of Identifier</label>
                         <div class="col-sm-8">
                             <input class="form-control" type="text" name="identifier">
+                        </div>                        
+                    </div> 
+                </div>
+                <div class="col-md-4"> 
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Lab</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select_tag" name="lab_id" id="lab_id">
+                                <option></option>
+                                @foreach ($labs as $lab)
+                                    <option value="{{ $lab->id }}"> {{ $lab->name }} </option>
+                                @endforeach
+                            </select>
                         </div>                        
                     </div> 
                 </div>
@@ -293,7 +302,10 @@
                             <thead>
                                 <tr class="colhead">
                                     <th rowspan="2">Lab ID</th>
-                                    <th rowspan="2">CIF ID</th>
+                                    @if(in_array(env('APP_LAB'), [1]))
+                                    <th rowspan="2">Lab</th>
+                                    @endif
+                                    <!-- <th rowspan="2">CIF ID</th> -->
                                     @if(in_array(env('APP_LAB'), [1,25]))
                                     <th rowspan="2">Kemri ID</th>
                                     @endif
@@ -326,7 +338,10 @@
                                     @continue($sample->repeatt == 1 && in_array(auth()->user()->user_type_id, [5, 11]))
                                     <tr>
                                         <td> {{ $sample->id }} </td>
-                                        <td> {{ $sample->cif_sample_id }} </td>
+                                        @if(in_array(env('APP_LAB'), [1]))
+                                        <td> {{ $sample->lab->name }} </td>
+                                        @endif
+                                        <!-- <td> {{ $sample->cif_sample_id }} </td> -->
                                         @if(in_array(env('APP_LAB'), [1,25]))
                                         <td> {{ $sample->kemri_id }} </td>
                                         @endif
