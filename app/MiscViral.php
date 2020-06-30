@@ -1103,9 +1103,9 @@ class MiscViral extends Common
             // return $body;
             // print_r($body);
             if($response->getStatusCode() > 399){
-                die();
+                // die();
                 print_r($post_data);
-                print_r($body);
+                // print_r($body);
                 return null;
             }
         }
