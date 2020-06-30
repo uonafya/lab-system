@@ -1064,7 +1064,7 @@ class MiscViral extends Common
         $prophylaxis = \DB::table('viralregimen')->get();
         $justifications = \DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
 
-        $min_date = date('Y-m-d', strtotime('-2 weeks'));
+        $min_date = date('Y-m-d', strtotime('-3 weeks'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])
@@ -1078,6 +1078,7 @@ class MiscViral extends Common
             $post_data = [
                     'lab' => "10",
                     'specimenlabelID' => '',
+                    'batchno' => $sample->batch_id,
                     'patient_identifier' => $sample->patient,
                     'dob' => $sample->dob,
                     'mflCode' => $sample->facilitycode,
