@@ -186,7 +186,7 @@ class VlController extends BaseController
         $patient->facility_id = $facility;
         $patient->pre_update();
 
-        if($editted){
+        if($editted && $sample_exists){
             $sample = Viralsample::find($sample_exists->id);
 
             $batch = $sample->batch;
@@ -194,6 +194,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->lab_id = $lab;
             $batch->edarp();            
         }
         else{
