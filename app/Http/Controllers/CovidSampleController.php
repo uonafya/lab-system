@@ -10,7 +10,7 @@ use App\City;
 use App\Facility;
 use App\Lookup;
 use App\MiscCovid;
-use Excel;
+// use Excel;
 use Mpdf\Mpdf;
 use DB;
 use App\Mail\CovidDispatch;
