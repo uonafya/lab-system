@@ -201,6 +201,10 @@
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
+                @if(auth()->user()->lab_id == 18 || (env('APP_LAB') == 1 && !auth()->user()->user_type_id))
+                    <li><a href="{{ url('covid_sample/wrp/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />                
+                @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
                 <hr />
                 <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>
