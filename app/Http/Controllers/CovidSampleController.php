@@ -16,6 +16,8 @@ use DB;
 use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CovidRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\KemriWRPImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -699,6 +701,19 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
     }
 
+    public function upload_wrp_samples(Request $request)
+    {
+        if(auth()->user()->user_type_id && !auth()->user()->other_lab) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new KemriWRPImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+
     /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
@@ -712,21 +727,21 @@ class CovidSampleController extends Controller
             if($data[0] == 'case_id') continue;
 
             $column = 'quarantine_site_id';
-            if($data[5] > 100) $column = 'facility_id';
+            if($data[15] > 100) $column = 'facility_id';
 
-            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[5]])->first();
+            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[15]])->first();
 
             if(!$p) $p = new CovidPatient;
 
             $p->fill([
                 'identifier' => $data[4],
-                $column => $data[5],
-                'patient_name' => $data[6],
-                'sex' => $data[8],
-                'national_id' => $data[9],
-                'phone_no' => $data[10],
-                'county' => $data[11],
-                'subcounty' => $data[12],                
+                $column => $data[15],
+                'patient_name' => $data[5],
+                'sex' => $data[7],
+                'national_id' => $data[8],
+                'phone_no' => $data[9],
+                'county' => $data[10],
+                'subcounty' => $data[11],                
             ]);
             $p->save();
 
