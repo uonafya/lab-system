@@ -605,8 +605,12 @@ class CovidSampleController extends Controller
      */
     public function destroy(CovidSample $covidSample)
     {
-        if($covidSample->worksheet_id || $covidSample->receivedstatus == 2){
-            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be deleted.']);
+        if($covidSample->worksheet_id){
+            session(['toast_error' => 1, 'toast_message' => 'Samples in a worksheet cannot be deleted.']);
+            return back();
+        }
+        if($covidSample->receivedstatus == 2){
+            session(['toast_error' => 1, 'toast_message' => 'Rejected samples cannot be deleted.']);
             return back();
         }
         // $covidSample->travel()->delete();
