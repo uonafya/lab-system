@@ -7,6 +7,8 @@ use DB;
 class CovidSampleView extends BaseModel
 {
 	protected $table = "covid_sample_view";
+    
+    protected $dates = ['datecollected', 'datereceived', 'datetested', 'datedispatched', 'dateapproved', 'dateapproved2'];
 
     protected $casts = [
         'symptoms' => 'array',
