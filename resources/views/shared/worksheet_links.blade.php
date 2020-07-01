@@ -99,6 +99,9 @@
 		Update Results (In Case of Accidental Cancellation)
 	</a> | 
 	{!! $worksheet->delete_form !!}
-
+@elseif($worksheet->status_id == 7)
+	<a href="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}" title="Click to View Samples Results" target='_blank'>	
+		View Results
+	</a>
 @else
 @endif
