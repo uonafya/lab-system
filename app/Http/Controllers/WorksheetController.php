@@ -329,7 +329,7 @@ class WorksheetController extends Controller
 
     public function reverse_upload(Worksheet $worksheet)
     {
-        if(!in_array($worksheet->status_id, [3,7] || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
+        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
             session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
             return back();
         }
