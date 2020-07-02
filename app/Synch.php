@@ -1387,6 +1387,10 @@ class Synch
 
 	public static function get_covid_samples()
 	{
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			return $samples;
+		}
 		$client = new Client(['base_uri' => self::$cov_base]);
 		// $client = new Client(['base_uri' => self::$base]);
 
@@ -1405,6 +1409,11 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			\App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->update(['lab_id' => auth()->user()->lab_id]);
+			return;
+			// return $samples;
+		}
 		$client = new Client(['base_uri' => self::$cov_base]);
 		// $client = new Client(['base_uri' => self::$base]);
 
