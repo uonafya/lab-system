@@ -1396,6 +1396,7 @@ class Synch
 				'Authorization' => 'Bearer ' . self::get_covid_token(),
 				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
+			'verify' => false,
 		]);
 
 		$body = json_decode($response->getBody());
@@ -1413,10 +1414,11 @@ class Synch
 				'Authorization' => 'Bearer ' . self::get_covid_token(),
 				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
-				'json' => [
-					'samples' => $samples,
-					'lab_id' => auth()->user()->lab_id,
-				],
+			'verify' => false,
+			'json' => [
+				'samples' => $samples,
+				'lab_id' => auth()->user()->lab_id,
+			],
 		]);
 
 		$body = json_decode($response->getBody());
