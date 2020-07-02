@@ -1393,8 +1393,8 @@ class Synch
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
 		]);
 
@@ -1410,8 +1410,8 @@ class Synch
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
 				'json' => [
 					'samples' => $samples,
