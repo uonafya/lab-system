@@ -41,8 +41,8 @@
                                         <tr>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
-                                            <td> {{ $sample->age ?? '' }} </td>
                                             <td> {{ $sample->patient->dob ?? '' }} </td>
+                                            <td> {{ $sample->age ?? '' }} </td>
                                             <td> {{ $sample->datecollected ?? '' }} </td>
                                             <td> 
                                                 <div align="center">
