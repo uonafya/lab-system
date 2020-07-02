@@ -30,6 +30,7 @@
                                         <th> CIF ID </th>
                                         <th> Identifier </th>
                                         <th> DOB </th>
+                                        <th> Age </th>
                                         <th> Date Collected </th>
                                         <th> Select Sample </th>
                                     </tr>
@@ -40,6 +41,7 @@
                                         <tr>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
+                                            <td> {{ $sample->age ?? '' }} </td>
                                             <td> {{ $sample->patient->dob ?? '' }} </td>
                                             <td> {{ $sample->datecollected ?? '' }} </td>
                                             <td> 
