@@ -121,7 +121,7 @@ width:1180px;
 							echo "[3 Controls]";
 							$vl = true;
 						}
-						else if($worksheet->route_name == 'covid_worksheet' && $machine_type == 2 && env('APP_LAB') == 2){
+						else if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type == 2 && env('APP_LAB') == 2){
 							echo "[4 Controls]";
 							$vl = false;		
 							$four_controls = true;						
