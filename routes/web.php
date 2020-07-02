@@ -154,7 +154,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
 			
-			Route::group(['middleware' => ['utype:4']], function () {
+			Route::group(['middleware' => ['only_utype:1,4,12']], function () {
 				
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');

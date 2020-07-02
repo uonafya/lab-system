@@ -158,7 +158,7 @@ width:1180px;
 						}
 					}
 					else if(isset($four_controls)){
-						echo "<td align='center' > PC </td><td  align='center' > NC </td><td  align='center' > PC 2 </td><td  align='center' > NC 2 </td>";
+						echo "<td align='center' > PC </td><td  align='center' > NC </td><td  align='center' > in house PC </td><td  align='center' > in house NC  </td>";
 						$count += 4; 						
 					}
 					else{
