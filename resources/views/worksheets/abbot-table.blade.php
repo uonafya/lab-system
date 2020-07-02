@@ -116,11 +116,15 @@ width:1180px;
 			<tr >
 				<th colspan="8" ><small> <strong> WORKSHEET SAMPLES
 					@php
-						$class = get_class($worksheet);
 
-						if($class == "App\Viralworksheet"){
+						if($worksheet->route_name == 'viralworksheet'){
 							echo "[3 Controls]";
 							$vl = true;
+						}
+						else if($worksheet->route_name == 'covid_worksheet' && $machine_type == 2 && env('APP_LAB') == 2){
+							echo "[4 Controls]";
+							$vl = false;		
+							$four_controls = true;						
 						}
 						else{
 							echo "[2 Controls]";
@@ -152,6 +156,10 @@ width:1180px;
 								<td align='center' > Cal B </td>							 
 							  ";
 						}
+					}
+					else if(isset($four_controls)){
+						echo "<td align='center' > PC </td><td  align='center' > NC </td><td  align='center' > PC 2 </td><td  align='center' > NC 2 </td>";
+						$count += 4; 						
 					}
 					else{
 						echo "<td align='center' > PC </td><td  align='center' > NC </td>";

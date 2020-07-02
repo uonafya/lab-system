@@ -143,6 +143,7 @@ class CovidWorksheetController extends Controller
         // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
         $limit = $soft_limit ?? $limit;
+        if($limit == 94 && $machine_type == 2 && env('APP_LAB') == 2) $limit = 92;
 
         return $this->create($machine_type, $limit, $combined, $entered_by, $sampletype);
     }
