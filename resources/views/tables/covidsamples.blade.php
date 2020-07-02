@@ -311,7 +311,7 @@
                                     @if(in_array(env('APP_LAB'), [1]))
                                     <th rowspan="2">Lab</th>
                                     @endif
-                                    <!-- <th rowspan="2">CIF ID</th> -->
+                                    <th rowspan="2">CIF ID</th>
                                     @if(in_array(env('APP_LAB'), [1,25]))
                                     <th rowspan="2">Kemri ID</th>
                                     @endif
@@ -347,7 +347,7 @@
                                         @if(in_array(env('APP_LAB'), [1]))
                                         <td> {{ $sample->lab->name }} </td>
                                         @endif
-                                        <!-- <td> {{ $sample->cif_sample_id }} </td> -->
+                                        <td> {{ $sample->cif_sample_id }} </td>
                                         @if(in_array(env('APP_LAB'), [1,25]))
                                         <td> {{ $sample->kemri_id }} </td>
                                         @endif
