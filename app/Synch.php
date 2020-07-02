@@ -1387,8 +1387,8 @@ class Synch
 
 	public static function get_covid_samples()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
@@ -1404,8 +1404,8 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
