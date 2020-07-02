@@ -417,6 +417,7 @@ class CovidSampleController extends Controller
             ->when($lab_id, function($query) use ($lab_id){
                 return $query->where('covid_sample_view.lab_id', $lab_id);
             })
+            ->whereRaw("(covid_sample_view.id IN (22478, 22555, 22450, 22470) OR covid_sample_view.id BETWEEN 22408 AND 22420 OR covid_sample_view.id BETWEEN 22422 AND 22430 OR covid_sample_view.id BETWEEN 22432 AND 22444 OR covid_sample_view.id BETWEEN 22452 AND 22464 OR covid_sample_view.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
             ->get();
