@@ -295,16 +295,16 @@ class CovidSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+                return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->when($lab_id, function($query) use ($lab_id){
-                return $query->where('covid_sample_view.lab_id', $lab_id);
+                return $query->where('covid_samples.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
@@ -406,18 +406,18 @@ class CovidSampleController extends Controller
                 return $query->whereDate($date_column, $date_start);
             })
             ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
+                return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->when($lab_id, function($query) use ($lab_id){
-                return $query->where('covid_sample_view.lab_id', $lab_id);
+                return $query->where('covid_samples.lab_id', $lab_id);
             })
-            ->whereRaw("(covid_sample_view.id IN (22478, 22555, 22450, 22470) OR covid_sample_view.id BETWEEN 22408 AND 22420 OR covid_sample_view.id BETWEEN 22422 AND 22430 OR covid_sample_view.id BETWEEN 22432 AND 22444 OR covid_sample_view.id BETWEEN 22452 AND 22464 OR covid_sample_view.id BETWEEN 22472 AND 22475 )")
+            ->whereRaw("(covid_samples.id IN (22478, 22555, 22450, 22470) OR covid_samples.id BETWEEN 22408 AND 22420 OR covid_samples.id BETWEEN 22422 AND 22430 OR covid_samples.id BETWEEN 22432 AND 22444 OR covid_samples.id BETWEEN 22452 AND 22464 OR covid_samples.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
             ->orderBy($date_column, 'desc')
             ->get();
