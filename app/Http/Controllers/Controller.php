@@ -42,29 +42,26 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        return true;
-        if(in_array(env('APP_LAB'), [3,5])) return true;
-	if (!auth()->user()->covid_consumption_allowed)
-		return true;
-        $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
-        $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
+        if (!auth()->user()->covid_consumption_allowed) // Only users with this attribute set to 1 should get the prompt
+		  return true;
 
-        // if(in_array(env('APP_LAB'), [3])) return true;
-        
-        if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-            return false;
-        
-        if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-            return false;
+        if (env('APP_LAB') != 23) {
+            $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
+            $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
+            
+            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return false;
+            
+            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return false;
+            
+            if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return false;
 
-        if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-            return false;
-
-        if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-            return false;
-
-        if(in_array(env('APP_LAB'), [8, 3])) return true;
-        
+            if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return false;
+        }
+                
         $time = $this->getPreviousWeek();
         $covidsubmittedstatus = 1;
         if (!in_array(env('APP_LAB'), [8]) && 

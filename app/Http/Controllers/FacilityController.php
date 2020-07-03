@@ -474,11 +474,9 @@ class FacilityController extends Controller
             ->whereRaw("(name like '%" . $search . "%' OR  facilitycode like '" . $search . "%')")
             ->when($poc, function($query){
                 return $query->where(['poc' => 1]);
-            })
-            ->when(($user && $user->is_partner), function($query) use ($user){
+            })->when(($user && $user->is_partner), function($query) use ($user){
                 return $query->where(['partner_id' => $user->facility_id]);
-            })
-            ->paginate(10);
+            })->paginate(10);
 
         $facilities->setPath(url()->current());
         return $facilities;
