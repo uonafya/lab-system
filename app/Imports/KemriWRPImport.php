@@ -23,9 +23,9 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         $column = 'quarantine_site_id';
         if($row->facility_name > 100) $column = 'facility_id';
 
-        $p = CovidPatient::where(['identifier' => $row->unique_case_id])->first();
+        $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
-        $mfl = $row->mfl_code ?? null;
+        $mfl = $row->mfl ?? null;
 
         $fac = Facility::locate($mfl)->first();
         $quarantine_site = QuarantineSite::where('name', $row->facility_name)->first();
@@ -33,7 +33,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->unique_case_id,
+            'identifier' => $row->identifier,
             'facility_id' => $fac->id ?? null,
             'quarantine_site_id' => $quarantine_site->id ?? null,
             'patient_name' => $row->full_name,
@@ -56,6 +56,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         $s = CovidSample::create([
             'patient_id' => $p->id,
             'lab_id' => 18,
+            'kemri_id' => $row->kemri_id,
             'site_entry' => 0,
             'age' => $row->age,
             'test_type' => 1,
