@@ -60,16 +60,16 @@ class BaseModel extends Model
         $c = $this->route_name;
 
         $url = url($c . '/' . $this->id);
-        // if(str_contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
-        if(str_contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+        // if(\Str::contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
+        if(\Str::contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
 
-        if(str_contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
+        if(\Str::contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
 
         $text = $this->id;
 
-        if(str_contains($c, 'patient')) $text = $this->patient;
-        if(str_contains($c, 'patient') && str_contains($c, 'covid')) $text = $this->identifier;
-        if(str_contains($c, 'sample')) $text = "View Runs";
+        if(\Str::contains($c, 'patient')) $text = $this->patient;
+        if(\Str::contains($c, 'patient') && \Str::contains($c, 'covid')) $text = $this->identifier;
+        if(\Str::contains($c, 'sample')) $text = "View Runs";
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 
@@ -82,27 +82,27 @@ class BaseModel extends Model
         $c = $this->route_name;
 
         $pre = '';
-        if(str_contains($c, 'viral')) $pre = 'viral';
-        if(str_contains($c, 'dr')) $pre = 'dr_';
-        if(str_contains($c, 'covid')) $pre = 'covid_';
+        if(\Str::contains($c, 'viral')) $pre = 'viral';
+        if(\Str::contains($c, 'dr')) $pre = 'dr_';
+        if(\Str::contains($c, 'covid')) $pre = 'covid_';
         $user = auth()->user();
 
-        if(str_contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
-        else if(str_contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
-        // else if(str_contains($attr, 'sample') || (str_contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
+        if(\Str::contains($attr, 'extraction')) $url = url('dr_extraction_worksheet/gel_documentation/' . $this->$attr);
+        else if(\Str::contains($attr, 'worksheet')) $url = url($pre . 'worksheet/approve/' . $this->$attr);
+        // else if(\Str::contains($attr, 'sample') || (\Str::contains($c, 'sample') && $attr == 'id')) $url = url($c . '/runs/' . $this->$attr);
         else{
             $a = explode('_', $attr);
             $url = url($pre . $a[0] . '/' . $this->$attr);
-            // if(str_contains($c, 'patient')) $url = url($pre . $a[0] . '/' . $this->patient_id);
+            // if(\Str::contains($c, 'patient')) $url = url($pre . $a[0] . '/' . $this->patient_id);
         }
 
         if($attr == 'id' && (!$user || ($user && $user->user_type_id == 5))) return null;
 
-        if(str_contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
+        if(\Str::contains($attr, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->$attr;
 
         $text = $this->$attr;
 
-        if(str_contains($c, 'patient')) $text = $this->patient;
+        if(\Str::contains($c, 'patient')) $text = $this->patient;
 
         $full_link = "<a href='{$url}' target='_blank'> {$text} </a>";
 

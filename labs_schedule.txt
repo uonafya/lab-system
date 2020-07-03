@@ -2,6 +2,12 @@ naiexec='php /root/labs/nairobi/artisan '
 kisexec='php /root/labs/kisumu/artisan '
 aluexec='php /root/labs/alupe/artisan '
 cpexec='php /root/labs/cpgh/artisan '
+kuexec='php /root/labs/kutrrh/artisan '
+amrexec='php /root/labs/amref/artisan '
+
+# Amref Crontab
+
+* * * * * $amrexec synch:covid 2>&1
 
 # Nairobi Crontab
 

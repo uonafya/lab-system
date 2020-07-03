@@ -177,7 +177,7 @@ class LoginController extends Controller
          */
 
         if(in_array(env('APP_LAB'), [8, 9])) session(['testingSystem' => 'Viralload']);
-        // if(in_array(env('APP_LAB'), [1, 3])) session(['testingSystem' => 'Covid']);
+        if(in_array(env('APP_LAB'), [23, 25])) session(['testingSystem' => 'Covid']);
 
         
         // Checking for pending tasks if user is Lab user before redirecting to the respective page

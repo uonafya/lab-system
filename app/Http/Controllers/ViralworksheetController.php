@@ -333,7 +333,7 @@ class ViralworksheetController extends Controller
 
     public function reverse_upload(Viralworksheet $worksheet)
     {
-        if($worksheet->status_id != 3){
+        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
@@ -569,17 +569,17 @@ class ViralworksheetController extends Controller
                     $name = strtolower($value[20]);
                     $result_array = MiscViral::sample_result($interpretation);
 
-                    if(str_contains($name, 'low')){
+                    if(\Str::contains($name, 'low')){
                         $lpc = $result_array['result'];
                         $lpc_int = $result_array['interpretation'];
                         $lpc_units = $result_array['units'];
                     }
-                    else if(str_contains($name, 'high')){
+                    else if(\Str::contains($name, 'high')){
                         $hpc = $result_array['result'];
                         $hpc_int = $result_array['interpretation'];
                         $hpc_units = $result_array['units'];
                     }
-                    else if(str_contains($name, 'negative')){
+                    else if(\Str::contains($name, 'negative')){
                         $nc = $result_array['result'];
                         $nc_int = $result_array['interpretation']; 
                         $nc_units = $result_array['units'];
@@ -861,7 +861,7 @@ class ViralworksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
             return back();
         }
-        $worksheet->status_id = 5;
+        $worksheet->status_id = 7;
         $worksheet->save();
 
         $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',

@@ -329,7 +329,7 @@ class WorksheetController extends Controller
 
     public function reverse_upload(Worksheet $worksheet)
     {
-        if($worksheet->status_id != 3){
+        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
             session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
             return back();
         }
@@ -540,11 +540,11 @@ class WorksheetController extends Controller
 
                 $data_array = Misc::sample_result($interpretation);
 
-                if(str_contains($control, '+')){
+                if(\Str::contains($control, '+')){
                     $positive_control = $data_array;
                     continue;
                 }
-                else if(str_contains($control, '-')){
+                else if(\Str::contains($control, '-')){
                     $negative_control = $data_array;
                     continue;
                 }
@@ -736,7 +736,7 @@ class WorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
             return back();
         }
-        $worksheet->status_id = 5;
+        $worksheet->status_id = 7;
         $worksheet->save();
 
         $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',

@@ -140,4 +140,33 @@ class CovidPatientController extends Controller
         return $patients;
 
     }
+
+
+    public function national_id(Request $request, $facility_id=null)
+    {
+        $user = auth()->user();
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(facility_id='{$user->facility_id}')";
+
+        $search = $request->input('search');
+        $search = addslashes($search);
+        
+        $patients = CovidPatient::select('covid_patients.id', 'covid_patients.national_id AS patient', 'quarantine_sites.name')
+            ->leftJoin('quarantine_sites', 'quarantine_sites.id', '=', 'covid_patients.quarantine_site_id')
+            ->whereRaw("(national_id like '" . $search . "%' )")
+            // ->where('patients.synched', '!=', 2)
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->where('quarantine_site_id', $user->facility_id);
+            })
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->paginate(10);
+
+        $patients->setPath(url()->current());
+        return $patients;
+
+    }
 }

@@ -65,6 +65,9 @@
         @case(23)
             <img src="{{ asset('img/kulogo.png') }}">
             @break
+        @case(25)
+            <img src="{{ asset('img/amrefnascoplogo.png') }}">
+            @break
         @default
             <img src="{{ asset('img/nascoplogo.png') }}">
     @endswitch

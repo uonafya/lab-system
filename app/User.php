@@ -154,6 +154,12 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function is_covid_lab_user()
+    {
+        if(in_array($this->user_type_id, [0, 1, 4, 12, 13])) return true;
+        return false;
+    }
+
     public function is_admin()
     {
         if(in_array($this->user_type_id, [0, 2])) return true;

@@ -7,6 +7,8 @@ use DB;
 class CovidSampleView extends BaseModel
 {
 	protected $table = "covid_sample_view";
+    
+    protected $dates = ['datecollected', 'datereceived', 'datetested', 'datedispatched', 'dateapproved', 'dateapproved2'];
 
     protected $casts = [
         'symptoms' => 'array',
@@ -32,6 +34,11 @@ class CovidSampleView extends BaseModel
     public function creator()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab', 'lab_id');
     }
     
     /**

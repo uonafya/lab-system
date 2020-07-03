@@ -228,27 +228,27 @@ class Viralsample extends BaseModel
         $interpretation = $this->interpretation;
         $lower_interpretation = strtolower($interpretation);
         // < ldl
-        if(str_contains($interpretation, ['<'])){
+        if(\Str::contains($interpretation, ['<'])){
             $str = "LDL:Lower Detectable Limit i.e. Below Detectable levels by machine ";
-            if(str_contains($interpretation, ['839'])){
+            if(\Str::contains($interpretation, ['839'])){
                 $str .= "( Abbott DBS  &lt;839 copies/ml )";
             }
-            else if(str_contains($interpretation, ['40'])){
+            else if(\Str::contains($interpretation, ['40'])){
                 $str .= "( Abbott Plasma  &lt;40 copies/ml )";
             }
-            else if(str_contains($interpretation, ['150'])){
+            else if(\Str::contains($interpretation, ['150'])){
                 $str .= "( Abbott Plasma  &lt;150 copies/ml )";
             }
-            else if(str_contains($interpretation, ['20'])){
+            else if(\Str::contains($interpretation, ['20'])){
                 $str .= "( Roche Plasma  &lt;20 copies/ml )";
             }
-            else if(str_contains($interpretation, ['Titer', 'titer'])){
+            else if(\Str::contains($interpretation, ['Titer', 'titer'])){
                 $str .= "( C8800 Plasma  &lt;20 copies/ml )";
             }
-            else if(str_contains($interpretation, ['30'])){
+            else if(\Str::contains($interpretation, ['30'])){
                 $str .= "( Pantha Plasma  &lt;30 copies/ml )";
             }
-            else if(str_contains($interpretation, ['log']) && str_contains($interpretation, ['<'])){
+            else if(\Str::contains($interpretation, ['log']) && \Str::contains($interpretation, ['<'])){
                 $x = preg_replace("/[^<0-9.]/", "", $interpretation);
                 $n = round(pow(10, $x));
                 $str .= "( &lt;{$n} copies/ml )";
@@ -258,7 +258,7 @@ class Viralsample extends BaseModel
                 $str .= "( &lt;{$n} copies/ml )";
             }
         }
-        else if(str_contains($result, ['<']) && str_contains($lower_interpretation, ['not detected'])){
+        else if(\Str::contains($result, ['<']) && \Str::contains($lower_interpretation, ['not detected'])){
             $str = "No circulating virus ie. level of HIV in blood is below the threshold needed for detection by this test. Doesn’t mean client Is Negative";
         }
         else if($result == "Target Not Detected"){

@@ -71,7 +71,7 @@ class Datatable
 					$or_query[] = $column_name . " LIKE '%{$str}%' ";
 				}
 				else{
-					if(str_contains($column_name, ['date', 'time'])){
+					if(\Str::contains($column_name, ['date', 'time'])){
 						$or_query[] = $column_name . " = '{$str}' ";
 					}
 				}

@@ -34,14 +34,15 @@ class CovidDispatch extends Mailable
         
         if(!is_dir(storage_path('app/batches/covid'))) mkdir(storage_path('app/batches/covid/'), 0777, true);
 
+        set_time_limit(300);
 
         $mpdf = new Mpdf();
         $data = Lookup::covid_form();
         $data['samples'] = $samples;
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
-        ini_set("pcre.backtrack_limit", "5000000");
+        ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
+        $mpdf->Output($this->individual_path, 'F');
     }
 
     /**

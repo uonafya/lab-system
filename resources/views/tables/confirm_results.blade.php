@@ -58,6 +58,9 @@
                                 <tr>
                                     <th>Sample ID</th>
                                     <th>Lab ID</th>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <th> KEMRI ID </th>
+                                    @endif
                                     <th>Run</th>
                                     <th>Result</th>                
                                     <th>Interpretation</th>                
@@ -71,6 +74,9 @@
                                 <tr>
                                     <td >PC</td>
                                     <td >-</td>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <td>-</td>
+                                    @endif
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#FF0000'>
@@ -92,6 +98,9 @@
                                 <tr>
                                     <td >NC</td>
                                     <td >-</td>
+                                    @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                        <td>-</td>
+                                    @endif
                                     <td >-</td>
                                     <td ><small><strong>
                                         <font color='#339900'> 
@@ -161,6 +170,9 @@
                                             {!! $sample->patient->hyperlink !!} 
                                         </td>
                                         <td> {{ $sample->id }}  </td>
+                                        @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
+                                            <td> {{ $sample->kemri_id }} </td>
+                                        @endif
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
@@ -214,7 +226,9 @@
                                         @endif
                                         <td> 
                                             <a href="{{ url($sample->route_name . '/' . $sample->id) }}" title='Click to view Details' target='_blank'> Details</a> | 
+                                            @if($sample->route_name != 'covid_sample')
                                             <a href="{{ url($sample->route_name . '/runs/' . $sample->id) }}" title='Click to View Runs' target='_blank'>Runs </a>  
+                                            @endif
                                         </td>
                                     </tr>
 
@@ -225,7 +239,7 @@
                                     @include('shared/confirm_result_row', ['sample' => $sample])
                                 @endforeach--}}
 
-                                @if($worksheet->status_id != 3)
+                                @if($worksheet->status_id == 2)
 
                                     @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )

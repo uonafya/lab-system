@@ -3,6 +3,9 @@
 		<thead>
 			<tr>
 				<th>#</th>
+				@if($machine_type == 0)
+					<th>Select (to enter worksheet)</th>
+				@endif
 				<th>Lab ID</th>
 				<th>Type</th>
 				<th>Patient</th>
@@ -12,13 +15,22 @@
 				<th>Date Collected</th>
 				<th>Release as Redraw</th>
 				<th>Update</th>
-				<th>Delete</th>
+				@if($machine_type != 0)
+					<th>Delete</th>
+				@endif
 			</tr>
 		</thead>
 		<tbody>
 			@foreach($samples as $key => $sample)
 				<tr>
 					<td> {{ ($key+1) }} </td>
+					@if($machine_type == 0)
+						<td>
+                            <div align='center'>
+                                <input name='samples[]' type='checkbox' class='checks' value='{{ $sample->id }}' checked="checked" />
+                            </div>
+                        </td>
+					@endif
 					<td> {{ $sample->id }} </td>
 					<td>
 						@if($sample->route_name == 'covid_sample')
@@ -42,7 +54,9 @@
 					<td> {{ $sample->my_date_format('datecollected') }} </td>
 	                <td> <a href="{{ url($sample->route_name . '/release/' . $sample->id) }}" class="confirmAction"> Release</a> </td>
 	                <td> {!! $sample->edit_link !!} </td>
-	                <td> {!! $sample->delete_form !!} </td>
+					@if($machine_type != 0)
+		                <td> {!! $sample->delete_form !!} </td>
+					@endif
 				</tr>
 			@endforeach
 

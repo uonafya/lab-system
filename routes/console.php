@@ -442,6 +442,11 @@ Artisan::command('edarp:delete', function(){
 })->describe('Delete Transfered');
 //Quick fix add EDARP samples to KEMRI
 
+Artisan::command('edarp:machakos', function(){
+    $str = \App\MiscViral::machakos_edarp();
+    $this->info($str);
+})->describe('Move Machakos samples');
+
 Artisan::command('check:maryland', function(){
     $str = \App\Random::getElvis();
     $this->info($str);

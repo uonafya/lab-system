@@ -53,11 +53,11 @@ class MiscCovid extends Common
         $str = strtolower($interpretation);
         $repeatt = 0;
 
-        // if(str_contains($str, ['cn', 'dc'])){
+        // if(\Str::contains($str, ['cn', 'dc'])){
         if(preg_match("/[0-9]/", $interpretation)){
             $result = 2;
         }
-        else if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+        else if(\Str::contains($str, ['not']) && \Str::contains($str, ['detected'])){
             $result = 1;
         }
         else{
@@ -108,7 +108,7 @@ class MiscCovid extends Common
                 ->whereNull('datedispatched')
                 ->whereNull('worksheet_id')
                 ->whereNull('result')
-                ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => env('APP_LAB'), 'repeatt' => 0])
+                ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => $user->lab_id, 'repeatt' => 0])
                 ->where('site_entry', '!=', 2)
                 ->orderBy('covid_sample_view.id', 'desc')
                 ->limit($temp_limit)
@@ -127,7 +127,7 @@ class MiscCovid extends Common
             ->whereNull('datedispatched')
             ->whereNull('worksheet_id')
             ->whereNull('result') 
-            ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => env('APP_LAB'), 'repeatt' => 0])
+            ->where(['receivedstatus' => 1, 'covid_sample_view.lab_id' => $user->lab_id, 'repeatt' => 0])
             ->where('site_entry', '!=', 2)  
             ->orderBy('run', 'desc')
             ->orderBy('highpriority', 'desc')
@@ -146,8 +146,9 @@ class MiscCovid extends Common
         $count = $samples->count();        
 
         $create = false;
-        if($count == $limit) $create = true;
-        if(!in_array(env('APP_LAB'), [3]) && $count) $create = true;
+        if($count) $create = true;
+        // if($count == $limit) $create = true;
+        // if(!in_array(env('APP_LAB'), [3]) && $count) $create = true;
         $covid = true;
 
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');

@@ -82,22 +82,22 @@ class Misc extends Common
         $str = strtolower($result);
 
 
-        if(str_contains($str, ['non']) && str_contains($str, ['reactive'])){
+        if(\Str::contains($str, ['non']) && \Str::contains($str, ['reactive'])){
             $res = 1;
         }
-        else if(str_contains($str, ['not']) && str_contains($str, ['detected'])){
+        else if(\Str::contains($str, ['not']) && \Str::contains($str, ['detected'])){
             $res = 1;
         }
-        else if(str_contains($result, ['1', '>']) || str_contains($str, ['detected', 'reactive'])){
+        else if(\Str::contains($result, ['1', '>']) || \Str::contains($str, ['detected', 'reactive'])){
             $res = 2;
         }
-        else if(str_contains($str, ['invalid'])){
+        else if(\Str::contains($str, ['invalid'])){
             $res = 3;
         }
-        else if(str_contains($str, ['valid', 'passed'])){
+        else if(\Str::contains($str, ['valid', 'passed'])){
             $res = 6;
         }
-        else if(str_contains($str, ['collect', '5'])){
+        else if(\Str::contains($str, ['collect', '5'])){
             $res = 5;
         }
         else{

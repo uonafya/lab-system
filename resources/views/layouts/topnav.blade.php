@@ -44,7 +44,7 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
-                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12,13]))
+                @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
                             <a href="{{ url('home') }}">Home</a>
@@ -213,22 +213,6 @@
                             </li>
                         @endif
                     @endif
-                @elseif(in_array(Auth::user()->user_type_id, [12]))
-                    <li class="">
-                        <a href="{{ url('home') }}">Home</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('covid_sample') }}">Samples</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('covid_sample/index/2') }}">Results List</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('covidreports') }}">Reports</a>
-                    </li>
                 @endif
                     <li>
                         <a class="" href="{{ url('/logout') }}"
@@ -240,7 +224,7 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
-            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11,12]))
+            @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
                         <a class="label-menu-corner" href="{{ url('home') }}">
@@ -447,22 +431,7 @@
                         </li>
                     @endif
                 @endif
-            @elseif(in_array(Auth::user()->user_type_id, [12]))
-                <li class="">
-                    <a href="{{ url('home') }}">Home</a>
-                </li>
-                <li class="">
-                    <a href="{{ url('covid_sample') }}">Samples</a>
-                </li>
-                <li class="">
-                    <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
-                </li>
-                <li class="">
-                    <a href="{{ url('covid_sample/index/2') }}">Results List</a>
-                </li>
-                <li class="">
-                    <a href="{{ url('covidreports') }}">Reports</a>
-                </li>
+            
             @endif
                 <li class="dropdown">
                         

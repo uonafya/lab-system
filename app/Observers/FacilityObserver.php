@@ -37,6 +37,10 @@ class FacilityObserver
         $fac = $facility::find($facility->id);
 
         $contact = $facility->facility_contact;
+        if(!$contact){
+            $contact = new FacilityContact;
+            $contact->facility_id = $facility->id;            
+        }
 
         foreach ($contact_array as $key => $value) {
             // if($facility->$value != $facility->getOriginal($value)){

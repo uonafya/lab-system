@@ -61,7 +61,7 @@ class CovidSample extends BaseModel
         if(is_numeric($value)) $this->attributes['result'] = $value;
         else{
             $value = strtolower($value);
-            if(str_contains($value, ['neg'])) $this->attributes['result'] = 1;
+            if(\Str::contains($value, ['neg'])) $this->attributes['result'] = 1;
             else{
                 $this->attributes['result'] = 2;
             }

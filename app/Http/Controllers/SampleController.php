@@ -682,7 +682,7 @@ class SampleController extends Controller
         if(env('APP_LAB') == 4){
             $fac = Facility::find($facility_id);
             $str = $fac->facilitycode . '/';
-            if(!str_contains($patient, $str)) $patient = $str . $patient;
+            if(!\Str::contains($patient, $str)) $patient = $str . $patient;
         }
 
         // Add check for in process sample

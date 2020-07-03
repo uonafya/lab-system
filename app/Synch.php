@@ -244,13 +244,13 @@ class Synch
 
 	public static function covid_login()
 	{
-		Cache::store('file')->forget('api_token');
+		Cache::store('file')->forget('covid_api_token');
 		$client = new Client(['base_uri' => self::$cov_base]);
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
             'debug' => false,
-            // 'verify' => false,
+            'verify' => false,
             // 'timeout' => 2,
 			'headers' => [
 				'Accept' => 'application/json',
@@ -592,7 +592,7 @@ class Synch
 						'Accept' => 'application/json',
 						'Authorization' => 'Bearer ' . $token,
 					],
-					// 'verify' => false,
+					'verify' => false,
 					'json' => [
 						$key => $models->toJson(),
 						'lab_id' => env('APP_LAB', null),
@@ -1279,8 +1279,8 @@ class Synch
 
 	public static function synch_covid()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1308,6 +1308,8 @@ class Synch
 			}
 		}
 
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(60)->get();
+
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
@@ -1322,18 +1324,27 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
+			if(env('APP_LAB') == 230) $token = self::get_token();
+			else{
+				$token = self::get_covid_token();				
+			}
+
 			$response = $client->request('post', 'covid_sample', [
 				'headers' => [
 					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . $token,
 					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-					'Authorization' => 'Bearer ' . self::get_token(),
+					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
-				// 'verify' => false,
+	            'http_errors' => false,
+				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
 				],
 			]);
+			if($response->getStatusCode() > 399) dd($response);
+			
 
 			$body = json_decode($response->getBody());
 			$sample_array = $body->sample;
@@ -1363,20 +1374,33 @@ class Synch
 			}
 
 		}
+
+		$sample_ids = CovidSample::select('covid_samples.id')
+					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+					->where('covid_samples.synched', '>', 0)
+					->where('covid_patients.synched', '=', 0)
+					->get()->pluck('id')->flatten()->toArray();
+
+		CovidSample::whereIn('id', $sample_ids)->update(['synched' => 0]);
 	}
 
 
 	public static function get_covid_samples()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			return $samples;
+		}
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
+			'verify' => false,
 		]);
 
 		$body = json_decode($response->getBody());
@@ -1385,19 +1409,58 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+
+
+			foreach ($nat_samples as $key => $nat_sample) {
+		        $nat_sample->lab_id = auth()->lab()->id;
+
+		        $p = CovidPatient::where('national_patient_id', $nat_sample->patient->id)->first();
+		        if(!$p){
+		            $p = new CovidPatient;
+		        }
+		        $patient_details = $s->patient->toArray();
+		        $p->national_patient_id = $patient_details['id'];
+		        unset($patient_details['original_patient_id']);
+		        // unset($patient_details['cif_patient_id']);
+		        unset($patient_details['nhrl_patient_id']);
+		        unset($patient_details['date_recovered']);
+		        $p->fill($patient_details);
+		        $p->save();
+
+
+		        unset($s->patient);
+
+		        $s = new CovidSample;
+		        $s->fill($nat_sample->toArray());
+		        $s->patient_id = $p->id;
+		        $s->national_sample_id = $nat_sample->id;
+		        unset($s->original_sample_id);
+		        // unset($s->cif_sample_id);
+		        unset($s->nhrl_sample_id);
+		        unset($s->age_category);
+		        $s->save();
+
+		        $nat_sample->save();
+			}
+			return;
+			// return $samples;
+		}
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
-				'json' => [
-					'samples' => $samples,
-					'lab_id' => auth()->user()->lab_id,
-				],
+			'verify' => false,
+			'json' => [
+				'samples' => $samples,
+				'lab_id' => auth()->user()->lab_id,
+			],
 		]);
 
 		$body = json_decode($response->getBody());
@@ -1689,7 +1752,7 @@ class Synch
                     $f->temp_facility_id = $max_temp++;
                     $f->save();
 
-                    \App\Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
+                    Common::change_facility_id($value->old_facility_id, $f->temp_facility_id, true);
                 }
             }
         }
@@ -1697,7 +1760,7 @@ class Synch
         $changes = FacilityChange::where(['implemented' => 0])->get();
 
         foreach ($changes as $f) {
-            \App\Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
+            Common::change_facility_id($f->temp_facility_id, $f->new_facility_id, true);
             $f->implemented = 1;
             $f->save();
         }

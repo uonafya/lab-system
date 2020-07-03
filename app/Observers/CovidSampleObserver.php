@@ -34,7 +34,7 @@ class CovidSampleObserver
             if(!$covidSample->datetested) $covidSample->datetested = date('Y-m-d');
         }
 
-        if($covidSample->isDirty('receivedstatus') && $covidSample->receivedstatus == 1 && $covidSample->datedispatched)
+        if($covidSample->isDirty('receivedstatus') && $covidSample->national_sample_id && $covidSample->receivedstatus == 1 && $covidSample->datedispatched)
         {
             $covidSample->datedispatched = null;
             $covidSample->dateapproved = $covidSample->dateapproved2 = null;

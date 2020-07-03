@@ -44,8 +44,7 @@
 		<table border="0" style="border: 0px; width: 100%;">
 			<tr>
 				<td colspan="9" align="center">
-					{{-- <img src="{{ asset('img/naslogo.jpg') }}" alt="NASCOP">--}}
-					<img src="https://eiddash.nascop.org/img/naslogo.jpg" alt="NASCOP">
+					<img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP">
 				</td>
 			</tr>
 			<tr>
