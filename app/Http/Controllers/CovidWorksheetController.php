@@ -143,6 +143,7 @@ class CovidWorksheetController extends Controller
         // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
         $limit = $soft_limit ?? $limit;
+        if($limit == 94 && $machine_type == 2 && env('APP_LAB') == 2) $limit = 92;
 
         return $this->create($machine_type, $limit, $combined, $entered_by, $sampletype);
     }
@@ -436,7 +437,7 @@ class CovidWorksheetController extends Controller
     public function reverse_upload(CovidWorksheet $worksheet)
     {
         if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);
-        if($worksheet->status_id != 3 || $worksheet->created_at->lessThan(date('Y-m-d', strtotime('-14 days')))){
+        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))) {
             session(['toast_error' => 1, 'toast_message' => 'The upload for this worksheet cannot be reversed.']);
             return back();
         }

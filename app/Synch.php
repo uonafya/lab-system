@@ -1280,7 +1280,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
+		// if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1324,7 +1324,7 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
-			if(env('APP_LAB') == 23) $token = self::get_token();
+			if(env('APP_LAB') == 230) $token = self::get_token();
 			else{
 				$token = self::get_covid_token();				
 			}
@@ -1387,15 +1387,20 @@ class Synch
 
 	public static function get_covid_samples()
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			return $samples;
+		}
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('get', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
+			'verify' => false,
 		]);
 
 		$body = json_decode($response->getBody());
@@ -1404,19 +1409,58 @@ class Synch
 
 	public static function set_covid_samples($samples)
 	{
-		// $client = new Client(['base_uri' => self::$cov_base]);
-		$client = new Client(['base_uri' => self::$base]);
+		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+
+
+			foreach ($nat_samples as $key => $nat_sample) {
+		        $nat_sample->lab_id = auth()->lab()->id;
+
+		        $p = CovidPatient::where('national_patient_id', $nat_sample->patient->id)->first();
+		        if(!$p){
+		            $p = new CovidPatient;
+		        }
+		        $patient_details = $s->patient->toArray();
+		        $p->national_patient_id = $patient_details['id'];
+		        unset($patient_details['original_patient_id']);
+		        // unset($patient_details['cif_patient_id']);
+		        unset($patient_details['nhrl_patient_id']);
+		        unset($patient_details['date_recovered']);
+		        $p->fill($patient_details);
+		        $p->save();
+
+
+		        unset($s->patient);
+
+		        $s = new CovidSample;
+		        $s->fill($nat_sample->toArray());
+		        $s->patient_id = $p->id;
+		        $s->national_sample_id = $nat_sample->id;
+		        unset($s->original_sample_id);
+		        // unset($s->cif_sample_id);
+		        unset($s->nhrl_sample_id);
+		        unset($s->age_category);
+		        $s->save();
+
+		        $nat_sample->save();
+			}
+			return;
+			// return $samples;
+		}
+		$client = new Client(['base_uri' => self::$cov_base]);
+		// $client = new Client(['base_uri' => self::$base]);
 
 		$response = $client->request('post', 'covid_sample/cif', [
 			'headers' => [
 				'Accept' => 'application/json',
-				// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-				'Authorization' => 'Bearer ' . self::get_token(),
+				'Authorization' => 'Bearer ' . self::get_covid_token(),
+				// 'Authorization' => 'Bearer ' . self::get_token(),
 			],
-				'json' => [
-					'samples' => $samples,
-					'lab_id' => auth()->user()->lab_id,
-				],
+			'verify' => false,
+			'json' => [
+				'samples' => $samples,
+				'lab_id' => auth()->user()->lab_id,
+			],
 		]);
 
 		$body = json_decode($response->getBody());
