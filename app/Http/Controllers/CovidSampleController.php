@@ -716,6 +716,62 @@ class CovidSampleController extends Controller
         return redirect('/covid_sample'); 
     }
 
+    public function ampath_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
+    }
+
+    public function upload_ampath_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Facility ID') continue;
+
+            $p = CovidPatient::where(['identifier' => $data[2]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[2],
+                'facility_id' => $data[0],
+                'patient_name' => $data[1],
+                'sex' => $data[3],
+                'national_id' => $data[8],
+                'phone_no' => $data[9],
+                'residence' => $data[5],
+                'occupation' => $data[6],
+                'justification' => 3,             
+            ]);
+            if(!$p->facility_id || $p->facility_id == '') $p->county_id = 26;
+
+            $p->save();
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => env('APP_LAB'),
+                'temperature' => $data[7],
+                'site_entry' => 1,
+                'age' => $data[4],
+                'test_type' => 1,
+                'sample_type' => 1,
+                'datecollected' => '2020-07-02',
+                'datereceived' => '2020-07-03',
+                'receivedstatus' => 1,
+                'sample_type' => 1,
+            ]);
+            $created_rows++;
+        }
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
 
     /*public function upload_wrp_samples(Request $request)
     {
