@@ -307,6 +307,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -352,6 +353,13 @@ class CovidSampleController extends Controller
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
             // }
+        }
+
+        foreach ($samples as $key => $sample) {
+            if(!$sample->date_email_sent){
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
         }
         session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
@@ -419,6 +427,7 @@ class CovidSampleController extends Controller
             })
             // ->whereRaw("(covid_samples.id IN (22478, 22555, 22450, 22470) OR covid_samples.id BETWEEN 22408 AND 22420 OR covid_samples.id BETWEEN 22422 AND 22430 OR covid_samples.id BETWEEN 22432 AND 22444 OR covid_samples.id BETWEEN 22452 AND 22464 OR covid_samples.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
