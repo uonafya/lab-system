@@ -189,7 +189,8 @@ INSERT INTO `worksheetstatus` VALUES
 (3,'Approved','<strong><div style=\'color: #339900;\'>Approved</div></strong>',1),
 (4,'Cancelled','<strong><div style=\'color: #FF0000;\'>Cancelled</div></strong>',1),
 (5,'Sent To Exatype','<strong><div style=\'color: #0000FF;\'>Sent To Exatype</div></strong>',1),
-(6,'Received From Exatype','<strong><div style=\'color: #0000FF;\'>Received From Exatype</div></strong>',1);
+(6,'Received From Exatype','<strong><div style=\'color: #0000FF;\'>Received From Exatype</div></strong>',1),
+(7,'Failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>',1);
 /*!40000 ALTER TABLE `worksheetstatus` ENABLE KEYS */;
 UNLOCK TABLES;
 

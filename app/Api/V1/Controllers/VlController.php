@@ -123,6 +123,7 @@ class VlController extends BaseController
         $datetested = $request->input('datetested');
         $datedispatched = $request->input('datedispatched');
         $dob = $request->input('dob');
+        $batch_id = $request->input('batchno');
         // $sex = Lookup::get_gender($gender);
         
         $facility = Lookup::facility_mfl($code);
@@ -139,7 +140,10 @@ class VlController extends BaseController
         $fields = Lookup::viralsamples_arrays();
 
         if($sample_exists && !$editted){
-            return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            if($batch_id) $editted = true;
+            else{
+                return $this->response->errorBadRequest("VL CCC # {$patient_identifier} collected on {$datecollected} already exists in database.");
+            }
         }
 
         // if($lab == 7 && strtotime($datetested) < strtotime("2019-02-01") ){
@@ -182,7 +186,7 @@ class VlController extends BaseController
         $patient->facility_id = $facility;
         $patient->pre_update();
 
-        if($editted){
+        if($editted && $sample_exists){
             $sample = Viralsample::find($sample_exists->id);
 
             $batch = $sample->batch;
@@ -190,6 +194,7 @@ class VlController extends BaseController
             $batch->datereceived = $datereceived;
             $batch->datedispatched = $datedispatched;
             $batch->site_entry = 0;
+            $batch->lab_id = $lab;
             $batch->edarp();            
         }
         else{

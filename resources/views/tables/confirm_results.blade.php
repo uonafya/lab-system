@@ -239,7 +239,7 @@
                                     @include('shared/confirm_result_row', ['sample' => $sample])
                                 @endforeach--}}
 
-                                @if($worksheet->status_id != 3)
+                                @if($worksheet->status_id == 2)
 
                                     @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
                                      (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
