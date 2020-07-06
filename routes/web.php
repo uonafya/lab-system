@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('refresh_cache', 'RandomController@refresh_cache');
 		Route::get('refresh_dashboard', 'RandomController@refresh_dashboard');
-		Route::get('sysswitch/{sys}', 'RandomController@sysswitch');
+		Route::get('system_switch/{sys}', 'RandomController@sysswitch');
 
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::prefix('batch')->name('batch.')->group(function () {
