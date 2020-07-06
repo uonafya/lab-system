@@ -1410,7 +1410,7 @@ class Synch
 	public static function set_covid_samples($samples)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 
 			foreach ($nat_samples as $key => $nat_sample) {
