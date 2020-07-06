@@ -6,9 +6,7 @@
 
 @section('content')
 
-<div class="content">
-
-    
+<div class="content">    
     
     <div class="row">
         <div class="col-lg-12">
@@ -29,7 +27,10 @@
                                     <tr class="colhead">
                                         <th> CIF ID </th>
                                         <th> Identifier </th>
+                                        <th> County </th>
+                                        <th> Name </th>
                                         <th> DOB </th>
+                                        <th> Age </th>
                                         <th> Date Collected </th>
                                         <th> Select Sample </th>
                                     </tr>
@@ -40,7 +41,10 @@
                                         <tr>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
+                                            <td> {{ $sample->patient->county ?? '' }} </td>
+                                            <td> {{ $sample->patient->patient_name ?? '' }} </td>
                                             <td> {{ $sample->patient->dob ?? '' }} </td>
+                                            <td> {{ $sample->age ?? '' }} </td>
                                             <td> {{ $sample->datecollected ?? '' }} </td>
                                             <td> 
                                                 <div align="center">

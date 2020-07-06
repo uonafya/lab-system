@@ -72,6 +72,8 @@ class RandomController extends Controller
 		}else if ($sys == 'Covid'){
 			$new = session(['testingSystem' => 'Covid']);
 		}
+
+		session(['test_var' => 'changed']);
 		
 		echo json_encode(session('testingSystem'));
 	}

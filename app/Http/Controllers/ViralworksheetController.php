@@ -333,7 +333,7 @@ class ViralworksheetController extends Controller
 
     public function reverse_upload(Viralworksheet $worksheet)
     {
-        if($worksheet->status_id != 3){
+        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
@@ -861,7 +861,7 @@ class ViralworksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
             return back();
         }
-        $worksheet->status_id = 5;
+        $worksheet->status_id = 7;
         $worksheet->save();
 
         $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',

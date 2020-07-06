@@ -10,12 +10,14 @@ use App\City;
 use App\Facility;
 use App\Lookup;
 use App\MiscCovid;
-use Excel;
+// use Excel;
 use Mpdf\Mpdf;
 use DB;
 use App\Mail\CovidDispatch;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CovidRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\KemriWRPImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -32,7 +34,7 @@ class CovidSampleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($type=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $quarantine_site_id=NULL)
+    public function index($type=1, $date_start=NULL, $date_end=NULL, $facility_id=NULL, $quarantine_site_id=NULL, $lab_id=NULL)
     {
         // 0 - not received
         // 1 - all
@@ -69,7 +71,10 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            // ->when(!$user->facility_user, function($query) use ($user){
+            //     return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            // })
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
@@ -77,6 +82,9 @@ class CovidSampleController extends Controller
             })
             ->when($user->facility_user, function($query) use ($user){
                 return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_sample_view.lab_id', $lab_id);
             })
             ->where('repeatt', 0)
             ->orderBy('covid_sample_view.id', 'desc')
@@ -92,9 +100,10 @@ class CovidSampleController extends Controller
         $justifications = DB::table('covid_justifications')->get();
         $counties = DB::table('countys')->get();
         $subcounties = DB::table('districts')->get();
+        $labs = DB::table('labs')->get();
         $results = DB::table('results')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'counties', 'subcounties', 'results');
-        if($type == 3) $data['labs'] = DB::table('labs')->get();
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'lab_id', 'counties', 'subcounties', 'results', 'labs');
+        // if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
     }
 
@@ -118,16 +127,18 @@ class CovidSampleController extends Controller
 
         $quarantine_site_id = $request->input('quarantine_site_id', 0);
         $facility_id = $request->input('facility_id', 0);
+        $lab_id = $request->input('lab_id');
 
         if(!$quarantine_site_id) $quarantine_site_id = 0;
         if(!$facility_id) $facility_id = 0;
 
-        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}");
+        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}/{$lab_id}");
     }
 
     public function download_excel($request)
     {
         $user = auth()->user();
+        // dd($request->all());
         extract($request->all());
 
         $type = $request->input('type', 1);
@@ -176,8 +187,11 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_sample_view.lab_id', $user->lab_id);
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_sample_view.lab_id', $lab_id);
             })
             // where(['receivedstatus' => 1])
             // ->whereNull('result')
@@ -195,6 +209,8 @@ class CovidSampleController extends Controller
                 'National ID' => $sample->national_id,
                 'Patient Name' => $sample->patient_name,
                 'Phone Number' => $sample->phone_no,
+                'County' => $sample->countyname ?? $sample->county,
+                'Subcounty' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
@@ -203,7 +219,9 @@ class CovidSampleController extends Controller
                 'Worksheet Number' => $sample->worksheet_id,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
-                'Date Tested' => $sample->datetested,
+                'Date Tested' => $sample->my_date_format('datetested'),
+                'TAT (Receipt to Testing)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInDays($sample->datereceived) : '',
+                'TAT (Receipt to Testing, Weekdays Only)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInWeekdays($sample->datereceived) : '',
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($results, 'result'),
                 'Entered By' => $sample->creator->full_name,
@@ -277,16 +295,20 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
+            })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_samples.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -332,6 +354,13 @@ class CovidSampleController extends Controller
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
             // }
+        }
+
+        foreach ($samples as $key => $sample) {
+            if(!$sample->date_email_sent){
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
         }
         session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
@@ -385,16 +414,21 @@ class CovidSampleController extends Controller
                 }
                 return $query->whereDate($date_column, $date_start);
             })
-            ->when(!$user->facility_user, function($query) use ($user){
+            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
                 return $query->where('covid_samples.lab_id', $user->lab_id);
             })
             ->when($user->quarantine_site, function($query) use ($user){
                 return $query->where('quarantine_site_id', $user->facility_id);
             })
             ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_sample_view.facility_id='{$user->facility_id}')");
+                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
+            ->when($lab_id, function($query) use ($lab_id){
+                return $query->where('covid_samples.lab_id', $lab_id);
+            })
+            // ->whereRaw("(covid_samples.id IN (22478, 22555, 22450, 22470) OR covid_samples.id BETWEEN 22408 AND 22420 OR covid_samples.id BETWEEN 22422 AND 22430 OR covid_samples.id BETWEEN 22432 AND 22444 OR covid_samples.id BETWEEN 22452 AND 22464 OR covid_samples.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -447,6 +481,12 @@ class CovidSampleController extends Controller
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
         $patient->save();
+
+        $sample = CovidSample::where(['patient_id' => $patient->id])->where($request->only('datecollected'))->first();
+        if($sample){
+            session(['toast_error' => 1, 'toast_message' => 'The sample already exists.']);
+            return back();
+        }
 
         $sample = new CovidSample;
         $sample->fill($request->only($data['sample']));
@@ -580,8 +620,12 @@ class CovidSampleController extends Controller
      */
     public function destroy(CovidSample $covidSample)
     {
-        if($covidSample->worksheet_id || $covidSample->receivedstatus == 2){
-            session(['toast_error' => 1, 'toast_message' => 'The sample cannot be deleted.']);
+        if($covidSample->worksheet_id){
+            session(['toast_error' => 1, 'toast_message' => 'Samples in a worksheet cannot be deleted.']);
+            return back();
+        }
+        if($covidSample->receivedstatus == 2){
+            session(['toast_error' => 1, 'toast_message' => 'Rejected samples cannot be deleted.']);
             return back();
         }
         // $covidSample->travel()->delete();
@@ -670,6 +714,75 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
     }
 
+    public function upload_wrp_samples(Request $request)
+    {
+        if(auth()->user()->user_type_id && !auth()->user()->other_lab) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new KemriWRPImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+    public function ampath_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
+    }
+
+    public function upload_ampath_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Facility ID') continue;
+
+            $p = CovidPatient::where(['identifier' => $data[2]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[2],
+                'facility_id' => $data[0],
+                'patient_name' => $data[1],
+                'sex' => $data[3],
+                'national_id' => $data[8],
+                'phone_no' => $data[9],
+                'residence' => $data[5],
+                'occupation' => $data[6],
+                'justification' => 3,             
+            ]);
+            if(!$p->facility_id || $p->facility_id == '') $p->county_id = 26;
+
+            $p->save();
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => env('APP_LAB'),
+                'temperature' => $data[7],
+                'site_entry' => 1,
+                'age' => $data[4],
+                'test_type' => 1,
+                'sample_type' => 1,
+                'datecollected' => '2020-07-02',
+                'datereceived' => '2020-07-03',
+                'receivedstatus' => 1,
+                'sample_type' => 1,
+            ]);
+            $created_rows++;
+        }
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+
     /*public function upload_wrp_samples(Request $request)
     {
         $file = $request->upload->path();
@@ -683,21 +796,21 @@ class CovidSampleController extends Controller
             if($data[0] == 'case_id') continue;
 
             $column = 'quarantine_site_id';
-            if($data[5] > 100) $column = 'facility_id';
+            if($data[15] > 100) $column = 'facility_id';
 
-            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[5]])->first();
+            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[15]])->first();
 
             if(!$p) $p = new CovidPatient;
 
             $p->fill([
                 'identifier' => $data[4],
-                $column => $data[5],
-                'patient_name' => $data[6],
-                'sex' => $data[8],
-                'national_id' => $data[9],
-                'phone_no' => $data[10],
-                'county' => $data[11],
-                'subcounty' => $data[12],                
+                $column => $data[15],
+                'patient_name' => $data[5],
+                'sex' => $data[7],
+                'national_id' => $data[8],
+                'phone_no' => $data[9],
+                'county' => $data[10],
+                'subcounty' => $data[11],                
             ]);
             $p->save();
 
