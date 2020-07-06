@@ -86,6 +86,10 @@ Artisan::command('dispatch:nhrl', function(){
     \App\Common::nhrl('vl');
 })->describe('Set NHRL & Edarp samples to be dispatched.');
 
+Artisan::command('dispatch:covid', function(){
+    \App\MiscCovid::dispatch_results();
+})->describe('Email Covid Results.');
+
 Artisan::command('input-complete', function(){
     $str = \App\Common::input_complete_batches('eid');
     $str = \App\Common::input_complete_batches('vl');

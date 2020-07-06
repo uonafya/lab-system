@@ -1388,7 +1388,7 @@ class Synch
 	public static function get_covid_samples()
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
 			return $samples;
 		}
 		$client = new Client(['base_uri' => self::$cov_base]);
