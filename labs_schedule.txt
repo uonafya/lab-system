@@ -20,6 +20,7 @@ amrexec='php /root/labs/amref/artisan '
 
 0 14 * * * $naiexec dispatch:results 2>&1
 0 9 * * * $naiexec dispatch:critical 2>&1
+55 * * * * $naiexec dispatch:nhrl 2>&1
 
 5 * * * * $naiexec compute:tat5 2>&1
 

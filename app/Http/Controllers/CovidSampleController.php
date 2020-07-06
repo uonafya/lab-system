@@ -138,6 +138,7 @@ class CovidSampleController extends Controller
     public function download_excel($request)
     {
         $user = auth()->user();
+        // dd($request->all());
         extract($request->all());
 
         $type = $request->input('type', 1);
@@ -307,6 +308,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -352,6 +354,13 @@ class CovidSampleController extends Controller
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
             // }
+        }
+
+        foreach ($samples as $key => $sample) {
+            if(!$sample->date_email_sent){
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
         }
         session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
@@ -419,6 +428,7 @@ class CovidSampleController extends Controller
             })
             // ->whereRaw("(covid_samples.id IN (22478, 22555, 22450, 22470) OR covid_samples.id BETWEEN 22408 AND 22420 OR covid_samples.id BETWEEN 22422 AND 22430 OR covid_samples.id BETWEEN 22432 AND 22444 OR covid_samples.id BETWEEN 22452 AND 22464 OR covid_samples.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -711,6 +721,62 @@ class CovidSampleController extends Controller
         $path = $request->upload->store('public/site_samples/covid');
         $c = new KemriWRPImport;
         Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+    public function ampath_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
+    }
+
+    public function upload_ampath_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Facility ID') continue;
+
+            $p = CovidPatient::where(['identifier' => $data[2]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[2],
+                'facility_id' => $data[0],
+                'patient_name' => $data[1],
+                'sex' => $data[3],
+                'national_id' => $data[8],
+                'phone_no' => $data[9],
+                'residence' => $data[5],
+                'occupation' => $data[6],
+                'justification' => 3,             
+            ]);
+            if(!$p->facility_id || $p->facility_id == '') $p->county_id = 26;
+
+            $p->save();
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => env('APP_LAB'),
+                'temperature' => $data[7],
+                'site_entry' => 1,
+                'age' => $data[4],
+                'test_type' => 1,
+                'sample_type' => 1,
+                'datecollected' => '2020-07-02',
+                'datereceived' => '2020-07-03',
+                'receivedstatus' => 1,
+                'sample_type' => 1,
+            ]);
+            $created_rows++;
+        }
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
