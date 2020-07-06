@@ -154,7 +154,7 @@ class MiscCovid extends Common
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
     }
 
-    public function dispatch_results()
+    public static function dispatch_results()
     {
         $quarantine_sites = CovidSampleView::select('distinct quarantine_site_id')
             ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
@@ -170,7 +170,7 @@ class MiscCovid extends Common
     }
 
 
-    public function send_results($quarantine_site_id=null, $facility_id=null)
+    public static function send_results($quarantine_site_id=null, $facility_id=null)
     {
         $lab = Lab::find(env('APP_LAB'));
         $cc_array = explode(',', $lab->cc_emails);
