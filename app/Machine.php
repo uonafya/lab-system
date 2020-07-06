@@ -165,6 +165,8 @@ class Machine extends Model
 
     public function getCovidTestsDone($start_date, $end_date)
     {
+        if ($this->id == 2)
+            return 1000;
         $user = auth()->user();
         return CovidSample::selectRaw("count(*) as `samples`")
                         ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
