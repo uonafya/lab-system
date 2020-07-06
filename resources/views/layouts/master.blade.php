@@ -213,22 +213,24 @@
             $("#sysSwitch").val(test);
             $("#systxt").html(text);
         }
+
+        // sysswitch
         
         $("#sysSwitch").click(function(){
             sys = $(this).val();
-            $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+            $.get("<?= url('system_switch/"+sys+"'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
 
         $("#drswitch").click(function(){
-            $.get("<?= url('sysswitch/DR'); ?>", function(data){
+            $.get("<?= url('system_switch/DR'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
 
         $("#cd4Switch").click(function(){
-            $.get("<?= url('sysswitch/CD4'); ?>", function(data){
+            $.get("<?= url('system_switch/CD4'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
