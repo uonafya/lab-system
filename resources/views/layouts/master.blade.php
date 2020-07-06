@@ -154,6 +154,8 @@
             }
         });
 
+        console.log("{{ session('testingSystem') }} ");
+
         @php
             $toast_message = session()->pull('toast_message');
             $toast_error = session()->pull('toast_error');
