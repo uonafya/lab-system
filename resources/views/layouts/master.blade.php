@@ -154,7 +154,8 @@
             }
         });
 
-        console.log("{{ session('testingSystem') }} ");
+        console.log("Testing system is {{ session('testingSystem') }} ");
+        console.log("Test var is {{ session('test_var') }} ");
 
         @php
             $toast_message = session()->pull('toast_message');
