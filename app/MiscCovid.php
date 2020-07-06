@@ -154,7 +154,7 @@ class MiscCovid extends Common
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
     }
 
-    public static function dispatch_results()
+    public static function dispatch_covid()
     {
         $quarantine_sites = CovidSampleView::select('distinct quarantine_site_id')
             ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
