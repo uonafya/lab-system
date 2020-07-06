@@ -138,6 +138,7 @@ class CovidSampleController extends Controller
     public function download_excel($request)
     {
         $user = auth()->user();
+        dd($request->all());
         extract($request->all());
 
         $type = $request->input('type', 1);
