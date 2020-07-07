@@ -2185,10 +2185,10 @@ class Random
 			->whereYear('daterun', $year)
 			->where(['samples_view.lab_id' => env('APP_LAB')])
 			->groupBy('year', 'month', 'machine_type', 'result')
-            ->orderBy('year', 'ASC')
-            ->orderBy('month', 'ASC')
-            ->orderBy('machine_type', 'ASC')
-            ->orderBy('result', 'ASC')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('result', 'asc')
 			->get();
 
 		$results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
@@ -2229,10 +2229,10 @@ class Random
 			->whereYear('daterun', $year)
 			->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 0,])
 			->groupBy('year', 'month', 'machine_type', 'rcategory')
-            ->orderBy('year', 'ASC')
-            ->orderBy('month', 'ASC')
-            ->orderBy('machine_type', 'ASC')
-            ->orderBy('rcategory', 'ASC')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('rcategory', 'asc')
 			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
 
@@ -2242,9 +2242,9 @@ class Random
             ->whereYear('daterun', $year)
             ->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 1, 'rcategory' => 5])
             ->groupBy('year', 'month', 'machine_type')
-            ->orderBy('year', 'ASC')
-            ->orderBy('month', 'ASC')
-            ->orderBy('machine_type', 'ASC')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
             ->get();
 
 		$results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
@@ -2288,10 +2288,10 @@ class Random
             ->whereYear('daterun', $year)
             ->where(['covid_samples.lab_id' => env('APP_LAB')])
             ->groupBy('year', 'month', 'machine_type', 'result')
-            ->orderBy('year', 'ASC')
-            ->orderBy('month', 'ASC')
-            ->orderBy('machine_type', 'ASC')
-            ->orderBy('result', 'ASC')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('result', 'asc')
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
