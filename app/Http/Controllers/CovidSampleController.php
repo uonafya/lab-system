@@ -138,6 +138,7 @@ class CovidSampleController extends Controller
     public function download_excel($request)
     {
         $user = auth()->user();
+        // dd($request->all());
         extract($request->all());
 
         $type = $request->input('type', 1);
@@ -307,6 +308,7 @@ class CovidSampleController extends Controller
                 return $query->where('covid_samples.lab_id', $lab_id);
             })
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -352,6 +354,13 @@ class CovidSampleController extends Controller
             // else{
             //     Mail::to($mail_array)->send(new CovidDispatch($samples, $quarantine_site));
             // }
+        }
+
+        foreach ($samples as $key => $sample) {
+            if(!$sample->date_email_sent){
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
         }
         session(['toast_message' => 'The results have been sent to the quarantine site / facility.']);
         return back();            
@@ -419,6 +428,7 @@ class CovidSampleController extends Controller
             })
             // ->whereRaw("(covid_samples.id IN (22478, 22555, 22450, 22470) OR covid_samples.id BETWEEN 22408 AND 22420 OR covid_samples.id BETWEEN 22422 AND 22430 OR covid_samples.id BETWEEN 22432 AND 22444 OR covid_samples.id BETWEEN 22452 AND 22464 OR covid_samples.id BETWEEN 22472 AND 22475 )")
             ->whereNotNull('datedispatched')
+            ->orderBy('identifier', 'asc')
             ->orderBy($date_column, 'desc')
             ->get();
 
@@ -490,10 +500,10 @@ class CovidSampleController extends Controller
 
             for ($i=0; $i < $count; $i++) {
                 $travel = new CovidTravel;
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
                 // $travel->city_visited = $travels['city_visited'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->save();
             }
@@ -591,9 +601,9 @@ class CovidSampleController extends Controller
                 else{
                     $travel = new CovidTravel;
                 }
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->pre_update();
             }

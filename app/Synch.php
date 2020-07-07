@@ -528,7 +528,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		// if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -584,7 +584,7 @@ class Synch
 				}
 
 				$token = self::get_token();
-				// if($type == 'covid') $token = self::get_covid_token();
+				if($type == 'covid') $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
@@ -1388,7 +1388,7 @@ class Synch
 	public static function get_covid_samples()
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
 			return $samples;
 		}
 		$client = new Client(['base_uri' => self::$cov_base]);
@@ -1410,7 +1410,7 @@ class Synch
 	public static function set_covid_samples($samples)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 
 			foreach ($nat_samples as $key => $nat_sample) {

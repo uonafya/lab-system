@@ -84,7 +84,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-	// Route::middleware(['consumptionsubmitted'])->group(function(){
+	Route::middleware(['consumptionsubmitted'])->group(function(){
 		Route::prefix('home')->name('home.')->group(function(){
 			Route::get('/', 'HomeController@index');
 			Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('refresh_cache', 'RandomController@refresh_cache');
 		Route::get('refresh_dashboard', 'RandomController@refresh_dashboard');
-		Route::get('sysswitch/{sys}', 'RandomController@sysswitch');
+		Route::get('system_switch/{sys}', 'RandomController@sysswitch');
 
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::prefix('batch')->name('batch.')->group(function () {
@@ -753,7 +753,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			Route::resource('viralworksheet', 'ViralworksheetController');
 		});
-	// });
+	});
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');

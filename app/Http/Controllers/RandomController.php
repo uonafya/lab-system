@@ -72,8 +72,11 @@ class RandomController extends Controller
 		}else if ($sys == 'Covid'){
 			$new = session(['testingSystem' => 'Covid']);
 		}
+
+		session(['test_var' => 'changed']);
+		return ['testingSystem' => session('testingSystem')];
 		
-		echo json_encode(session('testingSystem'));
+		// echo json_encode(session('testingSystem'));
 	}
 
 	public function search()
