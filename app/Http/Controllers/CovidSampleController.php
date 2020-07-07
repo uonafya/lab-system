@@ -500,10 +500,10 @@ class CovidSampleController extends Controller
 
             for ($i=0; $i < $count; $i++) {
                 $travel = new CovidTravel;
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
                 // $travel->city_visited = $travels['city_visited'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->save();
             }
@@ -601,9 +601,9 @@ class CovidSampleController extends Controller
                 else{
                     $travel = new CovidTravel;
                 }
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->pre_update();
             }
