@@ -2233,7 +2233,6 @@ class Random
             ->orderBy('month', 'asc')
             ->orderBy('machine_type', 'asc')
             ->orderBy('rcategory', 'asc')
-			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
 
         $data2 = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as tests ")
