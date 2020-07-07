@@ -2166,10 +2166,20 @@ class Random
 		");
 	}
 
+    public static function worksheets_data()
+    {
+        $data = [];
+        $data[] = self::eid_worksheets();
+        $data[] = self::vl_worksheets();
+        $data[] = self::covid_worksheets();
+
+        Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+    }
+
 	public static function eid_worksheets($year = null)
 	{
 		if(!$year) $year = date('Y');
-		$data = \App\SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
+		$data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
 			->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
 			->whereYear('daterun', $year)
@@ -2202,21 +2212,15 @@ class Random
 
 		$file = 'eid_worksheets_data';
 
-		Excel::create($file, function($excel) use($rows){
-			$excel->sheet('Sheetname', function($sheet) use($rows) {
-				$sheet->fromArray($rows);
-			});
-		})->store('csv');
+        Common::csv_download($rows, $file, true, true);
 
-		$data = [storage_path("exports/" . $file . ".csv")];
-
-		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+		return storage_path("exports/" . $file . ".csv");
 	}
 
 	public static function vl_worksheets($year = null)
 	{
 		if(!$year) $year = date('Y');
-		$data = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
+		$data = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
 			->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
 			->where('site_entry', '!=', 2)
 			->whereYear('daterun', $year)
@@ -2225,7 +2229,7 @@ class Random
 			->orderBy('year', 'month', 'machine_type', 'rcategory')
 			->get();
 
-        $data2 = \App\ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as tests ")
+        $data2 = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as tests ")
             ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
             ->where('site_entry', '!=', 2)
             ->whereYear('daterun', $year)
@@ -2261,16 +2265,51 @@ class Random
 
 		$file = 'vl_worksheets_data';
 
-		Excel::create($file, function($excel) use($rows){
-			$excel->sheet('Sheetname', function($sheet) use($rows) {
-				$sheet->fromArray($rows);
-			});
-		})->store('csv');
+        Common::csv_download($rows, $file, true, true);
 
-		$data = [storage_path("exports/" . $file . ".csv")];
-
-		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
+        return storage_path("exports/" . $file . ".csv");
 	}
+
+    public static function covid_worksheets($year = null)
+    {
+        if(!$year) $year = date('Y');
+        $data = CovidSample::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
+            ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['covid_samples.lab_id' => env('APP_LAB')])
+            ->groupBy('year', 'month', 'machine_type', 'result')
+            ->orderBy('year', 'month', 'machine_type', 'result')
+            ->get();
+
+        $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
+        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott'];
+
+        $rows = [];
+
+        for ($i=1; $i < 13; $i++) { 
+            foreach ($machines as $mkey => $mvalue) {
+                $row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
+                $row['Machine'] = $mvalue;
+                $total = 0;
+
+                foreach ($results as $rkey => $rvalue) {
+                    $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    $total += $row[$rvalue];
+                }
+
+                $row['Total'] = $total;
+                $rows[] = $row;
+            }
+            if($year == date('Y') && $i == date('m')) break;
+        }
+
+        $file = 'covid_worksheets_data';
+
+        Common::csv_download($rows, $file, true, true);
+
+        return storage_path("exports/" . $file . ".csv");
+    }
 
     private static function computeQualkits($deliveries, $prevConsumption, $procClass, $prefices, $used, $wasted, $posAdj, $negAdj, $requested)
     {
