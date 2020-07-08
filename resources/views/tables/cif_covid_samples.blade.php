@@ -27,6 +27,8 @@
                                     <tr class="colhead">
                                         <th> CIF ID </th>
                                         <th> Identifier </th>
+                                        <th> County </th>
+                                        <th> Name </th>
                                         <th> DOB </th>
                                         <th> Age </th>
                                         <th> Date Collected </th>
@@ -39,6 +41,8 @@
                                         <tr>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
+                                            <td> {{ $sample->patient->county ?? '' }} </td>
+                                            <td> {{ $sample->patient->patient_name ?? '' }} </td>
                                             <td> {{ $sample->patient->dob ?? '' }} </td>
                                             <td> {{ $sample->age ?? '' }} </td>
                                             <td> {{ $sample->datecollected ?? '' }} </td>

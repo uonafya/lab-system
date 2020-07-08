@@ -86,6 +86,10 @@ Artisan::command('dispatch:nhrl', function(){
     \App\Common::nhrl('vl');
 })->describe('Set NHRL & Edarp samples to be dispatched.');
 
+Artisan::command('dispatch:covid', function(){
+    \App\MiscCovid::dispatch_covid();
+})->describe('Email Covid Results.');
+
 Artisan::command('input-complete', function(){
     $str = \App\Common::input_complete_batches('eid');
     $str = \App\Common::input_complete_batches('vl');
@@ -156,6 +160,11 @@ Artisan::command('lablog', function(){
 // 	$str = \App\Synch::synch_vl_patients();
 //     $this->info($str);
 // })->describe('Synch vl patients to the national database.');
+
+Artisan::command('send:worksheet_data', function(){
+    $str = \App\Random::worksheets_data();
+    $this->info($str);
+})->describe('Send worksheets data.');
 
 Artisan::command('send:nodata', function(){
     $str = \App\Common::no_data_report('eid');

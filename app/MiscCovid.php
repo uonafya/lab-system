@@ -154,5 +154,74 @@ class MiscCovid extends Common
         return compact('count', 'limit', 'create', 'machine_type', 'machine', 'samples', 'covid');
     }
 
+    public static function dispatch_covid()
+    {
+        $quarantine_sites = CovidSampleView::select('distinct quarantine_site_id')
+            ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
+            ->where(['repeatt' => 0])
+            ->whereNull('date_email_sent')
+            ->whereNotNull('datedispatched')
+            ->whereNotNull('national_sample_id')
+            ->get();
+
+        foreach ($quarantine_sites as $key => $quarantine_site) {
+            self::send_results($quarantine_site->quarantine_site_id);
+        }
+    }
+
+
+    public static function send_results($quarantine_site_id=null, $facility_id=null)
+    {
+        $lab = Lab::find(env('APP_LAB'));
+        $cc_array = explode(',', $lab->cc_emails);
+
+        $samples = CovidSample::select('covid_samples.*')
+            ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+            ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
+            ->where(['dispatched' => 0, 'repeatt' => 0])
+            ->when($facility_id, function($query) use ($facility_id){
+                return $query->where('facility_id', $facility_id);
+            })
+            ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
+                return $query->where('quarantine_site_id', $quarantine_site_id);
+            })
+            ->whereNull('date_email_sent')
+            ->whereNotNull('datedispatched')
+            ->whereNotNull('national_sample_id')
+            ->orderBy('identifier', 'asc')
+            ->get();
+
+
+        $mail_array = [];
+
+        if($quarantine_site_id){
+            $quarantine_site = QuarantineSite::find($quarantine_site_id);
+            if($quarantine_site && $quarantine_site->email) $mail_array = explode(',', $quarantine_site->email);
+        }
+
+        else if($facility_id){
+            $quarantine_site = Facility::find($facility_id);
+            if($facility && $facility->covid_email) $mail_array = explode(',', $facility->covid_email);
+        }
+        
+
+        if(!$mail_array && $cc_array){
+            Mail::to($cc_array)->send(new CovidDispatch($samples));
+        }else{                 
+            if($quarantine_site_id){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+            }else if($facility_id){                
+                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+            }
+        }
+
+        foreach ($samples as $key => $sample) {
+            $sample->date_email_sent = date('Y-m-d');
+            $sample->save();
+        }
+
+
+    }
+
 
 }
