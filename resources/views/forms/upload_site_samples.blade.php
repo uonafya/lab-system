@@ -43,11 +43,19 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
+                            @if($url == 'covid_sample/wrp')
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Select Excel/CSV</span>
+                                <span class="fileinput-exists">Change</span>
+                                <input id="upload" type="file" required accept=".xlsx, .xls, .csv" name="upload" >
+                            </span>
+                            @else
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select CSV</span>
                                 <span class="fileinput-exists">Change</span>
                                 <input id="upload" type="file" required accept=".csv" name="upload" >
                             </span>
+                            @endif
                             <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                         </div>
 
