@@ -805,7 +805,7 @@ class CovidWorksheetController extends Controller
             $rsample->worksheet_id = $new_worksheet->id;
             $rsample->save();
         }
-        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        session(['toast_message' => "The worksheet has been marked as failed and is ready for rerun."]);
         return redirect($worksheet->route_name);  
     }
 

@@ -23,7 +23,10 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         $column = 'quarantine_site_id';
         if($row->facility_name > 100) $column = 'facility_id';
 
-        $p = CovidPatient::where(['identifier' => $row->identifier])->first();
+        $p = null;
+
+        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->first();
+        if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
         $mfl = $row->mfl ?? null;
 
@@ -37,6 +40,8 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         if(Str::contains($justification, 'truck')) $j = 10;
         else if(Str::contains($justification, 'food')) $j = 11;
         else if(Str::contains($justification, 'health')) $j = 9;
+        else if(Str::contains($justification, 'surveillance')) $j = 3;
+        // else if(Str::contains($justification, 'surveillance')) $j = 9;
         else{
             $j = null;
         }
