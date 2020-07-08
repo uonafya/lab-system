@@ -35,7 +35,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         if(!$p) $p = new CovidPatient;
 
-        $justification = strtolower(($row->justification ?? null));
+        $justification = strtolower(($row->justification ?? ''));
 
         if(Str::contains($justification, 'truck')) $j = 10;
         else if(Str::contains($justification, 'food')) $j = 11;
