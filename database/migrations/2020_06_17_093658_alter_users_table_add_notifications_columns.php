@@ -14,7 +14,7 @@ class AlterUsersTableAddNotificationsColumns extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table){
-            $table->tinyInteger('covid_consumption_allowed')->default(0)->after('user_signature');
+            $table->tinyInteger('covid_consumption_allowed')->default(0)->after('last_access');
         });
     }
 
