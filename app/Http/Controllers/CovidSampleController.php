@@ -750,7 +750,7 @@ class CovidSampleController extends Controller
             $p->fill([
                 'identifier' => $data[3],
                 'facility_id' => 5647,
-                'patient_name' => $data[1],
+                'patient_name' => $data[0],
                 'sex' => $data[2],
                 'phone_no' => $data[4],
                 'justification' => 3,             
@@ -761,7 +761,7 @@ class CovidSampleController extends Controller
                 'patient_id' => $p->id,
                 'lab_id' => env('APP_LAB'),
                 'site_entry' => 1,
-                'age' => $data[2],
+                'age' => $data[1],
                 'test_type' => 1,
                 'sample_type' => 1,
                 'datecollected' => date('Y-m-d'),
