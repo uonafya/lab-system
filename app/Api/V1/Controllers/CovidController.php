@@ -147,6 +147,8 @@ class CovidController extends Controller
         // else{
         //     $s->nhrl_sample_id = $request->input('specimen_id');
         // }
+
+        $s->datedispatched = $s->datetested;
         
         $s->lab_id = $lab->id;
         $s->save();
