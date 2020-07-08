@@ -15,7 +15,7 @@ class AlterUsersTableAddConsumptionReportColumn extends Migration
     {
         Schema::table('users', function(Blueprint $table){
             $table->tinyInteger('eidvl_consumption_allowed')->default(0)->after('covid_consumption_allowed');
-        })
+        });
     }
 
     /**
