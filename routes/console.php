@@ -161,6 +161,11 @@ Artisan::command('lablog', function(){
 //     $this->info($str);
 // })->describe('Synch vl patients to the national database.');
 
+Artisan::command('send:worksheet_data', function(){
+    $str = \App\Random::worksheets_data();
+    $this->info($str);
+})->describe('Send worksheets data.');
+
 Artisan::command('send:nodata', function(){
     $str = \App\Common::no_data_report('eid');
     $str = \App\Common::no_data_report('vl');
