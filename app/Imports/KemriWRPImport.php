@@ -17,6 +17,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class KemriWRPImport implements OnEachRow, WithHeadingRow
 {
 
+    
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
@@ -25,7 +26,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         $p = null;
 
-        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->first();
+        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
         $mfl = $row->mfl ?? null;
