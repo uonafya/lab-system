@@ -741,37 +741,31 @@ class CovidSampleController extends Controller
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Facility ID') continue;
+            if($data[0] == 'Name') continue;
 
-            $p = CovidPatient::where(['identifier' => $data[2]])->first();
+            $p = CovidPatient::where(['identifier' => $data[3]])->first();
 
             if(!$p) $p = new CovidPatient;
 
             $p->fill([
-                'identifier' => $data[2],
-                'facility_id' => $data[0],
-                'patient_name' => $data[1],
-                'sex' => $data[3],
-                'national_id' => $data[8],
-                'phone_no' => $data[9],
-                'residence' => $data[5],
-                'occupation' => $data[6],
+                'identifier' => $data[3],
+                'facility_id' => 5647,
+                'patient_name' => $data[0],
+                'sex' => $data[2],
+                'phone_no' => $data[4],
                 'justification' => 3,             
             ]);
-            if(!$p->facility_id || $p->facility_id == '') $p->county_id = 26;
-
             $p->save();
 
             $s = CovidSample::create([
                 'patient_id' => $p->id,
                 'lab_id' => env('APP_LAB'),
-                'temperature' => $data[7],
                 'site_entry' => 1,
-                'age' => $data[4],
+                'age' => $data[1],
                 'test_type' => 1,
                 'sample_type' => 1,
-                'datecollected' => '2020-07-02',
-                'datereceived' => '2020-07-03',
+                'datecollected' => date('Y-m-d'),
+                'datereceived' => date('Y-m-d'),
                 'receivedstatus' => 1,
                 'sample_type' => 1,
             ]);
