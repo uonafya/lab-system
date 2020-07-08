@@ -40,6 +40,7 @@
                         </div>
                     @endif
                 @endif
+                @if(!in_array(env('APP_LAB'), [23]))
                     <!-- Kit and kits consumption -->
                     @if(sizeof($deliveries) > 0)
                         <div class="alert alert-warning spacing  bottom">
@@ -100,6 +101,7 @@
                         </div>
                     @endif
                     <!-- Lab equipment Report -->
+                @endif
                 </div>
             </div>
         </div>

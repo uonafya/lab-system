@@ -42,13 +42,14 @@ class Consumption extends Model
     {
         $data = [];
         $year = $this->selectRaw("max(`year`) as `year`")->get()->first()->year;
+
         $month = $this->select('year', 'month')->where('year', '=', $year)->get()->max('month');
         
         $latestdate = (object)[
                            'year' => date('Y', strtotime("+1 Month", strtotime($year.'-'.$month))),
                            'month' => date('m', strtotime("+1 Month", strtotime($year.'-'.$month))),
                         ];
-        // dd($latestdate);
+        
         $limit = date('Y-m', strtotime("-1 Month", strtotime(date('Y-m'))));
         $currentloopdate = $latestdate->year . '-' . $latestdate->month;
         while (strtotime($limit) >= strtotime($currentloopdate)) {
