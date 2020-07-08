@@ -25,7 +25,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         $p = null;
 
-        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->first();
+        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
         $mfl = $row->mfl ?? null;
