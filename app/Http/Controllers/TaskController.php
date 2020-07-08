@@ -54,7 +54,7 @@ class TaskController extends Controller
             return redirect()->route('home');
         }
         // return redirect('/home');
-        if (env('APP_LAB') != 23) {
+        if (env('APP_LAB') != 23 && auth()->user()->eidvl_consumption_allowed) {
             $pendingDeliveries = $this->getDeliveries();
             $data['deliveries'] = $pendingDeliveries;
             if (empty($pendingDeliveries)){
@@ -80,7 +80,7 @@ class TaskController extends Controller
             $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         }
   //       $data['requisitions'] = count($this->getRequisitions());
-        if (!in_array(env('APP_LAB'), [8])){
+        if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed){
             $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
