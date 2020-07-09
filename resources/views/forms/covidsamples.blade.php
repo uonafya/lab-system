@@ -427,9 +427,9 @@
                 $("#identifier").blur(function(){
                     check_new_patient();
                 });
-                $("#national_id").blur(function(){
+                /*$("#national_id").blur(function(){
                     check_new_patient();
-                });
+                });*/
             @endif
 
 
@@ -550,8 +550,8 @@
 
 
         function check_new_patient(){
-            console.log('Here');
-            return;
+            // console.log('Here');
+            // return;
             var national_id = $("#national_id").val();
             var identifier = $("#identifier").val();
             var facility = $("#facility_id").val();
