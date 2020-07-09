@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsersTableAddNotificationsColumns extends Migration
+class AlterUsersTableAddConsumptionReportColumn extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AlterUsersTableAddNotificationsColumns extends Migration
      */
     public function up()
     {
-        // Schema::table('users', function(Blueprint $table){
-        //     $table->tinyInteger('covid_consumption_allowed')->default(0)->after('last_access');
-        // });
+        Schema::table('users', function(Blueprint $table){
+            $table->tinyInteger('eidvl_consumption_allowed')->default(0)->after('covid_consumption_allowed');
+        });
     }
 
     /**
