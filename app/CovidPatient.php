@@ -72,4 +72,13 @@ class CovidPatient extends BaseModel
     {
         return County::find($this->county_id)->name ?? '';
     }
+
+    public function most_recent()
+    {
+        $sample = CovidSample::where('patient_id', $this->id)
+                ->whereRaw("created_at=
+                    (SELECT max(created_at) FROM covid_samples WHERE patient_id={$this->id})")
+                ->first();
+        $this->most_recent = $sample;
+    }
 }

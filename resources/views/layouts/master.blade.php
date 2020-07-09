@@ -258,7 +258,7 @@
                 closeButton: true,
                 progressBar: true,
                 showMethod: 'slideDown',
-                timeOut: 10000,
+                timeOut: 15000,
                 preventDuplicates: true
             };
             toastr.warning(message); 
