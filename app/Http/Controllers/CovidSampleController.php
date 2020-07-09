@@ -474,9 +474,11 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
+        // if(auth()->user()->lab_id != 1){
+            if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
+            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
+            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
+        // }
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
@@ -749,10 +751,11 @@ class CovidSampleController extends Controller
 
             $p->fill([
                 'identifier' => $data[3],
-                'facility_id' => 5647,
+                // 'facility_id' => 5647,
+                'facility_id' => 5541,
                 'patient_name' => $data[0],
                 'sex' => $data[2],
-                'phone_no' => $data[4],
+                'phone_no' => $data[4] ?? null,
                 'justification' => 3,             
             ]);
             $p->save();
@@ -764,8 +767,8 @@ class CovidSampleController extends Controller
                 'age' => $data[1],
                 'test_type' => 1,
                 'sample_type' => 1,
-                'datecollected' => date('Y-m-d'),
-                'datereceived' => date('Y-m-d'),
+                'datecollected' => '2020-07-08',
+                'datereceived' => '2020-07-08',
                 'receivedstatus' => 1,
                 'sample_type' => 1,
             ]);
@@ -1086,5 +1089,37 @@ class CovidSampleController extends Controller
 
         $samples->setPath(url()->current());
         return $samples;
+    }
+
+
+    public function new_patient(Request $request)
+    {
+        $national_id = $request->input('national_id');
+        $identifier = $request->input('identifier');
+        $facility_id = $request->input('facility_id');
+        $quarantine_site_id = $request->input('quarantine_site_id');
+
+
+        $patient = null;
+        if($national_id) $patient = CovidPatient::where('national_id', $national_id)->first();
+        if(!$patient && !$identifier) return ['message' => null];
+        if(!$patient && $facility_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
+        }
+        if(!$patient && $quarantine_site_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
+        }
+
+        if($patient){
+            $patient->most_recent();
+            if($patient->most_recent){
+                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
+                Any patient details entered will overwrite existing patient details <br />
+                Name {$patient->patient_name} <br />
+                Identifier {$patient->identifier} <br />
+                National ID {$patient->national_id} "];
+            }
+        }
+        return ['message' => null];
     }
 }

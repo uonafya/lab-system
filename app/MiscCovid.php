@@ -156,7 +156,7 @@ class MiscCovid extends Common
 
     public static function dispatch_covid()
     {
-        $quarantine_sites = CovidSampleView::select('distinct quarantine_site_id')
+        $quarantine_sites = CovidSampleView::selectRaw('distinct quarantine_site_id')
             ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
             ->where(['repeatt' => 0])
             ->whereNull('date_email_sent')
