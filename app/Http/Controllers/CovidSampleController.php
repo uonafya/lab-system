@@ -766,8 +766,8 @@ class CovidSampleController extends Controller
                 'age' => $data[1],
                 'test_type' => 1,
                 'sample_type' => 1,
-                'datecollected' => date('Y-m-d'),
-                'datereceived' => date('Y-m-d'),
+                'datecollected' => '2020-07-08',
+                'datereceived' => '2020-07-08',
                 'receivedstatus' => 1,
                 'sample_type' => 1,
             ]);
