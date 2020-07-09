@@ -47,7 +47,10 @@ class CovidController extends Controller
      */
     public function index(CovidRequest $request)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
         if(!$lab) abort(401);
 
         $sample_class = CovidSample::class;
@@ -101,7 +104,10 @@ class CovidController extends Controller
      */
     public function store(CovidRequest $request)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
         if(!$lab) abort(401);
 
         $patient_class = CovidPatient::class;
@@ -178,7 +184,10 @@ class CovidController extends Controller
      */
     public function show(CovidRequest $request, $id)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
         if(!$lab) abort(401);
 
         $column = 'nhrl_sample_id';
