@@ -554,7 +554,7 @@
             // return;
             var national_id = $("#national_id").val();
             var identifier = $("#identifier").val();
-            var facility = $("#facility_id").val();
+            var facility_id = $("#facility_id").val();
             var quarantine_site_id = $("#quarantine_site_id").val();
 
             $.ajax({
