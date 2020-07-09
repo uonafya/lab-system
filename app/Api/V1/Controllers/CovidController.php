@@ -124,7 +124,7 @@ class CovidController extends Controller
             $patient_column = 'cif_patient_id';
             $sample_column = 'cif_sample_id';            
         }
-
+        
 
         // $p = new CovidPatient;
         // if(\Str::contains(url()->current(), 'test')) $p = new TestPatient;
