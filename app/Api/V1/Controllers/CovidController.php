@@ -47,7 +47,10 @@ class CovidController extends Controller
      */
     public function index(CovidRequest $request)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
         if(!$lab) abort(401);
 
         $sample_class = CovidSample::class;
@@ -101,7 +104,11 @@ class CovidController extends Controller
      */
     public function store(CovidRequest $request)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        // if(!$apikey) abort(401, 'apikey is required');
+        // $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
+        $lab = Lab::where(['apikey' => $apikey])->first();
         if(!$lab) abort(401);
 
         $patient_class = CovidPatient::class;
@@ -142,7 +149,7 @@ class CovidController extends Controller
         $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
         if(!$s) $s = $sample_class::where(['lab_id' => $lab->id, 'patient_id' => $p->id, 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = new $sample_class;
-        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'datecollected', 'datetested']));
+        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'age_unit', 'datecollected', 'datetested']));
         $s->patient_id = $p->id;
         $s->$sample_column = $request->input('specimen_id');
         // if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
@@ -178,7 +185,10 @@ class CovidController extends Controller
      */
     public function show(CovidRequest $request, $id)
     {
-        $lab = Lab::where(['apikey' => $request->headers->get('apikey')])->first();
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
         if(!$lab) abort(401);
 
         $column = 'nhrl_sample_id';
