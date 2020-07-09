@@ -444,7 +444,7 @@
                 else{
                     $('.requirable').attr("required", "required");
                 }
-                
+
             });
 
             $(".date-normal").datepicker({
@@ -550,6 +550,8 @@
 
 
         function check_new_patient(){
+            console.log('Here');
+            return;
             var national_id = $("#national_id").val();
             var identifier = $("#identifier").val();
             var facility = $("#facility_id").val();
