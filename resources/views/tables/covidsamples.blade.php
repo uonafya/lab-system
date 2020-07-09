@@ -318,6 +318,7 @@
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
+                                    <th rowspan="2">Age</th>
                                     <th colspan="4">Date</th>
                                     <th rowspan="2">Entered By</th>
                                     <th rowspan="2">Received By</th>
@@ -354,6 +355,7 @@
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
+                                        <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
 
