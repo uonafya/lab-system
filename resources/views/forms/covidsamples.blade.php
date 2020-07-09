@@ -424,12 +424,12 @@
                     $('.requirable').removeAttr("required");
                 @endif
             @else
-                $("#identifier").blur(function(){
-                    check_new_patient();
-                });
-                /*$("#national_id").blur(function(){
+                /*$("#identifier").blur(function(){
                     check_new_patient();
                 });*/
+                $("#national_id").blur(function(){
+                    check_new_patient();
+                });
             @endif
 
 
