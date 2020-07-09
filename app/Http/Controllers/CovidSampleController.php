@@ -474,11 +474,11 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(auth()->user()->lab_id != 1){
+        // if(auth()->user()->lab_id != 1){
             if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
             if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
             if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
-        }
+        // }
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
@@ -1114,7 +1114,7 @@ class CovidSampleController extends Controller
             $patient->most_recent();
             if($patient->most_recent){
                 return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
-                Any Patient details will overwrite existing patient details <br />
+                Any patient details entered will overwrite existing patient details <br />
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
                 National ID {$patient->national_id} "];
