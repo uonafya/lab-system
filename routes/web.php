@@ -175,6 +175,7 @@ Route::middleware(['auth'])->group(function(){
 			
 			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
+			Route::post('new_patient/', 'CovidSampleController@new_patient')->name('new_patient');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
 
