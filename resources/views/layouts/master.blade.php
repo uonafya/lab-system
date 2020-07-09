@@ -154,9 +154,6 @@
             }
         });
 
-        console.log("Testing system is {{ session('testingSystem') }} ");
-        console.log("Test var is {{ session('test_var') }} ");
-
         @php
             $toast_message = session()->pull('toast_message');
             $toast_error = session()->pull('toast_error');
@@ -258,7 +255,7 @@
                 closeButton: true,
                 progressBar: true,
                 showMethod: 'slideDown',
-                timeOut: 10000,
+                timeOut: 15000,
                 preventDuplicates: true
             };
             toastr.warning(message); 

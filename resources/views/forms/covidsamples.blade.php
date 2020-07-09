@@ -67,6 +67,12 @@
                             </center>
                         </div>
                         <br />
+
+                        <div class="alert alert-info" id="new_patient_div">
+                            <center id="new_patient_info">
+
+                            </center>
+                        </div>
   
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
@@ -118,18 +124,6 @@
                     </div>
                     <div class="panel-body" style="padding-bottom: 6px;">
 
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->nationality ?? null, 'prop' => 'nationality', 'label' => 'Nationality', 'items' => $nationalities, 'facility_required' => true])
-
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
-
-                        @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
-
-                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID (If any)'])
-
-                        @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
-
-                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
-
                         @if(auth()->user()->quarantine_site)
                             <input type="hidden" name="quarantine_site_id" value="{{ auth()->user()->facility_id }}">
                         @elseif(auth()->user()->facility_user)
@@ -141,6 +135,18 @@
                                 @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->quarantine_site_id ?? null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
                             @endif
                         @endif
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->nationality ?? null, 'prop' => 'nationality', 'label' => 'Nationality', 'items' => $nationalities, 'facility_required' => true])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->identifier_type ?? null, 'prop' => 'identifier_type', 'label' => 'Identifier Type', 'items' => $identifier_types])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
+
+                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID (If any)'])
+
+                        @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
+
+                        @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
 
                         @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
@@ -416,6 +422,7 @@
         $(document).ready(function(){
             $("#rejection").hide();
             $("#first_travel_item").hide();
+            $("#new_patient_div").hide();
 
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
@@ -424,10 +431,11 @@
                     $('.requirable').removeAttr("required");
                 @endif
             @else
-                $("#patient").blur(function(){
-                    var patient = $(this).val();
-                    var facility = $("#facility_id").val();
-                    // check_new_patient(patient, facility);
+                $("#identifier").blur(function(){
+                    check_new_patient();
+                });
+                $("#national_id").blur(function(){
+                    check_new_patient();
                 });
             @endif
 
@@ -443,6 +451,7 @@
                 else{
                     $('.requirable').attr("required", "required");
                 }
+
             });
 
             $(".date-normal").datepicker({
@@ -546,6 +555,42 @@
 
         });
 
+
+        function check_new_patient(){
+            // console.log('Here');
+            // return;
+            var national_id = $("#national_id").val();
+            var identifier = $("#identifier").val();
+            var facility_id = $("#facility_id").val();
+            var quarantine_site_id = $("#quarantine_site_id").val();
+
+            $.ajax({
+                type: "POST",
+                data: {
+                    national_id : national_id,
+                    identifier : identifier,
+                    facility_id : facility_id,
+                    quarantine_site_id : quarantine_site_id,
+                },
+                url: "{{ url('/covid_sample/new_patient') }}",
+
+                success: function(data){
+
+                    if(data['message']){
+                        set_message(data['message']);
+                        $("#new_patient_info").html(data['message']);
+                        $("#new_patient_div").show();
+                    }
+                    else{
+                        $("#new_patient_div").hide();
+                    }
+
+
+
+                }
+            });
+
+        }
 
     </script>
 
