@@ -320,7 +320,7 @@
                                     <th rowspan="2">Worksheet</th>
                                     <th rowspan="2">Age</th>
                                     <th colspan="4">Date</th>
-                                    <th rowspan="2">Entered By</th>
+                                    <!-- <th rowspan="2">Entered By</th> -->
                                     <th rowspan="2">Received By</th>
                                     <th rowspan="2">Received</th>
                                     <th rowspan="2">Results</th>                                    
@@ -370,9 +370,9 @@
                                         @endif
 
                                         @if($sample->surname == '' || !$sample->surname)
-                                            <td> {{ $sample->entered_by }} </td>
+                                            <!-- <td> {{ $sample->entered_by }} </td> -->
                                         @else
-                                            <td> {{ $sample->surname . ' ' . $sample->oname }} </td>
+                                            <!-- <td> {{ $sample->surname . ' ' . $sample->oname }} </td> -->
                                         @endif
 
                                         <td> {{ $sample->rsurname . ' ' . $sample->roname }} </td>
