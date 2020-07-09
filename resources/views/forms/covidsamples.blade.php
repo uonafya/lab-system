@@ -67,6 +67,12 @@
                             </center>
                         </div>
                         <br />
+
+                        <div class="alert alert-info" id="new_patient_div">
+                            <center id="new_patient_info">
+
+                            </center>
+                        </div>
   
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
@@ -416,6 +422,7 @@
         $(document).ready(function(){
             $("#rejection").hide();
             $("#first_travel_item").hide();
+            $("#new_patient_div").hide();
 
             @if(isset($sample))                
                 @if($sample->receivedstatus == 2)
@@ -424,9 +431,9 @@
                     $('.requirable').removeAttr("required");
                 @endif
             @else
-                /*$("#identifier").blur(function(){
+                $("#identifier").blur(function(){
                     check_new_patient();
-                });*/
+                });
                 $("#national_id").blur(function(){
                     check_new_patient();
                 });
@@ -571,7 +578,14 @@
 
                     if(data['message']){
                         set_message(data['message']);
+                        $("#new_patient_info").html(data['message']);
+                        $("#new_patient_div").show();
                     }
+                    else{
+                        $("#new_patient_div").hide();
+                    }
+
+
 
                 }
             });

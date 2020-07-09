@@ -1113,7 +1113,7 @@ class CovidSampleController extends Controller
         if($patient){
             $patient->most_recent();
             if($patient->most_recent){
-                return ['message' => "This patient's most recent sample was collected on {$patient->most_recent->datecollected}. <br />
+                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
                 Any Patient details will overwrite existing patient details <br />
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
