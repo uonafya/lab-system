@@ -751,10 +751,11 @@ class CovidSampleController extends Controller
 
             $p->fill([
                 'identifier' => $data[3],
-                'facility_id' => 5647,
+                // 'facility_id' => 5647,
+                'facility_id' => 5541,
                 'patient_name' => $data[0],
                 'sex' => $data[2],
-                'phone_no' => $data[4],
+                'phone_no' => $data[4] ?? null,
                 'justification' => 3,             
             ]);
             $p->save();
