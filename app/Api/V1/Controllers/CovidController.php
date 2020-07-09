@@ -124,13 +124,14 @@ class CovidController extends Controller
             $patient_column = 'cif_patient_id';
             $sample_column = 'cif_sample_id';            
         }
-
+        
 
         // $p = new CovidPatient;
         // if(\Str::contains(url()->current(), 'test')) $p = new TestPatient;
-        $p = $patient_class::where($request->only('national_id'))->whereNotNull('national_id')->first();
-        if(!$p) $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
-        if(!$p) $p = new $patient_class;
+
+        // $p = $patient_class::where($request->only('national_id'))->whereNotNull('national_id')->first();
+        // if(!$p) $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
+        $p = new $patient_class;
         $p->fill($request->only(['case_id', 'nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'phone_no', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         $p->$patient_column = $request->input('patient_id');
         // if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
