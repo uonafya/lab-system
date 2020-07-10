@@ -75,6 +75,8 @@
 
                             </center>
                         </div>
+
+                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
   
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
@@ -150,8 +152,6 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
-
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 

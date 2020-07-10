@@ -1394,7 +1394,7 @@ class Synch
 				$sql .= "patient_name LIKE '%{$name}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
-			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])
+			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
 				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-21 days')))
 				->whereNull('original_sample_id')
 				->whereNull('receivedstatus')
