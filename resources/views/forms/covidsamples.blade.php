@@ -594,7 +594,7 @@
 
         function check_cif_patient(){
             // console.log('Here');
-            // return;
+            return;
             var patient_name = $("#patient_name").val();
 
             $.ajax({
