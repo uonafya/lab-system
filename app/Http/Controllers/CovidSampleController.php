@@ -1122,4 +1122,36 @@ class CovidSampleController extends Controller
         }
         return ['message' => null];
     }
+
+
+    public function cif_patient(Request $request)
+    {
+        $national_id = $request->input('national_id');
+        $identifier = $request->input('identifier');
+        $facility_id = $request->input('facility_id');
+        $quarantine_site_id = $request->input('quarantine_site_id');
+
+
+        $patient = null;
+        if($national_id) $patient = CovidPatient::where('national_id', $national_id)->first();
+        if(!$patient && !$identifier) return ['message' => null];
+        if(!$patient && $facility_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
+        }
+        if(!$patient && $quarantine_site_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
+        }
+
+        if($patient){
+            $patient->most_recent();
+            if($patient->most_recent){
+                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
+                Any patient details entered will overwrite existing patient details <br />
+                Name {$patient->patient_name} <br />
+                Identifier {$patient->identifier} <br />
+                National ID {$patient->national_id} "];
+            }
+        }
+        return ['message' => null];
+    }
 }

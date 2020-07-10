@@ -437,6 +437,12 @@
                 $("#national_id").blur(function(){
                     check_new_patient();
                 });
+
+                @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                    $("#patient_name").blur(function(){
+                        check_cif_patient();
+                    });
+                @endif
             @endif
 
 
@@ -557,8 +563,6 @@
 
 
         function check_new_patient(){
-            // console.log('Here');
-            // return;
             var national_id = $("#national_id").val();
             var identifier = $("#identifier").val();
             var facility_id = $("#facility_id").val();
@@ -584,12 +588,26 @@
                     else{
                         $("#new_patient_div").hide();
                     }
-
-
-
                 }
             });
+        }
 
+        function check_cif_patient(){
+            // console.log('Here');
+            // return;
+            var patient_name = $("#patient_name").val();
+
+            $.ajax({
+                type: "POST",
+                data: {
+                    patient_name : patient_name,
+                },
+                url: "{{ url('/covid_sample/cif_patient') }}",
+
+                success: function(data){
+                    
+                }
+            });
         }
 
     </script>
