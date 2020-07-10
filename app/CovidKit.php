@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CovidKit extends BaseModel
 {
+    use SoftDeletes;
+
     public function machine()
     {
         return $this->belongsTo(Machine::class, 'machine', 'id');
@@ -91,5 +94,62 @@ class CovidKit extends BaseModel
                 $kit->save();
             }
         }
+    }
+
+    public function adjustKits()
+    {
+        $manual = [
+            ['material_no' => 'M1', 'product_description' => 'DAAN Extraction Kits', 'pack_size' => 240, 'calculated_pack_size' => 240, 'type' => 'Manual', 'unit' => 'tips', 'manual_machine' => 1],
+            ['material_no' => 'M2', 'product_description' => 'SARS-Cov2 Primers and probes', 'pack_size' => 96, 'calculated_pack_size' => 96, 'type' => 'Manual', 'unit' => 'tips', 'manual_machine' => 1],
+            ['material_no' => 'M20', 'product_description' => 'SD Biosensor Extraction Kits', 'pack_size' => 300, 'calculated_pack_size' => 300, 'type' => 'Manual', 'unit' => 'tips', 'manual_machine' => 2],
+            ['material_no' => 'M30', 'product_description' => 'Sun Sure  Extraction Kits', 'pack_size' => 4000, 'calculated_pack_size' => 4000, 'type' => 'Manual', 'unit' => 'tips', 'manual_machine' => 3],
+            ['material_no' => 'M7', 'product_description' => '200µl Sterile Filtered Pipette tips ',
+            'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Consumable', 'unit' => 'tips'],
+            ['material_no' => 'M8', 'product_description' => '1000µl Sterile Filtered Pipette tips',
+            'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Consumable', 'unit' => 'tips'],
+            ['material_no' => 'M5', 'product_description' => '10µl Sterile Filtered Pipette tips',
+            'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Consumable', 'unit' => 'tips'],
+            ['material_no' => 'M6', 'product_description' => '100µl Sterile Filtered Pipette tips',
+            'pack_size' => 960, 'calculated_pack_size' => 960, 'type' => 'Consumable', 'unit' => 'tips'],
+            ['material_no' => 'P40', 'product_description' => 'MicroAmp Fast Optical fast Optical 96-well Reaction plate 0.1ml(20)', 'pack_size' => 100, 'calculated_pack_size' => 100, 'type' => 'Consumable', 'unit' => 'pack'],
+            ['material_no' => 'P41', 'product_description' => 'Adhesive Plate 96-well Seals', 'pack_size' => 100, 'calculated_pack_size' => 100, 'type' => 'Consumable', 'unit' => 'pack'],
+        ];
+        foreach ($manual as $key => $kit) {
+            $dbkit = CovidKit::where('material_no', $kit['material_no'])->get();
+            if ($dbkit->isEmpty()){
+                CovidKit::create($kit);
+            } else {
+                $dbkit = $dbkit->first();
+                $dbkit->fill($kit);
+                $dbkit->save();
+            }
+        }
+
+        $deactivated_consumables = [
+            ['material_no' => 'P1'],
+            ['material_no' => 'P2'],
+            ['material_no' => 'M4'],
+            ['material_no' => 'M3'],
+            ['material_no' => 'P3'],
+            ['material_no' => 'P4'],
+            ['material_no' => 'P5'],
+            ['material_no' => 'P6'],
+            ['material_no' => 'P8'],
+            ['material_no' => 'P9'],
+            ['material_no' => 'P10'],
+            ['material_no' => 'P21'],
+            ['material_no' => 'P22'],
+            ['material_no' => 'P23'],
+            ['material_no' => 'P37'],
+            ['material_no' => '09N77-001']
+        ];
+        foreach ($deactivated_consumables as $key => $kit) {
+            $dbkit = CovidKit::where('material_no', $kit['material_no'])->get();
+            if (!$dbkit->isEmpty()){
+                $dbkit->first()->delete();
+            }
+        }
+
+        return true;
     }
 }
