@@ -50,6 +50,8 @@
             </div>
         @endif
 
+        <div id="cif_covid_samples"></div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
@@ -594,7 +596,7 @@
 
         function check_cif_patient(){
             // console.log('Here');
-            return;
+            // return;
             var patient_name = $("#patient_name").val();
 
             $.ajax({
@@ -605,7 +607,7 @@
                 url: "{{ url('/covid_sample/cif_patient') }}",
 
                 success: function(data){
-                    
+                    $("#cif_covid_samples").html(data);
                 }
             });
         }
