@@ -333,10 +333,10 @@ class ViralworksheetController extends Controller
 
     public function reverse_upload(Viralworksheet $worksheet)
     {
-        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
-            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+        /*if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot reverse results for this worksheet.']);
             return back();
-        }
+        }*/
         $worksheet->status_id = 1;
         $worksheet->neg_control_interpretation = $worksheet->highpos_control_interpretation = $worksheet->lowpos_control_interpretation = $worksheet->neg_control_result = $worksheet->highpos_control_result = $worksheet->lowpos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
         $worksheet->save();
