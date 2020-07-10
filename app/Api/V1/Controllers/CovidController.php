@@ -106,9 +106,9 @@ class CovidController extends Controller
     {
         $apikey = $request->headers->get('apikey');
         if(!$apikey) $apikey = $request->input('apikey');
-        // if(!$apikey) abort(401, 'apikey is required');
-        // $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
-        $lab = Lab::where(['apikey' => $apikey])->first();
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
+        // $lab = Lab::where(['apikey' => $apikey])->first();
         if(!$lab) abort(401);
 
         $patient_class = CovidPatient::class;
