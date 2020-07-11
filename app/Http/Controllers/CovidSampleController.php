@@ -757,7 +757,7 @@ class CovidSampleController extends Controller
                 'sex' => $data[4],
                 'phone_no' => $data[2] ?? null,
                 'justification' => 9,             
-                'residence' => 3,             
+                'residence' => $data[5],             
             ]);
             $p->save();
 
