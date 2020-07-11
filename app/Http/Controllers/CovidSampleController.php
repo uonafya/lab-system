@@ -745,6 +745,53 @@ class CovidSampleController extends Controller
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if($data[0] == 'Name') continue;
 
+            $p = CovidPatient::where(['national_id' => $data[1]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[1],
+                'national_id' => $data[1],
+                'facility_id' => 5296,
+                'patient_name' => $data[0],
+                'sex' => $data[4],
+                'phone_no' => $data[2] ?? null,
+                'justification' => 9,             
+                'residence' => 3,             
+            ]);
+            $p->save();
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => env('APP_LAB'),
+                'site_entry' => 1,
+                'age' => $data[3],
+                'test_type' => 1,
+                'sample_type' => 1,
+                'datecollected' => '2020-07-10',
+                'datereceived' => '2020-07-10',
+                'receivedstatus' => 1,
+                'sample_type' => 1,
+            ]);
+            $created_rows++;
+        }
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+    /*public function upload_ampath_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Name') continue;
+
             $p = CovidPatient::where(['identifier' => $data[3]])->first();
 
             if(!$p) $p = new CovidPatient;
@@ -777,7 +824,7 @@ class CovidSampleController extends Controller
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
-    }
+    }*/
 
 
     /*public function upload_wrp_samples(Request $request)
