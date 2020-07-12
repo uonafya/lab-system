@@ -333,8 +333,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_dashboard')->name('dr_dashboard.')->group(function () {
 			Route::get('/', 'DrDashboardController@index');
 			Route::post('filter_any', 'DrDashboardController@filter_any');
-			Route::get('drug_resistance', 'DrDashboardController@drug_resistance');
-			Route::get('heat_map', 'DrDashboardController@heat_map');
+			Route::get('drug_resistance/{current_only?}', 'DrDashboardController@drug_resistance');
+			Route::get('heat_map/{current_only?}', 'DrDashboardController@heat_map');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
