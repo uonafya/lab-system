@@ -34,7 +34,8 @@
 
                         <div class="alert alert-warning">
                             <center>
-                                The file must be a csv or excel file. The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                The file must be a csv or excel file. <br />
+                                The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
                                 Identifier<br />

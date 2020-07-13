@@ -43,7 +43,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
 
         $datecollected = $row->date_collected ?? date('Y-m-d');
 
-        $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected))])->first();
+        $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
 
         $sample->fill([
