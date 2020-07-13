@@ -30,8 +30,8 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
-	public static $cov_base = 'https://lab-covid19.health.go.ke/api';
-	// public static $cov_base = 'https://covid-19-kenya.org/api/';
+	// public static $cov_base = 'https://lab-covid19.health.go.ke/api';
+	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
 
