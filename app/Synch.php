@@ -1385,10 +1385,25 @@ class Synch
 	}
 
 
-	public static function get_covid_samples()
+	public static function get_covid_samples($patient_name=null)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+			$sql = '';
+			$names = explode(' ', $patient_name);
+			foreach ($names as $key => $name) {
+				$sql .= "patient_name LIKE '%{$name}%' AND ";
+			}
+			$sql = substr($sql, 0, -4);
+			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
+				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-21 days')))
+				->whereNull('original_sample_id')
+				->whereNull('receivedstatus')
+				->when($patient_name, function($query) use ($sql){
+					return $query->select('covid_samples.*')
+					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+					->whereRaw($sql);
+				})
+				->with(['patient'])->get();
 			return $samples;
 		}
 		$client = new Client(['base_uri' => self::$cov_base]);
@@ -1412,7 +1427,6 @@ class Synch
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
 			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
-
 			foreach ($nat_samples as $key => $nat_sample) {
 		        $nat_sample->lab_id = auth()->lab()->id;
 
@@ -1420,7 +1434,7 @@ class Synch
 		        if(!$p){
 		            $p = new CovidPatient;
 		        }
-		        $patient_details = $s->patient->toArray();
+		        $patient_details = $nat_sample->patient->toArray();
 		        $p->national_patient_id = $patient_details['id'];
 		        unset($patient_details['original_patient_id']);
 		        // unset($patient_details['cif_patient_id']);
@@ -1429,8 +1443,9 @@ class Synch
 		        $p->fill($patient_details);
 		        $p->save();
 
-
-		        unset($s->patient);
+		        $nat_sample->patient->original_patient_id = $p->id;
+		        $nat_sample->patient->save();
+		        unset($nat_sample->patient);
 
 		        $s = new CovidSample;
 		        $s->fill($nat_sample->toArray());
@@ -1440,8 +1455,11 @@ class Synch
 		        // unset($s->cif_sample_id);
 		        unset($s->nhrl_sample_id);
 		        unset($s->age_category);
+		        $s->receivedstatus = 1;
+		        $s->datereceived = date('Y-m-d');
 		        $s->save();
 
+		        $nat_sample->original_sample_id = $s->id;
 		        $nat_sample->save();
 			}
 			return;
