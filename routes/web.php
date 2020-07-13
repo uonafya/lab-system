@@ -84,7 +84,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-	Route::middleware(['consumptionsubmitted'])->group(function(){
+	// Route::middleware(['consumptionsubmitted'])->group(function(){
 		Route::prefix('home')->name('home.')->group(function(){
 			Route::get('/', 'HomeController@index');
 			Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::get('refresh_cache', 'RandomController@refresh_cache');
 		Route::get('refresh_dashboard', 'RandomController@refresh_dashboard');
-		Route::get('sysswitch/{sys}', 'RandomController@sysswitch');
+		Route::get('system_switch/{sys}', 'RandomController@sysswitch');
 
 		Route::group(['middleware' => ['utype:5']], function () {
 			Route::prefix('batch')->name('batch.')->group(function () {
@@ -165,6 +165,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('ampath/upload', 'CovidSampleController@ampath_sample_page');
 				Route::post('ampath/upload', 'CovidSampleController@upload_ampath_samples');
 				
+				Route::get('reed/upload', 'CovidSampleController@reed_sample_page');
+				Route::post('reed/upload', 'CovidSampleController@upload_walter_reed_samples');
+				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			
@@ -175,6 +178,8 @@ Route::middleware(['auth'])->group(function(){
 			
 			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
+			Route::post('new_patient/', 'CovidSampleController@new_patient')->name('new_patient');
+			Route::post('cif_patient/', 'CovidSampleController@cif_patient')->name('cif_patient');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
 
@@ -331,8 +336,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_dashboard')->name('dr_dashboard.')->group(function () {
 			Route::get('/', 'DrDashboardController@index');
 			Route::post('filter_any', 'DrDashboardController@filter_any');
-			Route::get('drug_resistance', 'DrDashboardController@drug_resistance');
-			Route::get('heat_map', 'DrDashboardController@heat_map');
+			Route::get('drug_resistance/{current_only?}', 'DrDashboardController@drug_resistance');
+			Route::get('heat_map/{current_only?}', 'DrDashboardController@heat_map');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
@@ -753,7 +758,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			Route::resource('viralworksheet', 'ViralworksheetController');
 		});
-	});
+	// });
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');

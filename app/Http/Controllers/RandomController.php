@@ -74,8 +74,9 @@ class RandomController extends Controller
 		}
 
 		session(['test_var' => 'changed']);
+		return ['testingSystem' => session('testingSystem')];
 		
-		echo json_encode(session('testingSystem'));
+		// echo json_encode(session('testingSystem'));
 	}
 
 	public function search()

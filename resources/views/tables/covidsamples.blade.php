@@ -318,8 +318,9 @@
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
-                                    <th colspan="4">Date</th>
-                                    <th rowspan="2">Entered By</th>
+                                    <th rowspan="2">Age</th>
+                                    <th colspan="5">Date</th>
+                                    <!-- <th rowspan="2">Entered By</th> -->
                                     <th rowspan="2">Received By</th>
                                     <th rowspan="2">Received</th>
                                     <th rowspan="2">Results</th>                                    
@@ -337,6 +338,7 @@
                                     <th>Received</th>
                                     <th>Tested</th>
                                     <th>Dispatched</th>    
+                                    <th>Email</th>    
                                 </tr>
                             </thead>
                             <tbody>
@@ -354,6 +356,7 @@
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
+                                        <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
 
@@ -366,11 +369,12 @@
                                             <td> {{ $sample->my_date_format('datetested') }} </td>
                                             <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         @endif
+                                        <td> {{ $sample->my_date_format('date_email_sent') }} </td>
 
                                         @if($sample->surname == '' || !$sample->surname)
-                                            <td> {{ $sample->entered_by }} </td>
+                                            <!-- <td> {{ $sample->entered_by }} </td> -->
                                         @else
-                                            <td> {{ $sample->surname . ' ' . $sample->oname }} </td>
+                                            <!-- <td> {{ $sample->surname . ' ' . $sample->oname }} </td> -->
                                         @endif
 
                                         <td> {{ $sample->rsurname . ' ' . $sample->roname }} </td>

@@ -17,13 +17,17 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class KemriWRPImport implements OnEachRow, WithHeadingRow
 {
 
+    
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
         $column = 'quarantine_site_id';
         if($row->facility_name > 100) $column = 'facility_id';
 
-        $p = CovidPatient::where(['identifier' => $row->identifier])->first();
+        $p = null;
+
+        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
         $mfl = $row->mfl ?? null;
 
@@ -31,6 +35,17 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         $quarantine_site = QuarantineSite::where('name', $row->facility_name)->first();
 
         if(!$p) $p = new CovidPatient;
+
+        $justification = strtolower(($row->justification ?? ''));
+
+        if(Str::contains($justification, 'truck')) $j = 10;
+        else if(Str::contains($justification, 'food')) $j = 11;
+        else if(Str::contains($justification, 'health')) $j = 9;
+        else if(Str::contains($justification, 'surveillance')) $j = 3;
+        // else if(Str::contains($justification, 'surveillance')) $j = 9;
+        else{
+            $j = null;
+        }
 
         $p->fill([
             'identifier' => $row->identifier,
@@ -41,7 +56,8 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
             'national_id' => $row->id_passport,
             'phone_no' => $row->mobile_phone_no,
             'county' => $row->county_rep,
-            'subcounty' => $row->sub_county_rep,                
+            'subcounty' => $row->sub_county_rep,   
+            'justification' => $j,             
         ]);
         $p->save();
 
@@ -53,7 +69,10 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
             $s = null;
         }
 
-        $s = CovidSample::create([
+        $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => date('Y-m-d', strtotime($row->date_collected))])->first();
+        if(!$sample) $sample = new CovidSample;
+
+        $sample->fill([
             'patient_id' => $p->id,
             'lab_id' => 18,
             'kemri_id' => $row->kemri_id,
@@ -69,6 +88,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
             'sample_type' => $s,
             'result' => $row->preliminary_lab_results,
         ]);
+        $sample->pre_update();
 
     }
 }

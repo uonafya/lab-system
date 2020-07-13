@@ -17,6 +17,7 @@ amrexec='php /root/labs/amref/artisan '
 0 8 * * 1 $naiexec send:weekly-backlog 2>&1
 
 10 * * * * $naiexec send:communication 2>&1
+0 8 * * * $naiexec edarp:approvesamples 2>&1
 
 0 14 * * * $naiexec dispatch:results 2>&1
 0 9 * * * $naiexec dispatch:critical 2>&1
@@ -45,7 +46,7 @@ amrexec='php /root/labs/amref/artisan '
 * * * * * $kisexec synch:covid
 
 10 * * * * $kisexec send:communication 2>&1
-0 8 * * * $kisexec edarp:approvesamples 2>&1
+#0 8 * * * $kisexec edarp:approvesamples 2>&1
 
 0 18 * * 5 $kisexec send:weekly-activity 2>&1
 0 9 * * 1 $kisexec send:weekly-backlog 2>&1

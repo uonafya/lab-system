@@ -474,9 +474,11 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
-        if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
+        // if(auth()->user()->lab_id != 1){
+            if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
+            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
+            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
+        // }
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
@@ -500,10 +502,10 @@ class CovidSampleController extends Controller
 
             for ($i=0; $i < $count; $i++) {
                 $travel = new CovidTravel;
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
                 // $travel->city_visited = $travels['city_visited'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->save();
             }
@@ -601,9 +603,9 @@ class CovidSampleController extends Controller
                 else{
                     $travel = new CovidTravel;
                 }
-                $travel->travel_date = $travels['travel_date'][$i];
-                $travel->city_id = $travels['city_id'][$i];
-                $travel->duration_visited = $travels['duration_visited'][$i];
+                $travel->travel_date = $travels['travel_date'][$i] ?? null;
+                $travel->city_id = $travels['city_id'][$i] ?? null;
+                $travel->duration_visited = $travels['duration_visited'][$i] ?? null;
                 $travel->patient_id = $patient->id;
                 $travel->pre_update();
             }
@@ -731,7 +733,7 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
     }
 
-    public function upload_ampath_samples(Request $request)
+    /*public function upload_ampath_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -741,37 +743,85 @@ class CovidSampleController extends Controller
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Facility ID') continue;
+            if($data[0] == 'Name') continue;
 
-            $p = CovidPatient::where(['identifier' => $data[2]])->first();
+            $p = CovidPatient::where(['national_id' => $data[1]])->first();
 
             if(!$p) $p = new CovidPatient;
 
             $p->fill([
-                'identifier' => $data[2],
-                'facility_id' => $data[0],
-                'patient_name' => $data[1],
-                'sex' => $data[3],
-                'national_id' => $data[8],
-                'phone_no' => $data[9],
-                'residence' => $data[5],
-                'occupation' => $data[6],
-                'justification' => 3,             
+                'identifier' => $data[1],
+                'national_id' => $data[1],
+                'facility_id' => 5296,
+                'patient_name' => $data[0],
+                'sex' => $data[4],
+                'phone_no' => $data[2] ?? null,
+                'justification' => 9,             
+                'residence' => $data[5],             
             ]);
-            if(!$p->facility_id || $p->facility_id == '') $p->county_id = 26;
-
             $p->save();
 
             $s = CovidSample::create([
                 'patient_id' => $p->id,
                 'lab_id' => env('APP_LAB'),
-                'temperature' => $data[7],
                 'site_entry' => 1,
-                'age' => $data[4],
+                'age' => $data[3],
                 'test_type' => 1,
                 'sample_type' => 1,
-                'datecollected' => '2020-07-02',
-                'datereceived' => '2020-07-03',
+                'datecollected' => '2020-07-10',
+                'datereceived' => '2020-07-10',
+                'receivedstatus' => 1,
+                'sample_type' => 1,
+            ]);
+            $created_rows++;
+        }
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }*/
+
+    public function reed_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/reed'])->with('pageTitle', 'Upload Walter Reed Samples');
+    }
+
+    public function upload_walter_reed_samples(Request $request)
+    {
+        $file = $request->upload->path();
+        // $path = $request->upload->store('public/site_samples/covid');
+
+        $problem_rows = 0;
+        $created_rows = 0;
+
+        // nakuru pgh
+
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if($data[0] == 'Name') continue;
+
+            $p = CovidPatient::where(['identifier' => $data[3]])->first();
+
+            if(!$p) $p = new CovidPatient;
+
+            $p->fill([
+                'identifier' => $data[3],
+                'facility_id' => 5647,
+                'patient_name' => $data[0],
+                'sex' => $data[2],
+                'phone_no' => $data[4] ?? null,
+                'justification' => 3,             
+            ]);
+            $p->save();
+
+            $s = CovidSample::create([
+                'patient_id' => $p->id,
+                'lab_id' => env('APP_LAB'),
+                'site_entry' => 1,
+                'age' => $data[1],
+                'test_type' => 1,
+                'sample_type' => 1,
+                'datecollected' => '2020-07-08',
+                'datereceived' => '2020-07-08',
                 'receivedstatus' => 1,
                 'sample_type' => 1,
             ]);
@@ -1092,5 +1142,50 @@ class CovidSampleController extends Controller
 
         $samples->setPath(url()->current());
         return $samples;
+    }
+
+
+    public function new_patient(Request $request)
+    {
+        $national_id = $request->input('national_id');
+        $identifier = $request->input('identifier');
+        $facility_id = $request->input('facility_id');
+        $quarantine_site_id = $request->input('quarantine_site_id');
+
+
+        $patient = null;
+        if($national_id) $patient = CovidPatient::where('national_id', $national_id)->first();
+        if(!$patient && !$identifier) return ['message' => null];
+        if(!$patient && $facility_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
+        }
+        if(!$patient && $quarantine_site_id){
+            $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
+        }
+
+        if($patient){
+            $patient->most_recent();
+            if($patient->most_recent){
+                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
+                Any patient details entered will overwrite existing patient details <br />
+                Name {$patient->patient_name} <br />
+                Identifier {$patient->identifier} <br />
+                National ID {$patient->national_id} "];
+            }
+        }
+        return ['message' => null];
+    }
+
+
+    public function cif_patient(Request $request)
+    {
+        $patient_name = $request->input('patient_name');
+        $samples = \App\Synch::get_covid_samples($patient_name);
+        $div = \Str::random(20);
+        if($samples){
+            return view('tables.cif_samples_partial', compact('samples', 'div'));
+        }
+        // abort(404);
+        return null;
     }
 }

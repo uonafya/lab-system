@@ -154,9 +154,6 @@
             }
         });
 
-        console.log("Testing system is {{ session('testingSystem') }} ");
-        console.log("Test var is {{ session('test_var') }} ");
-
         @php
             $toast_message = session()->pull('toast_message');
             $toast_error = session()->pull('toast_error');
@@ -213,22 +210,24 @@
             $("#sysSwitch").val(test);
             $("#systxt").html(text);
         }
+
+        // sysswitch
         
         $("#sysSwitch").click(function(){
             sys = $(this).val();
-            $.get("<?= url('sysswitch/"+sys+"'); ?>", function(data){
+            $.get("<?= url('system_switch/"+sys+"'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
 
         $("#drswitch").click(function(){
-            $.get("<?= url('sysswitch/DR'); ?>", function(data){
+            $.get("<?= url('system_switch/DR'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
 
         $("#cd4Switch").click(function(){
-            $.get("<?= url('sysswitch/CD4'); ?>", function(data){
+            $.get("<?= url('system_switch/CD4'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });
@@ -256,7 +255,7 @@
                 closeButton: true,
                 progressBar: true,
                 showMethod: 'slideDown',
-                timeOut: 10000,
+                timeOut: 15000,
                 preventDuplicates: true
             };
             toastr.warning(message); 
