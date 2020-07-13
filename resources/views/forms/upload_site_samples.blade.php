@@ -30,11 +30,46 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
+                        @if(Str::contains($url, ['reed']))
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file. The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                <b> Required Columns </b> <br />
+                                MFL Code <br />
+                                Identifier<br />
+                                Patient Name<br />
+                                Gender<br />
+                                Age<br />
+                                <b> Optional Columns </b> <br />
+                                Phone Number<br />
+                                National ID<br />
+                                County<br />
+                                Subcounty<br />
+                                Date Collected<br />
+                                Date Received<br />
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
+
+                            </center>
+                        </div>
+
+                        @elseif(Str::contains($url, ['wrp']))
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file.
+                            </center>
+                        </div>
+
+                        @else
+
                         <div class="alert alert-warning">
                             <center>
                                 The file must be a csv file.
                             </center>
                         </div>
+
+                        @endif
                         <br />
 
 
@@ -43,7 +78,7 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-                            @if($url == 'covid_sample/wrp')
+                            @if(Str::contains($url, ['wrp', 'reed']))
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select Excel/CSV</span>
                                 <span class="fileinput-exists">Change</span>
