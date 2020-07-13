@@ -13,7 +13,6 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class WRPCovidImport implements OnEachRow, WithHeadingRow
 {
-
     
     public function onRow(Row $row)
     {
