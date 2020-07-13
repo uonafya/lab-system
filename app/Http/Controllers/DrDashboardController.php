@@ -18,55 +18,7 @@ class DrDashboardController extends DashBaseController
 	// Filter routes
 	public function filter_date(Request $request)
 	{
-		if(!session('filter_groupby')) abort(400);
-		$default_financial = session('filter_financial_year');
-
-		$year = $request->input('year');
-		$month = $request->input('month');
-
-		$to_year = $request->input('to_year');
-		$to_month = $request->input('to_month');
-		$prev_year = ($year - 1);
-
-		$financial_year = $request->input('financial_year', $default_financial);
-		$quarter = $request->input('quarter');
-
-		$range = ['filter_year' => $year, 'filter_month' => $month, 'to_year' => $to_year, 'to_month' => $to_month, 'filter_financial_year' => $financial_year, 'filter_quarter' => $quarter];
-
-		session($range);
-
-		$display_date = ' (October, ' . ($financial_year-1) . ' - September ' . $financial_year . ')';
-		if($quarter){
-			switch ($quarter) {
-				case 1:
-					$display_date = "(October - December " . ($financial_year-1) . ")";
-					break;
-				case 2:
-					$display_date = "(January - March " . $financial_year . ")";
-					break;
-				case 3:
-					$display_date = "(April - June " . $financial_year . ")";
-					break;
-				case 4:
-					$display_date = "(July - September " . $financial_year . ")";
-					break;					
-				default:
-					break;
-			}
-		}
-		if($month){
-			if($month < 10) $display_date = '(' . $financial_year . ' ' . Lookup::resolve_month($month) . ')';
-			if($month > 9) $display_date = '(' . ($financial_year-1) . ' ' . Lookup::resolve_month($month) . ')';
-		}
-		if($to_year){
-			if($year == $to_year) 
-				$display_date = '(' . Lookup::resolve_month($month) . ' - ' . Lookup::resolve_month($to_month) . " {$year})";
-			else{
-				$display_date = "(" . Lookup::resolve_month($month) . ", {$year} - " . Lookup::resolve_month($to_month) . ", {$to_year})";
-			}
-		}
-
-		return ['year' => $year, 'prev_year' => $prev_year, 'range' => $range, 'display_date' => $display_date];
+		
 	}
 
 
@@ -103,12 +55,15 @@ class DrDashboardController extends DashBaseController
 	}
 
 	// Charts
-	public function drug_resistance()
+	public function drug_resistance($current_only=false)
 	{
 		$rows = DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')
 			->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')
 			->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
 			->selectRaw("dr_call_drugs.short_name_id, dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
+			->when($current_only, function($query){
+				return $query->where('current_drug', true);
+			})
 			->groupBy('short_name_id', 'call')
 			->get();
 
@@ -128,6 +83,43 @@ class DrDashboardController extends DashBaseController
 		}
 		return view('charts.bar_graph', $data);
 	}
+
+	public function heat_map($current_only=false)
+	{
+		$rows = DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')
+			->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')
+			->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
+			->selectRaw("dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
+			->groupBy('call')
+			->when($current_only, function($query){
+				return $query->where('current_drug', true);
+			})
+			->when(true, $this->get_callback_no_dates('name'))
+			->get();
+
+		// dd($rows);
+
+		$categories = $rows->pluck('name')->unique()->flatten()->toArray();
+
+		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
+		$data['point_percentage'] = true;
+
+		$call_array = MiscDr::$call_array;
+
+		foreach ($categories as $key => $value) {
+			$data['categories'][$key] = $value;
+
+			$i = 0;
+			foreach ($call_array as $call_key => $c) {
+				if($i==4) break;
+				$data["outcomes"][$i]["data"][$key] = (int) ($rows->where('name', $value)->where('call', $call_key)->first()->samples ?? 0);
+				$i++;
+			}
+		}
+		return view('charts.bar_graph', $data);
+	}
+
 
 	/*public function heat_map()
 	{
@@ -161,37 +153,4 @@ class DrDashboardController extends DashBaseController
 		}
 		return view('charts.bar_graph', $data);
 	}*/
-
-	public function heat_map()
-	{
-		$rows = DrCallDrug::join('dr_calls', 'dr_calls.id', '=', 'dr_call_drugs.call_id')
-			->join('dr_samples', 'dr_samples.id', '=', 'dr_calls.sample_id')
-			->join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
-			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
-			->selectRaw("dr_call_drugs.call, COUNT(dr_call_drugs.id) AS samples")
-			->groupBy('call')
-			->when(true, $this->get_callback_no_dates('name'))
-			->get();
-
-		// dd($rows);
-
-		$categories = $rows->pluck('name')->unique()->flatten()->toArray();
-
-		$data = DrDashboard::bars(['Low Coverage', 'Resistant', 'Intermediate Resistance', 'Susceptible'], 'column', ['#595959', "#ff0000", "#ff9900", "#00ff00"]);
-		$data['point_percentage'] = true;
-
-		$call_array = MiscDr::$call_array;
-
-		foreach ($categories as $key => $value) {
-			$data['categories'][$key] = $value;
-
-			$i = 0;
-			foreach ($call_array as $call_key => $c) {
-				if($i==4) break;
-				$data["outcomes"][$i]["data"][$key] = (int) ($rows->where('name', $value)->where('call', $call_key)->first()->samples ?? 0);
-				$i++;
-			}
-		}
-		return view('charts.bar_graph', $data);
-	}
 }
