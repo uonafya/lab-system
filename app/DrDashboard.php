@@ -50,6 +50,14 @@ class DrDashboard
 		return $val;
 	}
 
+	public static function date_query($date_column)
+	{
+		$start_date = session('filter_start_date', date('Y-m-d', strtotime('-' . date('z') .' days')));
+		$end_date = session('filter_end_date', date('Y-m-d'));
+
+		return $date_column . " BETWEEN '{$start_date}' AND '{$end_date}' ";
+	}
+
 	public static function divisions_query()
 	{
 		$query = " 1 ";

@@ -587,6 +587,28 @@ class MiscDr extends Common
 		}
 	}
 
+	public static function set_current_drug()
+	{
+		$samples = DrSample::all();
+
+		foreach ($samples as $sample) {
+			$viralregimen = DB::table('viralregimen')->where('id', $sample->prophylaxis)->first();
+			if(!$viralregimen) continue;
+			foreach ($sample->dr_call as $dr_call) {
+				foreach ($dr_call->call_drug as $call_drug) {
+					$r = [$viralregimen->regimen1_class_id, $viralregimen->regimen2_class_id, $viralregimen->regimen3_class_id, $viralregimen->regimen4_class_id, $viralregimen->regimen5_class_id, ];
+					if(in_array($call_drug->short_name_id, $r)){
+						$call_drug->current_drug = 1;
+						$call_drug->save();
+					}else{
+						$call_drug->current_drug = 0;
+						$call_drug->save();						
+					}
+				}
+			}
+		}
+	}
+
 
 	public static function get_extraction_worksheet_samples($limit=48)
 	{

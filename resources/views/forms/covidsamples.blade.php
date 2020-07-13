@@ -50,6 +50,8 @@
             </div>
         @endif
 
+        <div id="cif_covid_samples"></div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
@@ -73,6 +75,8 @@
 
                             </center>
                         </div>
+
+                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
   
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
@@ -148,8 +152,6 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
-
-                        @include('partial.input', ['model' => $m, 'required' => true, 'prop' => 'patient_name', 'default_val' => $sample->patient->patient_name ?? null, 'label' => 'Patient Name'])
 
                         @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 
@@ -437,6 +439,12 @@
                 $("#national_id").blur(function(){
                     check_new_patient();
                 });
+
+                @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                    $("#patient_name").blur(function(){
+                        check_cif_patient();
+                    });
+                @endif
             @endif
 
 
@@ -557,8 +565,6 @@
 
 
         function check_new_patient(){
-            // console.log('Here');
-            // return;
             var national_id = $("#national_id").val();
             var identifier = $("#identifier").val();
             var facility_id = $("#facility_id").val();
@@ -584,12 +590,26 @@
                     else{
                         $("#new_patient_div").hide();
                     }
-
-
-
                 }
             });
+        }
 
+        function check_cif_patient(){
+            // console.log('Here');
+            // return;
+            var patient_name = $("#patient_name").val();
+
+            $.ajax({
+                type: "POST",
+                data: {
+                    patient_name : patient_name,
+                },
+                url: "{{ url('/covid_sample/cif_patient') }}",
+
+                success: function(data){
+                    $("#cif_covid_samples").html(data);
+                }
+            });
         }
 
     </script>
