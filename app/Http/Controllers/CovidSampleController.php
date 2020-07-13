@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CovidRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KemriWRPImport;
+use App\Imports\WRPCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -787,7 +788,17 @@ class CovidSampleController extends Controller
 
     public function upload_walter_reed_samples(Request $request)
     {
+        if(env('APP_LAB') != 4) abort(403);
         $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new WRPCovidImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+
+
+        /*$file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
 
         $problem_rows = 0;
@@ -829,7 +840,7 @@ class CovidSampleController extends Controller
         }
 
         session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
+        return redirect('/covid_sample'); */
     }
 
 
