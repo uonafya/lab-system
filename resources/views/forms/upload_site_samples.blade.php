@@ -48,7 +48,7 @@
                                 Subcounty<br />
                                 Date Collected<br />
                                 Date Received<br />
-                                (by default any date missing date will be filled with the current day)
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
 
                             </center>
                         </div>
