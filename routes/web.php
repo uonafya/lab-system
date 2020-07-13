@@ -165,6 +165,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('ampath/upload', 'CovidSampleController@ampath_sample_page');
 				Route::post('ampath/upload', 'CovidSampleController@upload_ampath_samples');
 				
+				Route::get('reed/upload', 'CovidSampleController@reed_sample_page');
+				Route::post('reed/upload', 'CovidSampleController@upload_walter_reed_samples');
+				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			

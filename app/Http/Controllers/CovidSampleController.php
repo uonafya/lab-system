@@ -733,7 +733,7 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
     }
 
-    public function upload_ampath_samples(Request $request)
+    /*public function upload_ampath_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
@@ -778,15 +778,22 @@ class CovidSampleController extends Controller
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
+    }*/
+
+    public function reed_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/reed'])->with('pageTitle', 'Upload Walter Reed Samples');
     }
 
-    /*public function upload_ampath_samples(Request $request)
+    public function upload_walter_reed_samples(Request $request)
     {
         $file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
 
         $problem_rows = 0;
         $created_rows = 0;
+
+        // nakuru pgh
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
@@ -798,8 +805,7 @@ class CovidSampleController extends Controller
 
             $p->fill([
                 'identifier' => $data[3],
-                // 'facility_id' => 5647,
-                'facility_id' => 5541,
+                'facility_id' => 5647,
                 'patient_name' => $data[0],
                 'sex' => $data[2],
                 'phone_no' => $data[4] ?? null,
@@ -824,7 +830,7 @@ class CovidSampleController extends Controller
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
-    }*/
+    }
 
 
     /*public function upload_wrp_samples(Request $request)
