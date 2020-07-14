@@ -21,7 +21,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac) continue;
+        if(!$fac) return;
         $p = null;
 
         $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
