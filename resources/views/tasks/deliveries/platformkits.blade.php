@@ -68,7 +68,7 @@
                                             <input class="form-control input-sm input-edit-empty lotno" name="lotno[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" type="text" value="">
                                         </td>
                                         <td>
-                                            <div class="input-group date">
+                                            <div class="input-group date expiry-date">
                                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                 <input type="text" class="form-control input-sm input-edit-empty expiry" value="" name="expiry[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]">
                                             </div>
@@ -135,11 +135,25 @@
            
         @endslot
         $("select").select2();
+        
+
+        $(".expiry-date").datepicker({
+            startView: 1,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: new Date(),
+            endDate: "+6y",
+            format: "yyyy-mm-dd"
+        });
 
         $(".date").datepicker({
             todayBtn: "linked",
             forceParse: true,
             autoclose: true,
+            startDate: new Date("{{ $period->startMonthDiff }}"),
+            endDate: new Date("{{ $period->endMonthDiff }}"),
             format: "yyyy-mm-dd"
         });
 

@@ -100,6 +100,7 @@ class TaskController extends Controller
         $data = [
                 'machines' => Machine::get(),
             ];
+
         return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
         if ($platform == null) {
             $users = User::where('user_type_id', '<', 5)->get();
@@ -108,7 +109,6 @@ class TaskController extends Controller
                     
                     'pending_deliveries' => $this->getDeliveries(),
                 ];
-            // dd($data); 
             
         } else {
             $deliveries = $this->submitNullDeliveries($platform);
