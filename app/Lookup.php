@@ -379,6 +379,14 @@ class Lookup
         return $my_array->where('alias', $val)->first()->id ?? 7;
     } 
 
+    public static function eid_feeding($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('feedings');   
+        if(is_numeric($val)) return $val;   
+        return $my_array->where('feeding', $val)->first()->id ?? 5;
+    } 
+
     public static function samples_arrays()
     {
         return [
