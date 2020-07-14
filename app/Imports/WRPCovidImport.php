@@ -18,7 +18,9 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        $fac = Facility::locate($row->mfl_code)->first();
+        $mfl = (int) $row->mfl_code;
+
+        $fac = Facility::locate($mfl)->first();
         $p = null;
 
         $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
