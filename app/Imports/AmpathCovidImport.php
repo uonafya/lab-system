@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class WRPCovidImport implements OnEachRow, WithHeadingRow
+class AmpathCovidImport implements OnEachRow, WithHeadingRow
 {
     
     public function onRow(Row $row)
@@ -25,21 +25,21 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         $p = null;
 
         if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->identifier) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
 
 
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->identifier,
+            'identifier' => $row->identifier ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,   
-            'occupation' => $row->occupation ?? null,   
+            'subcounty' => $row->subcounty ?? null,  
+            'occupation' => $row->occupation ?? null,    
             'justification' => 3,             
         ]);
         $p->save();
