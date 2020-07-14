@@ -1015,7 +1015,7 @@ class MiscViral extends Common
 
     public static function edarpsamplesforapproval() {
         // $samples = Viralsample::selectRaw("count(if(date(created_at) = curdate(), 1, null)) as today, count(*) as total")->where('synched', 5)->first();
-        $samples = ViralsampleView::selectRaw("count(*) as total")->where('lab_id', 10)->whereBetween('created_at', [date('Y-m-d', strtotime('-1 day')), date('Y-m-d')])->first();
+        $samples = ViralsampleView::selectRaw("count(*) as total")->where('lab_id', 10)->whereBetween('updated_at', [date('Y-m-d', strtotime('-1 day')), date('Y-m-d')])->first();
         $edarpUser = User::where('user_type_id', 8)->first();
         if ($edarpUser->count()){
             $form_url = URL::temporarySignedRoute(
