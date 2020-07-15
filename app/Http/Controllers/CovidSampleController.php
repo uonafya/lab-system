@@ -597,6 +597,8 @@ class CovidSampleController extends Controller
         $covidSample->patient_id = $patient->id;
         $covidSample->pre_update();
 
+        // if($covidSample)
+
         $travels = $request->input('travel');
         if($travels){
             $count = count($travels['travel_date']);
