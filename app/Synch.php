@@ -1876,7 +1876,7 @@ class Synch
 			
 			$response = $client->request('post', $url, [
 				'http_errors' => false,
-				'debug' => true,
+				'debug' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
