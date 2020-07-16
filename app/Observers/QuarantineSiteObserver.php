@@ -29,7 +29,7 @@ class QuarantineSiteObserver
             $response = $client->request('post', 'quarantine_site', [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . self::get_covid_token(),
+                    'Authorization' => 'Bearer ' . Synch::get_covid_token(),
                 ],
                 'http_errors' => false,
                 'json' => [
