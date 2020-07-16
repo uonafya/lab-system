@@ -231,12 +231,10 @@
                     </li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [1,2,3,6,25]))
-                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
-                    <hr />
-                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
-                    <hr />
-                @endif
+                <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
+                <hr />
+                <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
+                <hr />
             @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
