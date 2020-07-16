@@ -22,7 +22,7 @@ class QuarantineSiteObserver
 
         $client = new Client(['base_uri' => Synch::$cov_base]);
 
-        if(in_array(env('APP_LAB'), [1,2,3,6])){
+        if(in_array(env('APP_LAB'), [1,2,3,6,25])){
             $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
             $quarantineSite->id = $id;
         }else{
