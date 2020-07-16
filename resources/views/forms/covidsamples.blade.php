@@ -192,7 +192,7 @@
 
                         @include('partial.date', ['model' => $m, 'prop' => 'date_isolation', 'label' => 'Date of Isolation', 'default_val' => $sample->patient->date_isolation ?? null,])
 
-                        @include('partial.select', ['model' => $m, 'prop' => 'health_status', 'label' => 'Health Status', 'items' => $health_statuses, 'facility_required' => true])
+                        @include('partial.select', ['model' => $m, 'prop' => 'health_status', 'label' => 'Health Status', 'items' => $health_statuses])
 
                         @include('partial.date', ['model' => $m, 'prop' => 'date_death', 'label' => 'Date of Death', 'default_val' => $sample->patient->date_death ?? null,])
 
@@ -445,6 +445,22 @@
                         check_cif_patient();
                     });
                 @endif
+            @endif
+
+
+            @if(auth()->user()->user_type_id == 5)
+                $("#age").change(function(){
+                    var val = $(this).val();
+
+                    // $('#county_id').removeAttr("required");
+
+                    if(val > 17){
+                        $('#national_id').attr("required", "required");
+                    }
+                    else{
+                        $('#national_id').removeAttr("required");
+                    }
+                });
             @endif
 
 

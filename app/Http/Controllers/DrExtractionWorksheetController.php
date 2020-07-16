@@ -198,7 +198,7 @@ class DrExtractionWorksheetController extends Controller
     public function gel_documentation(Request $request, DrExtractionWorksheet $drExtractionWorksheet)
     {
         $drExtractionWorksheet->date_gel_documentation = date('Y-m-d');
-        $drExtractionWorksheet->status_id = 3;
+        $drExtractionWorksheet->status_id = 2;
         $drExtractionWorksheet->save();
 
         $sample_ids = $request->input('samples');

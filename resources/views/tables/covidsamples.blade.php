@@ -315,6 +315,7 @@
                                     @if(in_array(env('APP_LAB'), [1,25]))
                                     <th rowspan="2">Kemri ID</th>
                                     @endif
+                                    <th rowspan="2">Patient Name</th>
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
@@ -353,6 +354,7 @@
                                         @if(in_array(env('APP_LAB'), [1,25]))
                                         <td> {{ $sample->kemri_id }} </td>
                                         @endif
+                                        <td> {{ $sample->patient_name }} </td>
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>

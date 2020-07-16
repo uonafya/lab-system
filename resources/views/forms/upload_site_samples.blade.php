@@ -55,6 +55,33 @@
                             </center>
                         </div>
 
+                        @elseif(Str::contains($url, ['knh']))
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file. <br />
+                                The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                <b> Required Columns </b> <br />
+                                MFL Code <br />
+                                Identifier<br />
+                                Patient Name<br />
+                                Gender<br />
+                                Age<br />
+                                <b> Optional Columns </b> <br />
+                                Phone Number<br />
+                                Type of Case &nbsp; <i> (Whether it's initial or repeat. Defaults to Initial) </i> <br />
+                                National ID<br />
+                                Occupation<br />
+                                County Of Residence<br />
+                                Subcounty Of Residence<br />
+                                Village/Estate<br />
+                                Date Collected<br />
+                                Date Received<br />
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
+
+                            </center>
+                        </div>
+
                         @elseif(Str::contains($url, ['wrp']))
 
                         <div class="alert alert-warning">

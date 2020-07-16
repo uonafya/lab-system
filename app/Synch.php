@@ -1392,7 +1392,8 @@ class Synch
 			$sql = '';
 			$names = explode(' ', $patient_name);
 			foreach ($names as $key => $name) {
-				$sql .= "patient_name LIKE '%{$name}%' AND ";
+				$n = addslashes($name);
+				$sql .= "patient_name LIKE '%{$n}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
 			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
