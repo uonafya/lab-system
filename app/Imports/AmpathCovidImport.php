@@ -39,6 +39,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
+            'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
             'justification' => 3,             
         ]);
