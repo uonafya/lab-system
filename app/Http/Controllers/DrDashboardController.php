@@ -18,10 +18,10 @@ class DrDashboardController extends DrDashboardBaseController
 	// Filter routes
 	public function filter_date(Request $request)
 	{
-		$start_date = $request->input('start_date');
-		$end_date = $request->input('end_date');
-		session(compact('start_date', 'end_date'));
-		return compact('start_date', 'end_date');
+		$filter_start_date = $request->input('start_date');
+		$filter_end_date = $request->input('end_date');
+		session(compact('filter_start_date', 'filter_end_date'));
+		return compact('filter_start_date', 'filter_end_date');
 	}
 
 

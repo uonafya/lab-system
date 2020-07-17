@@ -34,7 +34,7 @@ class DrDashboardTestingController extends DrDashboardBaseController
 			->whereNotNull('datetested')
 			->get();
 
-		dd($rows);
+		// dd($rows);
 
 		$data = DrDashboard::bars(['Samples Tested'], 'column', ["#00ff00"]);
 
