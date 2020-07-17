@@ -41,7 +41,7 @@ class DrDashboardTestingController extends DrDashboardBaseController
 		foreach ($rows as $key => $row) {
 			$data['categories'][$key] = DrDashboard::get_category($row);
 
-			$data["outcomes"][$i]["data"][$key] = (int) $row->samples;
+			$data["outcomes"][0]["data"][$key] = (int) $row->samples;
 		}
 		return view('charts.bar_graph', $data);
 	}
