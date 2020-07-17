@@ -42,7 +42,7 @@ class DrDashboard
 
 	public static function get_category($row)
 	{
-		$groupby = session('filter_groupby', 1);
+		$groupby = session('filter_groupby', 2);
 		if($groupby > 9){
 			if($groupby == 10) return 'Calendar Year ' . $row->year;
 			if($groupby == 11) return 'FY ' . $row->financial_year;
