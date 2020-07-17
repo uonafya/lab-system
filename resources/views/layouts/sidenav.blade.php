@@ -373,6 +373,7 @@
                 <a href="{{ url('covid_sample/index/2') }}">Dispatched Covid 19 Samples</a>
             </li>
             <hr />
+            @if(auth()->user()->user_type_id != 11)
             <li>
                 <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
             </li>
@@ -381,6 +382,7 @@
                 <a href="{{ url('covidkits/reports') }}">Consumption Report</a>
             </li>
             <hr />
+            @endif
             <li>
                 <a href="{{ url('covidreports') }}">Daily Tests Report</a>
             </li>
