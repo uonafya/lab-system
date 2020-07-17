@@ -680,7 +680,7 @@ class CovidSampleController extends Controller
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if(starts_with($data[0], ['S', 's'])) continue;
+            if(\Str::startsWith($data[0], ['S', 's'])) continue;
             
             $quarantine_site = null;
 

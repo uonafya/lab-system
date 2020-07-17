@@ -295,9 +295,9 @@ class MiscDr extends Common
 				return $a;
 			}
 			else{
-				// if(starts_with($file, $sample->mid . $primer)){
-				// if(starts_with($file, $sample->mid . '-') && \Str::contains($file, $primer))
-				if(starts_with($file, $sample->nat . '-') && \Str::contains($file, $primer))
+				// if(\Str::startsWith($file, $sample->mid . $primer)){
+				if(\Str::startsWith($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,
@@ -544,7 +544,7 @@ class MiscDr extends Common
 		$warning_id = DB::table('dr_warning_codes')->where(['name' => $error_name])->first()->id ?? 0;
 		if(!$warning_id){
 			$error = 1;
-			if(starts_with($error_name, 'Wrn')) $error = 0;
+			if(\Str::startsWith($error_name, 'Wrn')) $error = 0;
 			DB::table('dr_warning_codes')->insert(['name' => $error_name, 'error' => $error]);
 			return self::get_sample_warning($error_name);
 		}else{
