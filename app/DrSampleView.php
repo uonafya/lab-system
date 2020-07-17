@@ -35,6 +35,13 @@ class DrSampleView extends ViewModel
     }
 
 
+    // mid being my id
+    // Used when sending samples to sanger
+    public function getMidAttribute()
+    {
+        return env('DR_PREFIX') . $this->id;
+    }
+
 
     public function scopeExisting($query, $data_array)
     {

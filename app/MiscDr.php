@@ -220,8 +220,8 @@ class MiscDr extends Common
 	{
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
-		$samples = $worksheet->sample_view;
-		// $samples = $worksheet->sample;
+		// $samples = $worksheet->sample_view;
+		$samples = $worksheet->sample;
 		// $samples->load(['result']);
 
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
@@ -239,8 +239,8 @@ class MiscDr extends Common
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
-					// 'sample_name' => "{$sample->mid}",
-					'sample_name' => "{$sample->nat}",
+					'sample_name' => "{$sample->mid}",
+					// 'sample_name' => "{$sample->nat}",
 					'pathogen' => 'hiv',
 					'assay' => 'thermo_PR_RT',
 					// 'assay' => 'cdc-hiv',
