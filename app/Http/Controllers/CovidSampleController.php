@@ -1061,7 +1061,7 @@ class CovidSampleController extends Controller
                 $message .= "                
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
-                National ID {$patient->national_id} "
+                National ID {$patient->national_id} ";
                 return ['message' => $message];
             }
         }
