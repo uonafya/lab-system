@@ -92,6 +92,9 @@
                             <a href="{{ url('dr_dashboard') }}">Dashboard</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                         </li>
                         <li class="">
@@ -275,6 +278,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('dr_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
                     </li>
                     <li class="">
                         <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
