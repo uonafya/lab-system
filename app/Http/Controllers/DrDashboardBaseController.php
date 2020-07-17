@@ -107,7 +107,7 @@ class DrDashboardBaseController extends BaseController
 
     public function year_callback($divisions_query, $date_query, $date_column)
     {
-        $select_query = DB::raw("YEAR(" . $date_column . ") AS `year` ");
+        $select_query = DB::raw("YEAR({$date_column}) AS `year` ");
         return function($query) use($divisions_query, $date_query, $select_query){
             return $query->addSelect($select_query)
                 ->whereRaw($divisions_query)
@@ -117,9 +117,9 @@ class DrDashboardBaseController extends BaseController
         };
     }
 
-    public function year_month_callback($divisions_query, $date_query $date_column)
+    public function year_month_callback($divisions_query, $date_query, $date_column)
     {
-        $select_query = DB::raw("YEAR(" . $date_column . ") AS `year`, MONTHNAME(" . $date_column . ") AS `month`  ");
+        $select_query = DB::raw("YEAR({$date_column}) AS `year`, MONTHNAME({$date_column}) AS `month`  ");
         return function($query) use($divisions_query, $date_query, $select_query){
             return $query->addSelect($select_query)
                 ->whereRaw($divisions_query)
