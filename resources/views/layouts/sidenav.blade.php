@@ -580,6 +580,7 @@
                 
             @elseif(Auth::user()->quarantine_site)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
                 @if(session('testingSystem') == 'Viralload')
