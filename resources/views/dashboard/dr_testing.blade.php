@@ -1,5 +1,11 @@
 @extends('layouts.master')
 
+@section('css')
+    <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
+
+
+@endsection()
+
 @section('content')
 <style type="text/css">
     .list-group {
@@ -104,6 +110,7 @@
 @endsection()
 
 @section('scripts')
+<script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
 <script src="{{ asset('vendor/highcharts/highcharts.js' )}}"></script>
 <script src="{{ asset('vendor/highcharts/modules/data.js' )}}"></script>
 <script src="{{ asset('vendor/highcharts/modules/series-label.js' )}}"></script>
@@ -119,6 +126,15 @@
     }
 
     $().ready(function(){
+
+        $(".date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
 
         $("#filter_groupby").select2({
             placeholder: "Select Group By",
