@@ -1012,6 +1012,7 @@ class CovidSampleController extends Controller
 
     public function new_patient(Request $request)
     {
+        $patient_name = $request->input('patient_name');
         $national_id = $request->input('national_id');
         $identifier = $request->input('identifier');
         $facility_id = $request->input('facility_id');
@@ -1027,6 +1028,18 @@ class CovidSampleController extends Controller
         if(!$patient && $quarantine_site_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
         }
+
+        if(!$patient && $patient_name){
+            $sql = '';
+            $names = explode(' ', $patient_name);
+            foreach ($names as $key => $name) {
+                $n = addslashes($name);
+                $sql .= "patient_name LIKE '%{$n}%' AND ";
+            }
+            $sql = substr($sql, 0, -4);
+            $patient = CovidPatient::whereRaw($sql)->first();
+        }
+
 
         if($patient){
             $patient->most_recent();

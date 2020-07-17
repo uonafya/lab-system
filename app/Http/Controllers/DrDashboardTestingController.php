@@ -12,7 +12,7 @@ use App\DrCallDrug;
 
 use DB;
 
-class DrDashboardTestController extends DashBaseController
+class DrDashboardTestingController extends DrDashboardBaseController
 {
     //
 }

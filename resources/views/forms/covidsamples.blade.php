@@ -585,6 +585,7 @@
             var identifier = $("#identifier").val();
             var facility_id = $("#facility_id").val();
             var quarantine_site_id = $("#quarantine_site_id").val();
+            var patient_name = $("#patient_name").val();
 
             $.ajax({
                 type: "POST",
@@ -593,6 +594,7 @@
                     identifier : identifier,
                     facility_id : facility_id,
                     quarantine_site_id : quarantine_site_id,
+                    patient_name : patient_name,
                 },
                 url: "{{ url('/covid_sample/new_patient') }}",
 
