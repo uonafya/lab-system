@@ -12,7 +12,7 @@ use App\DrCallDrug;
 
 use DB;
 
-class DrDashboardController extends DashBaseController
+class DrDashboardController extends DrDashboardBaseController
 {
 
 	// Filter routes
@@ -38,19 +38,7 @@ class DrDashboardController extends DashBaseController
 	// Views
 	public function index()
 	{        
-        session()->forget('filter_county');
-        session()->forget('filter_subcounty');
-        session()->forget('filter_ward');
-        session()->forget('filter_facility');
-        session()->forget('filter_partner');
-        session()->forget('filter_project');
-        session()->forget('filter_drug_class');
-        session()->forget('filter_drug');
-
-        // session()->forget('filter_groupby');
-
-        session(['filter_groupby' => 2]);
-
+		DrDashboard::clear_cache();
 		return view('dashboard.dr', DrDashboard::get_divisions());
 	}
 

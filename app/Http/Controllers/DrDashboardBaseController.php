@@ -12,7 +12,7 @@ use App\DrDashboard;
 
 use App\DataSetElement;
 
-class DashBaseController extends BaseController
+class DrDashboardBaseController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
