@@ -1,9 +1,7 @@
 @extends('layouts.master')
 
-@section('css')
+@section('css_scripts')
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
-
-
 @endsection()
 
 @section('content')
