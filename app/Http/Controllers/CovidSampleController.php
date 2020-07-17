@@ -568,6 +568,11 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+        if($covidSample->receivedstatus && ($user->facility_user || $user->quarantine_site)){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been received at the lab.']);
+            return back();
+        }
+
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
@@ -1031,6 +1036,7 @@ class CovidSampleController extends Controller
 
         if(!$patient && $patient_name){
             $sql = '';
+            $matched_by_patient = true;
             $names = explode(' ', $patient_name);
             foreach ($names as $key => $name) {
                 $n = addslashes($name);
@@ -1044,11 +1050,19 @@ class CovidSampleController extends Controller
         if($patient){
             $patient->most_recent();
             if($patient->most_recent){
-                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
-                Any patient details entered will overwrite existing patient details <br />
+                $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
+
+                if(isset($matched_by_patient)){
+                    $message .= "If this is not the same person as the current sample then proceed. <br />";
+                }else{
+                    $message .= "Any patient details entered will overwrite existing patient details <br />";
+                }
+
+                $message .= "                
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
-                National ID {$patient->national_id} "];
+                National ID {$patient->national_id} "
+                return ['message' => $message];
             }
         }
         return ['message' => null];

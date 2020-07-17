@@ -18,7 +18,10 @@ class DrDashboardController extends DrDashboardBaseController
 	// Filter routes
 	public function filter_date(Request $request)
 	{
-		
+		$filter_start_date = $request->input('start_date');
+		$filter_end_date = $request->input('end_date');
+		session(compact('filter_start_date', 'filter_end_date'));
+		return compact('filter_start_date', 'filter_end_date');
 	}
 
 
@@ -52,6 +55,7 @@ class DrDashboardController extends DrDashboardBaseController
 			->when($current_only, function($query){
 				return $query->where('current_drug', true);
 			})
+			->whereRaw(DrDashboard::divisions_query())
 			->groupBy('short_name_id', 'call')
 			->get();
 
