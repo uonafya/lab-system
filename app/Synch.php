@@ -1867,7 +1867,7 @@ class Synch
 		$today = date('Y-m-d');
 
 		$url = 'insert/covidconsumption';
-		
+		dd($consumptions->toJson());
 		while (true) {
 			// $consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
 			$consumptions = CovidConsumption::with(['details.kit'])->get();
