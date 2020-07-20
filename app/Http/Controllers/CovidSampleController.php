@@ -19,6 +19,8 @@ use App\Http\Requests\CovidRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KemriWRPImport;
 use App\Imports\WRPCovidImport;
+use App\Imports\AmpathCovidImport;
+use App\Imports\KNHCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -566,6 +568,11 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+        if($covidSample->receivedstatus && ($user->facility_user || $user->quarantine_site)){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been received at the lab.']);
+            return back();
+        }
+
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
@@ -594,6 +601,8 @@ class CovidSampleController extends Controller
         if(in_array(auth()->user()->lab_id, [1,25])) $covidSample->kemri_id = $request->input('kemri_id');
         $covidSample->patient_id = $patient->id;
         $covidSample->pre_update();
+
+        // if($covidSample)
 
         $travels = $request->input('travel');
         if($travels){
@@ -671,7 +680,7 @@ class CovidSampleController extends Controller
 
         $handle = fopen($file, "r");
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if(starts_with($data[0], ['S', 's'])) continue;
+            if(\Str::startsWith($data[0], ['S', 's'])) continue;
             
             $quarantine_site = null;
 
@@ -734,9 +743,18 @@ class CovidSampleController extends Controller
         return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
     }
 
-    /*public function upload_ampath_samples(Request $request)
+    public function upload_ampath_samples(Request $request)
     {
+        if(env('APP_LAB') != 5) abort(403);
         $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new AmpathCovidImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+        
+        /*$file = $request->upload->path();
         // $path = $request->upload->store('public/site_samples/covid');
 
         $problem_rows = 0;
@@ -778,8 +796,8 @@ class CovidSampleController extends Controller
         }
 
         session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-    }*/
+        return redirect('/covid_sample'); */
+    }
 
     public function reed_sample_page()
     {
@@ -844,181 +862,22 @@ class CovidSampleController extends Controller
     }
 
 
-    /*public function upload_wrp_samples(Request $request)
+    public function knh_sample_page()
     {
-        $file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/knh'])->with('pageTitle', 'Upload KNH Site Samples');
+    }
 
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'case_id') continue;
-
-            $column = 'quarantine_site_id';
-            if($data[15] > 100) $column = 'facility_id';
-
-            $p = CovidPatient::where(['identifier' => $data[4], $column => $data[15]])->first();
-
-            if(!$p) $p = new CovidPatient;
-
-            $p->fill([
-                'identifier' => $data[4],
-                $column => $data[15],
-                'patient_name' => $data[5],
-                'sex' => $data[7],
-                'national_id' => $data[8],
-                'phone_no' => $data[9],
-                'county' => $data[10],
-                'subcounty' => $data[11],                
-            ]);
-            $p->save();
-
-            $sample_type = $data[18];
-            if(\Str::contains($sample_type, 'Oro') && \Str::contains($sample_type, 'Naso')) $s = 1;
-            else if(\Str::contains($sample_type, 'Oro')) $s = 3;
-            else if(\Str::contains($sample_type, 'Naso')) $s = 2;
-            else{
-                $s = null;
-            }
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'lab_id' => 18,
-                'site_entry' => 0,
-                'age' => $data[6],
-                'test_type' => $data[9],
-                'sample_type' => $data[10],
-                'datecollected' => date('Y-m-d', strtotime($data[1])),
-                'datereceived' => date('Y-m-d', strtotime($data[2])),
-                'datetested' => date('Y-m-d', strtotime($data[3])),
-                'datedispatched' => date('Y-m-d', strtotime($data[3])),
-                'dateapproved' => date('Y-m-d', strtotime($data[3])),
-                'receivedstatus' => 1,
-                'sample_type' => $s,
-                'result' => $data[19],
-            ]);
-            $created_rows++;
-        }
-        session(['toast_message' => "{$created_rows} samples have been created."]);
-        return redirect('/home');        
-    }*/
-
-
-    /*public function upload_wrp_samples(Request $request)
+    public function upload_knh_samples(Request $request)
     {
+        if(env('APP_LAB') != 9) abort(403);
         $file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new KNHCovidImport;
+        Excel::import($c, $path);
 
-        $problem_rows = 0;
-        $created_rows = 0;
-        $i = 0;
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Lab ID') continue;
-
-            $p = new CovidPatient;
-            $p->fill([
-                'identifier' => ($data[1] == '*' ? $data[2] : $data[1]),
-                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
-                'patient_name' => $data[2],
-                'sex' => $data[4],
-                'county_id' => $data[13],
-                'subcounty_id' => $data[14],
-            ]);
-            $p->save();
-
-            $s = new CovidSample;
-            $s->fill([
-                'lab_id' => env('APP_LAB'),
-                'kemri_id' => $data[0],
-                'patient_id' => $p->id,
-                'age' => $data[3],
-                'receivedstatus' => 1,
-                'datecollected' => date('Y-m-d', strtotime($data[6])),
-                'datereceived' => date('Y-m-d', strtotime($data[7])),
-                'datetested' => date('Y-m-d', strtotime($data[8])),
-                'datedispatched' => date('Y-m-d', strtotime($data[8])),
-                'result' => $data[10],
-            ]);
-            $s->save();
-
-            $p = CovidPatient::where('identifier', ($data[1] == '*' ? $data[2] : $data[1]))->first();
-            if(!$p) continue;
-
-            $s = $p->sample->first();
-
-            $s = CovidSample::where('kemri_id', $data[0])->first();
-            if(!$s) continue;
-            try {
-            $s->fill([
-                'kemri_id' => $data[0],
-                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
-                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
-                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
-            ]);
-                
-            } catch (\Exception $e) {
-                dd($data);
-            }
-            $s->pre_update();
-            if($data[0] == 'KEN-KEM-20-06-19330') break;
-        }
-    }*/
-
-    /*public function upload_wrp_samples(Request $request)
-    {
-        $file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Identifier') continue;
-
-            $p = new CovidPatient;
-            $p->fill([
-                'identifier' => $data[1] ?? $data[2] ,
-                'patient_name' => $data[2],
-                'quarantine_site_id' => (is_numeric($data[5]) ? $data[5] : null ),
-                'justification' => (is_numeric($data[5]) ? null : 3 ),
-                'sex' => $data[4],
-            ]);
-            $p->save();
-
-            $s = new CovidSample;
-            $s->fill([
-                'lab_id' => env('APP_LAB'),
-                'kemri_id' => $data[0],
-                'patient_id' => $p->id,
-                'age' => $data[3],
-                'datecollected' => date('Y-m-d', strtotime($data[6])),
-                'datereceived' => date('Y-m-d', strtotime($data[7])),
-                'datetested' => date('Y-m-d', strtotime($data[8])),
-                'datedispatched' => date('Y-m-d', strtotime($data[8])),
-                'receivedstatus' => ($data[9] == 'REJECTED' ? 2 : 1),
-                'result' => ($data[9] == 'REJECTED' ? null : $data[10]),
-                'test_type' => 1,
-            ]);
-            $s->save();
-
-
-            $s = CovidSample::where('kemri_id', $data[0])->first();
-            if(!$s) continue;
-            $s->fill([
-                'datecollected' => Carbon::createFromFormat('n/j/Y', $data[6]),
-                'datereceived' => Carbon::createFromFormat('n/j/Y', $data[7]),
-                'datetested' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'datedispatched' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'dateapproved' => Carbon::createFromFormat('n/j/Y', $data[8]),
-                'dateapproved2' => Carbon::createFromFormat('n/j/Y', $data[8]),
-            ]);
-            $s->pre_update();
-        }
-    }*/
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
 
 
     // Transfer Between Remote Labs
@@ -1158,6 +1017,7 @@ class CovidSampleController extends Controller
 
     public function new_patient(Request $request)
     {
+        $patient_name = $request->input('patient_name');
         $national_id = $request->input('national_id');
         $identifier = $request->input('identifier');
         $facility_id = $request->input('facility_id');
@@ -1174,14 +1034,35 @@ class CovidSampleController extends Controller
             $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
         }
 
+        if(!$patient && $patient_name){
+            $sql = '';
+            $matched_by_patient = true;
+            $names = explode(' ', $patient_name);
+            foreach ($names as $key => $name) {
+                $n = addslashes($name);
+                $sql .= "patient_name LIKE '%{$n}%' AND ";
+            }
+            $sql = substr($sql, 0, -4);
+            $patient = CovidPatient::whereRaw($sql)->first();
+        }
+
+
         if($patient){
             $patient->most_recent();
             if($patient->most_recent){
-                return ['message' => "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />
-                Any patient details entered will overwrite existing patient details <br />
+                $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
+
+                if(isset($matched_by_patient)){
+                    $message .= "If this is not the same person as the current sample then proceed. <br />";
+                }else{
+                    $message .= "Any patient details entered will overwrite existing patient details <br />";
+                }
+
+                $message .= "                
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
-                National ID {$patient->national_id} "];
+                National ID {$patient->national_id} ";
+                return ['message' => $message];
             }
         }
         return ['message' => null];

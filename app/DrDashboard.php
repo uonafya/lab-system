@@ -13,6 +13,22 @@ class DrDashboard
 		return $months[$m] ?? '';
 	}
 
+	public static function clear_cache()
+	{		
+        session()->forget('filter_county');
+        session()->forget('filter_subcounty');
+        session()->forget('filter_ward');
+        session()->forget('filter_facility');
+        session()->forget('filter_partner');
+        session()->forget('filter_project');
+        session()->forget('filter_drug_class');
+        session()->forget('filter_drug');
+
+        // session()->forget('filter_groupby');
+
+        session(['filter_groupby' => 2]);
+	}
+
 	public static function get_divisions()
 	{		
 		$counties = DB::table('countys')->get();
@@ -26,7 +42,7 @@ class DrDashboard
 
 	public static function get_category($row)
 	{
-		$groupby = session('filter_groupby', 1);
+		$groupby = session('filter_groupby', 2);
 		if($groupby > 9){
 			if($groupby == 10) return 'Calendar Year ' . $row->year;
 			if($groupby == 11) return 'FY ' . $row->financial_year;

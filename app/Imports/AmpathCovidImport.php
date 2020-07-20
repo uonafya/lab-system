@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class WRPCovidImport implements OnEachRow, WithHeadingRow
+class AmpathCovidImport implements OnEachRow, WithHeadingRow
 {
     
     public function onRow(Row $row)
@@ -25,26 +25,32 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         $p = null;
 
         if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->identifier) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
 
 
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->identifier,
+            'identifier' => $row->identifier ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
+            'nationality' => 1,
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,   
-            'occupation' => $row->occupation ?? null,   
-            'justification' => 3,             
+            'subcounty' => $row->subcounty ?? null,  
+            'residence' => $row->residence ?? null,  
+            'occupation' => $row->occupation ?? null,    
+            'justification' => $row->justification ?? 3,             
         ]);
         $p->save();
 
-        $datecollected = $row->date_collected ?? date('Y-m-d');
+        $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
+        $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
+
+        if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
+        if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');
 
         $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
@@ -55,8 +61,8 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'site_entry' => 0,
             'age' => $row->age,
             'test_type' => 1,
-            'datecollected' => $row->date_collected ?? date('Y-m-d'),
-            'datereceived' => $row->date_received ?? date('Y-m-d'),
+            'datecollected' => $datecollected,
+            'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
         ]);

@@ -120,8 +120,8 @@ class SampleController extends Controller
             $fac = \App\ViewFacility::find($data_existing['facility_id']);
             $str = $fac->facilitycode;
             if($request->input('automatic_slash')) $str .= '/';
-            if(!starts_with($patient_string, $str) && $request->input('automatic_mfl') && $fac->county_id != 47){
-                if(starts_with($patient_string, $fac->facilitycode)){
+            if(!\Str::startsWith($patient_string, $str) && $request->input('automatic_mfl') && $fac->county_id != 47){
+                if(\Str::startsWith($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
                     $patient_string = $str . $code;
                 }
@@ -182,7 +182,7 @@ class SampleController extends Controller
         $mother->mother_dob = Lookup::calculate_dob($request->input('datecollected'), $request->input('mother_age')); 
         $mother->fill($data);
 
-        if(env('APP_LAB') == 4 && !starts_with($mother->ccc_no, $fac->facilitycode)) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
+        if(env('APP_LAB') == 4 && !\Str::startsWith($mother->ccc_no, $fac->facilitycode)) $mother->ccc_no = $fac->facilitycode . '/' . $mother->ccc_no;
 
         $viralpatient = Viralpatient::existing($mother->facility_id, $mother->ccc_no)->first();
         if($viralpatient) $mother->patient_id = $viralpatient->id;

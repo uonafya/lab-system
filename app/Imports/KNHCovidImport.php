@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class WRPCovidImport implements OnEachRow, WithHeadingRow
+class KNHCovidImport implements OnEachRow, WithHeadingRow
 {
     
     public function onRow(Row $row)
@@ -36,9 +36,11 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
+            'nationality' => 1,
             'phone_no' => $row->phone_number ?? null,
-            'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,   
+            'county' => $row->county_of_residence ?? null,
+            'subcounty' => $row->subcounty_of_residence ?? null,   
+            'residence' => $row->village_estate ?? null,   
             'occupation' => $row->occupation ?? null,   
             'justification' => 3,             
         ]);
@@ -46,15 +48,18 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
 
         $datecollected = $row->date_collected ?? date('Y-m-d');
 
+        $test_type = $row->type_of_case ?? null;
+        $test_type = strtolower($test_type);
+
         $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
 
         $sample->fill([
             'patient_id' => $p->id,
             'lab_id' => env('APP_LAB'),
-            'site_entry' => 0,
+            'site_entry' => 1,
             'age' => $row->age,
-            'test_type' => 1,
+            'test_type' => Str::contains($test_type, 'rep') ? 2 : 1,
             'datecollected' => $row->date_collected ?? date('Y-m-d'),
             'datereceived' => $row->date_received ?? date('Y-m-d'),
             'receivedstatus' => 1,

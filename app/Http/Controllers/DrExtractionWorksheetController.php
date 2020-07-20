@@ -198,7 +198,7 @@ class DrExtractionWorksheetController extends Controller
     public function gel_documentation(Request $request, DrExtractionWorksheet $drExtractionWorksheet)
     {
         $drExtractionWorksheet->date_gel_documentation = date('Y-m-d');
-        $drExtractionWorksheet->status_id = 3;
+        $drExtractionWorksheet->status_id = 2;
         $drExtractionWorksheet->save();
 
         $sample_ids = $request->input('samples');
@@ -256,6 +256,19 @@ class DrExtractionWorksheetController extends Controller
         return back();
         // return redirect("/worksheet");
     }
+
+
+    public function reverse_upload(Request $request, DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $drExtractionWorksheet->date_gel_documentation = null;
+        $drExtractionWorksheet->status_id = 1;
+        $drExtractionWorksheet->save();
+
+        $drExtractionWorksheet->sample()->update(['passed_gel_documentation' => null]);
+        session(['toast_message' => 'The gel documentation details have been reversed.']);
+        return back();
+    }
+
 
     public function vl_worksheet(DrExtractionWorksheet $drExtractionWorksheet)
     {

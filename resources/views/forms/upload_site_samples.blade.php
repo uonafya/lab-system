@@ -30,7 +30,45 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['reed']))
+                        @if(Str::contains($url, ['reed', 'ampath']))
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file. <br />
+                                The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                <b> Required Columns </b> <br />
+                                MFL Code <br />
+                                Identifier<br />
+                                Patient Name<br />
+                                Gender<br />
+                                Age<br />
+                                <b> Optional Columns </b> <br />
+                                Justification<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                Phone Number<br />
+                                National ID<br />
+                                Occupation<br />
+                                County<br />
+                                Subcounty<br />
+                                Residence<br />
+                                Date Collected<br />
+                                Date Received<br />
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
+
+                            </center>
+                        </div>
+
+                        @elseif(Str::contains($url, ['knh']))
 
                         <div class="alert alert-warning">
                             <center>
@@ -44,9 +82,12 @@
                                 Age<br />
                                 <b> Optional Columns </b> <br />
                                 Phone Number<br />
+                                Type of Case &nbsp; <i> (Whether it's initial or repeat. Defaults to Initial) </i> <br />
                                 National ID<br />
-                                County<br />
-                                Subcounty<br />
+                                Occupation<br />
+                                County Of Residence<br />
+                                Subcounty Of Residence<br />
+                                Village/Estate<br />
                                 Date Collected<br />
                                 Date Received<br />
                                 (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
@@ -79,7 +120,7 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-                            @if(Str::contains($url, ['wrp', 'reed']))
+                            @if(Str::contains($url, ['wrp', 'reed', 'ampath']))
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select Excel/CSV</span>
                                 <span class="fileinput-exists">Change</span>

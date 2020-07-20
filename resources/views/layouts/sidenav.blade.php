@@ -201,12 +201,20 @@
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
+                @if(env('APP_LAB') == 9)
+                    <li><a href="{{ url('covid_sample/knh/upload') }}">Upload KNH Site Samples</a></li>
+                    <hr />                
+                @endif
                 @if(auth()->user()->lab_id == 18 || (env('APP_LAB') == 1 && !auth()->user()->user_type_id))
                     <li><a href="{{ url('covid_sample/wrp/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
                 @if(env('APP_LAB') == 4)
                     <li><a href="{{ url('covid_sample/reed/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />                
+                @endif
+                @if(env('APP_LAB') == 5)
+                    <li><a href="{{ url('covid_sample/ampath/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
@@ -223,12 +231,10 @@
                     </li>
                     <hr />
                 @endif
-                @if(in_array(env('APP_LAB'), [1,2,3,6,25]))
-                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
-                    <hr />
-                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
-                    <hr />
-                @endif
+                <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
+                <hr />
+                <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
+                <hr />
             @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
                 <hr />
@@ -367,6 +373,7 @@
                 <a href="{{ url('covid_sample/index/2') }}">Dispatched Covid 19 Samples</a>
             </li>
             <hr />
+            @if(auth()->user()->user_type_id != 11)
             <li>
                 <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
             </li>
@@ -375,6 +382,7 @@
                 <a href="{{ url('covidkits/reports') }}">Consumption Report</a>
             </li>
             <hr />
+            @endif
             <li>
                 <a href="{{ url('covidreports') }}">Daily Tests Report</a>
             </li>
@@ -572,6 +580,7 @@
                 
             @elseif(Auth::user()->quarantine_site)
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
+                <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
                 @if(session('testingSystem') == 'Viralload')
