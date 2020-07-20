@@ -64,7 +64,6 @@ class CovidConsumptionController extends Controller
 
     public function submitConsumption(Request $request)
     {
-        dd($request->all());
         if ($request->has('ending')){
             foreach ($request->input('ending') as $key => $value) {
                 $value = (int)$value;
@@ -84,7 +83,7 @@ class CovidConsumptionController extends Controller
         }
         
         $data = $this->buildConsumptionData($request);
-        
+        dd($data);
         $tests = [];
         if (!$request->has('machine')) {
             $tests[] = ['Manual' => $request->input('tests')];
