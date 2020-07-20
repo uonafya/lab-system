@@ -24,13 +24,15 @@
     <input type="hidden" name="week_start" value="{{ $time->week_start }}">
     <input type="hidden" name="week_end" value="{{ $time->week_end }}">
     @foreach($covidkits as $machinekey => $kits)
+    {{ $machinekey }}
+    {{-- 
         @php
             $machine = \App\Machine::find($machinekey);
             if ($machine)
                 $machinename = $machine->machine . ' Kits';
             else
                 $machinename = 'Consumables';
-            $machinename = '';
+
         @endphp
         <div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
@@ -110,6 +112,7 @@
                 </div>
             </div>
         </div>
+    --}}
     @endforeach
     <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
         <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
