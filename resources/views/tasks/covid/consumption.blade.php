@@ -27,7 +27,8 @@
         @php
             $machine = null;
             if (null !== trim($machinekey)){
-               print_r($machinekey);
+               if ($machinekey == "")
+                dd('This is a blank one');
                $machine = \App\Machine::find($machinekey);
                $machinename = $machine->machine . ' Kits';
             } else {
