@@ -42,7 +42,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             'subcounty' => $row->subcounty ?? null,  
             'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
-            'justification' => 3,             
+            'justification' => $row->justification ?? 3,             
         ]);
         $p->save();
 
