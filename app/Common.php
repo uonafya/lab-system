@@ -506,6 +506,8 @@ class Common
     		}
     	}*/
 
+    	$batches = $batch_model::where(['batch_complete' => 2])->whereIn('lab_id', [7, 10])->update(['batch_complete' => 1]);
+
     	$batches = $batch_model::where(['synched' => 5])->whereIn('lab_id', [7, 10])->get();
 
     	foreach ($batches as $batch) {
