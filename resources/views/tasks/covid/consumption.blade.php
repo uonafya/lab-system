@@ -26,16 +26,14 @@
     @foreach($covidkits as $machinekey => $kits)
         @php
             $machine = null;
-            if (null !== trim($machinekey)){
-               if ($machinekey == "")
-                dd('This is a blank one');
+            if ($machinekey != ""){
                $machine = \App\Machine::find($machinekey);
                $machinename = $machine->machine . ' Kits';
             } else {
                $machinename = 'Consumables'; 
             }
         @endphp
-
+        {{ $machinename }}
     {{--<div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
