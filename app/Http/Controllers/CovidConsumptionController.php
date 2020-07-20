@@ -44,7 +44,6 @@ class CovidConsumptionController extends Controller
                         ]);
         } else {
             $kits = $kits->groupby('machine');
-            dd($kits);
             return view('tasks.covid.consumption',
                         [
                             'covidkits' => $kits,
