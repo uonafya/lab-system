@@ -27,7 +27,7 @@
         @php
             $machine = null;
             if (null !== trim($machinekey)){
-               print_r($machine);
+               print_r($machinekey);
                $machine = \App\Machine::find($machinekey);
                $machinename = $machine->machine . ' Kits';
             } else {
