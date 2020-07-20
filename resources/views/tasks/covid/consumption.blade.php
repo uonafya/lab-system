@@ -27,13 +27,14 @@
         @php
             $machine = null;
             if (null !== trim($machinekey)){
+                {{ $machine }}<br/><br/>
                $machine = \App\Machine::find($machinekey);
                $machinename = $machine->machine . ' Kits';
             } else {
                $machinename = 'Consumables'; 
             }
         @endphp
-        {{ $machine }}<br/><br/>
+
     {{--<div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
