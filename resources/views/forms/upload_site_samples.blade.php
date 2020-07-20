@@ -43,6 +43,18 @@
                                 Gender<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
+                                Justification<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
