@@ -83,7 +83,7 @@ class CovidConsumptionController extends Controller
         }
         
         $data = $this->buildConsumptionData($request);
-        dd($data);
+        
         $tests = [];
         if (!$request->has('machine')) {
             $tests[] = ['Manual' => $request->input('tests')];
