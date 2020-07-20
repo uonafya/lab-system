@@ -33,7 +33,7 @@
                $machinename = 'Consumables'; 
             }
         @endphp
-        {{ $machinename }}
+        {{ $machine }}
     {{--<div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
