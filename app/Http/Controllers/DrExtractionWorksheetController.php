@@ -257,6 +257,19 @@ class DrExtractionWorksheetController extends Controller
         // return redirect("/worksheet");
     }
 
+
+    public function reverse_upload(Request $request, DrExtractionWorksheet $drExtractionWorksheet)
+    {
+        $drExtractionWorksheet->date_gel_documentation = null;
+        $drExtractionWorksheet->status_id = 1;
+        $drExtractionWorksheet->save();
+
+        $drExtractionWorksheet->sample()->update(['passed_gel_documentation' => null]);
+        session(['toast_message' => 'The gel documentation details have been reversed.']);
+        return back();
+    }
+
+
     public function vl_worksheet(DrExtractionWorksheet $drExtractionWorksheet)
     {
         $samples = $drExtractionWorksheet->sample()->where(['passed_gel_documentation' => false])->get();

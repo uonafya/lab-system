@@ -391,6 +391,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('print/{drExtractionWorksheet}', 'DrExtractionWorksheetController@print')->name('print');
 				Route::get('cancel/{drExtractionWorksheet}', 'DrExtractionWorksheetController@cancel')->name('cancel');
+				Route::get('reverse_upload/{drExtractionWorksheet}', 'DrExtractionWorksheetController@reverse_upload')->name('reverse_upload');
 
 			});
 			Route::resource('dr_extraction_worksheet', 'DrExtractionWorksheetController');
