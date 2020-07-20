@@ -33,8 +33,7 @@
                $machinename = 'Consumables'; 
             }
         @endphp
-        {{ $machinename }}
-    {{--<div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
+        <div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
                     <center><strong>Please enter the Kits received from KEMSA</strong></center>
@@ -112,7 +111,6 @@
                 </div>
             </div>
         </div>
-    --}}
     @endforeach
     <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
         <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
