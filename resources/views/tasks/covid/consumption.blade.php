@@ -24,17 +24,17 @@
     <input type="hidden" name="week_start" value="{{ $time->week_start }}">
     <input type="hidden" name="week_end" value="{{ $time->week_end }}">
     @foreach($covidkits as $machinekey => $kits)
-    {{ $machinekey }}
-    {{-- 
         @php
-            $machine = \App\Machine::find($machinekey);
-            if ($machine)
-                $machinename = $machine->machine . ' Kits';
-            else
-                $machinename = 'Consumables';
-
+            $machine = null;
+            if (null !== trim($machinekey)){
+               $machine = \App\Machine::find($machinekey);
+               $machinename = $machine->machine . ' Kits';
+            } else {
+               $machinename = 'Consumables'; 
+            }
         @endphp
-        <div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
+        {{ $machinename }}
+    {{--<div class="hpanel" style="margin-top: 1em;margin-right: 2%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <div class="alert alert-danger">
                     <center><strong>Please enter the Kits received from KEMSA</strong></center>
