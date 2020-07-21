@@ -63,7 +63,7 @@
                                 Residence<br />
                                 Date Collected<br />
                                 Date Received<br />
-                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. {{ date('Y-m-d') }})
 
                             </center>
                         </div>
