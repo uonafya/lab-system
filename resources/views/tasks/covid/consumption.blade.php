@@ -99,7 +99,7 @@
                                 </td>
                                 <td>
                                     <input class="form-control ending" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2) {{@(ceil($kit->beginingbalance($time->week_start))-ceil($kitsused))}} @else@($kit->beginingbalance($time->week_start)-$kitsused)@endif" min="0" disabled="true">
-                                    <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2) {{@(ceil($kit->beginingbalance($time->week_start))-ceil($kitsused))}} @else@($kit->beginingbalance($time->week_start)-$kitsused)@endif">
+                                    <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2) {{(int)(@(ceil($kit->beginingbalance($time->week_start))-ceil($kitsused)))}} @else{{{(int)(@($kit->beginingbalance($time->week_start)-$kitsused))}}@endif">
                                 </td>
                                 <td>
                                     <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>
