@@ -18,6 +18,27 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
+        if(!isset($row->mfl_code)){
+            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
+            return;
+        }
+        if(!isset($row->patient_name)){
+            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
+            return;
+        }
+        if(!isset($row->identifier)){
+            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
+            return;
+        }
+        if(!isset($row->age)){
+            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
+            return;
+        }
+        if(!isset($row->gender)){
+            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
+            return;
+        }
+
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
