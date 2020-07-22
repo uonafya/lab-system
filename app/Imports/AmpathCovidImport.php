@@ -24,8 +24,8 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
         if(!$fac) return;
         $p = null;
 
-        if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $row->identifier) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        if(!$p && $row->identifier && strlen($row->identifier) > 5) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
 
 
         if(!$p) $p = new CovidPatient;
