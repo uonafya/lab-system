@@ -18,6 +18,11 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
         
+
+        if(!isset($row->mfl_code)){
+            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
+            return;
+        }
         if(!isset($row->patient_name)){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
