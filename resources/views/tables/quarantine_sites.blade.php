@@ -13,7 +13,6 @@
                         <table class="table table-striped table-bordered table-hover data-table" >
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Emails</th>
@@ -23,7 +22,6 @@
                             <tbody> 
                                 @foreach($quarantine_sites as $key => $quarantine_site)
                                     <tr>
-                                        <td> {{ $key+1 }} </td>
                                         <td> {{ $quarantine_site->id }} </td>
                                         <td> {{ $quarantine_site->name }} </td>
                                         <td> {{ $quarantine_site->email }} </td>
