@@ -1072,8 +1072,10 @@ class CovidSampleController extends Controller
                 $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
 
                 if(isset($matched_by_patient)){
+                    $p = null;
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
+                    $p = $patient;
                     $message .= "Any patient details entered will overwrite existing patient details <br />";
                 }
 
@@ -1081,7 +1083,7 @@ class CovidSampleController extends Controller
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
                 National ID {$patient->national_id} ";
-                return ['message' => $message];
+                return ['message' => $message, 'patient' => $p];
             }
         }
         return ['message' => null];
