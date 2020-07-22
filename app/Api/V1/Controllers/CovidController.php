@@ -405,5 +405,51 @@ class CovidController extends Controller
         ], 201);
     }
 
+
+
+    public function cif_samples(CovidRequest $request)
+    {
+        $apikey = $request->headers->get('apikey');
+        if(!$apikey) $apikey = $request->input('apikey');
+        if(!$apikey) abort(401, 'apikey is required');
+        $lab = Lab::where(['apikey' => $apikey])->whereNotNull('apikey')->first();
+        // $lab = Lab::where(['apikey' => $apikey])->first();
+        if(!$lab || $lab->id != 12) abort(401);
+
+        $samples = CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-7 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->with(['patient'])->get();
+        // $samples = CovidSample::whereNotNull('cif_sample_id')->with(['patient'])->get();
+
+        foreach ($samples as $key => $sample) {
+            $data[] = [
+                'cif_patient_id' => $sample->patient->cif_patient_id,
+                'cif_id' => $sample->cif_sample_id,
+                'identifier' => $sample->patient->identifier,
+                'patient_name' => $sample->patient->patient_name,
+                'phone_no' => $sample->patient->phone_no,
+                'justification' => $sample->patient->justification,
+                'county' => $sample->patient->county,
+                'subcounty' => $sample->patient->subcounty,
+                'ward' => $sample->patient->ward,
+                'residence' => $sample->patient->residence,
+                'dob' => $sample->patient->dob,
+                'sex' => $sample->patient->gender,
+                'occupation' => $sample->patient->occupation,
+                'health_status' => $sample->patient->health_status,
+                'date_symptoms' => $sample->patient->date_symptoms,
+                'date_admission' => $sample->patient->date_admission,
+                'date_isolation' => $sample->patient->date_isolation,
+                'date_death' => $sample->patient->date_death,
+
+                'test_type' => $sample->test_type,
+                'age' => $sample->age,
+                'datecollected' => $sample->datecollected,
+
+            ];
+        }
+        return response()->json([
+          'status' => 'ok',
+          'samples' => $data,
+        ], 200);
+    }
 }
 

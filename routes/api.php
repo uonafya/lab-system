@@ -78,6 +78,10 @@ $api->version('v1', function (Router $api) {
             });
             
         // });
+
+        $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {
+            $api->post('covid/cif_samples', 'CovidController@cif_samples');
+        });
                 
         $api->resource('covid', 'CovidController');
         
