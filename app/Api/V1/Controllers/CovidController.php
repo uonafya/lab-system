@@ -443,7 +443,6 @@ class CovidController extends Controller
                 'test_type' => $sample->test_type,
                 'age' => $sample->age,
                 'datecollected' => $sample->datecollected,
-
             ];
         }
         return response()->json([
