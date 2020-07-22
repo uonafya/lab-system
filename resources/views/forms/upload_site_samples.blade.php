@@ -30,7 +30,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['reed', 'ampath']))
+                        @if(Str::contains($url, ['reed', 'ampath', 'nairobi']))
 
                         <div class="alert alert-warning">
                             <center>
@@ -120,7 +120,7 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-                            @if(Str::contains($url, ['wrp', 'reed', 'ampath']))
+                            @if(Str::contains($url, ['wrp', 'reed', 'ampath', 'nairobi']))
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select Excel/CSV</span>
                                 <span class="fileinput-exists">Change</span>

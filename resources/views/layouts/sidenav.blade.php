@@ -217,6 +217,10 @@
                     <li><a href="{{ url('covid_sample/ampath/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
+                @if(auth()->user()->lab_id == 1)
+                    <li><a href="{{ url('covid_sample/nairobi/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />                
+                @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
                 <hr />
                 <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>

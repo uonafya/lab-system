@@ -21,6 +21,7 @@ use App\Imports\KemriWRPImport;
 use App\Imports\WRPCovidImport;
 use App\Imports\AmpathCovidImport;
 use App\Imports\KNHCovidImport;
+use App\Imports\NairobiCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -873,6 +874,24 @@ class CovidSampleController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/site_samples/covid');
         $c = new KNHCovidImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+
+    public function nairobi_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/nairobi'])->with('pageTitle', 'Upload Nairobi Site Samples');
+    }
+
+    public function upload_nairobi_samples(Request $request)
+    {
+        if(env('APP_LAB') != 1) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new NairobiCovidImport;
         Excel::import($c, $path);
 
         session(['toast_message' => "The samples have been created."]);
