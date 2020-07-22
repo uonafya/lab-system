@@ -4,7 +4,13 @@ namespace App;
 
 use DB;
 
+use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Client;
+use App\Mail\TestMail;
+use App\Mail\CovidDispatch;
+
 use Excel;
+
 
 class MiscCovid extends Common
 {
