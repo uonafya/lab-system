@@ -205,7 +205,7 @@
                     <li><a href="{{ url('covid_sample/knh/upload') }}">Upload KNH Site Samples</a></li>
                     <hr />                
                 @endif
-                @if(auth()->user()->lab_id == 18 || (env('APP_LAB') == 1 && !auth()->user()->user_type_id))
+                @if(auth()->user()->lab_id == 18)
                     <li><a href="{{ url('covid_sample/wrp/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
