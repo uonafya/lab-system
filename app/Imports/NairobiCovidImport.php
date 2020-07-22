@@ -18,7 +18,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        $mfl = (int) $row->mfl_code ?? 0;
+        $mfl = (int) ($row->mfl_code ?? 0);
 
         $fac = Facility::locate($mfl)->first();
         // if(!$fac) return;
