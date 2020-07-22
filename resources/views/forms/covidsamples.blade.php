@@ -604,6 +604,34 @@
                         set_message(data['message']);
                         $("#new_patient_info").html(data['message']);
                         $("#new_patient_div").show();
+
+                        if(data['patient']){
+
+                            var patient = data['patient'];
+
+                            var national_id = $("#national_id").val();
+                            var identifier = $("#identifier").val();
+                            var facility_id = $("#facility_id").val();
+                            var quarantine_site_id = $("#quarantine_site_id").val();
+                            var patient_name = $("#patient_name").val();
+
+                            if(!national_id.length) $("#national_id").val(patient.national_id);
+                            if(!identifier.length) $("#identifier").val(patient.identifier);
+
+
+                            $("#sex").val(patient.sex).change();
+                            $("#facility_id").val(patient.facility_id).change();
+                            $("#quarantine_site_id").val(patient.quarantine_site_id).change();
+                            $("#dob").val(patient.dob);
+                            $("#age").val(patient.most_recent.age);
+                            
+                            $("#patient_name").val(patient.patient_name);
+                            $("#county_id").val(patient.county_id);
+                            $("#subcounty_id").val(patient.subcounty_id);
+                            $("#email_address").val(patient.email_address);
+                            $("#phone_no").val(patient.phone_no);
+                            $("#residence").val(patient.residence);
+                        }
                     }
                     else{
                         $("#new_patient_div").hide();
