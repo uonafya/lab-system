@@ -30,7 +30,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['reed', 'ampath']))
+                        @if(Str::contains($url, ['reed', 'ampath', 'nairobi']))
 
                         <div class="alert alert-warning">
                             <center>
@@ -38,6 +38,9 @@
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
+                                @if(env('APP_LAB') == 1)
+                                    (Quarantine Site ID) Can be used when MFL Code is not present <br />
+                                @endif
                                 Identifier<br />
                                 Patient Name<br />
                                 Gender<br />
@@ -63,7 +66,7 @@
                                 Residence<br />
                                 Date Collected<br />
                                 Date Received<br />
-                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. 2020-07-15)
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. {{ date('Y-m-d') }})
 
                             </center>
                         </div>
@@ -120,7 +123,7 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-                            @if(Str::contains($url, ['wrp', 'reed', 'ampath']))
+                            @if(Str::contains($url, ['wrp', 'reed', 'ampath', 'nairobi']))
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select Excel/CSV</span>
                                 <span class="fileinput-exists">Change</span>

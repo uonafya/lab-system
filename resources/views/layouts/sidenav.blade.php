@@ -205,7 +205,7 @@
                     <li><a href="{{ url('covid_sample/knh/upload') }}">Upload KNH Site Samples</a></li>
                     <hr />                
                 @endif
-                @if(auth()->user()->lab_id == 18 || (env('APP_LAB') == 1 && !auth()->user()->user_type_id))
+                @if(auth()->user()->lab_id == 18)
                     <li><a href="{{ url('covid_sample/wrp/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
@@ -215,6 +215,10 @@
                 @endif
                 @if(env('APP_LAB') == 5)
                     <li><a href="{{ url('covid_sample/ampath/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />                
+                @endif
+                @if(auth()->user()->lab_id == 1)
+                    <li><a href="{{ url('covid_sample/nairobi/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>

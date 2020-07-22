@@ -11,42 +11,23 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class AmpathCovidImport implements OnEachRow, WithHeadingRow
+class NairobiCovidImport implements OnEachRow, WithHeadingRow
 {
     
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!isset($row->mfl_code)){
-            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
-            return;
-        }
-        if(!isset($row->patient_name)){
-            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
-            return;
-        }
-        if(!isset($row->identifier)){
-            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
-            return;
-        }
-        if(!isset($row->age)){
-            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
-            return;
-        }
-        if(!isset($row->gender)){
-            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
-            return;
-        }
-
-        $mfl = (int) $row->mfl_code;
+        $mfl = (int) ($row->mfl_code ?? 0);
+        if(!$row->identifier) return;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac) return;
+        // if(!$fac) return;
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $row->identifier && strlen($row->identifier) > 5) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->identifier && strlen($row->identifier) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->identifier && strlen($row->identifier) > 5) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
@@ -54,6 +35,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
         $p->fill([
             'identifier' => $row->identifier ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
+            'quarantine_site_id' => $row->quarantine_site_id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,

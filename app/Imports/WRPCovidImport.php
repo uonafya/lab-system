@@ -17,6 +17,23 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
+        
+        if(!isset($row->patient_name)){
+            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
+            return;
+        }
+        if(!isset($row->identifier)){
+            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
+            return;
+        }
+        if(!isset($row->age)){
+            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
+            return;
+        }
+        if(!isset($row->gender)){
+            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
+            return;
+        }
 
         $mfl = (int) $row->mfl_code;
 
@@ -44,7 +61,10 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         ]);
         $p->save();
 
-        $datecollected = $row->date_collected ?? date('Y-m-d');
+        // $datecollected = $row->date_collected ?? date('Y-m-d');
+
+        $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
+        $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
 
         $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
@@ -55,8 +75,8 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'site_entry' => 0,
             'age' => $row->age,
             'test_type' => 1,
-            'datecollected' => $row->date_collected ?? date('Y-m-d'),
-            'datereceived' => $row->date_received ?? date('Y-m-d'),
+            'datecollected' => $datecollected,
+            'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
         ]);
