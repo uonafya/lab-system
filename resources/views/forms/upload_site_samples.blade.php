@@ -79,6 +79,7 @@
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
+                                Quarantine Site ID <br />
                                 Patient ID<br />
                                 Name<br />
                                 Sex<br />
