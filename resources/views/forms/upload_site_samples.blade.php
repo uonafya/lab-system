@@ -71,7 +71,7 @@
                             </center>
                         </div>
 
-                        @elseif(Str::contains($url, [nairobi']))
+                        @elseif(Str::contains($url, ['nairobi']))
 
                         <div class="alert alert-warning">
                             <center>
