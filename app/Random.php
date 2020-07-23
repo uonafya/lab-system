@@ -721,6 +721,11 @@ class Random
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
             if(!is_numeric($data[0])) continue;
 
+            $s = Viralsample::where(['national_sample_id' => $data[0]])->first();
+            if(!$s) continue;
+            $p = $s->patient;
+            
+
         }
     }
 
