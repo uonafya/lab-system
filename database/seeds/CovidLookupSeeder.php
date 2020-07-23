@@ -20,7 +20,7 @@ class CovidLookupSeeder extends Seeder
 		DB::statement("
 			CREATE TABLE `covid_justifications` (
 				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				`name` varchar(50) DEFAULT NULL,
+				`name` varchar(150) DEFAULT NULL,
 				PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
@@ -37,7 +37,40 @@ class CovidLookupSeeder extends Seeder
 			['id' => 9, 'name' => 'Health Care Worker'],
 			['id' => 10, 'name' => 'Truck Driver'],
 			['id' => 11, 'name' => 'Food Handlers'],
+			['id' => 12, 'name' => 'Before medical/surgical procedure'],
+			['id' => 13, 'name' => 'Travel to Country/County with presumed widespread COVID-19'],
+			['id' => 14, 'name' => 'Meets case definition'],
+			['id' => 15, 'name' => 'Acute severe respiratory illness'],
 		]);
+
+		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
+		DB::statement("
+			CREATE TABLE `nationalities` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('nationalities')->insert([
+			['id' => 1, 'name' => 'Kenyan'],
+			['id' => 2, 'name' => 'African'],
+			['id' => 3, 'name' => 'European'],
+			['id' => 4, 'name' => 'Asian'],
+			['id' => 5, 'name' => 'American'],
+			['id' => 6, 'name' => 'Other'],
+			['id' => 7, 'name' => 'Ugandan'],
+			['id' => 8, 'name' => 'Tanzanian'],
+			['id' => 9, 'name' => 'Rwandese'],
+			['id' => 10, 'name' => 'DRC National'],
+			['id' => 11, 'name' => 'South Sudanese'],
+			['id' => 12, 'name' => 'Somalian'],
+			['id' => 13, 'name' => 'Ethiopian'],
+			['id' => 14, 'name' => 'Sudanese'],
+			['id' => 15, 'name' => 'Burundian'],
+		]);
+
+		return;
 
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
@@ -207,28 +240,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 6, 'name' => '5th Follow Up'],
 			['id' => 7, 'name' => 'Not Specified'],
 			['id' => 8, 'name' => 'Repeat'],
-		]);
-
-		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
-		DB::statement("
-			CREATE TABLE `nationalities` (
-				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				`name` varchar(50) DEFAULT NULL,
-				PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-		");
-
-		DB::table('nationalities')->insert([
-			['id' => 1, 'name' => 'Kenyan'],
-			['id' => 2, 'name' => 'African'],
-			['id' => 3, 'name' => 'European'],
-			['id' => 4, 'name' => 'Asian'],
-			['id' => 5, 'name' => 'American'],
-			['id' => 6, 'name' => 'Other'],
-			['id' => 7, 'name' => 'Ugandan'],
-			['id' => 8, 'name' => 'Tanzanian'],
-			['id' => 9, 'name' => 'Rwandese'],
-			['id' => 10, 'name' => 'DRC National'],
 		]);
 
 		DB::statement("DROP TABLE IF EXISTS `identifier_types`;");

@@ -715,6 +715,20 @@ class Random
 		}
 	} 
 
+    public static function update_turkana()
+    {
+        $handle = fopen(public_path('turkana_samples.csv'), "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if(!is_numeric($data[0])) continue;
+
+            $s = Viralsample::where(['national_sample_id' => $data[0]])->first();
+            if(!$s) continue;
+            $p = $s->patient;
+            
+
+        }
+    }
+
 	public static function locations()
 	{
 		$locations = '

@@ -752,52 +752,10 @@ class CovidSampleController extends Controller
         $c = new AmpathCovidImport;
         Excel::import($c, $path);
 
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-        
-        /*$file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Name') continue;
-
-            $p = CovidPatient::where(['national_id' => $data[1]])->first();
-
-            if(!$p) $p = new CovidPatient;
-
-            $p->fill([
-                'identifier' => $data[1],
-                'national_id' => $data[1],
-                'facility_id' => 5296,
-                'patient_name' => $data[0],
-                'sex' => $data[4],
-                'phone_no' => $data[2] ?? null,
-                'justification' => 9,             
-                'residence' => $data[5],             
-            ]);
-            $p->save();
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'lab_id' => env('APP_LAB'),
-                'site_entry' => 1,
-                'age' => $data[3],
-                'test_type' => 1,
-                'sample_type' => 1,
-                'datecollected' => '2020-07-10',
-                'datereceived' => '2020-07-10',
-                'receivedstatus' => 1,
-                'sample_type' => 1,
-            ]);
-            $created_rows++;
-        }
+        if(session('toast_error')) return back();
 
         session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); */
+        return redirect('/covid_sample');
     }
 
     public function reed_sample_page()
@@ -813,53 +771,10 @@ class CovidSampleController extends Controller
         $c = new WRPCovidImport;
         Excel::import($c, $path);
 
+        if(session('toast_error')) return back();
+
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
-
-
-        /*$file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        // nakuru pgh
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Name') continue;
-
-            $p = CovidPatient::where(['identifier' => $data[3]])->first();
-
-            if(!$p) $p = new CovidPatient;
-
-            $p->fill([
-                'identifier' => $data[3],
-                'facility_id' => 5647,
-                'patient_name' => $data[0],
-                'sex' => $data[2],
-                'phone_no' => $data[4] ?? null,
-                'justification' => 3,             
-            ]);
-            $p->save();
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'lab_id' => env('APP_LAB'),
-                'site_entry' => 1,
-                'age' => $data[1],
-                'test_type' => 1,
-                'sample_type' => 1,
-                'datecollected' => '2020-07-08',
-                'datereceived' => '2020-07-08',
-                'receivedstatus' => 1,
-                'sample_type' => 1,
-            ]);
-            $created_rows++;
-        }
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); */
     }
 
 
@@ -970,6 +885,23 @@ class CovidSampleController extends Controller
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
         $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
+    }
+
+    public function receive_multiple(Request $request)
+    {
+        $ids = $request->input('sample_ids');
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to receive.", 'toast_error' => 1]);
+            return back();            
+        }
+        $samples = CovidSample::whereIn('id', $ids)->get();
+        foreach ($samples as $key => $sample) {
+            $sample->receivedstatus = 1;
+            $sample->datereceived = date('Y-m-d');
+            $sample->save();
+        }
+        session(['toast_message' => 'The samples have been marked as received.']);
+        return back();
     }
 
 
