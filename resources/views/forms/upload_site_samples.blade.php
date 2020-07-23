@@ -79,9 +79,6 @@
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
-                                @if(env('APP_LAB') == 1)
-                                    (Quarantine Site ID) Can be used when MFL Code is not present <br />
-                                @endif
                                 Patient ID<br />
                                 Name<br />
                                 Sex<br />
