@@ -81,7 +81,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'age' => $row->age,
-            'test_type' => 1,
+            'test_type' => $row->test_type ?? 1,
             'datecollected' => $datecollected,
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
