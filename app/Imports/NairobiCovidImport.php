@@ -17,23 +17,25 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
-        
-        if(!isset($row->patient_name)){
+
+        if(!property_exists($row, 'patient_name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
-        if(!isset($row->identifier)){
+        if(!property_exists($row, 'identifier')){
             session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
             return;
         }
-        if(!isset($row->age)){
+        if(!property_exists($row, 'age')){
             session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
             return;
         }
-        if(!isset($row->gender)){
+        if(!property_exists($row, 'gender')){
             session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
             return;
         }
+
+        if(!$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
 
         $mfl = (int) ($row->mfl_code ?? 0);
         if(!$row->identifier) return;

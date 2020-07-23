@@ -233,6 +233,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 12, 'name' => 'Somalian'],
 			['id' => 13, 'name' => 'Ethiopian'],
 			['id' => 14, 'name' => 'Sudanese'],
+			['id' => 15, 'name' => 'Burundian'],
 		]);
 
 		DB::statement("DROP TABLE IF EXISTS `identifier_types`;");
