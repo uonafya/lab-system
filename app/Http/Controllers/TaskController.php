@@ -54,32 +54,24 @@ class TaskController extends Controller
             return redirect()->route('home');
         }
         // return redirect('/home');
-
-        $pendingDeliveries = $this->getDeliveries();
-        $data['deliveries'] = $pendingDeliveries;
-        if (empty($pendingDeliveries)){
-            $pendingConsumptions = $this->getConsumptions();
-            $data['consumptions'] = $pendingConsumptions;
+        if (env('APP_LAB') != 23 && auth()->user()->eidvl_consumption_allowed) {
+            $pendingDeliveries = $this->getDeliveries();
+            $data['deliveries'] = $pendingDeliveries;
+            if (empty($pendingDeliveries)){
+                $pendingConsumptions = $this->getConsumptions();
+                $data['consumptions'] = $pendingConsumptions;
+            }
+          		
+    		$month = $this->previousMonth;
+            $year = $this->previousYear;
+            $range = '';
+            $quarter = parent::_getMonthQuarter(date('m'),$range);
+            session(['range'=>$range, 'quarter'=>$quarter]);
+            $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
+            $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
         }
-  //   	$data['kits'] = (object)$this->getKitsEntered();
-        
-  //   	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
-		// {
-  //           $data['submittedkits'] = 1;
-  //           $data['consumption'] = (object)$this->getConsumption();
-		// }else {
-		// 	$data['submittedkits'] = 0;
-		// }
-		
-		$month = $this->previousMonth;
-        $year = $this->previousYear;
-        $range = '';
-        $quarter = parent::_getMonthQuarter(date('m'),$range);
-        session(['range'=>$range, 'quarter'=>$quarter]);
-        $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
-        $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
   //       $data['requisitions'] = count($this->getRequisitions());
-        if (!in_array(env('APP_LAB'), [8])){
+        if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed){
             $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
@@ -99,6 +91,7 @@ class TaskController extends Controller
         $data = [
                 'machines' => Machine::get(),
             ];
+
         return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
         if ($platform == null) {
             $users = User::where('user_type_id', '<', 5)->get();
@@ -107,7 +100,6 @@ class TaskController extends Controller
                     
                     'pending_deliveries' => $this->getDeliveries(),
                 ];
-            // dd($data); 
             
         } else {
             $deliveries = $this->submitNullDeliveries($platform);

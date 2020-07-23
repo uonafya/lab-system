@@ -33,6 +33,7 @@ class CovidConsumptionController extends Controller
                                         else
                                             return $query->where('type', '<>', 'Manual');
                                     })->orderBy('machine', 'desc')->get();/*->groupby('machine');*/
+
         if ($user->user_type_id == 12){
             $kits = $kits->groupby('type')->sortKeysDesc();
             $tests = $consumption->getTestsDone($time->week_start, $time->week_end);

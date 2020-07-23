@@ -34,9 +34,15 @@ class DeliveriesController extends Controller
     	$model = new Deliveries;
     	$period = collect($model->getMissingDeliveries())->first();
     	if ($request->method() == 'POST') {
+            $period = collect($model->getMissingDeliveries())->first();
+            $from = $period->year . '-' . $period->month . '-1';
+            $to = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d', strtotime("+1 Month", strtotime($from))))));
+            $period->startMonthDiff = $from;
+            $period->endMonthDiff = $to;
+            
     		$data = [
     				'machines' => Machine::whereIn('id', $request->input('machine'))->get(),
-                	'period' => collect($model->getMissingDeliveries())->first(),
+                	'period' => $period,
                 	'types' => TestType::get(),
                 	'users' => User::where('user_type_id', '<', 5)->get()
     			];
@@ -49,7 +55,7 @@ class DeliveriesController extends Controller
                 'machines' => $machines->missingDeliveries($period->year, $period->month),
                 'period' => $period
             ];
-            
+        
         return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
     }
 

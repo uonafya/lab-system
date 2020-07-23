@@ -38,7 +38,7 @@
                         </div>
 
                         <div class="form-group" style="/*display: none;" id="platformDiv">
-                            <label class="col-sm-4 control-label"><center>Select Platform <small style="color:red;">Select multiple</small></center></label>
+                            <label class="col-sm-4 control-label"><center>Select all Platforms <small style="color:red;">Select multiple</small></center></label>
                             <div class="col-sm-8">
                                 <select class="form-control input-sm" required name="machine[]" id="machine" multiple="true">
                                 @foreach($machines as $machine)

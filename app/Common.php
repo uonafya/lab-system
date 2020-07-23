@@ -1221,4 +1221,13 @@ class Common
 			$start_date = date('Y-m-d', strtotime('+1 month', strtotime($start_date)));
 		}
     }
+
+    public static function updateReporters()
+    {
+    	foreach (User::where('covid_consumption_allowed', 1)->get() as $key => $user) {
+    		$user->eidvl_consumption_allowed = 1;
+    		$user->save();
+    	}
+    	return true;
+    }
 }

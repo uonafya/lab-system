@@ -81,6 +81,8 @@ class CovidKitsSeeder extends Seeder
                 ['material_no' => 'P35', 'product_description' => 'Head covers(disposable)', 'unit'=> 'pack', 'pack_size' => 100, 'type' => 'Consumable'],
                 ['material_no' => 'P36', 'product_description' => 'Paper towels', 'type' => 'Consumable'],
                 ['material_no' => 'P37', 'product_description' => 'Tongue depressors', 'type' => 'Consumable'],
+
+                // Manual Kits
                 ['material_no' => 'M1', 'product_description' => 'SARS-COV-2 Extraction Kits',
                 'pack_size' => 240, 'calculated_pack_size' => 240, 'type' => 'Manual', 'unit' => 'tests'],
                 ['material_no' => 'M2', 'product_description' => 'SARS-Cov2 Primers and probes- 96 tests',
