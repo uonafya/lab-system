@@ -30,7 +30,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['reed', 'ampath', 'nairobi']))
+                        @if(Str::contains($url, ['reed', 'ampath']))
 
                         <div class="alert alert-warning">
                             <center>
@@ -63,6 +63,36 @@
                                 Occupation<br />
                                 County<br />
                                 Subcounty<br />
+                                Residence<br />
+                                Date Collected<br />
+                                Date Received<br />
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. {{ date('Y-m-d') }})
+
+                            </center>
+                        </div>
+
+                        @elseif(Str::contains($url, [nairobi']))
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file. <br />
+                                The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                <b> Required Columns </b> <br />
+                                MFL Code <br />
+                                @if(env('APP_LAB') == 1)
+                                    (Quarantine Site ID) Can be used when MFL Code is not present <br />
+                                @endif
+                                Patient ID<br />
+                                Name<br />
+                                Sex<br />
+                                Age<br />
+                                <b> Optional Columns </b> <br />
+                                Justification<br />
+                                Telehone Number<br />
+                                National ID<br />
+                                Occupation<br />
+                                County of Residence<br />
+                                Sub-county<br />
                                 Residence<br />
                                 Date Collected<br />
                                 Date Received<br />
