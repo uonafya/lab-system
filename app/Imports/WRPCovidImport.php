@@ -17,23 +17,29 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
     public function onRow(Row $row)
     {
         $row = json_decode(json_encode($row->toArray()));
-        
-        if(!isset($row->patient_name)){
+
+        if(!property_exists($row, 'mfl_code')){
+            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'patient_name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
-        if(!isset($row->identifier)){
+        if(!property_exists($row, 'identifier')){
             session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
             return;
         }
-        if(!isset($row->age)){
+        if(!property_exists($row, 'age')){
             session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
             return;
         }
-        if(!isset($row->gender)){
+        if(!property_exists($row, 'gender')){
             session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
             return;
         }
+
+        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
 
         $mfl = (int) $row->mfl_code;
 
@@ -56,8 +62,8 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,   
-            'occupation' => $row->occupation ?? null,   
-            'justification' => 3,             
+            'occupation' => $row->occupation ?? null,  
+            'justification' => $row->justification ?? 3,       
         ]);
         $p->save();
 

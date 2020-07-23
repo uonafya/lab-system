@@ -18,26 +18,28 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!isset($row->mfl_code)){
+        if(!property_exists($row, 'mfl_code')){
             session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
             return;
         }
-        if(!isset($row->patient_name)){
+        if(!property_exists($row, 'patient_name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
-        if(!isset($row->identifier)){
+        if(!property_exists($row, 'identifier')){
             session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
             return;
         }
-        if(!isset($row->age)){
+        if(!property_exists($row, 'age')){
             session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
             return;
         }
-        if(!isset($row->gender)){
+        if(!property_exists($row, 'gender')){
             session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
             return;
         }
+
+        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
 
         $mfl = (int) $row->mfl_code;
 
@@ -81,7 +83,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'age' => $row->age,
-            'test_type' => 1,
+            'test_type' => $row->test_type ?? 1,
             'datecollected' => $datecollected,
             'datereceived' => $datereceived,
             'receivedstatus' => 1,

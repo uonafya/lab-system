@@ -290,6 +290,10 @@
                         <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to print the selected samples?');">
                             @csrf
                         @endif
+                        @if(isset($type) && $type == 0)
+                        <form  method="post" action="{{ url('covid_sample/receive_multiple/') }}" onsubmit="return confirm('Are you sure you want to receive the selected samples?');">
+                            @csrf
+                        @endif
 
                         @if(isset($type) && $type == 3)
                         <form  method="post" action="{{ url('covid_sample/transfer/') }}" onsubmit="return confirm('Are you sure you want to transfer the selected samples to the selected lab?');">
@@ -328,6 +332,8 @@
                                     <th rowspan="2">Task</th>
                                     @if(isset($type) && $type == 2)
                                         <th rowspan="2">Print Multiple</th>
+                                    @elseif(isset($type) && $type == 0)
+                                        <th rowspan="2">Receive Multiple</th>
                                     @elseif(isset($type) && $type == 3)
                                         <th rowspan="2">Select Sample</th>
                                     @else
@@ -408,7 +414,7 @@
                                                 @endif
                                             @endif                                         
                                         </td>
-                                        @if(isset($type) && in_array($type, [2, 3]))
+                                        @if(isset($type) && in_array($type, [0, 2, 3]))
                                             <td> 
                                                 <div align="center">
                                                     <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
@@ -424,6 +430,11 @@
 
                         @if(isset($type) && $type == 2)
                         <button type="submit" class="btn btn-primary">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
+                        @if(isset($type) && $type == 0)
+                        <button type="submit" class="btn btn-primary">Receive Multiple Samples</button>
                         </form>
                         @endif
 

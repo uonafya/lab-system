@@ -887,6 +887,23 @@ class CovidSampleController extends Controller
         return view('exports.mpdf_covid_samples', $data);
     }
 
+    public function receive_multiple(Request $request)
+    {
+        $ids = $request->input('sample_ids');
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to receive.", 'toast_error' => 1]);
+            return back();            
+        }
+        $samples = CovidSample::whereIn('id', $ids)->get();
+        foreach ($samples as $key => $sample) {
+            $sample->receivedstatus = 1;
+            $sample->datereceived = date('Y-m-d');
+            $sample->save();
+        }
+        session(['toast_message' => 'The samples have been marked as received.']);
+        return back();
+    }
+
 
     public function cities(Request $request)
     {

@@ -155,6 +155,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			
 			Route::group(['middleware' => ['only_utype:1,4,12']], function () {
+				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
 				
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
