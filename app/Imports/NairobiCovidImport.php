@@ -35,7 +35,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->name || !$row->patient_id || !$row->age || !$row->sex) return;
+        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) return;
 
         $mfl = (int) ($row->mfl_code ?? 0);
         if(!$row->patient_id) return;
@@ -61,7 +61,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             'nationality' => 1,
             'phone_no' => $row->telephone_number ?? null,
             'county' => $row->county_of_residence ?? null,
-            'subcounty' => $row->sub)county ?? null,  
+            'subcounty' => $row->sub_county ?? null,  
             'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
             'justification' => $row->justification ?? 3,             
