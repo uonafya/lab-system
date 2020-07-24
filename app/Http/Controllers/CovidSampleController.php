@@ -868,6 +868,11 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+        if(!$covidSample->datedispatched){
+            session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
+            return back();
+        }
+
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $data['print'] = true;
