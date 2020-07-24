@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(CovidKitsSeeder::class);
         // $this->call(TestTypeSeeder::class);
         // $this->call(TestTypeSeeder::class);
-        $this->call(ManualMachineSeeder::class);
+        // $this->call(ManualMachineSeeder::class);
+        $this->call(CancerLookupsSeeder::class);
     }
 }
