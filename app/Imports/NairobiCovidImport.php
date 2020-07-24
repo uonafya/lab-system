@@ -18,50 +18,50 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!property_exists($row, 'patient_name')){
+        if(!property_exists($row, 'name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
-        if(!property_exists($row, 'identifier')){
-            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
+        if(!property_exists($row, 'patient_id')){
+            session(['toast_error' => 1, 'toast_message' => 'Patient ID (identifier) column is not present.']);
             return;
         }
         if(!property_exists($row, 'age')){
             session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
             return;
         }
-        if(!property_exists($row, 'gender')){
-            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
+        if(!property_exists($row, 'sex')){
+            session(['toast_error' => 1, 'toast_message' => 'Sex column is not present.']);
             return;
         }
 
-        if(!$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
+        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) return;
 
         $mfl = (int) ($row->mfl_code ?? 0);
-        if(!$row->identifier) return;
+        if(!$row->patient_id) return;
 
         $fac = Facility::locate($mfl)->first();
         // if(!$fac) return;
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $row->identifier && strlen($row->identifier) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
-        if(!$p && $row->identifier && strlen($row->identifier) > 5) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+        if(!$p && $row->patient_id && strlen($row->patient_id) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->patient_id, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->patient_id && strlen($row->patient_id) > 5) $p = CovidPatient::where(['identifier' => $row->patient_id, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->identifier ?? $row->patient_name,
+            'identifier' => $row->patient_id ?? $row->name,
             'facility_id' => $fac->id ?? null,
             'quarantine_site_id' => $row->quarantine_site_id ?? null,
-            'patient_name' => $row->patient_name,
-            'sex' => $row->gender,
+            'patient_name' => $row->name,
+            'sex' => $row->sex,
             'national_id' => $row->national_id ?? null,
             'nationality' => 1,
-            'phone_no' => $row->phone_number ?? null,
-            'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,  
+            'phone_no' => $row->telephone_number ?? null,
+            'county' => $row->county_of_residence ?? null,
+            'subcounty' => $row->sub_county ?? null,  
             'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
             'justification' => $row->justification ?? 3,             
@@ -71,8 +71,8 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
 
-        if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
-        if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');
+        if($datecollected == '1970-01-01' || date('Y', strtotime($datecollected)) > date('Y')) $datecollected = date('Y-m-d');
+        if($datereceived == '1970-01-01' || date('Y', strtotime($datereceived)) > date('Y')) $datereceived = date('Y-m-d');
 
         $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
