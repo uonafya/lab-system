@@ -31,7 +31,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
         if(!property_exists($row, 'sex')){
-            session(['toast_error' => 1, 'toast_message' => 'sex column is not present.']);
+            session(['toast_error' => 1, 'toast_message' => 'Sex column is not present.']);
             return;
         }
 
