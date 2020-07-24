@@ -514,7 +514,7 @@ class CovidSampleController extends Controller
                 $travel->save();
             }
         }
-        session(['toast_message' => "The sample has been created."]);
+        session(['toast_message' => "The sample has been created.", 'last_covid_sample' => $sample->id]);
         return back();
     }
 

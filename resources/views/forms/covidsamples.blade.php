@@ -70,6 +70,15 @@
                         </div>
                         <br />
 
+                        @if(session('last_covid_sample'))
+                            <div class="alert alert-success">
+                                <center>
+                                    The sample added has been assigned lab id {{ session('last_covid_sample') }}.
+                                </center>
+                            </div>
+                            <br />
+                        @endif
+
                         <div class="alert alert-info" id="new_patient_div">
                             <center id="new_patient_info">
 
