@@ -290,6 +290,10 @@
                         <form  method="post" action="{{ url('covid_sample/print_multiple/') }}" onsubmit="return confirm('Are you sure you want to print the selected samples?');">
                             @csrf
                         @endif
+                        @if(isset($type) && $type == 0)
+                        <form  method="post" action="{{ url('covid_sample/receive_multiple/') }}" onsubmit="return confirm('Are you sure you want to receive the selected samples?');">
+                            @csrf
+                        @endif
 
                         @if(isset($type) && $type == 3)
                         <form  method="post" action="{{ url('covid_sample/transfer/') }}" onsubmit="return confirm('Are you sure you want to transfer the selected samples to the selected lab?');">
@@ -315,6 +319,7 @@
                                     @if(in_array(env('APP_LAB'), [1,25]))
                                     <th rowspan="2">Kemri ID</th>
                                     @endif
+                                    <th rowspan="2">Patient Name</th>
                                     <th rowspan="2">Facility</th>
                                     <th rowspan="2">Identifier</th>
                                     <th rowspan="2">Worksheet</th>
@@ -327,6 +332,8 @@
                                     <th rowspan="2">Task</th>
                                     @if(isset($type) && $type == 2)
                                         <th rowspan="2">Print Multiple</th>
+                                    @elseif(isset($type) && $type == 0)
+                                        <th rowspan="2">Receive Multiple</th>
                                     @elseif(isset($type) && $type == 3)
                                         <th rowspan="2">Select Sample</th>
                                     @else
@@ -353,6 +360,7 @@
                                         @if(in_array(env('APP_LAB'), [1,25]))
                                         <td> {{ $sample->kemri_id }} </td>
                                         @endif
+                                        <td> {{ $sample->patient_name }} </td>
                                         <td> {{ $sample->facilityname }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
@@ -363,12 +371,11 @@
                                         @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
                                          ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
                                             || !$sample->datedispatched))
-                                            <td></td>
-                                            <td></td>
-                                        @else
-                                            <td> {{ $sample->my_date_format('datetested') }} </td>
-                                            <td> {{ $sample->my_date_format('datedispatched') }} </td>
+                                            <!-- <td></td>
+                                            <td></td> -->
                                         @endif
+                                        <td> {{ $sample->my_date_format('datetested') }} </td>
+                                        <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> {{ $sample->my_date_format('date_email_sent') }} </td>
 
                                         @if($sample->surname == '' || !$sample->surname)
@@ -389,24 +396,21 @@
                                         @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
                                          ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
                                             || !$sample->datedispatched))
-                                            <td></td>
-                                        @else
-                                            <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
+                                            <!-- <td></td> -->
                                         @endif
+                                        <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
 
                                         <td>
                                             {!! $sample->edit_link !!}  |
                                             @if($sample->datedispatched)
-                                                @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
-                                                     ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
-                                                        || !$sample->datedispatched))
+                                                @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) && !$sample->datedispatched)
 
                                                 @else
                                                     <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
                                                 @endif
                                             @endif                                         
                                         </td>
-                                        @if(isset($type) && in_array($type, [2, 3]))
+                                        @if(isset($type) && in_array($type, [0, 2, 3]))
                                             <td> 
                                                 <div align="center">
                                                     <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
@@ -422,6 +426,11 @@
 
                         @if(isset($type) && $type == 2)
                         <button type="submit" class="btn btn-primary">Print Multiple Samples</button>
+                        </form>
+                        @endif
+
+                        @if(isset($type) && $type == 0)
+                        <button type="submit" class="btn btn-primary">Receive Multiple Samples</button>
                         </form>
                         @endif
 

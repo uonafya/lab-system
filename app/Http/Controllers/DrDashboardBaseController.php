@@ -12,7 +12,7 @@ use App\DrDashboard;
 
 use App\DataSetElement;
 
-class DashBaseController extends BaseController
+class DrDashboardBaseController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -117,7 +117,7 @@ class DashBaseController extends BaseController
         };
     }
 
-    public function year_month_callback($divisions_query, $date_query $date_column)
+    public function year_month_callback($divisions_query, $date_query, $date_column)
     {
         $select_query = DB::raw("YEAR({$date_column}) AS `year`, MONTHNAME({$date_column}) AS `month`  ");
         return function($query) use($divisions_query, $date_query, $select_query){

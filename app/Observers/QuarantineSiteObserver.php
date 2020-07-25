@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use GuzzleHttp\Client;
 use App\QuarantineSite;
+use App\Synch;
 use DB;
 
 class QuarantineSiteObserver
@@ -16,8 +18,32 @@ class QuarantineSiteObserver
     public function creating(QuarantineSite $quarantineSite)
     {
         if($quarantineSite->email) $quarantineSite->email = str_replace(' ', '', $quarantineSite->email);
-        $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
-        $quarantineSite->id = $id;
+
+
+        $client = new Client(['base_uri' => Synch::$cov_base]);
+
+        if(in_array(env('APP_LAB'), [1,2,3,6,25])){
+            $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
+            $quarantineSite->id = $id;
+        }else{
+            $response = $client->request('post', 'quarantine_site', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . Synch::get_covid_token(),
+                ],
+                'http_errors' => false,
+                'json' => [
+                    'quarantine_site' => $quarantineSite->toJson(),
+                    'lab_id' => env('APP_LAB', null),
+                ],
+            ]);
+            if($response->getStatusCode() > 399) dd($response);
+            
+
+            $body = json_decode($response->getBody());
+
+            $quarantineSite->id = $body->id;
+        }
     }
 
     /**

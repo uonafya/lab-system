@@ -4,7 +4,13 @@ namespace App;
 
 use DB;
 
+use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Client;
+use App\Mail\TestMail;
+use App\Mail\CovidDispatch;
+
 use Excel;
+
 
 class MiscCovid extends Common
 {
@@ -162,10 +168,24 @@ class MiscCovid extends Common
             ->whereNull('date_email_sent')
             ->whereNotNull('datedispatched')
             ->whereNotNull('national_sample_id')
+            ->whereNotNull('quarantine_site_id')
             ->get();
 
         foreach ($quarantine_sites as $key => $quarantine_site) {
             self::send_results($quarantine_site->quarantine_site_id);
+        }
+
+        $facilities = CovidSampleView::selectRaw('distinct facility_id')
+            ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
+            ->where(['repeatt' => 0])
+            ->whereNull('date_email_sent')
+            ->whereNotNull('datedispatched')
+            ->whereNotNull('national_sample_id')
+            ->whereNotNull('facility_id')
+            ->get();
+
+        foreach ($facilities as $key => $facility) {
+            self::send_results(null, $facility->facility_id);
         }
     }
 
@@ -174,11 +194,12 @@ class MiscCovid extends Common
     {
         $lab = Lab::find(env('APP_LAB'));
         $cc_array = explode(',', $lab->cc_emails);
+        $bcc_array = $lab->bcc_emails ? explode(',', $lab->bcc_emails) : [];
 
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
-            ->where(['dispatched' => 0, 'repeatt' => 0])
+            ->where(['repeatt' => 0])
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })
@@ -206,12 +227,12 @@ class MiscCovid extends Common
         
 
         if(!$mail_array && $cc_array){
-            Mail::to($cc_array)->send(new CovidDispatch($samples));
+            Mail::to($cc_array)->bcc($bcc_array)->send(new CovidDispatch($samples));
         }else{                 
             if($quarantine_site_id){                
-                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $quarantine_site));
+                Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send(new CovidDispatch($samples, $quarantine_site));
             }else if($facility_id){                
-                Mail::to($mail_array)->cc($cc_array)->send(new CovidDispatch($samples, $facility));
+                Mail::to($mail_array)->cc($cc_array)->bcc($bcc_array)->send(new CovidDispatch($samples, $facility));
             }
         }
 
