@@ -197,7 +197,7 @@
                 @endif
             
             @elseif (session('testingSystem') == 'Covid')
-                @if(in_array(env('APP_LAB'), [8, 9]))
+                {{--@if(in_array(env('APP_LAB'), [8, 9]))
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
@@ -220,6 +220,11 @@
                 @if(auth()->user()->lab_id == 1)
                     <li><a href="{{ url('covid_sample/nairobi/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
+                @endif--}}
+
+                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18]))
+                    <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
+                    <hr />               
                 @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
                 <hr />

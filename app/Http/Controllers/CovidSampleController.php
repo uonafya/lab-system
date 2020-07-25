@@ -829,7 +829,13 @@ class CovidSampleController extends Controller
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
         else if($lab_id == 3) $c = new AlupeCovidImport;
+        else if($lab_id == 4) $c = new WRPCovidImport;
+        else if($lab_id == 5) $c = new AmpathCovidImport;
+        else if($lab_id == 9) $c = new KNHCovidImport;
+        else if($lab_id == 18) $c = new KemriWRPImport;
         Excel::import($c, $path);
+
+        if(session('toast_error')) return back();
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
