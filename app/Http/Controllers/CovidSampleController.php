@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KemriWRPImport;
 use App\Imports\WRPCovidImport;
 use App\Imports\AmpathCovidImport;
+use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
 use App\Imports\NairobiCovidImport;
 use Illuminate\Http\Request;
@@ -232,6 +233,7 @@ class CovidSampleController extends Controller
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
             if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
             $data[] = $row;
         }
         if(!$data) return back();
@@ -807,6 +809,26 @@ class CovidSampleController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/site_samples/covid');
         $c = new NairobiCovidImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+    public function lab_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
+    }
+
+    public function upload_lab_samples(Request $request)
+    {
+        // if(env('APP_LAB') != 1) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $lab_id = auth()->user()->lab_id;
+        $c = null;
+        if($lab_id == 1) $c = new NairobiCovidImport;
+        else if($lab_id == 3) $c = new AlupeCovidImport;
         Excel::import($c, $path);
 
         session(['toast_message' => "The samples have been created."]);
