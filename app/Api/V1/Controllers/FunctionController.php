@@ -109,7 +109,7 @@ class FunctionController extends BaseController
                 if($test < 3) return $query->where(['repeatt' => 0]);
             })            
             ->orderBy('created_at', 'desc')
-            ->paginate(50);
+            ->paginate(20);
 
         $result->transform(function ($sample, $key) use ($test){
             // return ['patient age' => $item->age];
