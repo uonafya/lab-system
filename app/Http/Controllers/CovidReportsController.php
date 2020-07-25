@@ -377,7 +377,7 @@ class CovidReportsController extends Controller
 
 			$data[] = $post_data;
 		}
-		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', false);
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', true);
 		// return Common::csv_download($data, 'nphl_download');
 	}
 
