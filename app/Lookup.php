@@ -286,6 +286,21 @@ class Lookup
         ];
     }
 
+    public static function cancer_lookups()
+    {
+        self::cacher();
+        return [
+            'genders' => Cache::get('genders'),
+            'facility_name' => session('viral_facility_name', 0),
+            'sampletypes' => Cache::get('cancer_sample_types'),
+            'justifications' => Cache::get('cancerjustifications'),
+            'hivstatuses' => Cache::get('cancerhivstatuses'),
+            'rejectedreasons' => Cache::get('cancerrejectedreasons'),
+            'results' => Cache::get('results'),
+            'actions' => Cache::get('canceractions'),
+        ];
+    }
+
     public static function cd4_lookups()
     {
         self::cacher();

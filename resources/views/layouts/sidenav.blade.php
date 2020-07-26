@@ -331,6 +331,10 @@
                 </li>
                 <hr />
                 <li>
+                    <a href="{{ url('cancersample/create') }}">Update Cervical Cancer Results</a>
+                </li>
+                <hr />
+                <li>
                     <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
                 </li>
                 <hr>

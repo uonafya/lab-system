@@ -26,6 +26,7 @@
             @else
             <form action="{{ url('/cancersample') }}" class="form-horizontal" method="POST" id='samples_form'>
             @endif
+            @csrf()
 
             <input type="hidden" value=0 name="new_patient" id="new_patient">
 
@@ -234,7 +235,15 @@
                             
                             <div class="hr-line-dashed"></div> 
 
+                            <div class="form-group">
+                                <center>
 
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
+                                        <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
+                                    </div>
+                                </center>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,4 +251,205 @@
             </form>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+
+    @component('/forms/scripts')
+        @slot('js_scripts')
+            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
+        @endslot
+
+
+        @slot('val_rules')
+           ,
+            rules: {
+                dob: {
+                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"]
+                },
+                datecollected: {
+                    lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
+                    @if(auth()->user()->user_type_id != 5)
+                        lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
+                    @endif
+                },
+                datedispatched: {
+                    lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
+                } 
+                               
+            }
+        @endslot
+
+        // $(".date :not(.date-dob, .date-dispatched)").datepicker({
+        $(".date-normal").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: "-6m",
+            endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
+        $(".date-dob").datepicker({
+            startView: 1,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            endDate: "-1w",
+            format: "yyyy-mm-dd"
+        });
+
+        $(".date-dispatched").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            startDate: "-6m",
+            endDate: "+7d",
+            format: "yyyy-mm-dd"
+        });
+
+        set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+
+    @endcomponent
+
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#rejection").hide();
+
+            @if(env('APP_LAB') == 8 && auth()->user()->is_lab_user() && !isset($sample))
+                $("#samples_form input,select").change(function(){
+                    var frm = $('#samples_form');
+                    // var data = JSON.stringify(frm.serializeObject());
+                    var data = frm.serializeObject();
+                    console.log(data);
+                });  
+            @endif
+
+            @if(isset($sample))                
+                @if($sample->receivedstatus == 2)
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
+                @endif
+            @else
+                $("#patient").blur(function(){
+                    var patient = $(this).val();
+                    var facility = $("#facility_id").val();
+                    check_new_patient(patient, facility);
+                });
+            @endif
+
+            $("#facility_id").change(function(){
+                var val = $(this).val();
+
+                if(val == 7148 || val == '7148'){
+                    $('.requirable').removeAttr("required");
+                }
+                else{
+                    $('.requirable').attr("required", "required");
+                }
+            }); 
+
+
+
+            $("#receivedstatus").change(function(){
+                var val = $(this).val();
+                if(val == 2){
+                    $("#rejection").show();
+                    $("#rejectedreason").removeAttr("disabled");
+                    $('.requirable').removeAttr("required");
+                    // $("#rejectedreason").prop('disabled', false);
+                }
+                else{
+                    $("#rejection").hide();
+                    $("#rejectedreason").attr("disabled", "disabled");
+                    $('.requirable').attr("required", "required");
+                    // $("#enrollment_ccc_no").attr("disabled", "disabled");
+                    // $("#rejectedreason").prop('disabled', true);
+
+                }
+            }); 
+
+            $("#pcrtype").change(function(){
+                var val = $(this).val();
+                if(val == 4){
+                    $("#enrollment_ccc_no").removeAttr("disabled");
+                }
+                else{
+                    $("#enrollment_ccc_no").attr("disabled", "disabled");
+                }
+            }); 
+
+        });
+
+
+        function check_new_patient(patient, facility_id){
+            $.ajax({
+               type: "POST",
+               data: {
+                patient : patient,
+                facility_id : facility_id
+               },
+               url: "{{ url('/sample/new_patient') }}",
+
+
+               success: function(data){
+
+                    console.log(data);
+
+                    $("#new_patient").val(data[0]);
+
+                    if(data[0] == 0){
+                        localStorage.setItem("new_patient", 0);
+                        var patient = data[1];
+                        var mother = data[2];
+                        var prev = data[3];
+
+                        console.log(patient.dob);
+
+                        $("#dob").val(patient.dob);
+                        
+                        $("#patient_name").val(patient.patient_name);
+                        $("#patient_phone_no").val(patient.patient_phone_no);
+                        $("#sex").val(patient.sex).change();
+                        $("#entry_point").val(patient.entry_point).change();
+                        $("#mother_age").val(mother.age);
+                        // $("#hiv_status").val(mother.hiv_status).change();
+                        $("#ccc_no").val(mother.ccc_no).change();
+                        $("#pcrtype").val(prev.recommended_pcr).change();
+
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'patient_id',
+                            value: patient.id,
+                            id: 'hidden_patient',
+                            class: 'patient_details'
+                        }).appendTo("#samples_form");
+
+                        if(data[4] != 0)
+                        {
+                            set_message(data[4]);
+                        }
+                    }
+                    else{
+                        localStorage.setItem("new_patient", 1);
+                        $('#pcrtype option[value=1]').attr('selected','selected').change();
+                        $('.patient_details').remove();
+                    }
+
+                }
+            });
+
+        }
+    </script>
+
+
+
 @endsection
