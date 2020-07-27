@@ -175,6 +175,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('nairobi/upload', 'CovidSampleController@nairobi_sample_page');
 				Route::post('nairobi/upload', 'CovidSampleController@upload_nairobi_samples');
 				
+				Route::get('lab/upload', 'CovidSampleController@lab_sample_page');
+				Route::post('lab/upload', 'CovidSampleController@upload_lab_samples');
+				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
 			

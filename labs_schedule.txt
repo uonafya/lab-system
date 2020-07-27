@@ -7,7 +7,7 @@ amrexec='php /root/labs/amref/artisan '
 
 # Amref Crontab
 
-* * * * * $amrexec synch:covid 2>&1
+#* * * * * $amrexec synch:covid 2>&1
 
 # Nairobi Crontab
 
@@ -22,6 +22,7 @@ amrexec='php /root/labs/amref/artisan '
 0 14 * * * $naiexec dispatch:results 2>&1
 0 9 * * * $naiexec dispatch:critical 2>&1
 55 * * * * $naiexec dispatch:nhrl 2>&1
+0 10 * * * $naiexec dispatch:covid 2>&1
 
 5 * * * * $naiexec compute:tat5 2>&1
 
@@ -86,6 +87,7 @@ amrexec='php /root/labs/amref/artisan '
 
 0 14 * * * $aluexec dispatch:results 2>&1
 0 9 * * * $aluexec dispatch:critical 2>&1
+0 10 * * * $naiexec dispatch:covid 2>&1
 
 10 14 * * * $aluexec send:sms 2>&1
 

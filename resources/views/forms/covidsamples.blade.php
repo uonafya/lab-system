@@ -70,6 +70,15 @@
                         </div>
                         <br />
 
+                        @if(session('last_covid_sample'))
+                            <div class="alert alert-success">
+                                <center>
+                                    The sample added has been assigned lab id {{ session('last_covid_sample') }}.
+                                </center>
+                            </div>
+                            <br />
+                        @endif
+
                         <div class="alert alert-info" id="new_patient_div">
                             <center id="new_patient_info">
 
@@ -89,11 +98,11 @@
                             </div>
                         </div>
 
-                        @if(auth()->user()->lab_id == 1)
+                        @if(auth()->user()->lab_id == 1 && auth()->user()->user_type_id)
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID', 'required' => true])
                         @endif
 
-                        @if(auth()->user()->lab_id == 25)
+                        @if(auth()->user()->lab_id == 25 || (auth()->user()->lab_id == 1 && !auth()->user()->user_type_id))
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
                         @endif
 

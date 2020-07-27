@@ -32,6 +32,10 @@ class CovidReportsController extends Controller
 		if($request->input('types') == 'nphl_results_submission'){
 			return $this->nphl_upload($date);
 		}
+
+		if($request->input('types') == 'nphl_api_submission'){
+			return $this->nphl_api_download();
+		}
 		
 		// Get the data from the database
 		$today_data = $this->get_model()->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
@@ -280,7 +284,102 @@ class CovidReportsController extends Controller
 				$sample->datedispatched,
 			];
 		}
-		return \App\MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL UPLOAD FOR ' . $date, false);
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL UPLOAD FOR ' . $date, false);
 	}
+
+
+	public function nphl_api_download()
+	{
+		$samples = CovidSampleView::whereIn('result', [1,2])
+						->where(['repeatt' => 0])
+						->where('datedispatched', '>',  date('Y-m-d', strtotime('-3 days')))
+						->with(['lab'])
+						// ->limit(200)
+						->get();
+
+		$a = ['nationalities', 'covid_sample_types', 'covid_symptoms'];
+		$lookups = $data = [];
+		foreach ($a as $value) {
+			$lookups[$value] = DB::table($value)->get();
+		}
+
+		foreach ($lookups['covid_symptoms'] as $key => $value) {
+			$symptoms_array[$value->id] = $value->name;
+		}
+
+		foreach ($samples as $key => $sample) {
+			$travelled = 'No';
+			$history = '';
+			if (!$sample->patient->travel->isEmpty()){
+				$travelled = 'Yes';
+				foreach ($sample->patient->travel as $key => $travel) {
+					if(!$travel->town) continue;
+					$history .= $travel->town->name . ', ' . $travel->town->country . ';';
+				}
+			}
+
+			$has_symptoms = 'No';
+			$symptoms = '';
+			if($sample->date_symptoms){
+				$has_symptoms = 'Yes';
+				if($sample->symptoms && is_array($sample->symptoms)){
+					foreach ($sample->symptoms as $value) {
+						$symptoms .= $symptoms_array[$value] . ';';
+					}
+				}
+			}
+
+			$post_data = [
+				'TESTING_LAB' => $sample->lab->name,
+
+				'CASE_ID' => $sample->identifier,
+				'CASE_TYPE' => $sample->test_type == 1 ? 'Initial' : 'Repeat',
+				'SAMPLE_TYPE' => $sample->get_prop_name($lookups['covid_sample_types'], 'sample_type', 'name'),
+				'SAMPLE_NUMBER' => $sample->id,
+				'SAMPLE_COLLECTION_DATE' => $sample->datecollected->toDateString(),
+				'RESULT' => $sample->result_name,
+				'LAB_CONFIRMATION_DATE' => $sample->datedispatched->toDateString(),
+
+				'FIRST_FOLLOW_UP_DATE' => null,
+				'FIRST_FOLLOW_UP_RESULT' => null,
+				'SECOND_FOLLOW_UP_DATE' => null,
+				'SECOND_FOLLOW_UP_RESULT' => null,
+				'THIRD_FOLLOW_UP_DATE' => null,
+				'THIRD_FOLLOW_UP_RESULT' => null,
+
+				'PATIENT_NAMES' => $sample->patient_name,
+				'PATIENT_PHONE' => $sample->phone_no,
+				'AGE' => $sample->age ?? 0,
+				'AGE_UNIT' => $sample->age_unit ?? 'Years',
+				'GENDER' => substr($sample->gender, 0, 1),
+				'OCCUPATION' => $sample->occupation,
+				'NATIONALITY' => $sample->get_prop_name($lookups['nationalities'], 'nationality'),
+				'NATIONAL_ID' => $sample->national_id ?? $sample->identifier,
+				'COUNTY' => $sample->countyname ?? $sample->county,
+				'SUB_COUNTY' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
+				'WARD' => $sample->ward ?? $sample->residence,
+				'VILLAGE' => $sample->residence,
+
+				'HAS_TRAVEL_HISTORY' => $travelled,
+				'TRAVEL_FROM' => $history,
+				'CONTACT_WITH_CASE' => 'No',
+				'CONFIRMED_CASE_NAME' => null,
+
+				'SYMPTOMATIC' => $has_symptoms,
+				'SYMPTOMS' => $symptoms,
+				'SYMPTOMS_ONSET_DATE' => $sample->date_symptoms,
+				'COUNTY_OF_DIAGNOSIS' => $sample->countyname ?? $sample->county,
+
+				'QUARANTINED_FACILITY' => $sample->quarantine_site ?? $sample->facilityname ?? null,
+				'HOSPITALIZED' => $sample->date_admission ? 'Yes' : 'Unknown',
+				'ADMISSION_DATE' => $sample->date_admission,
+			];
+
+			$data[] = $post_data;
+		}
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', true);
+		// return Common::csv_download($data, 'nphl_download');
+	}
+
 }
 ?>

@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KemriWRPImport;
 use App\Imports\WRPCovidImport;
 use App\Imports\AmpathCovidImport;
+use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
 use App\Imports\NairobiCovidImport;
 use Illuminate\Http\Request;
@@ -232,6 +233,7 @@ class CovidSampleController extends Controller
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
             if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
             $data[] = $row;
         }
         if(!$data) return back();
@@ -514,7 +516,7 @@ class CovidSampleController extends Controller
                 $travel->save();
             }
         }
-        session(['toast_message' => "The sample has been created."]);
+        session(['toast_message' => "The sample has been created.", 'last_covid_sample' => $sample->id]);
         return back();
     }
 
@@ -813,6 +815,32 @@ class CovidSampleController extends Controller
         return redirect('/covid_sample'); 
     }
 
+    public function lab_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
+    }
+
+    public function upload_lab_samples(Request $request)
+    {
+        // if(env('APP_LAB') != 1) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $lab_id = auth()->user()->lab_id;
+        $c = null;
+        if($lab_id == 1) $c = new NairobiCovidImport;
+        else if($lab_id == 3) $c = new AlupeCovidImport;
+        else if($lab_id == 4) $c = new WRPCovidImport;
+        else if($lab_id == 5) $c = new AmpathCovidImport;
+        else if($lab_id == 9) $c = new KNHCovidImport;
+        else if($lab_id == 18) $c = new KemriWRPImport;
+        Excel::import($c, $path);
+
+        if(session('toast_error')) return back();
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
 
     // Transfer Between Remote Labs
     public function transfer_samples_form($facility_id=null)
@@ -867,6 +895,11 @@ class CovidSampleController extends Controller
     {
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
+
+        if(!$covidSample->datedispatched){
+            session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
+            return back();
+        }
 
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
