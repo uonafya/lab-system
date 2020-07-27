@@ -39,7 +39,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
+        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender) return;
 
         $mfl = (int) $row->mfl_code;
 
