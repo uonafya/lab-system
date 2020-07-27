@@ -361,7 +361,7 @@
                                         <td> {{ $sample->kemri_id }} </td>
                                         @endif
                                         <td> {{ $sample->patient_name }} </td>
-                                        <td> {{ $sample->facilityname }} </td>
+                                        <td> {{ $sample->facilityname ?? $sample->quarantine_site }} </td>
                                         <td> {{ $sample->identifier }} </td>
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->age }} </td>

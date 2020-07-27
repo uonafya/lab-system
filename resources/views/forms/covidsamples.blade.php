@@ -98,11 +98,11 @@
                             </div>
                         </div>
 
-                        @if(auth()->user()->lab_id == 1)
+                        @if(auth()->user()->lab_id == 1 && auth()->user()->user_type_id)
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID', 'required' => true])
                         @endif
 
-                        @if(auth()->user()->lab_id == 25)
+                        @if(auth()->user()->lab_id == 25 || (auth()->user()->lab_id == 1 && !auth()->user()->user_type_id))
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
                         @endif
 
