@@ -51,7 +51,7 @@ class ViralsampleController extends Controller
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->paginate(50);
-
+        // dd($samples);
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
@@ -376,7 +376,8 @@ class ViralsampleController extends Controller
         }*/
 
         $data = $request->only($viralsamples_arrays['patient']);
-        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        if(!$data['dob'])
+            $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->patient = $patient_string;
         $viralpatient->pre_update();

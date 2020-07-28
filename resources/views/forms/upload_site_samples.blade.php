@@ -38,7 +38,7 @@
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
-                                (Quarantine Site ID) Can be used when MFL Code is not present <br />
+                                (Quarantine Site ID) Can be used when MFL Code is not present. Add as a separate column. <br />
                                 Identifier<br />
                                 Patient Name<br />
                                 Gender<br />
@@ -56,6 +56,7 @@
                                 &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
                                 &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
                                 &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
