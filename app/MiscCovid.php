@@ -178,7 +178,7 @@ class MiscCovid extends Common
         $samples = CovidSample::select('covid_samples.*')
             ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
-            ->where(['dispatched' => 0, 'repeatt' => 0])
+            ->where(['repeatt' => 0])
             ->when($facility_id, function($query) use ($facility_id){
                 return $query->where('facility_id', $facility_id);
             })

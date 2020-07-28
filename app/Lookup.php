@@ -286,6 +286,22 @@ class Lookup
         ];
     }
 
+    public static function cancer_lookups()
+    {
+        self::cacher();
+        return [
+            'genders' => Cache::get('genders'),
+            'facility_name' => session('viral_facility_name', 0),
+            'sampletypes' => Cache::get('cancer_sample_types'),
+            'justifications' => Cache::get('cancerjustifications'),
+            'hivstatuses' => Cache::get('cancerhivstatuses'),
+            'rejectedreasons' => Cache::get('cancerrejectedreasons'),
+            'results' => Cache::get('results'),
+            'actions' => Cache::get('canceractions'),
+            'receivedstatuses' => Cache::get('received_statuses'),
+        ];
+    }
+
     public static function cd4_lookups()
     {
         self::cacher();
@@ -379,6 +395,14 @@ class Lookup
         return $my_array->where('alias', $val)->first()->id ?? 7;
     } 
 
+    public static function eid_feeding($val)
+    {
+        self::cacher();       
+        $my_array = Cache::get('feedings');   
+        if(is_numeric($val)) return $val;   
+        return $my_array->where('feeding', $val)->first()->id ?? 5;
+    } 
+
     public static function samples_arrays()
     {
         return [
@@ -438,6 +462,21 @@ class Lookup
 
             'regimen_age' => ['', 'Adult', 'Paediatric'],
             'regimen_line' => ['', 'First Line', 'Second Line', 'Third Line'],
+        ];
+    }
+
+    public static function cancersample_form()
+    {
+        self::cacher();
+        return [
+            'genders' => Cache::get('genders'),
+            'facility_name' => session('viral_facility_name', 0),
+            'sampletypes' => Cache::get('cancer_sample_types'),
+            'justifications' => Cache::get('cancerjustifications'),
+            'hivstatuses' => Cache::get('cancerhivstatuses'),
+            'rejectedreasons' => Cache::get('cancerrejectedreasons'),
+            'receivedstatuses' => Cache::get('received_statuses'),
+            'actions' => Cache::get('canceractions'),
         ];
     }
 
@@ -636,6 +675,11 @@ class Lookup
 
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
+            $cancer_sample_types = DB::table('cancersampletypes')->get();
+            $cancerjustifications = DB::table('cancerjustifications')->get();
+            $cancerhivstatuses = DB::table('cancerhivstatuses')->get();
+            $cancerrejectedreasons = DB::table('cancerrejectedreasons')->get();
+            $canceractions = DB::table('canceractions')->get();
 
             $minutes = 60*60;
 
@@ -691,6 +735,11 @@ class Lookup
             
             Cache::put('partners', $partners, $minutes);
             Cache::put('subcounties', $subcounties, $minutes);
+            Cache::put('cancer_sample_types', $cancer_sample_types, $minutes);
+            Cache::put('cancerjustifications', $cancerjustifications, $minutes);
+            Cache::put('cancerhivstatuses', $cancerhivstatuses, $minutes);
+            Cache::put('cancerrejectedreasons', $cancerrejectedreasons, $minutes);
+            Cache::put('canceractions', $canceractions, $minutes);
         }		
 	}
 
@@ -740,6 +789,12 @@ class Lookup
 
         Cache::forget('partners');
         Cache::forget('subcounties');
+
+        Cache::forget('cancer_sample_types');
+        Cache::forget('cancerjustifications');
+        Cache::forget('cancerhivstatuses');
+        Cache::forget('cancerrejectedreasons');
+        Cache::forget('canceractions');
     }
 
     public static function refresh_cache()

@@ -1293,7 +1293,7 @@ class Synch
 			$where_query = "( receivedstatus=2 and repeatt=0 OR  (result > 0 AND (repeatt = 0 or repeatt is null) AND (approvedby IS NOT NULL OR dateapproved IS NOT NULL)) )";
 		}
 
-		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0 or datedispatched is null)")->get();
+		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0 or synched is null or datedispatched is null)")->get();
 		$today = date('Y-m-d');
 
 		foreach ($samples as $key => $sample) {
@@ -1392,7 +1392,8 @@ class Synch
 			$sql = '';
 			$names = explode(' ', $patient_name);
 			foreach ($names as $key => $name) {
-				$sql .= "patient_name LIKE '%{$name}%' AND ";
+				$n = addslashes($name);
+				$sql .= "patient_name LIKE '%{$n}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
 			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
@@ -1890,6 +1891,7 @@ class Synch
 		while (true) {
 			// $consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
 			$consumptions = CovidConsumption::with(['details.kit'])->get();
+			// dd($consumptions->toJson());
 			if($consumptions->isEmpty())
 				break;
 			
@@ -1908,7 +1910,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			print_r($body);
+			// print_r($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body));

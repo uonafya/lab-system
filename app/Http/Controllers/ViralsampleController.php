@@ -51,7 +51,7 @@ class ViralsampleController extends Controller
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->paginate(50);
-
+        // dd($samples);
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
@@ -279,8 +279,8 @@ class ViralsampleController extends Controller
             // $patient_string = $fac->facilitycode . '/' . $patient_string;
             $str = $fac->facilitycode;
             if($request->input('automatic_slash')) $str .= '/';
-            if(!starts_with($patient_string, $str) && $request->input('automatic_mfl') && $fac->county_id != 47){
-                if(starts_with($patient_string, $fac->facilitycode)){
+            if(!\Str::startsWith($patient_string, $str) && $request->input('automatic_mfl') && $fac->county_id != 47){
+                if(\Str::startsWith($patient_string, $fac->facilitycode)){
                     $code = str_after($patient_string, $fac->facilitycode);
                     $patient_string = $str . $code;
                 }
@@ -376,7 +376,8 @@ class ViralsampleController extends Controller
         }*/
 
         $data = $request->only($viralsamples_arrays['patient']);
-        if(!$data['dob']) $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
+        if(!$data['dob'])
+            $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->patient = $patient_string;
         $viralpatient->pre_update();

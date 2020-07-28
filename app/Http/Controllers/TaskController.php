@@ -61,16 +61,7 @@ class TaskController extends Controller
                 $pendingConsumptions = $this->getConsumptions();
                 $data['consumptions'] = $pendingConsumptions;
             }
-      //   	$data['kits'] = (object)$this->getKitsEntered();
-            
-      //   	if ($data['kits']->taqkits  > 0 && $data['kits']->abkits  > 0)
-    		// {
-      //           $data['submittedkits'] = 1;
-      //           $data['consumption'] = (object)$this->getConsumption();
-    		// }else {
-    		// 	$data['submittedkits'] = 0;
-    		// }
-    		
+          		
     		$month = $this->previousMonth;
             $year = $this->previousYear;
             $range = '';
@@ -100,6 +91,7 @@ class TaskController extends Controller
         $data = [
                 'machines' => Machine::get(),
             ];
+
         return view('tasks.newkitsdeliveries', $data)->with('pageTitle', 'Kit Deliveries');
         if ($platform == null) {
             $users = User::where('user_type_id', '<', 5)->get();
@@ -108,7 +100,6 @@ class TaskController extends Controller
                     
                     'pending_deliveries' => $this->getDeliveries(),
                 ];
-            // dd($data); 
             
         } else {
             $deliveries = $this->submitNullDeliveries($platform);

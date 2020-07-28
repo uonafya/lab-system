@@ -220,8 +220,8 @@ class MiscDr extends Common
 	{
 		$path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
 
-		$samples = $worksheet->sample_view;
-		// $samples = $worksheet->sample;
+		// $samples = $worksheet->sample_view;
+		$samples = $worksheet->sample;
 		// $samples->load(['result']);
 
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
@@ -239,8 +239,8 @@ class MiscDr extends Common
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
-					// 'sample_name' => "{$sample->mid}",
-					'sample_name' => "{$sample->nat}",
+					'sample_name' => "{$sample->mid}",
+					// 'sample_name' => "{$sample->nat}",
 					'pathogen' => 'hiv',
 					'assay' => 'thermo_PR_RT',
 					// 'assay' => 'cdc-hiv',
@@ -295,9 +295,9 @@ class MiscDr extends Common
 				return $a;
 			}
 			else{
-				// if(starts_with($file, $sample->mid . $primer)){
-				// if(starts_with($file, $sample->mid . '-') && \Str::contains($file, $primer))
-				if(starts_with($file, $sample->nat . '-') && \Str::contains($file, $primer))
+				// if(\Str::startsWith($file, $sample->mid . $primer)){
+				if(\Str::startsWith($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,
@@ -544,7 +544,7 @@ class MiscDr extends Common
 		$warning_id = DB::table('dr_warning_codes')->where(['name' => $error_name])->first()->id ?? 0;
 		if(!$warning_id){
 			$error = 1;
-			if(starts_with($error_name, 'Wrn')) $error = 0;
+			if(\Str::startsWith($error_name, 'Wrn')) $error = 0;
 			DB::table('dr_warning_codes')->insert(['name' => $error_name, 'error' => $error]);
 			return self::get_sample_warning($error_name);
 		}else{

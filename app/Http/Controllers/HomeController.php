@@ -44,6 +44,9 @@ class HomeController extends Controller
             session(['toast_message' => 'Please make sure that your contact information is up to date.']);
             return redirect("/facility/{$user->facility_id}/edit");
         }
+        else if (in_array(auth()->user()->user_type_id, [11, 13])) {
+            return redirect("/covid_sample/create");
+        }
         else if (in_array(auth()->user()->user_type_id, [0, 1, 4, 12])) {
             self::cacher();
             $chart = $this->getHomeGraph();
