@@ -155,7 +155,7 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID (If any)'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID / Passport Number (If any)'])
 
                         @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
@@ -485,6 +485,10 @@
                     $('.requirable').attr("required", "required");
                 }
 
+            });
+
+            $("#quarantine_site_id").change(function(){
+                $('#facility_id').removeAttr("required");
             });
 
             $(".date-normal").datepicker({
