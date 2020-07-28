@@ -298,6 +298,7 @@ class Lookup
             'rejectedreasons' => Cache::get('cancerrejectedreasons'),
             'results' => Cache::get('results'),
             'actions' => Cache::get('canceractions'),
+            'receivedstatuses' => Cache::get('received_statuses'),
         ];
     }
 
@@ -474,6 +475,7 @@ class Lookup
             'justifications' => Cache::get('cancerjustifications'),
             'hivstatuses' => Cache::get('cancerhivstatuses'),
             'rejectedreasons' => Cache::get('cancerrejectedreasons'),
+            'receivedstatuses' => Cache::get('received_statuses'),
             'actions' => Cache::get('canceractions'),
         ];
     }

@@ -19,7 +19,10 @@ class CancerSampleController extends Controller
     public function index($param=null)
     {
         $user = auth()->user();
-        $samples = CancerSampleView::with(['facility'])->where('facility_id', $user->facility_id)->paginate();
+        $samples = CancerSampleView::with(['facility'])->where('facility_id', $user->facility_id)
+                                ->when($param, function($query) use ($param){
+                                    return $query->whereNull('result')->where('receivedstatus', 1);
+                                })->paginate();
         $data['samples'] = $samples;
         // dd($samples);
         return view('tables.cancer_samples', $data)->with('pageTitle', 'Eid POC Samples');
@@ -62,7 +65,7 @@ class CancerSampleController extends Controller
             $cancerpatient->patient = $patient_string;
             $cancerpatient->pre_update();
 
-            $data = $request->only(['facility_id', 'sampletype', 'datecollected', 'justification']);
+            $data = $request->only(['facility_id', 'sampletype', 'datecollected', 'justification', 'datereceived', 'receivedstatus', 'rejectedreason']);
             $cancersample = new CancerSample;
             $cancersample->fill($data);
             $cancersample->sample_type = $cancersample->sampletype;

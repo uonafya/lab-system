@@ -331,7 +331,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancersample/create') }}">Update Cervical Cancer Results</a>
+                    <a href="{{ url('cancersample/list/1') }}">Update Cervical Cancer Results</a>
                 </li>
                 <hr />
                 <li>

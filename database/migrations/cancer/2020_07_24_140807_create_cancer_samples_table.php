@@ -44,6 +44,7 @@ class CreateCancerSamplesTable extends Migration
             $table->integer('approvedby2')->unsigned()->nullable();
 
             $table->date('datecollected')->nullable();
+            $table->date('datereceived')->nullable();
             $table->date('datetested')->nullable();
             $table->date('datemodified')->nullable();
             $table->date('dateapproved')->nullable();

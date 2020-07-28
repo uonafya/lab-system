@@ -46,7 +46,7 @@
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> 
-                                            {{ $sample->result ?? '' }}
+                                            {{ $sample->resultname ?? '' }}
                                         </td>
                                         <td> 
                                             {{--
@@ -57,7 +57,7 @@
                                             @endif
                                             --}}
 
-                                            @if(auth()->user()->user_type_id != 7)
+                                            @if(!$sample->result && $sample->receivedstatus == 1)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
 

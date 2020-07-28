@@ -206,7 +206,60 @@
                                     </div>
                                 </div>                            
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date Received
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date date-normal">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                    </div>
+                                </div>                            
+                            </div> 
 
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Received Status
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-8">
+                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
+
+                                        <option></option>
+                                        @foreach ($receivedstatuses as $receivedstatus)
+                                            <option value="{{ $receivedstatus->id }}"
+
+                                            @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $receivedstatus->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="rejection" >
+                                <label class="col-sm-4 control-label">Rejected Reason</label>
+                                <div class="col-sm-8">
+                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+
+                                        <option></option>
+                                        @foreach ($rejectedreasons as $rejectedreason)
+                                            <option value="{{ $rejectedreason->id }}"
+
+                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
+                                                selected
+                                            @endif
+
+                                            > {{ $rejectedreason->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
                             
                             <div class="hr-line-dashed"></div>
 
