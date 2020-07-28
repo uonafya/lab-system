@@ -347,7 +347,7 @@ class FacilityController extends Controller
     {
         if(auth()->user()->user_type_id == 5 && auth()->user()->facility_id != $id) abort(403);
         $facility = $this->getFacility($id);
-        // dd($facility[0]);
+        
         return view('facilities.facility', ['facility' => $facility[0], 'disabled' => ''])
                         ->with('edit', true)
                         ->with('pageTitle', 'Facilities');

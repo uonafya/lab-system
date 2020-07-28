@@ -18,8 +18,8 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!property_exists($row, 'mfl_code')){
-            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
+        if(!property_exists($row, 'mfl_code') && !property_exists($row, 'quarantine_site_id')){
+            session(['toast_error' => 1, 'toast_message' => 'MFL Code OR Quarantine Site ID column is not present.']);
             return;
         }
         if(!property_exists($row, 'patient_name')){
@@ -39,16 +39,17 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
+        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender) return;
 
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac) return;
+        if(!$fac && !isset($row->quarantine_site_id)) return;
         $p = null;
 
         if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
@@ -56,6 +57,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         $p->fill([
             'identifier' => $row->identifier,
             'facility_id' => $fac->id ?? null,
+            'quarantine_site_id' => $row->quarantine_site_id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
@@ -72,6 +74,10 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
 
+        if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
+        if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');
+
+
         $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
 
@@ -80,7 +86,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'age' => $row->age,
-            'test_type' => 1,
+            'test_type' => $row->test_type ?? 1,
             'datecollected' => $datecollected,
             'datereceived' => $datereceived,
             'receivedstatus' => 1,

@@ -335,7 +335,7 @@ class CovidReportsController extends Controller
 				'CASE_ID' => $sample->identifier,
 				'CASE_TYPE' => $sample->test_type == 1 ? 'Initial' : 'Repeat',
 				'SAMPLE_TYPE' => $sample->get_prop_name($lookups['covid_sample_types'], 'sample_type', 'name'),
-				'SAMPLE_NUMBER' => $sample->original_sample_id ?? $sample->id,
+				'SAMPLE_NUMBER' => $sample->id,
 				'SAMPLE_COLLECTION_DATE' => $sample->datecollected->toDateString(),
 				'RESULT' => $sample->result_name,
 				'LAB_CONFIRMATION_DATE' => $sample->datedispatched->toDateString(),

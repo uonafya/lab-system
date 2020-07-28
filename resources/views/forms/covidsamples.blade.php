@@ -98,11 +98,11 @@
                             </div>
                         </div>
 
-                        @if(auth()->user()->lab_id == 1)
+                        @if(auth()->user()->lab_id == 1 && auth()->user()->user_type_id)
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID', 'required' => true])
                         @endif
 
-                        @if(auth()->user()->lab_id == 25)
+                        @if(auth()->user()->lab_id == 25 || (auth()->user()->lab_id == 1 && !auth()->user()->user_type_id))
                             @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
                         @endif
 
@@ -155,7 +155,7 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID (If any)'])
+                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID / Passport Number (If any)'])
 
                         @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
@@ -485,6 +485,10 @@
                     $('.requirable').attr("required", "required");
                 }
 
+            });
+
+            $("#quarantine_site_id").change(function(){
+                $('#facility_id').removeAttr("required");
             });
 
             $(".date-normal").datepicker({

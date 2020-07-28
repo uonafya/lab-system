@@ -73,6 +73,7 @@ class FunctionController extends BaseController
         if($facilities){
             $facilities = str_replace(' ', '', $facilities);
             $facilities = explode(',', $facilities);
+            if(sizeof($facilities) > 10) $facilities = [];
         }
  
         $result = $class::when(($facilities), function($query) use($facilities){
