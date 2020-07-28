@@ -56,6 +56,7 @@
                                 &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
                                 &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
                                 &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
