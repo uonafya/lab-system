@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers;
 use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\BlankRequest;
+use App\Api\V1\Requests\WeeklyAlertRequest;
 use DB;
 
 use App\Lookup;
@@ -190,7 +191,7 @@ class FunctionController extends BaseController
         return $result;
     }
 
-    public function weekly_alerts(BlankRequest $request)
+    public function weekly_alerts(WeeklyAlertRequest $request)
     {     
         $lab = $request->input('lab', env('APP_LAB'));
 
