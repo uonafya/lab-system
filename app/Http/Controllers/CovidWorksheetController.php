@@ -653,7 +653,6 @@ class CovidWorksheetController extends Controller
 
 
 
-
     public function approve_results(CovidWorksheet $worksheet)
     {    
         if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);    
