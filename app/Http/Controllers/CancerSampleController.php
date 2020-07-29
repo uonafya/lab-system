@@ -171,4 +171,19 @@ class CancerSampleController extends Controller
     {
         //
     }
+
+    /**
+     * Print the specified resource.
+     *
+     * @param  \App\Batch  $batch
+     * @return \Illuminate\Http\Response
+     */
+    public function print(CancerSample $sample)
+    {
+        $data = Lookup::cancer_lookups();
+        $sample->load(['patient', 'facility']);
+        $data['samples'] = [$sample];
+
+        return view('exports.mpdf_cancersamples', $data)->with('pageTitle', 'Individual Samples');
+    }
 }

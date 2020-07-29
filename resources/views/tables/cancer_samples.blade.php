@@ -68,6 +68,8 @@
                                                         <button type="submit" class="btn btn-xs btn-primary">Delete</button>
                                                     </form>
                                                 @endif
+                                            @else
+                                                <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
                                             @endif
                                         </td>
                                     </tr>
