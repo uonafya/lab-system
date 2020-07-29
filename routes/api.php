@@ -60,7 +60,8 @@ $api->version('v1', function (Router $api) {
         
         // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
-
+            $api->post('weekly_alerts', 'FunctionController@weekly_alerts');
+            
             $api->post('eid', 'EidController@eid');    
             $api->post('eid_complete', 'EidController@complete_result');  
 

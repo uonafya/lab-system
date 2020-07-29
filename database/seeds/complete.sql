@@ -1,4 +1,31 @@
 
+DROP TABLE IF EXISTS `weekly_alerts`;
+-- Dumping structure for table apidb.age_bands
+CREATE TABLE IF NOT EXISTS `weekly_alerts` (
+  `id`  int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lab_id`  tinyint UNSIGNED NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+
+  `eid_samples_received`  int UNSIGNED DEFAULT NULL,
+  `eid_total_tests`  int UNSIGNED DEFAULT NULL,
+  `eid_in_process_samples`  int UNSIGNED DEFAULT NULL,
+  `eid_pending_samples`  int UNSIGNED DEFAULT NULL,
+  `eid_dispatched_samples`  int UNSIGNED DEFAULT NULL,
+  `eid_lab_tat`  int UNSIGNED DEFAULT NULL,
+  `eid_oldest_in_queue`  int UNSIGNED DEFAULT NULL,
+
+  `vl_samples_received`  int UNSIGNED DEFAULT NULL,
+  `vl_total_tests`  int UNSIGNED DEFAULT NULL,
+  `vl_in_process_samples`  int UNSIGNED DEFAULT NULL,
+  `vl_pending_samples`  int UNSIGNED DEFAULT NULL,
+  `vl_dispatched_samples`  int UNSIGNED DEFAULT NULL,
+  `vl_lab_tat`  int UNSIGNED DEFAULT NULL,
+  `vl_oldest_in_queue`  int UNSIGNED DEFAULT NULL,
+
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `age_bands`;
 -- Dumping structure for table apidb.age_bands
 CREATE TABLE IF NOT EXISTS `age_bands` (
