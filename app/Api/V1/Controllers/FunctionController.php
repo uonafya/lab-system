@@ -199,7 +199,7 @@ class FunctionController extends BaseController
             ->whereBetween('end_date', [date('Y-m-d'), date('Y-m-d', strtotime('+2 days'))])
             ->first();
 
-        $w->fill($request->except(['lab_id']));
+        $w->fill($request->except(['lab']));
         $w->save();
 
         return $w;
