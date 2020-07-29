@@ -190,6 +190,20 @@ class FunctionController extends BaseController
         return $result;
     }
 
+    public function weekly_alerts(BlankRequest $request)
+    {     
+        $lab = $request->input('lab', env('APP_LAB'));
+
+        $w = \App\WeeklyAlert::where(['lab_id' => $lab])
+            ->whereBetween('end_date', [date('Y-m-d'), date('Y-m-d', strtotime('+2 days'))])
+            ->first();
+
+        $w->fill($request->except(['lab_id']));
+        $w->save();
+
+        return $w;
+    }
+
     
 
     /*public function api(BlankRequest $request)
