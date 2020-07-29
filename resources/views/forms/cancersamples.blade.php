@@ -114,7 +114,7 @@
                                         @if(auth()->user()->user_type_id == 5)
                                             required
                                         @endif
-                                         value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                         value="" name="dob">
                                     </div>
                                 </div>                            
                             </div>

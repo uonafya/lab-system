@@ -20,6 +20,7 @@ class CancerSampleController extends Controller
     {
         $user = auth()->user();
         $samples = CancerSampleView::with(['facility'])->where('facility_id', $user->facility_id)
+                                ->orWhere('user_id', $user->id)
                                 ->when($param, function($query) use ($param){
                                     return $query->whereNull('result')->where('receivedstatus', 1);
                                 })->paginate();
@@ -46,7 +47,7 @@ class CancerSampleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
         $patient_string = $request->input('patient');
@@ -65,12 +66,18 @@ class CancerSampleController extends Controller
             $cancerpatient->patient = $patient_string;
             $cancerpatient->pre_update();
 
-            $data = $request->only(['facility_id', 'sampletype', 'datecollected', 'justification', 'datereceived', 'receivedstatus', 'rejectedreason']);
+            $data = $request->only(['facility_id', 'sampletype', 'datecollected', 'justification', 'datereceived', 'receivedstatus', 'rejectedreason', 'age']);
+            if (!isset($data['age'])){
+                $diff = abs(strtotime($request->input('datecollected')) - strtotime($request->input('dob')));
+                $data['age'] = floor($diff / (365*60*60*24));
+            }
+            
             $cancersample = new CancerSample;
             $cancersample->fill($data);
             $cancersample->sample_type = $cancersample->sampletype;
             unset($cancersample->sampletype);
             $cancersample->patient_id = $cancerpatient->id;
+            $cancersample->user_id = $user->id;
             $cancersample->save();
 
             DB::commit();
@@ -94,6 +101,9 @@ class CancerSampleController extends Controller
         $data = $request->only(["approvedby", "approvedby2", "dateapproved", "dateapproved2",
         "datemodified", "datetested", "result", "action"]);
         $sample->fill($data);
+        $sample->datedispatched = $data['datetested'];
+        $sample->dateapproved = $data['datetested'];
+        $sample->dateapproved2 = $data['datetested'];
         $sample->pre_update();
 
         session(['toast_message' => 'Cancer Result sample updated successfully']);
@@ -117,9 +127,11 @@ class CancerSampleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(CancerSample $sample)
     {
-        //
+        $data = Lookup::cancersample_form();
+        $data['sample'] = $sample;
+        return view('forms.cancersamples', $data)->with('pageTitle', 'Add Cervical Cancer Sample');
     }
 
     /**
