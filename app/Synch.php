@@ -1430,7 +1430,7 @@ class Synch
 			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 			foreach ($nat_samples as $key => $nat_sample) {
-		        $nat_sample->lab_id = auth()->lab()->id;
+		        $nat_sample->lab_id = auth()->user()->lab_id;
 
 		        $p = CovidPatient::where('national_patient_id', $nat_sample->patient->id)->first();
 		        if(!$p){
