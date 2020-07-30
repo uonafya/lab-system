@@ -68,10 +68,10 @@ class CovidPatient extends BaseModel
         else{ return "No Gender"; }
     }
 
-    public function getCountyAttribute()
+    /*public function getCountyAttribute()
     {
         return County::find($this->county_id)->name ?? '';
-    }
+    }*/
 
     public function most_recent()
     {
