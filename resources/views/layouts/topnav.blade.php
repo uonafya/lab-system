@@ -122,15 +122,26 @@
                                     <li class=""><a href="{{ url('covid_sample/index/2') }}">Covid Results</a></li>
                                 @endif
 
-                                <li class="">
-                                    <a href="{{ url('batch') }}">EID Samples</a>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Samples
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ url('batch') }}">EID</a>
+                                        <a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a>
+                                    </div>
+
                                 </li>
+
+                                <!-- <li class="">
+                                    <a href="{{ url('batch') }}">EID Samples</a>
+                                </li> -->
                                 <li class="">
                                     <a href="{{ url('batch/index/1') }}">EID Results</a>
                                 </li>
-                                <li class="">
+                                <!-- <li class="">
                                     <a href="{{ url('viralbatch') }}">VL Samples</a>
-                                </li>
+                                </li> -->
                                 <li class="">
                                     <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
                                 </li>
@@ -316,15 +327,26 @@
                                 </li>
                             @endif
 
-                            <li class="">
-                                <a href="{{ url('batch') }}">EID Samples</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Samples
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ url('batch') }}">EID</a>
+                                    <a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a>
+                                </div>
+
                             </li>
+
+                            <!-- <li class="">
+                                <a href="{{ url('batch') }}">EID Samples</a>
+                            </li> -->
                             <li class="">
                                 <a href="{{ url('batch/index/1') }}">EID Results</a>
                             </li>
-                            <li class="">
+                            <!-- <li class="">
                                 <a href="{{ url('viralbatch') }}">VL Samples</a>
-                            </li>
+                            </li> -->
                             <li class="">
                                 <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
                             </li>
