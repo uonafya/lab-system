@@ -16,6 +16,11 @@ class CancerSample extends BaseModel
     	return $this->belongsTo('App\Facility');
     }
 
+    public function facility_lab()
+    {
+        return $this->belongsTo(Facility::class, 'lab_id', 'id');
+    }
+
     /**
      * Get the sample's result name
      *
