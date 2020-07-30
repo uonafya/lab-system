@@ -63,7 +63,7 @@ p.breakhere {page-break-before: always}
 			</tr>
 			<tr>
 				<td colspan="7" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->lab->name ?? '' }}</strong>
+					<strong>Testing Lab: {{ $sample->facility_lab->name ?? $sample->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 
@@ -82,7 +82,12 @@ p.breakhere {page-break-before: always}
 						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->facility->email_string }}
 					</td>					
 				</tr>
-
+			@else
+				<tr>
+					<td colspan="7" class="comment style1 style4" align="right">
+						<strong>Facility: {{ $sample->facility->name ?? '' }}</strong>
+					</td>
+				</tr>
 			@endif
 
 			<tr>
@@ -141,10 +146,10 @@ p.breakhere {page-break-before: always}
 				
 
 			@if($sample->receivedstatus == 2)
-				<td colspan="1" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
+				<td colspan="2" class="style4 style1 comment"><strong>Sample Rejected. Reason:</strong></td>
 
-				<td colspan="3" class="style4 style1 comment">
-					 {{ $rejected_reasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
+				<td colspan="5" class="style4 style1 comment">
+					 {{ $rejectedreasons->where('id', $sample->rejectedreason)->first()->name ?? '' }}
 				</td>
 
 
@@ -166,7 +171,6 @@ p.breakhere {page-break-before: always}
 	                    @endforeach
 					</strong>
 				</td>
-			@endif
 				<td colspan="1" class="style4 style1 comment"><strong>Action:</strong></td>
 				<td colspan="2" class="style4 style1 comment">
 					<strong>
@@ -177,6 +181,7 @@ p.breakhere {page-break-before: always}
 					@endforeach
 					</strong>
 				</td>
+			@endif
 			</tr>
 		
 

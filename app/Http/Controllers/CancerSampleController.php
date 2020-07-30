@@ -99,7 +99,7 @@ class CancerSampleController extends Controller
     public function save_result(Request $request, CancerSample $sample)
     {
         $data = $request->only(["approvedby", "approvedby2", "dateapproved", "dateapproved2",
-        "datemodified", "datetested", "result", "action"]);
+        "datemodified", "datetested", "lab_id", "result", "action"]);
         $sample->fill($data);
         $sample->datedispatched = $data['datetested'];
         $sample->dateapproved = $data['datetested'];

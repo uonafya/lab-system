@@ -290,7 +290,7 @@
 
                             <div class="form-group">
                                 <center>
-                                @if($sample)
+                                @isset($sample)
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <button class="btn btn-success" type="submit" name="submit_type" value="update">Update sample</button>
                                     </div>
@@ -299,7 +299,7 @@
                                         <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                                         <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
                                     </div>
-                                @endif
+                                @endisset
                                 </center>
                             </div>
                         </div>
