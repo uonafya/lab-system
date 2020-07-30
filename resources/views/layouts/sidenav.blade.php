@@ -351,10 +351,10 @@
                     <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
                 </li>
                 <hr>
-                <li>
+                {{-- <li>
                     <a href="{{ url('facility/reports/cervicalcancer') }}">Cervical Cancer Reports</a>
                 </li>
-                <hr>
+                <hr> --}}
                 <li>
                     <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
                 </li>
