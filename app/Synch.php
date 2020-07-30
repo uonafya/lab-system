@@ -529,7 +529,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -585,7 +585,7 @@ class Synch
 				}
 
 				$token = self::get_token();
-				if($type == 'covid') $token = self::get_covid_token();
+				if($type == 'covid' && env('APP_LAB') != 25) $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
@@ -1045,10 +1045,14 @@ class Synch
 
 		$users = DB::table('musers')->where('weeklyalert', 1)->get();
 
+		$currentdaydisplay =date('d-M-Y');
+		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
+		$labname = Lab::find(env('APP_LAB'))->labname ?? '';
+
 		foreach ($users as $user) {
 
 			$message = 
-			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
+			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$weekstartdisplay} - {$currentdaydisplay}\n{$labname}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
 			$message .=
 			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
@@ -1281,7 +1285,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		// if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
+		if(env('APP_LAB') == 25) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1325,7 +1329,7 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
-			if(env('APP_LAB') == 230) $token = self::get_token();
+			if(env('APP_LAB') == 25) $token = self::get_token();
 			else{
 				$token = self::get_covid_token();				
 			}
@@ -1430,7 +1434,7 @@ class Synch
 			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 			foreach ($nat_samples as $key => $nat_sample) {
-		        $nat_sample->lab_id = auth()->lab()->id;
+		        $nat_sample->lab_id = auth()->user()->lab_id;
 
 		        $p = CovidPatient::where('national_patient_id', $nat_sample->patient->id)->first();
 		        if(!$p){
