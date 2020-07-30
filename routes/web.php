@@ -147,6 +147,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('{sample}/edit_result', 'CancerSampleController@edit_result');
 			Route::put('{sample}/edit_result', 'CancerSampleController@save_result');
 			Route::get('list/{param?}', 'CancerSampleController@index');
+			Route::get('{sample}/print', 'CancerSampleController@print');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
