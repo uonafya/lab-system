@@ -62,33 +62,15 @@ p.breakhere {page-break-before: always}
 				</td>
 			</tr>
 			<tr>
-				<td colspan="7" class="comment style1 style4" align="right">
+				<td colspan="4" class="comment style1 style4" align="right">
+					<strong>Facility: {{ $sample->facility->name ?? '' }}</strong>
+				</td>
+				<td colspan="3" class="comment style1 style4" align="right">
 					<strong>Testing Lab: {{ $sample->facility_lab->name ?? $sample->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
-
-			@if(env('APP_LAB') == 1)
-
-				<tr>
-					<td colspan="7" class="style4 style1 comment">
-						<strong>Contact/Facility Telephone:</strong>
-						{{ $sample->facility->contacts }} &nbsp;&nbsp;
-						{{ $sample->facility->facility_contacts }}
-					</td>		
-				</tr>			
-
-				<tr>
-					<td colspan="7" class="style4 style1 comment">
-						<strong>Contact/Facility Email:</strong> &nbsp; {{ $sample->facility->email_string }}
-					</td>					
-				</tr>
-			@else
-				<tr>
-					<td colspan="7" class="comment style1 style4" align="right">
-						<strong>Facility: {{ $sample->facility->name ?? '' }}</strong>
-					</td>
-				</tr>
-			@endif
+			
+			</tr>
 
 			<tr>
 				<td colspan="7"  class="evenrow" align="center" >
