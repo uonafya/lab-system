@@ -320,6 +320,10 @@
                 </li>
                 <hr />
                 <li>
+                    <a href="{{ url('cancersample/create') }}">Add Cervical Cancer Sample</a>
+                </li>
+                <hr />
+                <li>
                     <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
                 </li>
                 <hr />
@@ -336,11 +340,19 @@
                 </li>
                 <hr />
                 <li>
+                    <a href="{{ url('cancersample/list/1') }}">Update Cervical Cancer Results</a>
+                </li>
+                <hr />
+                <li>
                     <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
                 </li>
                 <hr>
                 <li>
                     <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="{{ url('facility/reports/cervicalcancer') }}">Cervical Cancer Reports</a>
                 </li>
                 <hr>
                 <li>
