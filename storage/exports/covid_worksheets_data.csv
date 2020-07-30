@@ -1,0 +1,22 @@
+"Year of Testing","Month of Testing",Machine,Negative,Positive,Failed,Unknown,"Collect New Sample",Total
+2020,January,Manual,0,0,0,0,0,0
+2020,January,Roche,0,0,0,0,0,0
+2020,January,Abbott,0,0,0,0,0,0
+2020,February,Manual,0,0,0,0,0,0
+2020,February,Roche,0,0,0,0,0,0
+2020,February,Abbott,0,0,0,0,0,0
+2020,March,Manual,0,0,0,0,0,0
+2020,March,Roche,0,0,0,0,0,0
+2020,March,Abbott,0,0,0,0,0,0
+2020,April,Manual,0,0,0,0,0,0
+2020,April,Roche,0,0,0,0,0,0
+2020,April,Abbott,0,0,0,0,0,0
+2020,May,Manual,0,0,0,0,0,0
+2020,May,Roche,0,0,0,0,0,0
+2020,May,Abbott,0,0,0,0,0,0
+2020,June,Manual,124,6,3,0,0,133
+2020,June,Roche,0,0,0,0,0,0
+2020,June,Abbott,0,0,0,0,0,0
+2020,July,Manual,66,8,5,0,0,79
+2020,July,Roche,0,0,0,0,0,0
+2020,July,Abbott,1172,16,36,0,2,1226

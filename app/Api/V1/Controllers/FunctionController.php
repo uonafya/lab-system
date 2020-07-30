@@ -73,6 +73,7 @@ class FunctionController extends BaseController
         if($facilities){
             $facilities = str_replace(' ', '', $facilities);
             $facilities = explode(',', $facilities);
+            if(sizeof($facilities) > 10) $facilities = [];
         }
  
         $result = $class::when(($facilities), function($query) use($facilities){
@@ -109,7 +110,7 @@ class FunctionController extends BaseController
                 if($test < 3) return $query->where(['repeatt' => 0]);
             })            
             ->orderBy('created_at', 'desc')
-            ->paginate(50);
+            ->paginate(20);
 
         $result->transform(function ($sample, $key) use ($test){
             // return ['patient age' => $item->age];

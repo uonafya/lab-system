@@ -20,7 +20,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KemriWRPImport;
 use App\Imports\WRPCovidImport;
 use App\Imports\AmpathCovidImport;
+use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
+use App\Imports\NairobiCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -231,6 +233,7 @@ class CovidSampleController extends Controller
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
             if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
             $data[] = $row;
         }
         if(!$data) return back();
@@ -513,7 +516,7 @@ class CovidSampleController extends Controller
                 $travel->save();
             }
         }
-        session(['toast_message' => "The sample has been created."]);
+        session(['toast_message' => "The sample has been created.", 'last_covid_sample' => $sample->id]);
         return back();
     }
 
@@ -751,52 +754,10 @@ class CovidSampleController extends Controller
         $c = new AmpathCovidImport;
         Excel::import($c, $path);
 
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-        
-        /*$file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Name') continue;
-
-            $p = CovidPatient::where(['national_id' => $data[1]])->first();
-
-            if(!$p) $p = new CovidPatient;
-
-            $p->fill([
-                'identifier' => $data[1],
-                'national_id' => $data[1],
-                'facility_id' => 5296,
-                'patient_name' => $data[0],
-                'sex' => $data[4],
-                'phone_no' => $data[2] ?? null,
-                'justification' => 9,             
-                'residence' => $data[5],             
-            ]);
-            $p->save();
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'lab_id' => env('APP_LAB'),
-                'site_entry' => 1,
-                'age' => $data[3],
-                'test_type' => 1,
-                'sample_type' => 1,
-                'datecollected' => '2020-07-10',
-                'datereceived' => '2020-07-10',
-                'receivedstatus' => 1,
-                'sample_type' => 1,
-            ]);
-            $created_rows++;
-        }
+        if(session('toast_error')) return back();
 
         session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); */
+        return redirect('/covid_sample');
     }
 
     public function reed_sample_page()
@@ -812,53 +773,10 @@ class CovidSampleController extends Controller
         $c = new WRPCovidImport;
         Excel::import($c, $path);
 
+        if(session('toast_error')) return back();
+
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
-
-
-        /*$file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        // nakuru pgh
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if($data[0] == 'Name') continue;
-
-            $p = CovidPatient::where(['identifier' => $data[3]])->first();
-
-            if(!$p) $p = new CovidPatient;
-
-            $p->fill([
-                'identifier' => $data[3],
-                'facility_id' => 5647,
-                'patient_name' => $data[0],
-                'sex' => $data[2],
-                'phone_no' => $data[4] ?? null,
-                'justification' => 3,             
-            ]);
-            $p->save();
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'lab_id' => env('APP_LAB'),
-                'site_entry' => 1,
-                'age' => $data[1],
-                'test_type' => 1,
-                'sample_type' => 1,
-                'datecollected' => '2020-07-08',
-                'datereceived' => '2020-07-08',
-                'receivedstatus' => 1,
-                'sample_type' => 1,
-            ]);
-            $created_rows++;
-        }
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); */
     }
 
 
@@ -874,6 +792,50 @@ class CovidSampleController extends Controller
         $path = $request->upload->store('public/site_samples/covid');
         $c = new KNHCovidImport;
         Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+
+    public function nairobi_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/nairobi'])->with('pageTitle', 'Upload Nairobi Site Samples');
+    }
+
+    public function upload_nairobi_samples(Request $request)
+    {
+        if(env('APP_LAB') != 1) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $c = new NairobiCovidImport;
+        Excel::import($c, $path);
+
+        session(['toast_message' => "The samples have been created."]);
+        return redirect('/covid_sample'); 
+    }
+
+    public function lab_sample_page()
+    {
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
+    }
+
+    public function upload_lab_samples(Request $request)
+    {
+        // if(env('APP_LAB') != 1) abort(403);
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/site_samples/covid');
+        $lab_id = auth()->user()->lab_id;
+        $c = null;
+        if($lab_id == 1) $c = new NairobiCovidImport;
+        else if($lab_id == 3) $c = new AlupeCovidImport;
+        else if($lab_id == 4) $c = new WRPCovidImport;
+        else if($lab_id == 5) $c = new AmpathCovidImport;
+        else if($lab_id == 9) $c = new KNHCovidImport;
+        else if($lab_id == 18) $c = new KemriWRPImport;
+        Excel::import($c, $path);
+
+        if(session('toast_error')) return back();
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
@@ -934,6 +896,11 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+        if(!$covidSample->datedispatched){
+            session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
+            return back();
+        }
+
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $data['print'] = true;
@@ -951,6 +918,23 @@ class CovidSampleController extends Controller
         $data['samples'] = CovidSample::whereIn('id', $ids)->get();
         $data['print'] = true;
         return view('exports.mpdf_covid_samples', $data);
+    }
+
+    public function receive_multiple(Request $request)
+    {
+        $ids = $request->input('sample_ids');
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to receive.", 'toast_error' => 1]);
+            return back();            
+        }
+        $samples = CovidSample::whereIn('id', $ids)->get();
+        foreach ($samples as $key => $sample) {
+            $sample->receivedstatus = 1;
+            $sample->datereceived = date('Y-m-d');
+            $sample->save();
+        }
+        session(['toast_message' => 'The samples have been marked as received.']);
+        return back();
     }
 
 
@@ -1053,8 +1037,10 @@ class CovidSampleController extends Controller
                 $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
 
                 if(isset($matched_by_patient)){
+                    $p = null;
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
+                    $p = $patient;
                     $message .= "Any patient details entered will overwrite existing patient details <br />";
                 }
 
@@ -1062,7 +1048,7 @@ class CovidSampleController extends Controller
                 Name {$patient->patient_name} <br />
                 Identifier {$patient->identifier} <br />
                 National ID {$patient->national_id} ";
-                return ['message' => $message];
+                return ['message' => $message, 'patient' => $p];
             }
         }
         return ['message' => null];

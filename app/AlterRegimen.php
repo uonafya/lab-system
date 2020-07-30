@@ -217,6 +217,11 @@ class AlterRegimen
 		");
 
 		DB::statement("INSERT INTO `viralregimen` (`id`, `name`, `code`, `age`, `line`) VALUES (45,	'None',	'',	0, 0), (46,	'No Data',	'',	0, 0); ");
+
+		DB::statement("INSERT INTO `viralregimen` (`id`, `name`, `code`, `age`, `line`, `regimen1`, `regimen2`, `regimen3`, `regimen4`, `regimen5`, `regimen1_class_id`, `regimen2_class_id`, `regimen3_class_id`, `regimen4_class_id`, `regimen5_class_id`) VALUES
+			(47,	'ABC+3TC+DTG',	'CF2G',	2,	1,	'ABC',	'3TC',	'DTG',	NULL,	NULL,	11,	10,	2,	NULL,	NULL),
+			(48,	'TDF+3TC+DTG',	'CF4E',	2,	1,	'TDF',	'3TC',	'DTG',	NULL,	NULL,	16,	10,	2,	NULL,	NULL);
+		");
 	}
 
 	public static function alter_columns()

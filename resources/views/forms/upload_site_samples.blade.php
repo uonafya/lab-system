@@ -30,7 +30,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['reed', 'ampath']))
+                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [3,4,5,6]))
 
                         <div class="alert alert-warning">
                             <center>
@@ -38,12 +38,13 @@
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
+                                (Quarantine Site ID) Can be used when MFL Code is not present. Add as a separate column. <br />
                                 Identifier<br />
                                 Patient Name<br />
                                 Gender<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
-                                Justification<br />
+                                Justification (default is 3 for surveillance)<br />
                                 &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
                                 &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
                                 &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
@@ -55,6 +56,7 @@
                                 &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
                                 &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
                                 &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
@@ -68,7 +70,35 @@
                             </center>
                         </div>
 
-                        @elseif(Str::contains($url, ['knh']))
+                        @elseif(Str::contains($url, ['covid']) && auth()->user()->lab_id == 1)
+
+                        <div class="alert alert-warning">
+                            <center>
+                                The file must be a csv or excel file. <br />
+                                The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
+                                <b> Required Columns </b> <br />
+                                MFL Code <br />
+                                Quarantine Site ID <br />
+                                Patient ID<br />
+                                Name<br />
+                                Sex<br />
+                                Age<br />
+                                <b> Optional Columns </b> <br />
+                                Justification<br />
+                                Telehone Number<br />
+                                National ID<br />
+                                Occupation<br />
+                                County of Residence<br />
+                                Sub-county<br />
+                                Residence<br />
+                                Date Collected<br />
+                                Date Received<br />
+                                (By default any date missing date will be filled with the current day. Date must be filled in the YYYY-MM-DD format e.g. {{ date('Y-m-d') }})
+
+                            </center>
+                        </div>
+
+                        @elseif(Str::contains($url, ['covid']) && env('APP_LAB') == 9)
 
                         <div class="alert alert-warning">
                             <center>
@@ -95,7 +125,7 @@
                             </center>
                         </div>
 
-                        @elseif(Str::contains($url, ['wrp']))
+                        @elseif(Str::contains($url, ['covid']))
 
                         <div class="alert alert-warning">
                             <center>
@@ -120,7 +150,7 @@
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i> 
                                 <span class="fileinput-filename"></span>
                             </div>
-                            @if(Str::contains($url, ['wrp', 'reed', 'ampath']))
+                            @if(Str::contains($url, ['covid']))
                             <span class="input-group-addon btn btn-default btn-file">
                                 <span class="fileinput-new">Select Excel/CSV</span>
                                 <span class="fileinput-exists">Change</span>

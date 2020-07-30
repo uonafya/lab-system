@@ -197,7 +197,7 @@
                 @endif
             
             @elseif (session('testingSystem') == 'Covid')
-                @if(in_array(env('APP_LAB'), [8, 9]))
+                {{--@if(in_array(env('APP_LAB'), [8, 9]))
                     <li><a href="{{ url('covid_sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
@@ -205,7 +205,7 @@
                     <li><a href="{{ url('covid_sample/knh/upload') }}">Upload KNH Site Samples</a></li>
                     <hr />                
                 @endif
-                @if(auth()->user()->lab_id == 18 || (env('APP_LAB') == 1 && !auth()->user()->user_type_id))
+                @if(auth()->user()->lab_id == 18)
                     <li><a href="{{ url('covid_sample/wrp/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
                 @endif
@@ -216,6 +216,15 @@
                 @if(env('APP_LAB') == 5)
                     <li><a href="{{ url('covid_sample/ampath/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />                
+                @endif
+                @if(auth()->user()->lab_id == 1)
+                    <li><a href="{{ url('covid_sample/nairobi/upload') }}">Upload Data Entry Samples</a></li>
+                    <hr />                
+                @endif--}}
+
+                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18]))
+                    <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
+                    <hr />               
                 @endif
                 <li><a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
                 <hr />
@@ -340,6 +349,10 @@
                 <hr>
                 <li>
                     <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
+                </li>
+                <hr>
+                <li>
+                    <a href="{{ url('facility/reports/cervicalcancer') }}">Cervical Cancer Reports</a>
                 </li>
                 <hr>
                 <li>

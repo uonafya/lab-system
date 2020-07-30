@@ -715,6 +715,29 @@ class Random
 		}
 	} 
 
+    public static function update_turkana()
+    {
+        $handle = fopen(public_path('turkana_samples.csv'), "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
+            if(!is_numeric($data[0])) continue;
+
+            $sample = Viralsample::where(['national_sample_id' => $data[0]])->first();
+            if(!$sample) continue;
+
+            $patient = Viralpatient::where(['patient' => $data[2]])->first();
+
+            if(!$patient){
+                $patient = $sample->patient;
+                $patient->patient = $data[2];
+                $patient->pre_update();
+            }else{
+                $sample->patient_id = $patient->id;
+                $sample->pre_update();
+            }            
+
+        }
+    }
+
 	public static function locations()
 	{
 		$locations = '

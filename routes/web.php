@@ -147,6 +147,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('{sample}/edit_result', 'CancerSampleController@edit_result');
 			Route::put('{sample}/edit_result', 'CancerSampleController@save_result');
 			Route::get('list/{param?}', 'CancerSampleController@index');
+			Route::get('{sample}/print', 'CancerSampleController@print');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
@@ -163,6 +164,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			
 			Route::group(['middleware' => ['only_utype:1,4,12']], function () {
+				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
 				
 				Route::get('upload', 'CovidSampleController@site_sample_page');
 				Route::post('upload', 'CovidSampleController@upload_site_samples');
@@ -178,6 +180,12 @@ Route::middleware(['auth'])->group(function(){
 				
 				Route::get('knh/upload', 'CovidSampleController@knh_sample_page');
 				Route::post('knh/upload', 'CovidSampleController@upload_knh_samples');
+				
+				Route::get('nairobi/upload', 'CovidSampleController@nairobi_sample_page');
+				Route::post('nairobi/upload', 'CovidSampleController@upload_nairobi_samples');
+				
+				Route::get('lab/upload', 'CovidSampleController@lab_sample_page');
+				Route::post('lab/upload', 'CovidSampleController@upload_lab_samples');
 				
 				Route::post('transfer', 'CovidSampleController@transfer');
 			});
