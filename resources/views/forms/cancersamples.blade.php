@@ -68,7 +68,7 @@
                                 <div class="col-sm-8">
                                     <select class="form-control requirable" required name="facility_id" id="facility_id">
                                         @isset($sample)
-                                            <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                            <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
                                         @endisset
                                     </select>
                                 </div>
@@ -92,14 +92,14 @@
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                    <input class="form-control requirable" required name="patient" type="text" value="{{ $sample->patient->patient ?? '' }}" id="patient">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Patient Names</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}">
+                                    <input class="form-control" name="patient_name" type="text" value="{{ $sample->patient->patient_name ?? '' }}">
                                 </div>
                             </div>
 
@@ -114,7 +114,7 @@
                                         @if(auth()->user()->user_type_id == 5)
                                             required
                                         @endif
-                                         value="" name="dob">
+                                         value="{{ $sample->patient->dob ?? '' }}" name="dob">
                                     </div>
                                 </div>                            
                             </div>
@@ -130,7 +130,7 @@
                                         @foreach ($genders as $gender)
                                             <option value="{{ $gender->id }}"
 
-                                            @if (isset($viralsample) && $viralsample->patient->sex == $gender->id)
+                                            @if (isset($sample) && $sample->patient->sex == $gender->id)
                                                 selected
                                             @endif
 
@@ -145,7 +145,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Entry Point</label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="entry_point" type="text" value="{{ $viralsample->patient->entry_point ?? '' }}">
+                                    <input class="form-control" name="entry_point" type="text" value="{{ $sample->patient->entry_point ?? '' }}">
                                 </div>
                             </div>
 
@@ -160,7 +160,7 @@
                                         @foreach ($sampletypes as $sampletype)
                                             <option value="{{ $sampletype->id }}"
 
-                                            @if (isset($viralsample) && $viralsample->sampletype == $sampletype->id)
+                                            @if (isset($sample) && $sample->sample_type == $sampletype->id)
                                                 selected
                                             @endif
 
@@ -181,7 +181,7 @@
                                         @foreach ($hivstatuses as $status)
                                             <option value="{{ $status->id }}"
 
-                                            @if (isset($viralsample) && $viralsample->patient->hiv_status == $status->id)
+                                            @if (isset($sample) && $sample->patient->hiv_status == $status->id)
                                                 selected
                                             @endif
 
@@ -202,7 +202,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
+                                        <input type="text" id="datecollected" required class="form-control requirable" value="{{ $sample->datecollected ?? '' }}" name="datecollected">
                                     </div>
                                 </div>                            
                             </div>
@@ -213,7 +213,7 @@
                                 <div class="col-sm-8">
                                     <div class="input-group date date-normal">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $sample->datereceived ?? '' }}" name="datereceived">
                                     </div>
                                 </div>                            
                             </div> 
@@ -229,7 +229,7 @@
                                         @foreach ($receivedstatuses as $receivedstatus)
                                             <option value="{{ $receivedstatus->id }}"
 
-                                            @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
+                                            @if (isset($sample) && $sample->receivedstatus == $receivedstatus->id)
                                                 selected
                                             @endif
 
@@ -274,7 +274,7 @@
                                             @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                             <option value="{{ $justification->id }}"
 
-                                            @if (isset($viralsample) && $viralsample->justification == $justification->id)
+                                            @if (isset($sample) && $sample->justification == $justification->id)
                                                 selected
                                             @endif
 
@@ -290,11 +290,16 @@
 
                             <div class="form-group">
                                 <center>
-
+                                @if($sample)
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <button class="btn btn-success" type="submit" name="submit_type" value="update">Update sample</button>
+                                    </div>
+                                @else
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <button class="btn btn-success" type="submit" name="submit_type" value="release">Save & Release sample</button>
                                         <button class="btn btn-primary" type="submit" name="submit_type" value="add">Save & Add sample</button>
                                     </div>
+                                @endif
                                 </center>
                             </div>
                         </div>
