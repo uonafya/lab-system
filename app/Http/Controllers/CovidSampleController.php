@@ -54,6 +54,7 @@ class CovidSampleController extends Controller
             ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
             ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
             ->when($facility_id, function($query) use ($facility_id){
+                if($facility_id == 'null') return $query->whereNull('covid_sample_view.facility_id');
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
@@ -107,7 +108,7 @@ class CovidSampleController extends Controller
         $subcounties = DB::table('districts')->get();
         $labs = DB::table('labs')->get();
         $results = DB::table('results')->get();
-        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'quarantine_site_id', 'lab_id', 'counties', 'subcounties', 'results', 'labs');
+        $data = compact('samples', 'myurl', 'myurl2', 'type', 'quarantine_sites', 'justifications', 'facility', 'facility_id', 'quarantine_site_id', 'lab_id', 'counties', 'subcounties', 'results', 'labs');
         // if($type == 3) $data['labs'] = DB::table('labs')->get();
         return view('tables.covidsamples', $data);
     }
@@ -168,6 +169,7 @@ class CovidSampleController extends Controller
                 return $query->where('subcounty_id', $subcounty_id);
             })
             ->when($facility_id, function($query) use ($facility_id){
+                if($facility_id == 'null') return $query->whereNull('facility_id');
                 return $query->where('covid_sample_view.facility_id', $facility_id);
             })
             ->when($quarantine_site_id, function($query) use ($quarantine_site_id){
@@ -400,6 +402,7 @@ class CovidSampleController extends Controller
                 return $query->where('subcounty_id', $subcounty_id);
             })
             ->when($facility_id, function($query) use ($facility_id){
+                if($facility_id == 'null') return $query->whereNull('facility_id');
                 return $query->where('facility_id', $facility_id);
             })
             ->when($identifier, function($query) use ($identifier){
