@@ -123,13 +123,13 @@
                                 @endif
 
                                 <li class="dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Samples
+                                    <a class="nav-link dropdown-toggle" href="#" id="olnavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Samples <span class="caret"></span>
                                     </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ url('batch') }}">EID</a>
-                                        <a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a>
-                                    </div>
+                                    <ul class="dropdown-menu" aria-labelledby="olnavbarDropdown">
+                                        <li><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                        <li><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                    </ul>
 
                                 </li>
 
@@ -328,13 +328,13 @@
                             @endif
 
                             <li class="dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Samples
+                                <a class="dropdown-toggle" href="#" id="secondNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Samples <span class="caret"></span>
                                 </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ url('batch') }}">EID</a>
-                                    <a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a>
-                                </div>
+                                <ul class="dropdown-menu" aria-labelledby="secondNavbarDropdown">
+                                    <li><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                </ul>
 
                             </li>
 
