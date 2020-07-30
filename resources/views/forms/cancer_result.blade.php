@@ -60,14 +60,29 @@
                                     <input class="form-control" disabled type="text" value="{{ $sample->datecollected ?? '' }}">
                                 </div>
                             </div>
-                            {{--
+                            
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Received</label>
                                 <div class="col-sm-8">
                                     <input class="form-control" disabled type="text" value="{{ $sample->datereceived ?? '' }}">
                                 </div>
                             </div>   
-                            --}}
+                            
+                            <div class="form-group">
+                                    <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" required name="lab_id" id="lab_id">
+                                            @if($sample->facility_lab)
+                                                <option value="{{ $sample->facility_lab->id }}" selected>{{ $sample->facility_lab->facilitycode }} {{ $sample->facility_lab->name }}</option>
+                                            @else
+                                                <option value="{{ $sample->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
+                                            @endif
+
+                                        </select>
+                                    </div>
+                                </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Date Tested
