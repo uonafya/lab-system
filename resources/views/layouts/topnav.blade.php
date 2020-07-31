@@ -122,24 +122,36 @@
                                     <li class=""><a href="{{ url('covid_sample/index/2') }}">Covid Results</a></li>
                                 @endif
 
-                                <li class="">
-                                    <a href="{{ url('batch') }}">EID Samples</a>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Samples <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('batch/index/1') }}">EID Results</a>
+
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Results <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('batch/index/1') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralbatch/index/1') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch') }}">VL Samples</a>
+
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        POC Samples <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('sample/list_poc') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralsample/list_poc') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                                </li>
+
                                 <li class="">
                                     <a href="{{ url('cancersample') }}">Cervical Cancers</a>
                                 </li>
@@ -316,24 +328,37 @@
                                 </li>
                             @endif
 
-                            <li class="">
-                                <a href="{{ url('batch') }}">EID Samples</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Samples <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('batch/index/1') }}">EID Results</a>
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Results <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('batch/index/1') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralbatch/index/1') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('viralbatch') }}">VL Samples</a>
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    POC Samples <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('sample/list_poc') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralsample/list_poc') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                            </li>
-                            <li class="">
-                                <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                            </li>
-                            <li class="">
-                                <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                            </li>
+
+                            
                             <li class="">
                                 <a href="{{ url('cancersample') }}">Cancers Samples</a>
                             </li>
