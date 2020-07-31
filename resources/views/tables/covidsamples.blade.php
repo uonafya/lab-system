@@ -369,12 +369,6 @@
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
 
-                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
-                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
-                                            || !$sample->datedispatched))
-                                            <!-- <td></td>
-                                            <td></td> -->
-                                        @endif
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> {{ $sample->my_date_format('date_email_sent') }} </td>
@@ -394,11 +388,6 @@
                                             @endif
                                         </td>
 
-                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
-                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
-                                            || !$sample->datedispatched))
-                                            <!-- <td></td> -->
-                                        @endif
                                         <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
 
                                         <td>
