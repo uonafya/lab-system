@@ -196,8 +196,11 @@ class FunctionController extends BaseController
         $lab = $request->input('lab', env('APP_LAB'));
 
         $w = \App\WeeklyAlert::where(['lab_id' => $lab])
-            ->whereBetween('end_date', [date('Y-m-d'), date('Y-m-d', strtotime('+2 days'))])
+            // ->whereBetween('end_date', [date('Y-m-d'), date('Y-m-d', strtotime('+2 days'))])
+            ->where('end_date', '>=', date('Y-m-d'))
             ->first();
+
+        if(!$w) return;
 
         $w->fill($request->except(['lab']));
         $w->save();
