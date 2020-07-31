@@ -103,7 +103,9 @@
                         <div class="col-sm-9">
                             <select class="form-control" name="facility_id" id="facility_id">
                                 <option></option>
-                                <option value="null" selected  >No Facility</option>
+                                @if(env('APP_LAB') == 6)
+                                    <option value="null" selected  >No Facility</option>
+                                @endif
                                 @if(isset($facility) && $facility)
                                     <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
                                 @endif

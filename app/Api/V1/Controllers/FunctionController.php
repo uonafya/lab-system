@@ -200,7 +200,7 @@ class FunctionController extends BaseController
             ->where('end_date', '>=', date('Y-m-d'))
             ->first();
 
-        if(!$w) return;
+        if(!$w) return ['message' => 'Send Later'];
 
         $w->fill($request->except(['lab']));
         $w->save();
