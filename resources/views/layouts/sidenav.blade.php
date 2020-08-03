@@ -320,7 +320,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancersample/create') }}">Add Cervical Cancer Sample</a>
+                    <a href="{{ url('cancersample/create') }}">Add HPV Sample</a>
                 </li>
                 <hr />
                 <li>
@@ -340,7 +340,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancersample/list/1') }}">Update Cervical Cancer Results</a>
+                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results</a>
                 </li>
                 <hr />
                 <li>
@@ -352,7 +352,7 @@
                 </li>
                 <hr>
                 {{-- <li>
-                    <a href="{{ url('facility/reports/cervicalcancer') }}">Cervical Cancer Reports</a>
+                    <a href="{{ url('facility/reports/cervicalcancer') }}">HPV Reports</a>
                 </li>
                 <hr> --}}
                 <li>
