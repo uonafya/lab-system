@@ -69,6 +69,7 @@
                                                     </form>
                                                 @endif
                                             @else
+                                                <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
                                                 <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
                                             @endif
                                         </td>
