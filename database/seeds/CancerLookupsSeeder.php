@@ -70,6 +70,8 @@ class CancerLookupsSeeder extends Seeder
 	        ['name' => 'Referred for VIA', 'displaylabel' => '2. Referred for VIA'],
 	        ['name' => 'Referred for Rx (Cryotherapy, LEEP or Thermocoagulation)', 'displaylabel' => '3. Referred for Rx (Cryotherapy, LEEP or Thermocoagulation)'],
 	        ['name' => 'Client pregnant therefore follow up after delivery.', 'displaylabel' => '4. Client pregnant therefore follow up after delivery.'],
+            ['name'=> 'Re-screen after 1 year', 'displaylabel' => '5. Re-screen after 1 year'],
+            ['name'=> 'Re-screen after 3 years', 'displaylabel' => '6. Re-screen after 3 years'],
         ];
         DB::table('canceractions')->truncate();
         DB::table('canceractions')->insert($actions);
