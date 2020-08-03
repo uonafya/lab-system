@@ -141,7 +141,7 @@
                                     <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
                                 </li>
                                 <li class="">
-                                    <a href="{{ url('cancersample') }}">Cervical Cancers</a>
+                                    <a href="{{ url('cancersample') }}">HPV Samples</a>
                                 </li>
                                 <li class="">
                                     <a href="{{ url('worklist') }}">POC Worklists</a>
@@ -335,7 +335,7 @@
                                 <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
                             </li>
                             <li class="">
-                                <a href="{{ url('cancersample') }}">Cancers Samples</a>
+                                <a href="{{ url('cancersample') }}">HPV Samples</a>
                             </li>
                             <li class="">
                                 <a href="{{ url('worklist') }}">POC Worklists</a>
