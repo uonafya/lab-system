@@ -406,20 +406,20 @@ class MiscDr extends Common
 				if($sample->status_id == 3)	$sample->qc_pass = 0;			
 
 				if(isset($s->sample_qc_pass)){
-					$sample->qc_pass = $s->sample_qc_pass;
+					$sample->qc_pass = $s->sample_qc_pass ?? null;
 
-					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
-					$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass;
-					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
+					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass ?? null;
+					$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass ?? null;
+					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass ?? null;
 				}
 
 				if(isset($s->sample_qc_distance)){
-					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
-					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
-					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
-					$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name;
-					$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name;
-					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
+					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id ?? null;
+					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id ?? null;
+					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference ?? null;
+					$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name ?? null;
+					$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name ?? null;
+					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name ?? null;
 				}
 
 				if(isset($s->errors)){
