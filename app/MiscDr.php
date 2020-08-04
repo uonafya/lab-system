@@ -349,7 +349,7 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
-		$included = print_r($body->included, true);
+		// $included = print_r($body->included, true);
 
 		// $file = fopen(public_path('res.json'), 'w+');
 		// fwrite($file, $included);
@@ -422,7 +422,7 @@ class MiscDr extends Common
 					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name ?? null;
 				}
 
-				if(isset($s->errors)){
+				if(isset($s->errors) && $s->errors){
 					$sample->has_errors = true;
 
 					foreach ($s->errors as $error) {
@@ -430,7 +430,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if(isset($s->warnings)){
+				if(isset($s->warnings) && $s->warnings){
 					$sample->has_warnings = true;
 
 					foreach ($s->warnings as $error) {
@@ -438,7 +438,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if(isset($s->calls)){
+				if(isset($s->calls) && $s->calls){
 					// $sample->has_calls = true;
 
 					foreach ($s->calls as $call) {
@@ -479,7 +479,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if(isset($s->genotype)){
+				if(isset($s->genotype) && $s->genotype){
 					// $sample->has_genotypes = true;
 
 					foreach ($s->genotype as $genotype) {
