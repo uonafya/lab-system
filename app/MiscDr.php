@@ -460,12 +460,16 @@ class MiscDr extends Common
 							'sample_id' => $sample->id,
 							'drug_class' => $call->drug_class,
 							'drug_class_id' => self::get_drug_class($call->drug_class),
-							'mutations' => $call->mutations ?? [],
+							// 'mutations' => $call->mutations ?? [],
 							// 'other_mutations' => self::escape_null($call->other_mutations),
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
-						if($c->mutations) $sample->has_mutations = true;
+						if(isset($c->mutations) && $c->mutations){
+							$sample->has_mutations = true;
+							$c->mutations = $call->mutations ?? [];
+							$c->save();
+						}
 
 						foreach ($call->drugs as $drug) {
 							$d = DrCallDrug::firstOrCreate([
