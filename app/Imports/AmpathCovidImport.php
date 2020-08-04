@@ -20,6 +20,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
 
         $rows = session('entered_rows', []);
         $rows[] = $row;
+        session(['entered_rows' => $rows]);
 
         if(!property_exists($row, 'mfl_code') && !property_exists($row, 'quarantine_site_id')){
             session(['toast_error' => 1, 'toast_message' => 'MFL Code OR Quarantine Site ID column is not present.']);
