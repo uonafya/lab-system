@@ -391,7 +391,7 @@ class MiscDr extends Common
 
 			foreach ($body->included as $key => $value) {
 
-				$sample = DrSample::where(['exatype_id' => $value->attributes->id])->first();
+				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 
 				if(!$sample) continue;
 				if(in_array($sample->status_id, [1, 2, 3])) continue;
@@ -460,12 +460,12 @@ class MiscDr extends Common
 							'sample_id' => $sample->id,
 							'drug_class' => $call->drug_class,
 							'drug_class_id' => self::get_drug_class($call->drug_class),
-							'mutations' => self::escape_null($call->mutations),
+							'mutations' => $call->mutations ?? [],
 							// 'other_mutations' => self::escape_null($call->other_mutations),
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
-						if($c->mutations_array) $sample->has_mutations = true;
+						if($c->mutations) $sample->has_mutations = true;
 
 						foreach ($call->drugs as $drug) {
 							$d = DrCallDrug::firstOrCreate([
