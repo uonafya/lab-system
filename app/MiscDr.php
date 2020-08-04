@@ -465,7 +465,7 @@ class MiscDr extends Common
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
-						if(isset($c->mutations) && $c->mutations){
+						if(isset($call->mutations) && $call->mutations){
 							$sample->has_mutations = true;
 							$c->mutations = $call->mutations ?? [];
 							$c->save();
