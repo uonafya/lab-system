@@ -37,6 +37,11 @@ Artisan::command('dr:fetch-results', function(){
     $this->info($str);
 })->describe('Fetch results from exatype system.');
 
+Artisan::command('dr:current-drug', function(){
+    $str = \App\MiscDr::set_current_drug();
+    $this->info($str);
+})->describe('Set current drug.');
+
 Artisan::command('compute:tat5', function(){
     \App\Common::save_tat5('eid');
     \App\Common::save_tat5('vl');

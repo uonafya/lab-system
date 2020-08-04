@@ -13,6 +13,7 @@ class Console
 		if($w) return;
 
 		WeeklyAlert::create(['lab_id' => 10, 'start_date' => date('Y-m-d'), 'end_date' => date('Y-m-d', strtotime('+4 days'))]);
+
 	}
 
 	public static function edarp_weekly_activity()
