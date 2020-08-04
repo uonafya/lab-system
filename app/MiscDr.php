@@ -525,6 +525,8 @@ class MiscDr extends Common
 			return false;			
 		}
 
+		return $body;
+
 		// dd($body);
 	}
 
