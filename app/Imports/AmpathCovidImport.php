@@ -18,7 +18,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
 
-        $rows = session('entered_rows', []);
+        /*$rows = session('entered_rows', []);
         $rows[] = $row;
         session(['entered_rows' => $rows]);
 
@@ -43,12 +43,12 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender) return;
+        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender) return;*/
 
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac && !isset($row->quarantine_site_id)) return;
+        // if(!$fac && !isset($row->quarantine_site_id)) return;
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
