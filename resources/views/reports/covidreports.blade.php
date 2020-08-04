@@ -146,13 +146,19 @@
                             </div>
                         </div> --}}
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Date Filter
+                            <label class="col-sm-4 control-label">Date Filter
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
-                            <div class="col-sm-9">
+                            <div class="col-sm-4">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="date_filter" required class="form-control" value="{{ date('Y-m-d') }}" name="date_filter">
+                                </div>
+                            </div>  
+                            <div class="col-sm-4">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="date_filter_to" required class="form-control" value="{{ date('Y-m-d') }}" name="date_filter_to">
                                 </div>
                             </div>                            
                         </div>

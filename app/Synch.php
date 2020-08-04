@@ -529,7 +529,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && env('APP_LAB') != 2500) $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -585,7 +585,7 @@ class Synch
 				}
 
 				$token = self::get_token();
-				if($type == 'covid' && env('APP_LAB') != 25) $token = self::get_covid_token();
+				if($type == 'covid' && env('APP_LAB') != 2500) $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
@@ -1093,7 +1093,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		if(env('APP_LAB') == 25) $client = new Client(['base_uri' => self::$base]);
+		// if(env('APP_LAB') == 25) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 

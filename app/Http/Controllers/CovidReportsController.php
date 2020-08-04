@@ -28,6 +28,7 @@ class CovidReportsController extends Controller
 	{
 		// Get the dates
 		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
+		$date_to = $request->input('date_filter_to');
 
 		if($request->input('types') == 'nphl_results_submission'){
 			return $this->nphl_upload($date);
@@ -42,7 +43,7 @@ class CovidReportsController extends Controller
 		$last_update_data = $this->get_model()->whereRaw("DATE(datetested) < '{$date}'")->get();
 		
 		// Prepare the data to fill the excel
-		$data = $this->prepareData($today_data, $last_update_data, $date);
+		$data = $this->prepareData($today_data, $last_update_data, $date, $date_to);
 
 		return \App\MiscCovid::csv_download($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date, false);
 	}
@@ -90,21 +91,27 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $last_update_data, $date)
+	private function prepareData($today_data, $last_update_data, $date, $date_to=null)
 	{
 		$data = [[Lab::find(auth()->user()->lab_id)->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
-		$data[] = $this->get_summary_data($today_data, $last_update_data, $date);
+		$data[] = $this->get_summary_data($today_data, $last_update_data, $date, $date_to);
 
 		if(env('APP_LAB') == 1 && auth()->user()->lab_id == env('APP_LAB')){
 			$labs = CovidSample::selectRaw('DISTINCT lab_id AS lab_id')->where('lab_id', '!=', env('APP_LAB'))->where('site_entry', '!=', 2)->get();
 
 			foreach ($labs as $key => $value) {
-				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				$today_data_other = $this->get_model($value->lab_id)					
+					->when($date, function($query) use($date, $date_to){
+						if($date_to) return $query->whereBetween('datetested', [$date, $date_to]);
+						return $query->whereDate('datetested', $date);
+					})
+					->orderBy('result', 'desc')
+					->get();
 				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
-				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
+				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $date_to, $value->lab_id);
 			}
 		}
 
@@ -120,7 +127,7 @@ class CovidReportsController extends Controller
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $last_update_data, $date, $lab_id=null)
+	private function get_summary_data($today_data, $last_update_data, $date, $date_to=null, $lab_id=null)
 	{
 		if(!$lab_id) $lab_id = auth()->user()->lab_id;
 		$lab = Lab::find($lab_id);
@@ -330,7 +337,7 @@ class CovidReportsController extends Controller
 			}
 
 			$post_data = [
-				'TESTING_LAB' => $sample->lab->name,
+				'TESTING_LAB' => $sample->lab->code,
 
 				'CASE_ID' => $sample->identifier,
 				'CASE_TYPE' => $sample->test_type == 1 ? 'Initial' : 'Repeat',

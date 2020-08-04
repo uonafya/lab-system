@@ -483,11 +483,11 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        // if(auth()->user()->lab_id != 1){
+        if(auth()->user()->lab_id != 1){
             if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
             if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
             if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
-        // }
+        }
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
         $patient->current_health_status = $request->input('health_status');
@@ -1039,7 +1039,7 @@ class CovidSampleController extends Controller
             if($patient->most_recent){
                 $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
 
-                if(isset($matched_by_patient)){
+                if(isset($matched_by_patient) || env('APP_LAB') == 1){
                     $p = null;
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{

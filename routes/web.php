@@ -363,6 +363,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_testing')->name('dr_testing.')->group(function () {
 			Route::get('/', 'DrDashboardTestingController@index');
 			Route::get('testing', 'DrDashboardTestingController@testing');
+			Route::get('rejected', 'DrDashboardTestingController@rejected');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
