@@ -1039,7 +1039,7 @@ class CovidSampleController extends Controller
             if($patient->most_recent){
                 $message = "This patient's most recent sample was collected on " . $patient->most_recent->datecollected->toFormattedDateString() . " <br />";
 
-                if(isset($matched_by_patient) || env('APP_LAB')){
+                if(isset($matched_by_patient) || env('APP_LAB') == 1){
                     $p = null;
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
