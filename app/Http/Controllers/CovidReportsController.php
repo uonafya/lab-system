@@ -337,7 +337,7 @@ class CovidReportsController extends Controller
 			}
 
 			$post_data = [
-				'TESTING_LAB' => $sample->lab->name,
+				'TESTING_LAB' => $sample->lab->code,
 
 				'CASE_ID' => $sample->identifier,
 				'CASE_TYPE' => $sample->test_type == 1 ? 'Initial' : 'Repeat',
