@@ -518,7 +518,7 @@ class MiscDr extends Common
 			
 			}
 			session(['toast_message' => 'The worksheet results have been successfully retrieved from Exatype.']);
-			return true;
+			return $body;
 		}
 		else{
 			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
