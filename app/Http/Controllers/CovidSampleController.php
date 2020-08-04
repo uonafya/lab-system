@@ -838,7 +838,7 @@ class CovidSampleController extends Controller
         else if($lab_id == 18) $c = new KemriWRPImport;
         Excel::import($c, $path);
 
-        dd(session('rows'));
+        dd(session('entered_rows'));
 
         if(session('toast_error')) return back();
 
