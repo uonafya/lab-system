@@ -676,7 +676,7 @@ class Lookup
             $partners = DB::table('partners')->get();
             $subcounties = DB::table('districts')->get();
 
-            if(env('APP_LAB') < 10 && env('APP_LAB') != 8){
+            if(env('APP_LAB') < 10 && env('APP_LAB') != 7){
             $cancer_sample_types = DB::table('cancersampletypes')->get();
             $cancerjustifications = DB::table('cancerjustifications')->get();
             $cancerhivstatuses = DB::table('cancerhivstatuses')->get();
@@ -738,7 +738,7 @@ class Lookup
             
             Cache::put('partners', $partners, $minutes);
             Cache::put('subcounties', $subcounties, $minutes);
-            if(env('APP_LAB') < 10 && env('APP_LAB') != 8){
+            if(env('APP_LAB') < 10 && env('APP_LAB') != 7){
             Cache::put('cancer_sample_types', $cancer_sample_types, $minutes);
             Cache::put('cancerjustifications', $cancerjustifications, $minutes);
             Cache::put('cancerhivstatuses', $cancerhivstatuses, $minutes);
