@@ -405,7 +405,7 @@ class MiscDr extends Common
 
 				if($sample->status_id == 3)	$sample->qc_pass = 0;			
 
-				if($s->sample_qc_pass){
+				if(isset($s->sample_qc_pass)){
 					$sample->qc_pass = $s->sample_qc_pass;
 
 					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
@@ -413,7 +413,7 @@ class MiscDr extends Common
 					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
 				}
 
-				if($s->sample_qc_distance){
+				if(isset($s->sample_qc_distance)){
 					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
 					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
 					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
@@ -422,7 +422,7 @@ class MiscDr extends Common
 					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
 				}
 
-				if($s->errors){
+				if(isset($s->errors)){
 					$sample->has_errors = true;
 
 					foreach ($s->errors as $error) {
@@ -430,7 +430,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->warnings){
+				if(isset($s->warnings)){
 					$sample->has_warnings = true;
 
 					foreach ($s->warnings as $error) {
@@ -438,7 +438,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->calls){
+				if(isset($s->calls)){
 					// $sample->has_calls = true;
 
 					foreach ($s->calls as $call) {
@@ -479,7 +479,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->genotype){
+				if(isset($s->genotype)){
 					// $sample->has_genotypes = true;
 
 					foreach ($s->genotype as $genotype) {
