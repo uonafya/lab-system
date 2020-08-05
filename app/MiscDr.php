@@ -349,7 +349,7 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
-		$included = print_r($body->included, true);
+		// $included = print_r($body->included, true);
 
 		// $file = fopen(public_path('res.json'), 'w+');
 		// fwrite($file, $included);
@@ -391,7 +391,7 @@ class MiscDr extends Common
 
 			foreach ($body->included as $key => $value) {
 
-				$sample = DrSample::where(['exatype_id' => $value->attributes->id])->first();
+				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 
 				if(!$sample) continue;
 				if(in_array($sample->status_id, [1, 2, 3])) continue;
@@ -405,24 +405,24 @@ class MiscDr extends Common
 
 				if($sample->status_id == 3)	$sample->qc_pass = 0;			
 
-				if($s->sample_qc_pass){
-					$sample->qc_pass = $s->sample_qc_pass;
+				if(isset($s->sample_qc_pass)){
+					$sample->qc_pass = $s->sample_qc_pass ?? null;
 
-					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass;
-					$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass;
-					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass;
+					$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass ?? null;
+					$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass ?? null;
+					$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass ?? null;
 				}
 
-				if($s->sample_qc_distance){
-					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id;
-					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id;
-					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference;
-					$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name;
-					$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name;
-					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name;
+				if(isset($s->sample_qc_distance)){
+					$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id ?? null;
+					$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id ?? null;
+					$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference ?? null;
+					$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name ?? null;
+					$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name ?? null;
+					$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name ?? null;
 				}
 
-				if($s->errors){
+				if(isset($s->errors) && $s->errors){
 					$sample->has_errors = true;
 
 					foreach ($s->errors as $error) {
@@ -430,7 +430,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->warnings){
+				if(isset($s->warnings) && $s->warnings){
 					$sample->has_warnings = true;
 
 					foreach ($s->warnings as $error) {
@@ -438,7 +438,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->calls){
+				if(isset($s->calls) && $s->calls){
 					// $sample->has_calls = true;
 
 					foreach ($s->calls as $call) {
@@ -460,12 +460,16 @@ class MiscDr extends Common
 							'sample_id' => $sample->id,
 							'drug_class' => $call->drug_class,
 							'drug_class_id' => self::get_drug_class($call->drug_class),
-							'mutations' => self::escape_null($call->mutations),
+							// 'mutations' => $call->mutations ?? [],
 							// 'other_mutations' => self::escape_null($call->other_mutations),
 							// 'major_mutations' => self::escape_null($call->major_mutations),
 						]);
 
-						if($c->mutations_array) $sample->has_mutations = true;
+						if(isset($call->mutations) && $call->mutations){
+							$sample->has_mutations = true;
+							$c->mutations = $call->mutations ?? [];
+							$c->save();
+						}
 
 						foreach ($call->drugs as $drug) {
 							$d = DrCallDrug::firstOrCreate([
@@ -479,7 +483,7 @@ class MiscDr extends Common
 					}
 				}
 
-				if($s->genotype){
+				if(isset($s->genotype) && $s->genotype){
 					// $sample->has_genotypes = true;
 
 					foreach ($s->genotype as $genotype) {
@@ -518,12 +522,14 @@ class MiscDr extends Common
 			
 			}
 			session(['toast_message' => 'The worksheet results have been successfully retrieved from Exatype.']);
-			return true;
+			return $body;
 		}
 		else{
 			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
 			return false;			
 		}
+
+		return $body;
 
 		// dd($body);
 	}

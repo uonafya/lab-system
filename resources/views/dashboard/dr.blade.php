@@ -101,6 +101,30 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Heat Map (Current) </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="heat_map_current"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Resistance by Drug (Current) </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="resistance_by_drug_current"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection()
@@ -118,8 +142,15 @@
         $("#resistance_by_drug").html("<center><div class='loader'></div></center>");
         $("#heat_map").html("<center><div class='loader'></div></center>");
 
+        $("#resistance_by_drug_current").html("<center><div class='loader'></div></center>");
+        $("#heat_map_current").html("<center><div class='loader'></div></center>");
+
+
         $("#resistance_by_drug").load("{{ url('dr_dashboard/drug_resistance') }}");
         $("#heat_map").load("{{ url('dr_dashboard/heat_map') }}");
+
+        $("#resistance_by_drug_current").load("{{ url('dr_dashboard/drug_resistance/1') }}");
+        $("#heat_map_current").load("{{ url('dr_dashboard/heat_map/1') }}");
 
     }
 
