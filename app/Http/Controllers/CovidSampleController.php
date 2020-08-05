@@ -579,6 +579,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+        if(env('APP_LAB') == 5 && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been dispatched.']);
+            return back();
+        }
+
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
