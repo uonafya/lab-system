@@ -1701,8 +1701,8 @@ class Synch
 		$url = 'insert/covidconsumption';
 		
 		while (true) {
-			// $consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
-			$consumptions = CovidConsumption::with(['details.kit'])->get();
+			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
+			// $consumptions = CovidConsumption::with(['details.kit'])->get();
 			// dd($consumptions->toJson());
 			if($consumptions->isEmpty())
 				break;
