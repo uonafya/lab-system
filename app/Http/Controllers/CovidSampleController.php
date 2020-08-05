@@ -579,8 +579,8 @@ class CovidSampleController extends Controller
             return back();
         }
 
-        if(env('APP_LAB') == 5 && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
-            session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been dispatched.']);
+        if(in_array(env('APP_LAB'), [5, 3]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
             return back();
         }
 
@@ -843,9 +843,10 @@ class CovidSampleController extends Controller
         else if($lab_id == 18) $c = new KemriWRPImport;
         Excel::import($c, $path);
 
-        // dd(session('entered_rows'));
-
         if(session('toast_error')) return back();
+
+        $skipped_rows = session()->pull('skipped_rows');
+        if($skipped_rows) return MiscCovid::csv_download($skipped_rows, 'rows-skipped-due-to-incompleteness');
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 

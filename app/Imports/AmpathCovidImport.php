@@ -16,11 +16,9 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
-        $rows = session('entered_rows', []);
-        $rows[] = $row;
-        session(['entered_rows' => $rows]);
 
         if(!property_exists($row, 'mfl_code') && !property_exists($row, 'quarantine_site_id')){
             session(['toast_error' => 1, 'toast_message' => 'MFL Code OR Quarantine Site ID column is not present.']);
@@ -43,12 +41,22 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender) return;
+        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
 
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac && !isset($row->quarantine_site_id)) return;
+        if(!$fac && !isset($row->quarantine_site_id)){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);   
+            return;
+        }
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();

@@ -2199,7 +2199,7 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
     }
 
-	public static function eid_worksheets($year = null)
+	public static function eid_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2243,7 +2243,7 @@ class Random
 		return storage_path("exports/" . $file . ".csv");
 	}
 
-	public static function vl_worksheets($year = null)
+	public static function vl_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
@@ -2301,7 +2301,7 @@ class Random
         return storage_path("exports/" . $file . ".csv");
 	}
 
-    public static function covid_worksheets($year = null)
+    public static function covid_worksheets($year = null, $download=true)
     {
         if(!$year) $year = date('Y');
         $data = CovidSample::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2339,6 +2339,8 @@ class Random
         }
 
         $file = 'covid_worksheets_data';
+
+        if($download) return Common::csv_download($rows, $file);
 
         Common::csv_download($rows, $file, true, true);
 
