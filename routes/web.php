@@ -804,6 +804,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('/', 'CovidConsumptionController@index');
 		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
 		Route::get('reports', 'CovidConsumptionController@reports');
+		Route::post('allocation', 'CovidConsumptionController@submitAllocation');
 	});
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){
