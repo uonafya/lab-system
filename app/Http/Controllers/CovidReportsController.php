@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidSampleView;
 use App\CovidSample;
+use App\CovidWorksheet;
 use App\Lab;
 use App\MiscCovid;
 use Carbon\Carbon;
@@ -386,6 +387,17 @@ class CovidReportsController extends Controller
 		}
 		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', true);
 		// return Common::csv_download($data, 'nphl_download');
+	}
+
+
+	public function worksheet_report()
+	{
+		return \App\Random::covid_worksheets(date('Y'), true);
+	}
+
+	public function worksheets_no_reruns($date, $date_to=null)
+	{
+
 	}
 
 }

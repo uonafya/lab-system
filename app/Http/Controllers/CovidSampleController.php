@@ -843,9 +843,10 @@ class CovidSampleController extends Controller
         else if($lab_id == 18) $c = new KemriWRPImport;
         Excel::import($c, $path);
 
-        // dd(session('entered_rows'));
-
         if(session('toast_error')) return back();
+
+        $skipped_rows = session()->pull('skipped_rows');
+        if($skipped_rows) return MiscCovid::csv_download($skipped_rows, 'rows-skipped-due-to-incompleteness');
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
