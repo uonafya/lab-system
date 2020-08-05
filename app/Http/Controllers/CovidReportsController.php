@@ -31,13 +31,11 @@ class CovidReportsController extends Controller
 		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
 		$date_to = $request->input('date_filter_to');
 
-		if($request->input('types') == 'nphl_results_submission'){
-			return $this->nphl_upload($date);
-		}
+		if($request->input('types') == 'nphl_results_submission') return $this->nphl_upload($date);
+		if($request->input('types') == 'nphl_api_submission') return $this->nphl_api_download();
+		if($request->input('types') == 'worksheet_machines') return $this->worksheet_report();
+		if($request->input('types') == 'worksheet_report') return $this->worksheets_no_reruns($date, $date_to);
 
-		if($request->input('types') == 'nphl_api_submission'){
-			return $this->nphl_api_download();
-		}
 		
 		// Get the data from the database
 		$today_data = $this->get_model()->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
@@ -385,7 +383,7 @@ class CovidReportsController extends Controller
 
 			$data[] = $post_data;
 		}
-		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', true);
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API');
 		// return Common::csv_download($data, 'nphl_download');
 	}
 
@@ -397,7 +395,18 @@ class CovidReportsController extends Controller
 
 	public function worksheets_no_reruns($date, $date_to=null)
 	{
+		$worksheets = CovidWorksheet::selectRaw('covid_worksheets.*, machines.name, count(covid_samples.id) as sample_number')
+			->where('parentid', 0)					
+			->when($date, function($query) use($date, $date_to){
+				if($date_to) return $query->whereBetween('datetested', [$date, $date_to]);
+				return $query->whereDate('datetested', $date);
+			})
+			->groupBy('covid_worksheets.id')
+			->having('sample_number', '>', 0)
+			->get();
 
+		$data = $worksheets->toArray();
+		return MiscCovid::csv_download($data, 'worksheets-data');
 	}
 
 }
