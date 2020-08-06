@@ -10,7 +10,7 @@
                 @endif
 			</label>
 			<div class="col-sm-8">
-				<input class="form-control" type="{{ $input_type ?? 'text' }}" 
+				<input class="form-control {{ $is_required ? 'requirable' : '' }}" type="{{ $input_type ?? 'text' }}" 
 					name="{{ $prop }}" 
 					id="{{ $prop }}" 
 					value="{{ $default_val ?? $model->$prop ?? '' }}" 
