@@ -1052,7 +1052,8 @@ class CovidSampleController extends Controller
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
                     $p = $patient;
-                    $message .= "Any patient details entered will overwrite existing patient details <br />";
+                    $message .= "Any patient details entered will overwrite existing patient details i.e. patient name, facility and county of residence but not sample details e.g. date collected and result <br />";
+                    $message .= "If it is a different sample of the same patient then proceed. <br />";
                 }
 
                 $message .= "                
