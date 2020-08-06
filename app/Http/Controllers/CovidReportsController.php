@@ -395,11 +395,13 @@ class CovidReportsController extends Controller
 
 	public function worksheets_no_reruns($date, $date_to=null)
 	{
-		$worksheets = CovidWorksheet::selectRaw('covid_worksheets.*, machines.name, count(covid_samples.id) as sample_number')
-			->where('parentid', 0)					
+		$worksheets = CovidWorksheet::selectRaw('covid_worksheets.*, machines.machine, count(covid_samples.id) as sample_number')
+			->join('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+			->join('covid_samples', 'covid_samples.worksheet_id', '=', 'covid_worksheets.id')
+			// ->where('parentid', 0)					
 			->when($date, function($query) use($date, $date_to){
-				if($date_to) return $query->whereBetween('datetested', [$date, $date_to]);
-				return $query->whereDate('datetested', $date);
+				if($date_to) return $query->whereBetween('daterun', [$date, $date_to]);
+				return $query->whereDate('daterun', $date);
 			})
 			->groupBy('covid_worksheets.id')
 			->having('sample_number', '>', 0)
