@@ -85,7 +85,7 @@ class MiscCovid extends Common
             return false;
         }
 
-        $sample = $original->replicate(['national_sample_id', 'worksheet_id', 'interpretation', 'result', 'repeatt', 'datetested', 'dateapproved', 'dateapproved2', 'approvedby', 'approvedby2']); 
+        $sample = $original->replicate(['national_sample_id', 'worksheet_id', 'interpretation', 'result', 'repeatt', 'datetested', 'dateapproved', 'dateapproved2', 'target1', 'target2', 'error', 'approvedby', 'approvedby2']); 
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
