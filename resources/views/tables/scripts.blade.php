@@ -32,6 +32,18 @@
             ]
         });
 
+        $('.data-table-long').dataTable({
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
+            responsive: true,
+            "lengthMenu": [ [50, -1], [50, "All"] ],
+            buttons: [
+                {extend: 'copy',className: 'btn-sm'},
+                {extend: 'csv',title: 'Download', className: 'btn-sm'},
+                {extend: 'pdf', title: 'Download', className: 'btn-sm'},
+                {extend: 'print',className: 'btn-sm'}
+            ]
+        });
+
         var msg;
         var dynamicErrorMsg = function () { return msg; }
         
