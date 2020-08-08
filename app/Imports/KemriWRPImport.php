@@ -82,7 +82,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         $sample->fill([
             'patient_id' => $p->id,
-            'lab_id' => auth()->lab()->lab_id,
+            'lab_id' => auth()->user()->lab_id,
             'kemri_id' => $row->kemri_id ?? null,
             'site_entry' => 0,
             'age' => $row->age,
