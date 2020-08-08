@@ -217,6 +217,11 @@ Artisan::command('synch:covid', function(){
     $this->info($str);
 })->describe('Synch covid samples to the national database.');
 
+Artisan::command('synch:covidconsumptions', function(){
+    $str =  \App\Synch::synchCovidConsumption();
+    $this->info($str);
+})->describe('Sync covid consumptions to the national database.');
+
 
 Artisan::command('synch:patients', function(){
     // if($type == 'eid') $str = \App\Synch::synch_eid_patients();

@@ -78,6 +78,7 @@
                                 @php
                                     if($machinekey != '')
                                         $kitsused = $kit->computekitsUsed($machine->getCovidTestsDone($time->week_start, $time->week_end));
+                                    $received = $allocations->where('material_number', $kit->material_no)->first()->received_kits ?? 0;
                                 @endphp
                                 <td>                            
                                     <input class="form-control kits_used" type="number" name="kits_used[{{$kit->material_no}}]" id="kits_used[{{$kit->material_no}}]" value="@if($machinekey == 2){{ceil($kitsused)}}@else{{$kitsused}}@endif" min="0" required="true">
@@ -86,7 +87,7 @@
                                     <input class="form-control begining_balance" type="text" name="begining_balance[{{$kit->material_no}}]" id="begining_balance[{{$kit->material_no}}]" value="@if($machinekey == 2){{ceil($kit->beginingbalance($time->week_start))}}@else{{$kit->beginingbalance($time->week_start)}}@endif" required="true">
                                 </td>
                                 <td>
-                                    <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="0" min="0" required>
+                                    <input class="form-control received" type="number" name="received[{{$kit->material_no}}]" id="received[{{$kit->material_no}}]" value="{{ $received }}" min="0" required>
                                 </td>
                                 <td>
                                     <input class="form-control positive" type="number" name="positive[{{$kit->material_no}}]" id="positive[{{$kit->material_no}}]" value="0" min="0" required>
@@ -98,8 +99,8 @@
                                     <input class="form-control wastage" type="number" name="wastage[{{$kit->material_no}}]" id="wastage[{{$kit->material_no}}]" value="0" min="0" required>
                                 </td>
                                 <td>
-                                    <input class="form-control ending" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2){{(int)(@(ceil($kit->beginingbalance($time->week_start))-ceil($kitsused)))}}@else{{(int)(@($kit->beginingbalance($time->week_start)-$kitsused))}}@endif" min="0" disabled="true">
-                                    <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2){{(int)(@(ceil($kit->beginingbalance($time->week_start))-ceil($kitsused)))}}@else{{(int)(@($kit->beginingbalance($time->week_start)-$kitsused))}}@endif">
+                                    <input class="form-control ending" type="number" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2){{(int)(@(ceil($kit->beginingbalance($time->week_start)+(int)$received)-ceil($kitsused)))}}@else{{(int)(@($kit->beginingbalance($time->week_start)+(int)$received-$kitsused))}}@endif" min="0" disabled="true">
+                                    <input type="hidden" name="ending[{{$kit->material_no}}]" id="ending[{{$kit->material_no}}]" value="@if($machinekey == 2){{(int)(@(ceil($kit->beginingbalance($time->week_start)+(int)$received)-ceil($kitsused)))}}@else{{(int)(@($kit->beginingbalance($time->week_start)+(int)$received-$kitsused))}}@endif">
                                 </td>
                                 <td>
                                     <input class="form-control" type="number" name="requested[{{$kit->material_no}}]" id="requested[{{$kit->material_no}}]" value="0" min="0" required>

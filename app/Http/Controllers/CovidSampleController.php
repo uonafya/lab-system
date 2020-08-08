@@ -152,7 +152,10 @@ class CovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::where('repeatt', 0)
+        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
+            ->where('repeatt', 0)
+            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
+            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
@@ -224,6 +227,7 @@ class CovidSampleController extends Controller
                 'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
                 'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
                 'Worksheet Number' => $sample->worksheet_id,
+                'Machine' => $sample->machine,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->my_date_format('datetested'),
@@ -579,6 +583,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+        if(in_array(env('APP_LAB'), [5, 3]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
+            return back();
+        }
+
         $data['sample'] = $covidSample;
         return view('forms.covidsamples', $data)->with('pageTitle', 'Edit Sample');      
     }
@@ -835,10 +844,13 @@ class CovidSampleController extends Controller
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;
-        else if($lab_id == 18) $c = new KemriWRPImport;
+        else if($lab_id == 18 || $lab_id == 16) $c = new KemriWRPImport;
         Excel::import($c, $path);
 
         if(session('toast_error')) return back();
+
+        $skipped_rows = session()->pull('skipped_rows');
+        if($skipped_rows) return MiscCovid::csv_download($skipped_rows, 'rows-skipped-due-to-incompleteness');
 
         session(['toast_message' => "The samples have been created."]);
         return redirect('/covid_sample'); 
@@ -1044,7 +1056,8 @@ class CovidSampleController extends Controller
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
                     $p = $patient;
-                    $message .= "Any patient details entered will overwrite existing patient details <br />";
+                    $message .= "Any patient details entered will overwrite existing patient details i.e. patient name, facility and county of residence but not sample details e.g. date collected and result <br />";
+                    $message .= "If it is a different sample of the same patient then proceed. <br />";
                 }
 
                 $message .= "                

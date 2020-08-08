@@ -39,7 +39,7 @@
                                         <th>Has Mutations</th>
                                         <th>Requires Manual Intervention</th>    
                                         <th>View Chromatogram</th>         
-                                        <th>Task</th>                
+                                        <th>Results</th>                
                                         <th>Print</th>               
                                     </tr>
                                 </thead>
@@ -107,10 +107,14 @@
                                                 <td>  </td>
                                             @endif                                        
                                             <td> {!! $sample->view_chromatogram !!} </td>
-                                            <td> <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Details</a> </td>
                                             <td> 
-                                                <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> |
-                                                <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> |
+                                                @if(in_array($sample->status_id, [1,7]))
+                                                    <a href="{{ url('dr_sample/' . $sample->id) }}" target="_blank">View Results</a>
+                                                @endif 
+                                            </td>
+                                            <td> 
+                                                <!-- <a href="{{ url('dr_sample/results/' . $sample->id) }}" target="_blank">Results</a> | -->
+                                                <!-- <a href="{{ url('dr_sample/results/' . $sample->id ) }}" target="_blank">View Results</a> | -->
                                                 <a href="{{ url('dr_sample/download_results/' . $sample->id) }}">Download</a> 
                                             </td>
                                         </tr>
