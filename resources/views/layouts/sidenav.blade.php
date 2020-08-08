@@ -222,7 +222,7 @@
                     <hr />                
                 @endif--}}
 
-                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18]))
+                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18,16]))
                     <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
                     <hr />               
                 @endif

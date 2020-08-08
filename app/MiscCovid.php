@@ -96,7 +96,6 @@ class MiscCovid extends Common
         return $sample;
     }
 
-
     public static function get_worksheet_samples($machine_type, $limit, $entered_by=null)
     {
         $machines = Lookup::get_machines();

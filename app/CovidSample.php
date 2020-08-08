@@ -79,11 +79,12 @@ class CovidSample extends BaseModel
 
     public function setResultAttribute($value)
     {
-        if(is_numeric($value)) $this->attributes['result'] = $value;
+        if(is_numeric($value) || !$value) $this->attributes['result'] = $value;
         else{
             $value = strtolower($value);
             if(\Str::contains($value, ['neg'])) $this->attributes['result'] = 1;
             else if(\Str::contains($value, ['pos'])) $this->attributes['result'] = 2;
+            else if(\Str::contains($value, ['coll'])) $this->attributes['result'] = 5;
         }
     }
 
