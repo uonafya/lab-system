@@ -767,6 +767,10 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
             return back();
         }
+        if($covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot print a failed run.']);
+            return back();            
+        }
 
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
