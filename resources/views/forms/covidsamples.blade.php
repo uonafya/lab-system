@@ -90,7 +90,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
-                                <select class="form-control" @if(env('APP_LAB') == 4 || auth()->user()->facility_user) required @endif name="facility_id" id="facility_id">
+                                <select class="form-control" @if((env('APP_LAB') == 4 && !$m) || auth()->user()->facility_user) required @endif name="facility_id" id="facility_id">
                                     @if(isset($sample) && $sample->patient->facility)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endif

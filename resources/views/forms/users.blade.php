@@ -227,7 +227,7 @@
                     $("#quarantines").show();
                     $('#quarantine_select').attr("required", "required");
                     $('#quarantine_select').removeAttr("disabled");  
-                }else if(val == 12){
+                }else if(val == 12 || val == 15){
                     $("#lab_row").show();
                     $('#lab_select').attr("required", "required");
                     $('#lab_select').removeAttr("disabled");  
