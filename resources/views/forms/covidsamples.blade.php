@@ -613,6 +613,8 @@
 
                 success: function(data){
 
+                    console.log(data);
+
                     if(data['message']){
                         set_message(data['message']);
                         $("#new_patient_info").html(data['message']);
