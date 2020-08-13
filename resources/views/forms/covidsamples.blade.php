@@ -613,7 +613,7 @@
 
                 success: function(data){
 
-                    console.log(data);
+                    // console.log(data);
 
                     if(data['message']){
                         set_message(data['message']);

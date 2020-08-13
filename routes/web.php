@@ -221,7 +221,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::resource('covid_worksheet', 'CovidWorksheetController');
 		});
 
-		Route::group(['middleware' => ['only_utype:2']], function () {
+		Route::group(['middleware' => ['only_utype:2,12']], function () {
 			Route::resource('quarantine_site', 'QuarantineSiteController');
 		});
 
