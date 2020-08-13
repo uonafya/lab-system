@@ -6,6 +6,7 @@ use App\CovidConsumption;
 use App\CovidConsumptionDetail;
 use App\CovidKit;
 use App\CovidSample;
+use App\HCMPCovidAllocations;
 use App\Machine;
 use App\Synch;
 use DB;
@@ -43,11 +44,18 @@ class CovidConsumptionController extends Controller
                             'time' => $time
                         ]);
         } else {
+            $allocations = $this->checkCovidAllocations($time->week_end);
+            if(!$allocations->isEmpty()) {
+                return view('tasks.covid.allocation', ['allocations' => $allocations]);
+            }
+            
+            $allocations = $this->getCovidAllocations($time->week_end);
             $kits = $kits->groupby('machine');
             return view('tasks.covid.consumption',
                         [
                             'covidkits' => $kits,
-                            'time' => $time
+                            'time' => $time,
+                            'allocations' => $allocations
                         ]);
         }
     }
@@ -132,9 +140,24 @@ class CovidConsumptionController extends Controller
             Synch::synchCovidConsumption();
         }
         if (auth()->user()->user_type_id == 12)
-            return redirect('covidkits/pending');    
+            return redirect('covidkits/pending');   
         return redirect('pending');
     	
+    }
+
+    public function submitAllocation(Request $request)
+    {
+        if (!$request->has(['received', 'response'])) {
+            session(['toast_error' => true, 'toast_message' => 'Bad request. The posted details are incomplete']);
+        }
+
+        foreach ($request->input('received') as $key => $value) {
+            $allocation_line = HCMPCovidAllocations::find($key);
+            $allocation_line->received_kits = $value;
+            $allocation_line->received = $request->input('response');
+            $allocation_line->save();
+        }
+        return redirect('covidkits');
     }
 
     public function reports(Request $request, CovidConsumption $consumption)
@@ -175,6 +198,28 @@ class CovidConsumptionController extends Controller
     		}
     	}
     	return $data;
+    }
+
+    private function checkCovidAllocations($end_of_week)
+    {
+        $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
+        $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
+                            ->whereDate('allocation_date', $allocation_date)
+                            ->get();
+        
+        $newallocation = [];
+        foreach ($allocations as $key => $allocation) 
+            $newallocation[$allocation->kit->machine ?? ''][] = $allocation;
+        
+        return collect($newallocation);
+    }
+
+    private function getCovidAllocations($end_of_week)
+    {
+        $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
+        return HCMPCovidAllocations::where('received', 'YES')->whereNull('consumption_detail_id')
+                            ->whereDate('allocation_date', $allocation_date)
+                            ->get();
     }
 }
 

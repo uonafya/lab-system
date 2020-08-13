@@ -56,6 +56,8 @@ class FunctionController extends BaseController
         else if($test == 3){
             $class = Cd4SampleView::class;
             if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4 tests.");
+        }else{
+            return $this->response->errorBadRequest("The selected test is not valid.");
         }
         // else if($test == 4) $class = CragSampleView::class;
 

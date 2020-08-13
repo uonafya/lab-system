@@ -152,7 +152,10 @@ class CovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::where('repeatt', 0)
+        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
+            ->where('repeatt', 0)
+            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
+            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
@@ -224,6 +227,7 @@ class CovidSampleController extends Controller
                 'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
                 'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
                 'Worksheet Number' => $sample->worksheet_id,
+                'Machine' => $sample->machine,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->my_date_format('datetested'),
@@ -493,7 +497,7 @@ class CovidSampleController extends Controller
         $patient->current_health_status = $request->input('health_status');
         $patient->save();
 
-        $sample = CovidSample::where(['patient_id' => $patient->id])->where($request->only('datecollected'))->first();
+        $sample = CovidSample::where(['patient_id' => $patient->id])->where($request->only(['datecollected']))->first();
         if($sample){
             session(['toast_error' => 1, 'toast_message' => 'The sample already exists.']);
             return back();
@@ -579,7 +583,7 @@ class CovidSampleController extends Controller
             return back();
         }
 
-        if(in_array(env('APP_LAB'), [5, 3]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+        if(in_array(env('APP_LAB'), [5, 3, 4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
             return back();
         }
@@ -675,154 +679,6 @@ class CovidSampleController extends Controller
         return redirect('covid_sample');        
     }
 
-
-    public function site_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample'])->with('pageTitle', 'Upload Facility Samples');
-    }
-
-    public function upload_site_samples(Request $request)
-    {
-        $file = $request->upload->path();
-        // $path = $request->upload->store('public/site_samples/covid');
-
-        $problem_rows = 0;
-        $created_rows = 0;
-
-        $handle = fopen($file, "r");
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE){
-            if(\Str::startsWith($data[0], ['S', 's'])) continue;
-            
-            $quarantine_site = null;
-
-            $facility = Facility::locate($data[2])->first();
-            if(!$facility && !is_numeric($data[2])){
-                $quarantine_site = \App\QuarantineSite::where(['name' => $data[2]])->first();
-            }
-
-            $p = CovidPatient::create([
-                'identifier' => $data[3],
-                'national_id' => $data[19],
-                'phone_no' => $data[15],
-                'county' => $data[4],
-                'subcounty' => $data[16],
-                'ward' => $data[17],
-                'residence' => $data[18],
-                'facility_id' => $facility->id ?? 3475,
-                'quarantine_site_id' => $quarantine_site->id ?? null,
-                'patient_name' => $data[5],
-                'sex' => $data[7],
-                'justification' => $data[8],
-            ]);
-
-            $s = CovidSample::create([
-                'patient_id' => $p->id,
-                'site_entry' => 1,
-                'age' => $data[6],
-                'test_type' => $data[9],
-                'sample_type' => $data[10],
-                'datecollected' => $data[11],
-                'datereceived' => $data[12] ?? date('Y-m-d'),
-                'receivedstatus' => $data[13] ?? 1,
-                'received_by' => auth()->user()->id,
-            ]);
-            $created_rows++;
-        }
-        session(['toast_message' => "{$created_rows} samples have been created."]);
-        return redirect('/home');        
-    }
-
-    public function wrp_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/wrp'])->with('pageTitle', 'Upload WRP Samples');
-    }
-
-    public function upload_wrp_samples(Request $request)
-    {
-        if(auth()->user()->user_type_id && !auth()->user()->other_lab) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
-        $c = new KemriWRPImport;
-        Excel::import($c, $path);
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-    }
-
-    public function ampath_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/ampath'])->with('pageTitle', 'Upload Ampath Samples');
-    }
-
-    public function upload_ampath_samples(Request $request)
-    {
-        if(env('APP_LAB') != 5) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
-        $c = new AmpathCovidImport;
-        Excel::import($c, $path);
-
-        if(session('toast_error')) return back();
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample');
-    }
-
-    public function reed_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/reed'])->with('pageTitle', 'Upload Walter Reed Samples');
-    }
-
-    public function upload_walter_reed_samples(Request $request)
-    {
-        if(env('APP_LAB') != 4) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
-        $c = new WRPCovidImport;
-        Excel::import($c, $path);
-
-        if(session('toast_error')) return back();
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-    }
-
-
-    public function knh_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/knh'])->with('pageTitle', 'Upload KNH Site Samples');
-    }
-
-    public function upload_knh_samples(Request $request)
-    {
-        if(env('APP_LAB') != 9) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
-        $c = new KNHCovidImport;
-        Excel::import($c, $path);
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-    }
-
-
-    public function nairobi_sample_page()
-    {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/nairobi'])->with('pageTitle', 'Upload Nairobi Site Samples');
-    }
-
-    public function upload_nairobi_samples(Request $request)
-    {
-        if(env('APP_LAB') != 1) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
-        $c = new NairobiCovidImport;
-        Excel::import($c, $path);
-
-        session(['toast_message' => "The samples have been created."]);
-        return redirect('/covid_sample'); 
-    }
-
     public function lab_sample_page()
     {
         return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
@@ -840,7 +696,7 @@ class CovidSampleController extends Controller
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;
-        else if($lab_id == 18) $c = new KemriWRPImport;
+        else if($lab_id == 18 || $lab_id == 16) $c = new KemriWRPImport;
         Excel::import($c, $path);
 
         if(session('toast_error')) return back();
@@ -910,6 +766,10 @@ class CovidSampleController extends Controller
         if(!$covidSample->datedispatched){
             session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
             return back();
+        }
+        if($covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot print a failed run.']);
+            return back();            
         }
 
         $data = Lookup::covid_form();
@@ -1052,7 +912,8 @@ class CovidSampleController extends Controller
                     $message .= "If this is not the same person as the current sample then proceed. <br />";
                 }else{
                     $p = $patient;
-                    $message .= "Any patient details entered will overwrite existing patient details <br />";
+                    $message .= "Any patient details entered will overwrite existing patient details i.e. patient name, facility and county of residence but not sample details e.g. date collected and result <br />";
+                    $message .= "If it is a different sample of the same patient then proceed. <br />";
                 }
 
                 $message .= "                

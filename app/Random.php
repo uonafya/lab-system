@@ -2329,7 +2329,7 @@ class Random
 
                 foreach ($results as $rkey => $rvalue) {
                     $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
-                    if($rkey == 3) $row[$rvalue] += $data->whereNull('result')->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    if($rkey == 3) $row[$rvalue] += $data->where('result', null)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
                     $total += $row[$rvalue];
                 }
 
