@@ -136,10 +136,10 @@ class CovidSample extends BaseModel
 
     public function set_tat()
     {
-        $this->tat1 = Common::get_days($this->datecollected, $this->datereceived);
-        $this->tat2 = Common::get_days($this->datereceived, $this->datetested);
-        $this->tat3 = Common::get_days($this->datetested, $this->datedispatched);
-        $this->tat4 = Common::get_days($this->datecollected, $this->datedispatched);        
+        $this->tat1 = Common::get_days($this->datecollected, $this->datereceived, false);
+        $this->tat2 = Common::get_days($this->datereceived, $this->datetested, false);
+        $this->tat3 = Common::get_days($this->datetested, $this->datedispatched, false);
+        $this->tat4 = Common::get_days($this->datecollected, $this->datedispatched, false);        
     }
 
     public function getIsReadyAttribute()
