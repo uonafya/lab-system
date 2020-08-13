@@ -214,10 +214,6 @@
                         <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
                     </li>
                     <hr />
-                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
-                    <hr />
-                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
-                    <hr />
                 @endif
             @elseif (session('testingSystem') == 'DR')
                 <li><a href="{{ url('dr_sample/create') }}">Add Samples</a></li>
