@@ -1209,7 +1209,7 @@ class Synch
 			}
 			$sql = substr($sql, 0, -4);
 			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
-				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-21 days')))
+				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-4 days')))
 				->whereNull('original_sample_id')
 				->whereNull('receivedstatus')
 				->when($patient_name, function($query) use ($sql){
