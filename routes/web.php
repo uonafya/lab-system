@@ -151,6 +151,19 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
+		Route::prefix('nat_sample')->name('covid_sample.')->group(function () {
+			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'NatCovidSampleController@index');
+			Route::post('index', 'NatCovidSampleController@sample_search');
+
+			Route::post('print_multiple', 'NatCovidSampleController@print_multiple');
+			Route::get('result/{covidSample}', 'NatCovidSampleController@result');
+			
+			Route::post('kem_id/', 'NatCovidSampleController@kemri_id')->name('kemri_id');
+			Route::post('search/', 'NatCovidSampleController@search')->name('search');
+			Route::post('new_patient/', 'NatCovidSampleController@new_patient')->name('new_patient');
+			Route::post('cif_patient/', 'NatCovidSampleController@cif_patient')->name('cif_patient');
+		});
+
 		Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'CovidSampleController@index');
 			Route::post('index', 'CovidSampleController@sample_search');
