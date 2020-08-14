@@ -136,7 +136,7 @@ class NatCovidSampleController extends Controller
         if(!$quarantine_site_id) $quarantine_site_id = 0;
         if(!$facility_id) $facility_id = 0;
 
-        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}/{$lab_id}");
+        return redirect("nat_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}/{$lab_id}");
     }
 
     public function download_excel($request)
@@ -150,10 +150,7 @@ class NatCovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
-            ->where('repeatt', 0)
-            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
-            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+        $samples = CovidSampleView::where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
@@ -225,7 +222,6 @@ class NatCovidSampleController extends Controller
                 'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
                 'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
                 'Worksheet Number' => $sample->worksheet_id,
-                'Machine' => $sample->machine,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->my_date_format('datetested'),
