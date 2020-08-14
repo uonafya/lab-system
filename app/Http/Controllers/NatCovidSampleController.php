@@ -142,7 +142,7 @@ class NatCovidSampleController extends Controller
     public function download_excel($request)
     {
         $user = auth()->user();
-        dd($request->all());
+        // dd($request->all());
         extract($request->all());
 
         $type = $request->input('type', 1);
@@ -191,9 +191,6 @@ class NatCovidSampleController extends Controller
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
-            })
-            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
             })
             ->when($lab_id, function($query) use ($lab_id){
                 return $query->where('covid_sample_view.lab_id', $lab_id);
@@ -382,7 +379,7 @@ class NatCovidSampleController extends Controller
         $date_column = "covid_samples.datedispatched";
 
         $samples = CovidSample::select('covid_samples.*')
-            ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+            ->join('covid_19.covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
@@ -420,15 +417,6 @@ class NatCovidSampleController extends Controller
                     ->whereDate($date_column, '<=', $date_end);
                 }
                 return $query->whereDate($date_column, $date_start);
-            })
-            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_samples.lab_id', $user->lab_id);
-            })
-            ->when($user->quarantine_site, function($query) use ($user){
-                return $query->where('quarantine_site_id', $user->facility_id);
-            })
-            ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->when($lab_id, function($query) use ($lab_id){
                 return $query->where('covid_samples.lab_id', $lab_id);
