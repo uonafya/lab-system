@@ -98,8 +98,8 @@ class NatCovidSampleController extends Controller
 
         $facility = Facility::find($facility_id);
         
-        $myurl = url('/covid_sample/index/' . $type);
-        $myurl2 = url('/covid_sample/index/');        
+        $myurl = url('/nat_sample/index/' . $type);
+        $myurl2 = url('/nat_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
         $justifications = DB::table('covid_justifications')->get();
         $counties = DB::table('countys')->get();
