@@ -18,6 +18,13 @@ class BaseModel extends Model
         }
         return '';
     }
+
+    public function my_date_format($value, $format='d-M-Y')
+    {
+        if($this->$value) return date($format, strtotime($this->$value));
+        return '';
+    }
+    
     public function get_link($attr)
     {
         $user = auth()->user();
