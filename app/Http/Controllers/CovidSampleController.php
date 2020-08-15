@@ -808,6 +808,37 @@ class CovidSampleController extends Controller
         return back();
     }
 
+    public function release_redraw(CovidSample $covidSample)
+    {
+        if($covidSample->run == 1){
+            session(['toast_message' => 'The sample cannot be released as a redraw.']);
+            session(['toast_error' => 1]);
+            return back();
+        } 
+        else if($covidSample->run == 2){
+            // $prev_sample = Sample::find($sample->parentid);
+            $prev_sample = $covidSample->parent;
+        }
+        else{
+            $run = $covidSample->run - 1;
+            $prev_sample = CovidSample::where(['parentid' => $covidSample->parentid, 'run' => $run])->first();
+        }
+        
+        $covidSample->delete();
+
+        $prev_sample->labcomment = "Failed Test";
+        $prev_sample->repeatt = 0;
+        $prev_sample->result = 5;
+        $prev_sample->approvedby = auth()->user()->id;
+        $prev_sample->approvedby2 = auth()->user()->id;
+        $prev_sample->dateapproved = date('Y-m-d');
+        $prev_sample->dateapproved2 = date('Y-m-d');
+
+        $prev_sample->save();
+        session(['toast_message' => 'The sample has been released as a redraw.']);
+        return back();
+    }
+
 
     public function cities(Request $request)
     {
