@@ -75,7 +75,7 @@
 
     @if(!in_array(auth()->user()->user_type_id, [5, 11]))
 
-        <form action="{{ url('covid_sample/index') }}" method="POST" class="my_form">
+        <form action="{{ url($myurl2) }}" method="POST" class="my_form">
             @csrf
 
             @isset($to_print)

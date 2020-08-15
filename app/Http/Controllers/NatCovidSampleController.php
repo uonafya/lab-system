@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CovidPatient;
-use App\CovidSample;
-use App\CovidSampleView;
-use App\CovidTravel;
+use App\CovidModels\CovidPatient;
+use App\CovidModels\CovidSample;
+use App\CovidModels\CovidSampleView;
+use App\CovidModels\CovidTravel;
 use App\City;
 use App\Facility;
 use App\Lookup;
@@ -27,7 +27,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 
-class CovidSampleController extends Controller
+class NatCovidSampleController extends Controller
 {
     public function __construct()
     {
@@ -50,9 +50,7 @@ class CovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::select(['covid_sample_view.*', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
-            ->leftJoin('users as u', 'u.id', '=', 'covid_sample_view.user_id')
-            ->leftJoin('users as r', 'r.id', '=', 'covid_sample_view.received_by')
+        $samples = CovidSampleView::select(['covid_sample_view.*'])
             ->when($facility_id, function($query) use ($facility_id){
                 if($facility_id == 'null') return $query->whereNull('covid_sample_view.facility_id');
                 return $query->where('covid_sample_view.facility_id', $facility_id);
@@ -100,8 +98,8 @@ class CovidSampleController extends Controller
 
         $facility = Facility::find($facility_id);
         
-        $myurl = url('/covid_sample/index/' . $type);
-        $myurl2 = url('/covid_sample/index/');        
+        $myurl = url('/nat_sample/index/' . $type);
+        $myurl2 = url('/nat_sample/index/');        
         $quarantine_sites = DB::table('quarantine_sites')->get();
         $justifications = DB::table('covid_justifications')->get();
         $counties = DB::table('countys')->get();
@@ -138,7 +136,7 @@ class CovidSampleController extends Controller
         if(!$quarantine_site_id) $quarantine_site_id = 0;
         if(!$facility_id) $facility_id = 0;
 
-        return redirect("covid_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}/{$lab_id}");
+        return redirect("nat_sample/index/{$type}/{$date_start}/{$date_end}/{$facility_id}/{$quarantine_site_id}/{$lab_id}");
     }
 
     public function download_excel($request)
@@ -152,10 +150,7 @@ class CovidSampleController extends Controller
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
 
-        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
-            ->where('repeatt', 0)
-            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
-            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+        $samples = CovidSampleView::where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
             })
@@ -197,9 +192,6 @@ class CovidSampleController extends Controller
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
             })
-            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_sample_view.lab_id', $user->lab_id);
-            })
             ->when($lab_id, function($query) use ($lab_id){
                 return $query->where('covid_sample_view.lab_id', $lab_id);
             })
@@ -227,7 +219,6 @@ class CovidSampleController extends Controller
                 'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
                 'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
                 'Worksheet Number' => $sample->worksheet_id,
-                'Machine' => $sample->machine,
                 'Date Collected' => $sample->my_date_format('datecollected'),
                 'Date Received' => $sample->my_date_format('datereceived'),
                 'Date Tested' => $sample->my_date_format('datetested'),
@@ -388,7 +379,7 @@ class CovidSampleController extends Controller
         $date_column = "covid_samples.datedispatched";
 
         $samples = CovidSample::select('covid_samples.*')
-            ->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+            ->join('covid_19.covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
             ->where('repeatt', 0)
             ->when($justification_id, function($query) use ($justification_id){
                 return $query->where('justification', $justification_id);
@@ -426,15 +417,6 @@ class CovidSampleController extends Controller
                     ->whereDate($date_column, '<=', $date_end);
                 }
                 return $query->whereDate($date_column, $date_start);
-            })
-            ->when(($user->lab_id != env('APP_LAB')), function($query) use ($user){
-                return $query->where('covid_samples.lab_id', $user->lab_id);
-            })
-            ->when($user->quarantine_site, function($query) use ($user){
-                return $query->where('quarantine_site_id', $user->facility_id);
-            })
-            ->when($user->facility_user, function($query) use ($user){
-                return $query->whereRaw("(user_id='{$user->id}' OR covid_samples.facility_id='{$user->facility_id}')");
             })
             ->when($lab_id, function($query) use ($lab_id){
                 return $query->where('covid_samples.lab_id', $lab_id);
@@ -483,6 +465,7 @@ class CovidSampleController extends Controller
      */
     public function store(Request $request)
     {
+        abort(400);
         $data = Lookup::covid_arrays();
 
         $patient = null;
@@ -805,37 +788,6 @@ class CovidSampleController extends Controller
             $sample->save();
         }
         session(['toast_message' => 'The samples have been marked as received.']);
-        return back();
-    }
-
-    public function release_redraw(CovidSample $covidSample)
-    {
-        if($covidSample->run == 1){
-            session(['toast_message' => 'The sample cannot be released as a redraw.']);
-            session(['toast_error' => 1]);
-            return back();
-        } 
-        else if($covidSample->run == 2){
-            // $prev_sample = Sample::find($sample->parentid);
-            $prev_sample = $covidSample->parent;
-        }
-        else{
-            $run = $covidSample->run - 1;
-            $prev_sample = CovidSample::where(['parentid' => $covidSample->parentid, 'run' => $run])->first();
-        }
-        
-        $covidSample->delete();
-
-        $prev_sample->labcomment = "Failed Test";
-        $prev_sample->repeatt = 0;
-        $prev_sample->result = 5;
-        $prev_sample->approvedby = auth()->user()->id;
-        $prev_sample->approvedby2 = auth()->user()->id;
-        $prev_sample->dateapproved = date('Y-m-d');
-        $prev_sample->dateapproved2 = date('Y-m-d');
-
-        $prev_sample->save();
-        session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
 
