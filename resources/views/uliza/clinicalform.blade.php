@@ -440,8 +440,9 @@
         			console.log(this.myForm)
         		},
         		addVisit(){
-        			this.myForm.clinical_visits.push(this.clinicalVisit);
-        			console.log(this.clinicalVisit);
+        			var tempObj = this.clinicalVisit;
+        			this.myForm.clinical_visits.push(tempObj);
+        			console.log(tempObj);
         			var tempVm = this
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				tempVm.clinicalVisit[key] = null;
