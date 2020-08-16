@@ -43,7 +43,7 @@
 							</div>
 						</div>
 						<div class="col-md-10">
-	                        <select class="form-control" required name="facility_id" id="facility_id">
+	                        <select class="form-control" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
 	                        </select>						
 						</div>
 				    </div>
@@ -56,13 +56,13 @@
 									<small>(Do not write name)</small>
 								</span>
 						    </div>
-						    <input aria-describedby="cccno" class="form-control" maxlength="10" minlength="10" name="cccno" required type="text">
+						    <input aria-describedby="cccno" class="form-control" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
 						</div>
 						<div class="col-md-5 input-group required">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="reporting_date">Case Reporting Date:</span>
 							</div>
-							<input class="form-control date" name="reporting_date" required>
+							<input class="form-control date" v-model="myForm.reporting_date" name="reporting_date" required>
 						</div>
 				    </div>
 				  
@@ -77,13 +77,13 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="dob">Date of Birth:</span>
 									</div>
-									<input class="form-control date" name="dob" required>
+									<input class="form-control date" v-model="myForm.dob" name="dob" required>
 								</div>
 								<div class="col-md-6 input-group required">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="artstart_date">ART Start Date:</span>
 									</div>
-									<input class="form-control date" name="artstart_date" required>
+									<input class="form-control date" v-model="myForm.artstart_date" name="artstart_date" required>
 								</div>
 							</div>
 					  
@@ -92,7 +92,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" for="gender">Gender:</span>
 									</div>
-									<select class="custom-select" id="gender" name="gender" required="">
+									<select class="custom-select" v-model="myForm.gender" id="gender" name="gender" required="">
 										<option selected="">Choose...</option>
 										<option value="Male">Male</option>
 										<option value="Female">Female</option>
@@ -103,13 +103,13 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="curr_weight">Current Weight (Kg):</span>
 									</div>
-									<input aria-describedby="curr_weight" class="form-control" maxlength="3" name="curr_weight" required="" type="number">
+									<input aria-describedby="curr_weight" v-model="myForm.curr_weight" class="form-control" maxlength="3" name="curr_weight" required="" type="number">
 								</div>
 								<div class="col-md-4 input-group required">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="height">Height (cm):</span>
 									</div>
-									<input aria-describedby="height" class="form-control" maxlength="3" name="height" required="" type="number">
+									<input aria-describedby="height" class="form-control" v-model="myForm.height" maxlength="3" name="height" required="" type="number">
 								</div>
 							</div>
 						</div>
@@ -120,7 +120,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text text-left" id="clinician_name">Clinician’s Name:</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control" maxlength="75" name="clinician_name" required="" type="text">
+							<input aria-describedby="clinician_name" class="form-control" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="" type="text">
 						</div>
 					</div>
 				  
@@ -135,7 +135,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_email">Facility Email Address:</span>
 							</div>
-							<input aria-describedby="facility_email" class="form-control" maxlength="75" name="facility_email" required="" type="text">
+							<input aria-describedby="facility_email" class="form-control" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="" type="text">
 						</div>
 					</div>
 				  
@@ -144,7 +144,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_tel">Facility Tel No:</span>
 							</div>
-							<input aria-describedby="facility_tel" class="form-control" maxlength="45" name="facility_tel" required="" type="text">
+							<input aria-describedby="facility_tel" class="form-control" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="" type="text">
 						</div>
 					</div>
 				  
@@ -156,7 +156,7 @@
 					<div class="form-row mb-3">
 						@foreach($reasons as $reason)
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" name="primary_reason" required="" type="radio" id="primary_reason_A{{ $reason->id }}">
+								<input class="form-check-input ml-1" v-model="myForm.primary_reason" name="primary_reason" required="" type="radio" id="primary_reason_A{{ $reason->id }}">
 								<label class="form-check-label ml-5" for="primary_reason_A{{ $reason->id }}">{{ $reason->name }}</label>
 							</div>
 						@endforeach
@@ -167,7 +167,7 @@
 							Clinical Evaluation: history, physical, diagnostics, working diagnosis:(excluding the information in the table below)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="clinical_eval" required="" rows="3"></textarea>
+							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" required="" rows="3"></textarea>
 						</div>
 					</div>
 				  
@@ -224,7 +224,7 @@
 							Number of adherence counseling/assessment sessions done in the last 3-6 months:
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" name="no_adhearance_counseling" required="" type="number">
+							<input class="form-control" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="" type="number">
 						</div>
 					</div>
 				  
@@ -234,7 +234,7 @@
 							Number of home visits conducted in last 3-6 months, and findings:
 						</label>
 						<div class="col-md-8">
-						  <input class="form-control" name="no_homevisits" required="" type="number">
+						  <input class="form-control" v-model="myForm.no_homevisits" name="no_homevisits" required="" type="number">
 						</div>
 					</div>
 				  
@@ -243,7 +243,7 @@
 							Support structures (e.g. treatment buddy, support group attendance, caregivers) in place for this patient?
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="support_structures" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.support_structures" name="support_structures" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -252,14 +252,14 @@
 							Evidence of adherence concerns (e.g. missed appointments, pill counts?):
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="adherence_concerns" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.adherence_concerns" name="adherence_concerns" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Number of DOTS done in last 3-6 months:</label>
 						<div class="col-md-8">
-							<input class="form-control" name="no_dotsdone" required="" type="number">
+							<input class="form-control" v-model="myForm.no_dotsdone" name="no_dotsdone" required="" type="number">
 						</div>
 					</div>
 				  
@@ -268,7 +268,7 @@
 							Likely root cause/s of poor adherence, for this patient (e.g. stigma, disclosure, side effects, alcohol or other drugs, mental health issues, caregiver changes, religious beliefs, inadequate preparation, etc):
 						</label>
 						<div class="col-md-8">
-						  <textarea class="form-control" name="likely_rootcauses" required="" rows="4"></textarea>
+						  <textarea class="form-control" v-model="myForm.likely_rootcauses" name="likely_rootcauses" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -281,28 +281,28 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Inadequate dosing/dose adjustments (particularly for children)::</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="inadequate_dosing" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.inadequate_dosing" name="inadequate_dosing" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-drug interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="drug_interactions" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.drug_interactions" name="drug_interactions" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="food_interactions" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.no_adherance_counseling" name="food_interactions" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Impaired absorption (e.g. chronic severe diarrhea):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="impaired_absorption" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.impaired_absorption" name="impaired_absorption" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -315,7 +315,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Comment on treatment interruptions, if any:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="treatment_interruptions" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.treatment_interruptions" name="treatment_interruptions" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -324,7 +324,7 @@
 							Has Drug Resistance/Sensitivity Testing been done for this patient? If yes, state date done and attach the detailed results.
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="drt_testing" required="" rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.drt_testing" name="drt_testing" required="" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -335,7 +335,7 @@
 							(indicate how treatment failure was established and confirmed, proposed regimen and dosage, current source of drugs if patient already on 3rd line). If yes, state date done and attach the detailed results:
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" name="mdt_discussions" required="" rows="6"></textarea>
+							<textarea class="form-control" v-model="myForm.mdt_discussions" name="mdt_discussions" required="" rows="6"></textarea>
 						</div>
 					</div>
 				  
@@ -344,7 +344,7 @@
 							MDT members who participated in the case discussion (names and titles)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" maxlength="255" name="mdt_members" required="" rows="6"></textarea>
+							<textarea class="form-control" v-model="myForm.mdt_members" maxlength="255" name="mdt_members" required="" rows="6"></textarea>
 						</div>
 					</div>
 				  
