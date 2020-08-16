@@ -156,7 +156,7 @@
 					<div class="form-row mb-3">
 						@foreach($reasons as $reason)
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" v-model="myForm.primary_reason" name="primary_reason" required="" type="radio" id="primary_reason_A{{ $reason->id }}">
+								<input class="form-check-input ml-1" v-model="myForm.primary_reason" name="primary_reason" required="" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
 								<label class="form-check-label ml-5" for="primary_reason_A{{ $reason->id }}">{{ $reason->name }}</label>
 							</div>
 						@endforeach
@@ -446,10 +446,13 @@
 
         			var tempVm = this;
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
-        				// tempVm.clinicalVisit[key] = null;
         				tempObj[key] = tempVm.clinicalVisit[key];
         			});
         			this.myForm.clinical_visits.push(tempObj);
+
+        			Object.keys(this.clinicalVisit).forEach(function(key, index){
+        				tempVm.clinicalVisit[key] = null;
+        			});
         		},
         		saveDraft(){
 					const data = JSON.stringify(this.myForm)
