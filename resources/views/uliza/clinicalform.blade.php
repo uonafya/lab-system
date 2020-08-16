@@ -441,10 +441,10 @@
         		},
         		addVisit(){
         			// var tempObj = this.clinicalVisit;
-        			var tempObj;
+        			var tempObj = [];
         			// this.myForm.clinical_visits.push(this.clinicalVisit);
 
-        			var tempVm = this
+        			var tempVm = this;
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				// tempVm.clinicalVisit[key] = null;
         				tempObj[key] = tempVm.clinicalVisit[key];
