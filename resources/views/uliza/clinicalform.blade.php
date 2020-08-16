@@ -179,7 +179,7 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button class="btn btn-warning float-right" data-toggle="modal" data-target="#clinical_visit_modal">
+										<button class="btn btn-warning float-right" type="button" data-toggle="modal" data-target="#clinical_visit_modal">
 											Add Clinical Visit
 										</button>
 									</div>
