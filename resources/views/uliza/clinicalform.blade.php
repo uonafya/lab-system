@@ -26,15 +26,15 @@
 		</div>
 	</div>
 
-	<div class="col-md-12">
+	<div class="col-md-12" id="my-vue-instance">
 		<div class="card border-secondary mb-4">
 			<img class="rounded mx-auto d-block img-responsive mt-1" height="161" src="{{ asset('uliza_nascop/logo.jpg') }}" width="160">
 			<div class="card-body text-secondary">
 				<h5 class="card-title text-center">MINISTRY OF HEALTH</h5>
-				<h6 class="card-subtitle mb-2 text-muted text-center">NATIONAL AIDS AND STI CONTROL PROGRAMME</h6>
+				<h5 class="card-subtitle mb-2 text-muted text-center">NATIONAL AIDS AND STI CONTROL PROGRAMME</h5>
 				<p class="card-text text-center">CLINICAL SUMMARY FORM</p>
 			
-				<form autocomplete="off" novalidate="" class="ng-invalid ng-dirty ng-touched">
+				<form autocomplete="off" @submit.prevent="update" novalidate="" class="ng-invalid ng-dirty ng-touched">
 				  
 					<div class="form-row mb-3">
 						<div class="col-md-2 input-group required">
@@ -44,9 +44,6 @@
 						</div>
 						<div class="col-md-10">
 	                        <select class="form-control" required name="facility_id" id="facility_id">
-	                            @isset($sample)
-	                                <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->facility->facilitycode }} {{ $sample->facility->name }}</option>
-	                            @endisset
 	                        </select>						
 						</div>
 				    </div>
@@ -138,7 +135,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_email">Facility Email Address:</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control" maxlength="75" name="clinician_name" required="" type="text">
+							<input aria-describedby="facility_email" class="form-control" maxlength="75" name="facility_email" required="" type="text">
 						</div>
 					</div>
 				  
@@ -371,9 +368,11 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script type="text/javascript">
 	$(document).ready(function(){
-
 
 		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
@@ -394,6 +393,47 @@
             // endDate: new Date(),
             format: "yyyy-mm-dd"
         });
+
+        var vm = new Vue({
+        	el: "my-vue-instance",
+        	data: {
+        		myForm: {
+        			facility_id: null,
+        			cccno: null,
+        			reporting_date: null,
+        			dob: null,
+        			artstart_date: null,
+        			gender: null,
+        			curr_weight: null,
+        			height: null,
+        			clinician_name: null,
+        			facility_email: null,
+        			facility_tel: null,
+        			primary_reason: null,
+        			clinical_eval: null,
+        			clinical_visits: [],
+        			no_adherance_counseling: null,
+        			no_homevisits: null,
+        			support_structures: null,
+        			adherence_concerns: null,
+        			no_dotsdone: null,
+        			likely_rootcauses: null,
+        			inadequate_dosing: null,
+        			drug_interactions: null,
+        			food_interactions: null,
+        			impaired_absorption: null,
+        			treatment_interruptions: null,
+        			drt_testing: null,
+        			mdt_discussions: null,
+        			mdt_members: null, 
+        		},
+        	},
+        	methods: {
+        		update(){
+        			console.log(this.myForm)
+        		},
+        	},
+        })
 	});
 </script>
 @endsection
