@@ -366,7 +366,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default" type="button">Save As Draft</button>
+						<button class="btn btn-default"  @click="saveDraft()" type="button">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
@@ -450,6 +450,17 @@
         				tempObj[key] = tempVm.clinicalVisit[key];
         			});
         			this.myForm.clinical_visits.push(tempObj);
+        		},
+        		saveDraft(){
+					const data = JSON.stringify(this.myForm)
+					const blob = new Blob([data], {type: 'text/plain'})
+					const e = document.createEvent('MouseEvents'),
+					a = document.createElement('a');
+					a.download = "clinicalform.json";
+					a.href = window.URL.createObjectURL(blob);
+					a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+					e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+					a.dispatchEvent(e);        			
         		},
         	},
         });
