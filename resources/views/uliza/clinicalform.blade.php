@@ -373,6 +373,8 @@
 @section('scripts')
 <script type="text/javascript">
 	$(document).ready(function(){
+
+
 		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
         $(".form-horizontal").validate({
@@ -382,7 +384,7 @@
             }
         });
 
-        $(".date-normal").datepicker({
+        $(".date").datepicker({
             startView: 2,
             todayBtn: "linked",
             keyboardNavigation: false,

@@ -44,6 +44,18 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
+                    @if(in_array(Auth::user()->user_type_id, [0,1,4]))
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Help Desk <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
+                            <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
+                            <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                        </ul>
+                    </li>
+                    @endif
                 @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
@@ -241,6 +253,18 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
+                @if(in_array(Auth::user()->user_type_id, [0,1,4]))
+                <li class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Help Desk <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
+                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
+                        <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                    </ul>
+                </li>
+                @endif
             @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
