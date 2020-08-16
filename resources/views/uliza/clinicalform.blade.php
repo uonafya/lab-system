@@ -179,7 +179,7 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button type="button" class="btn btn-warning float-right" @click="displayModal()" data-toggle="modal" data-target="#clinical_visit_modal">
+										<button type="button" class="btn btn-warning float-right" @click="displayModal()">
 											Add Clinical Visit
 										</button>
 									</div>
@@ -446,6 +446,7 @@
         		},
         		displayModal(){
         			$('#clinical_visit_modal').modal();
+        			console.log("Modal opened");
         		},
         	},
         });

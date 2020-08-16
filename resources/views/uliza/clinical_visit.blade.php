@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header text-white bg-warning">
 				<h4 class="modal-title pull-left">Add Clinical Visit</h4>
-				<button aria-label="Close" class="close pull-right" type="button">
+				<button aria-label="Close" class="close pull-right" type="button" data-dismiss="modal">
 					<span aria-hidden="true">×</span>
 				</button>
 			</div>
