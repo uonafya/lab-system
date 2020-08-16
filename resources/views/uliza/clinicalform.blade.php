@@ -179,7 +179,9 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button class="btn btn-warning float-right">Add Clinical Visit</button>
+										<button class="btn btn-warning float-right" data-toggle="modal" data-target="#clinical_visit_modal">
+											Add Clinical Visit
+										</button>
 									</div>
 								</div>
 								<div class="row">
@@ -201,8 +203,18 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<td colspan="11">No available data</td>
+												<tr v-for="(clinical_visit, clinical_visit_index) in myForm.clinical_visits">
+													<td> @{{ clinical_visit_index+1 }} </td>
+													<td> @{{ clinical_visit.clinicvisitdate }} </td>
+													<td> @{{ clinical_visit.cd4 }} </td>
+													<td> @{{ clinical_visit.hb }} </td>
+													<td> @{{ clinical_visit.crclegfr }} </td>
+													<td> @{{ clinical_visit.viral_load }} </td>
+													<td> @{{ clinical_visit.weight_bmi }} </td>
+													<td> @{{ clinical_visit.arv_regimen }} </td>
+													<td> @{{ clinical_visit.reason_switch }} </td>
+													<td> @{{ clinical_visit.new_oi }} </td>
+													<td></td>
 												</tr>
 											</tbody>
 										</table>
@@ -360,6 +372,8 @@
 				</form>
 			</div>
 		</div>
+
+		@include('uliza.clinical_visit')
 		
 	</div>
 
@@ -408,11 +422,28 @@
         			mdt_discussions: null,
         			mdt_members: null, 
         		},
+        		clinicalVisit:{
+        			clinicvisitdate: null,
+        			cd4: null,
+        			hb: null,
+        			crclegfr: null,
+        			viral_load: null,
+        			weight_bmi: null,
+        			arv_regimen: null,
+        			reason_switch: null,
+        			new_oi: null,        			
+        		},
         	},
         	methods: {
         		update(){
         			console.log(this.myForm)
         		},
+        		addVisit(){
+        			vm.myForm.push(vm.clinicalVisit);
+        			Object.keys(vm.clinicalVisit).forEach(function(key, index){
+        				vm.clinicalVisit[key] = null;
+        			});
+        		}
         	},
         });
 
