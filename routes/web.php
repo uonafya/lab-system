@@ -151,6 +151,19 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
+		Route::prefix('nat_sample')->name('covid_sample.')->group(function () {
+			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'NatCovidSampleController@index');
+			Route::post('index', 'NatCovidSampleController@sample_search');
+
+			Route::post('print_multiple', 'NatCovidSampleController@print_multiple');
+			Route::get('result/{covidSample}', 'NatCovidSampleController@result');
+			
+			Route::post('kem_id/', 'NatCovidSampleController@kemri_id')->name('kemri_id');
+			Route::post('search/', 'NatCovidSampleController@search')->name('search');
+			Route::post('new_patient/', 'NatCovidSampleController@new_patient')->name('new_patient');
+			Route::post('cif_patient/', 'NatCovidSampleController@cif_patient')->name('cif_patient');
+		});
+
 		Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'CovidSampleController@index');
 			Route::post('index', 'CovidSampleController@sample_search');
@@ -158,31 +171,13 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
 
-			Route::group(['middleware' => ['only_utype:1,4,12']], function () {
+			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::get('cif', 'CovidSampleController@cif_samples');
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
 			
-			Route::group(['middleware' => ['only_utype:1,4,12']], function () {
+			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
-				
-				Route::get('upload', 'CovidSampleController@site_sample_page');
-				Route::post('upload', 'CovidSampleController@upload_site_samples');
-				
-				Route::get('wrp/upload', 'CovidSampleController@wrp_sample_page');
-				Route::post('wrp/upload', 'CovidSampleController@upload_wrp_samples');
-				
-				Route::get('ampath/upload', 'CovidSampleController@ampath_sample_page');
-				Route::post('ampath/upload', 'CovidSampleController@upload_ampath_samples');
-				
-				Route::get('reed/upload', 'CovidSampleController@reed_sample_page');
-				Route::post('reed/upload', 'CovidSampleController@upload_walter_reed_samples');
-				
-				Route::get('knh/upload', 'CovidSampleController@knh_sample_page');
-				Route::post('knh/upload', 'CovidSampleController@upload_knh_samples');
-				
-				Route::get('nairobi/upload', 'CovidSampleController@nairobi_sample_page');
-				Route::post('nairobi/upload', 'CovidSampleController@upload_nairobi_samples');
 				
 				Route::get('lab/upload', 'CovidSampleController@lab_sample_page');
 				Route::post('lab/upload', 'CovidSampleController@upload_lab_samples');
@@ -210,7 +205,7 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('covid_patient', 'CovidPatientController');
 
-		Route::group(['middleware' => ['only_utype:1,4,12,13']], function () {
+		Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 				Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
@@ -225,7 +220,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('rerun_worksheet/{worksheet}', 'CovidWorksheetController@rerun_worksheet')->name('rerun_worksheet');
 				Route::get('convert/{worksheet}/{machine_type}', 'CovidWorksheetController@convert_worksheet')->name('convert');
 
-				Route::group(['middleware' => ['only_utype:1,13']], function () {
+				Route::group(['middleware' => ['only_utype:1,12,14']], function () {
 					Route::get('cancel_upload/{worksheet}', 'CovidWorksheetController@cancel_upload')->name('cancel_upload');
 					Route::get('reverse_upload/{worksheet}', 'CovidWorksheetController@reverse_upload')->name('reverse_upload');
 					Route::get('upload/{worksheet}', 'CovidWorksheetController@upload')->name('upload');
@@ -237,11 +232,13 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('search/', 'CovidWorksheetController@search')->name('search');		
 			});
 			Route::resource('covid_worksheet', 'CovidWorksheetController');
+		});
 
+		Route::group(['middleware' => ['only_utype:2,12']], function () {
 			Route::resource('quarantine_site', 'QuarantineSiteController');
 		});
 
-		Route::group(['middleware' => ['only_utype:1,4,12']], function () {
+		Route::group(['middleware' => ['only_utype:1,4,12,14']], function () {
 			Route::prefix('covidreports')->name('covid_reports.')->group(function () {
 				Route::get('/', 'CovidReportsController@index')->name('index');
 				Route::post('/', 'CovidReportsController@generate')->name('generate');
@@ -363,6 +360,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_testing')->name('dr_testing.')->group(function () {
 			Route::get('/', 'DrDashboardTestingController@index');
 			Route::get('testing', 'DrDashboardTestingController@testing');
+			Route::get('rejected', 'DrDashboardTestingController@rejected');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');

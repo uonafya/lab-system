@@ -400,14 +400,15 @@ class DrWorksheetController extends Controller
 
     public function create_plate(DrWorksheet $worksheet)
     {
-        \App\MiscDr::create_plate($worksheet);
+        MiscDr::create_plate($worksheet);
         // session(['toast_message' => 'The samples have been uploaded to exatype and will be ready later.']);
         return back();
     }
 
     public function get_plate_result(DrWorksheet $worksheet)
     {
-        \App\MiscDr::get_plate_result($worksheet);
+        $result = MiscDr::get_plate_result($worksheet);
+        dd($result);
         // session(['toast_message' => 'The results have been retrieved.']);
         return back();
     }

@@ -37,6 +37,11 @@ Artisan::command('dr:fetch-results', function(){
     $this->info($str);
 })->describe('Fetch results from exatype system.');
 
+Artisan::command('dr:current-drug', function(){
+    $str = \App\MiscDr::set_current_drug();
+    $this->info($str);
+})->describe('Set current drug.');
+
 Artisan::command('compute:tat5', function(){
     \App\Common::save_tat5('eid');
     \App\Common::save_tat5('vl');
@@ -189,13 +194,19 @@ Artisan::command('send:sms', function(){
     $this->info($str);
 })->describe('Send result sms.');
 
+Artisan::command('create:weekly-backlog', function(){
+    $str = \App\Console::create_alert_row();
+    $this->info($str);
+})->describe('Create edarp weekly backlog row.');
+
 Artisan::command('send:weekly-activity', function(){
-    $str = \App\Synch::send_weekly_activity();
+    $str = \App\Console::send_weekly_activity();
+    if(env('APP_LAB') == 1) $str .= \App\Console::edarp_weekly_activity();
     $this->info($str);
 })->describe('Send out weekly activity sms alert.');
 
 Artisan::command('send:weekly-backlog', function(){
-    $str = \App\Synch::send_weekly_backlog();
+    $str = \App\Console::send_weekly_backlog();
     $this->info($str);
 })->describe('Send out weekly backlog sms alert.');
 

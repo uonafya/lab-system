@@ -2199,7 +2199,7 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
     }
 
-	public static function eid_worksheets($year = null)
+	public static function eid_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2243,7 +2243,7 @@ class Random
 		return storage_path("exports/" . $file . ".csv");
 	}
 
-	public static function vl_worksheets($year = null)
+	public static function vl_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
@@ -2301,7 +2301,7 @@ class Random
         return storage_path("exports/" . $file . ".csv");
 	}
 
-    public static function covid_worksheets($year = null)
+    public static function covid_worksheets($year = null, $download=true)
     {
         if(!$year) $year = date('Y');
         $data = CovidSample::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2317,7 +2317,7 @@ class Random
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
-        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott'];
+        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
 
         $rows = [];
 
@@ -2329,6 +2329,7 @@ class Random
 
                 foreach ($results as $rkey => $rvalue) {
                     $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    if($rkey == 3) $row[$rvalue] += $data->where('result', null)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
                     $total += $row[$rvalue];
                 }
 
@@ -2339,6 +2340,8 @@ class Random
         }
 
         $file = 'covid_worksheets_data';
+
+        if($download) return Common::csv_download($rows, $file);
 
         Common::csv_download($rows, $file, true, true);
 

@@ -60,7 +60,8 @@ $api->version('v1', function (Router $api) {
         
         // $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
 
-
+            $api->post('weekly_alerts', 'FunctionController@weekly_alerts');
+            
             $api->post('eid', 'EidController@eid');    
             $api->post('eid_complete', 'EidController@complete_result');  
 
@@ -73,7 +74,7 @@ $api->version('v1', function (Router $api) {
             $api->post('crag', 'CragController@partial');
             // $api->post('crag_complete', 'CragController@complete_result');
 
-            $api->group(['middleware' => 'api.throttle', 'limit' => 10, 'expires' => 1], function(Router $api) {
+            $api->group(['middleware' => 'api.throttle', 'limit' => env('API_LIMIT', 30), 'expires' => 1], function(Router $api) {
                 $api->post('function', 'FunctionController@data_functions');
             });
             

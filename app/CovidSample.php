@@ -79,11 +79,12 @@ class CovidSample extends BaseModel
 
     public function setResultAttribute($value)
     {
-        if(is_numeric($value)) $this->attributes['result'] = $value;
+        if(is_numeric($value) || !$value) $this->attributes['result'] = $value;
         else{
             $value = strtolower($value);
             if(\Str::contains($value, ['neg'])) $this->attributes['result'] = 1;
             else if(\Str::contains($value, ['pos'])) $this->attributes['result'] = 2;
+            else if(\Str::contains($value, ['coll'])) $this->attributes['result'] = 5;
         }
     }
 
@@ -135,10 +136,10 @@ class CovidSample extends BaseModel
 
     public function set_tat()
     {
-        $this->tat1 = Common::get_days($this->datecollected, $this->datereceived);
-        $this->tat2 = Common::get_days($this->datereceived, $this->datetested);
-        $this->tat3 = Common::get_days($this->datetested, $this->datedispatched);
-        $this->tat4 = Common::get_days($this->datecollected, $this->datedispatched);        
+        $this->tat1 = Common::get_days($this->datecollected, $this->datereceived, false);
+        $this->tat2 = Common::get_days($this->datereceived, $this->datetested, false);
+        $this->tat3 = Common::get_days($this->datetested, $this->datedispatched, false);
+        $this->tat4 = Common::get_days($this->datecollected, $this->datedispatched, false);        
     }
 
     public function getIsReadyAttribute()

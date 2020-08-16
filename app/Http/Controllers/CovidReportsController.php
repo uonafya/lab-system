@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CovidSampleView;
 use App\CovidSample;
+use App\CovidWorksheet;
 use App\Lab;
 use App\MiscCovid;
 use Carbon\Carbon;
@@ -28,21 +29,20 @@ class CovidReportsController extends Controller
 	{
 		// Get the dates
 		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
+		$date_to = $request->input('date_filter_to');
 
-		if($request->input('types') == 'nphl_results_submission'){
-			return $this->nphl_upload($date);
-		}
+		if($request->input('types') == 'nphl_results_submission') return $this->nphl_upload($date);
+		if($request->input('types') == 'nphl_api_submission') return $this->nphl_api_download();
+		if($request->input('types') == 'worksheet_machines') return $this->worksheet_report();
+		if($request->input('types') == 'worksheet_report') return $this->worksheets_no_reruns($date, $date_to);
 
-		if($request->input('types') == 'nphl_api_submission'){
-			return $this->nphl_api_download();
-		}
 		
 		// Get the data from the database
 		$today_data = $this->get_model()->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
 		$last_update_data = $this->get_model()->whereRaw("DATE(datetested) < '{$date}'")->get();
 		
 		// Prepare the data to fill the excel
-		$data = $this->prepareData($today_data, $last_update_data, $date);
+		$data = $this->prepareData($today_data, $last_update_data, $date, $date_to);
 
 		return \App\MiscCovid::csv_download($data, 'DAILY COVID-19 LABORATORY RESULTS ' . $date, false);
 	}
@@ -90,21 +90,27 @@ class CovidReportsController extends Controller
 		return $model;
 	}
 
-	private function prepareData($today_data, $last_update_data, $date)
+	private function prepareData($today_data, $last_update_data, $date, $date_to=null)
 	{
 		$data = [[Lab::find(auth()->user()->lab_id)->labdesc . ' DAILY COVID-19 LABORATORY RESULTS SUBMISSION']];
 		$data[] = [
 			'Date', 'Testing Laboratory', 'Cumulative number of samples tested as at last update', 'Number of samples tested since last update', 'Cumulative number of samples tested to date ', 'Cumulative positive tests as at last update ', 'Number of new Positive tests', 'Cumulative Positive samples since onset of outbreak'
 		];
-		$data[] = $this->get_summary_data($today_data, $last_update_data, $date);
+		$data[] = $this->get_summary_data($today_data, $last_update_data, $date, $date_to);
 
 		if(env('APP_LAB') == 1 && auth()->user()->lab_id == env('APP_LAB')){
 			$labs = CovidSample::selectRaw('DISTINCT lab_id AS lab_id')->where('lab_id', '!=', env('APP_LAB'))->where('site_entry', '!=', 2)->get();
 
 			foreach ($labs as $key => $value) {
-				$today_data_other = $this->get_model($value->lab_id)->whereDate('datetested', $date)->orderBy('result', 'desc')->get();
+				$today_data_other = $this->get_model($value->lab_id)					
+					->when($date, function($query) use($date, $date_to){
+						if($date_to) return $query->whereBetween('datetested', [$date, $date_to]);
+						return $query->whereDate('datetested', $date);
+					})
+					->orderBy('result', 'desc')
+					->get();
 				$last_update_data_other = $this->get_model($value->lab_id)->whereDate("datetested", '<', $date)->get();
-				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $value->lab_id);
+				$data[] = $this->get_summary_data($today_data_other, $last_update_data_other, $date, $date_to, $value->lab_id);
 			}
 		}
 
@@ -120,7 +126,7 @@ class CovidReportsController extends Controller
 		return $data;
 	}
 
-	private function get_summary_data($today_data, $last_update_data, $date, $lab_id=null)
+	private function get_summary_data($today_data, $last_update_data, $date, $date_to=null, $lab_id=null)
 	{
 		if(!$lab_id) $lab_id = auth()->user()->lab_id;
 		$lab = Lab::find($lab_id);
@@ -164,6 +170,7 @@ class CovidReportsController extends Controller
 		if (!$sample->patient->travel->isEmpty()){
 			$travelled = 'Y';
 			foreach ($sample->patient->travel as $key => $travel) {
+				if(!$travel->town) continue;
 				$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
 			}
 		}
@@ -237,6 +244,7 @@ class CovidReportsController extends Controller
 			if (!$sample->patient->travel->isEmpty()){
 				$travelled = 'Y';
 				foreach ($sample->patient->travel as $key => $travel) {
+					if(!$travel->town) continue;
 					$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
 				}
 			}
@@ -330,7 +338,7 @@ class CovidReportsController extends Controller
 			}
 
 			$post_data = [
-				'TESTING_LAB' => $sample->lab->name,
+				'TESTING_LAB' => $sample->lab->code,
 
 				'CASE_ID' => $sample->identifier,
 				'CASE_TYPE' => $sample->test_type == 1 ? 'Initial' : 'Repeat',
@@ -377,8 +385,32 @@ class CovidReportsController extends Controller
 
 			$data[] = $post_data;
 		}
-		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API ', true);
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL API');
 		// return Common::csv_download($data, 'nphl_download');
+	}
+
+
+	public function worksheet_report()
+	{
+		return \App\Random::covid_worksheets(date('Y'), true);
+	}
+
+	public function worksheets_no_reruns($date, $date_to=null)
+	{
+		$worksheets = CovidWorksheet::selectRaw('covid_worksheets.*, machines.machine, count(covid_samples.id) as sample_number')
+			->join('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+			->join('covid_samples', 'covid_samples.worksheet_id', '=', 'covid_worksheets.id')
+			// ->where('parentid', 0)					
+			->when($date, function($query) use($date, $date_to){
+				if($date_to) return $query->whereBetween('daterun', [$date, $date_to]);
+				return $query->whereDate('daterun', $date);
+			})
+			->groupBy('covid_worksheets.id')
+			->having('sample_number', '>', 0)
+			->get();
+
+		$data = $worksheets->toArray();
+		return MiscCovid::csv_download($data, 'worksheets-data');
 	}
 
 }

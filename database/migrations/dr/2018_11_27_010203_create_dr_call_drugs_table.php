@@ -19,6 +19,8 @@ class CreateDrCallDrugsTable extends Migration
             $table->string('short_name', 20)->nullable(); 
             $table->tinyInteger('short_name_id')->nullable()->unsigned()->index();
             $table->string('call', 5)->nullable()->index(); 
+            $table->tinyInteger('score')->unsigned()->default(0);
+            $table->tinyInteger('resistance_id')->unsigned()->default(0);
             $table->tinyInteger('current_drug')->unsigned()->default(0);
             $table->timestamps();
         });

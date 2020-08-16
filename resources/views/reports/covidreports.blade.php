@@ -146,13 +146,19 @@
                             </div>
                         </div> --}}
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Date Filter
+                            <label class="col-sm-4 control-label">Date Filter
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
-                            <div class="col-sm-9">
+                            <div class="col-sm-4">
                                 <div class="input-group date">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="date_filter" required class="form-control" value="{{ date('Y-m-d') }}" name="date_filter">
+                                </div>
+                            </div>  
+                            <div class="col-sm-4">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" id="date_filter_to" required class="form-control" value="{{ date('Y-m-d') }}" name="date_filter_to">
                                 </div>
                             </div>                            
                         </div>
@@ -162,6 +168,8 @@
                             </label>
                             <div class="col-sm-9">
                                 <label> <input type="radio" name="types" value="daily_results_submission" class="i-checks" required> Daily Laboratory Results Submission </label>
+                                <label> <input type="radio" name="types" value="worksheet_machines" class="i-checks" required> Worksheet Machine Totals </label>
+                                <label> <input type="radio" name="types" value="worksheet_report" class="i-checks" required> Worksheet Report </label>
                                 <label> <input type="radio" name="types" value="nphl_results_submission" class="i-checks" required> Daily NPHL Results Submission </label>
                                 <label> <input type="radio" name="types" value="nphl_api_submission" class="i-checks" required> NPHL API Submission </label>
                             </div>

@@ -103,6 +103,18 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Rejected </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="rejected"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection()
@@ -119,8 +131,10 @@
     function reload_page()
     {
         $("#testing").html("<center><div class='loader'></div></center>");
+        $("#rejected").html("<center><div class='loader'></div></center>");
 
         $("#testing").load("{{ url('dr_testing/testing') }}");
+        $("#rejected").load("{{ url('dr_testing/rejected') }}");
     }
 
     $().ready(function(){

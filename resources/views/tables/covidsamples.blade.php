@@ -75,7 +75,7 @@
 
     @if(!in_array(auth()->user()->user_type_id, [5, 11]))
 
-        <form action="{{ url('covid_sample/index') }}" method="POST" class="my_form">
+        <form action="{{ url($myurl2) }}" method="POST" class="my_form">
             @csrf
 
             @isset($to_print)
@@ -103,6 +103,9 @@
                         <div class="col-sm-9">
                             <select class="form-control" name="facility_id" id="facility_id">
                                 <option></option>
+                                @if(env('APP_LAB') == 6)
+                                    <option value="null" selected  >No Facility</option>
+                                @endif
                                 @if(isset($facility) && $facility)
                                     <option value="{{ $facility->id }}" selected>{{ $facility->facilitycode }} {{ $facility->name }}</option>
                                 @endif
@@ -368,12 +371,6 @@
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->my_date_format('datereceived') }} </td>
 
-                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
-                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
-                                            || !$sample->datedispatched))
-                                            <!-- <td></td>
-                                            <td></td> -->
-                                        @endif
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> {{ $sample->my_date_format('date_email_sent') }} </td>
@@ -393,11 +390,6 @@
                                             @endif
                                         </td>
 
-                                        @if($sample->result == 2 && in_array(auth()->user()->user_type_id, [5, 11]) &&
-                                         ($sample->datedispatched->greaterThan(date('Y-m-d', strtotime('-1 day'))) 
-                                            || !$sample->datedispatched))
-                                            <!-- <td></td> -->
-                                        @endif
                                         <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
 
                                         <td>

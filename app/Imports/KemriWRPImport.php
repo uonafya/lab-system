@@ -22,11 +22,11 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
     {
         $row = json_decode(json_encode($row->toArray()));
         $column = 'quarantine_site_id';
-        if($row->facility_name > 100) $column = 'facility_id';
+        if($row->facility_name > 1000) $column = 'facility_id';
 
         $p = null;
 
-        $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        if(isset($row->id_passport)) $p = CovidPatient::where(['national_id' => $row->id_passport])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
         $mfl = $row->mfl ?? null;
@@ -44,50 +44,63 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         else if(Str::contains($justification, 'surveillance')) $j = 3;
         // else if(Str::contains($justification, 'surveillance')) $j = 9;
         else{
-            $j = null;
+            $j = 3;
         }
 
         $p->fill([
             'identifier' => $row->identifier,
             'facility_id' => $fac->id ?? null,
-            'quarantine_site_id' => $quarantine_site->id ?? null,
+            'quarantine_site_id' => $quarantine_site->id ?? $row->quarantine_site_id ?? null,
             'patient_name' => $row->full_name,
             'sex' => $row->gender,
             'national_id' => $row->id_passport,
             'phone_no' => $row->mobile_phone_no,
             'county' => $row->county_rep,
-            'subcounty' => $row->sub_county_rep,   
+            'subcounty' => $row->sub_county_rep ?? null,   
             'justification' => $j,             
         ]);
         $p->save();
 
-        $sample_type = $row->specimen_source;
+        $sample_type = $row->specimen_source ?? null;
         if(Str::contains($sample_type, 'Oro') && Str::contains($sample_type, 'Naso')) $s = 1;
         else if(Str::contains($sample_type, 'Oro')) $s = 3;
         else if(Str::contains($sample_type, 'Naso')) $s = 2;
         else{
-            $s = null;
+            $s = 1;
         }
 
-        $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => date('Y-m-d', strtotime($row->date_collected))])->first();
+        $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
+        $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
+        $datetested = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_tested)) : date('Y-m-d');
+
+        if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
+        if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');
+        if($datetested == '1970-01-01') $datetested = date('Y-m-d');
+
+        $sample = CovidSample::where(['patient_id' => $p->id, 'datecollected' => $datecollected])->first();
         if(!$sample) $sample = new CovidSample;
 
         $sample->fill([
             'patient_id' => $p->id,
-            'lab_id' => 18,
-            'kemri_id' => $row->kemri_id,
+            'lab_id' => auth()->user()->lab_id,
+            'kemri_id' => $row->kemri_id ?? null,
             'site_entry' => 0,
             'age' => $row->age,
             'test_type' => 1,
-            'datecollected' => date('Y-m-d', strtotime($row->date_collected)),
-            'datereceived' => date('Y-m-d', strtotime($row->date_received)),
-            'datetested' => date('Y-m-d', strtotime($row->date_tested)),
-            'datedispatched' => date('Y-m-d', strtotime($row->date_tested)),
-            'dateapproved' => date('Y-m-d', strtotime($row->date_tested)),
+            'datecollected' => $datecollected,
+            'datereceived' => $datereceived,
+            'datetested' => $datetested,
+            'datedispatched' => $datetested,
+            'dateapproved' => $datetested,
             'receivedstatus' => 1,
             'sample_type' => $s,
             'result' => $row->preliminary_lab_results,
         ]);
+        if(isset($row->rejected_reason) && $row->rejected_reason){
+            $sample->datetested = null;
+            $sample->receivedstatus = 2;
+            $sample->rejectedreason = $row->rejected_reason;
+        }
         $sample->pre_update();
 
     }
