@@ -77,7 +77,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning" type="button" disabled="">Submit</button>
+				<button class="btn btn-warning" @click="addVisit()" type="button">Submit</button>
 				<button class="btn btn-default" type="button">Cancel</button>
 			</div>
 		</div>

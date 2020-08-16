@@ -34,7 +34,7 @@
 				<h5 class="card-subtitle mb-2 text-muted text-center">NATIONAL AIDS AND STI CONTROL PROGRAMME</h5>
 				<p class="card-text text-center">CLINICAL SUMMARY FORM</p>
 			
-				<form autocomplete="off" @submit.prevent="update" novalidate="" class="ng-invalid ng-dirty ng-touched">
+				<form autocomplete="off" @submit.prevent="update" novalidate="">
 				  
 					<div class="form-row mb-3">
 						<div class="col-md-2 input-group required">
@@ -179,7 +179,7 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button class="btn btn-warning float-right" type="button" data-toggle="modal" data-target="#clinical_visit_modal">
+										<button type="button" class="btn btn-warning float-right" @click="displayModal()" data-toggle="modal" data-target="#clinical_visit_modal">
 											Add Clinical Visit
 										</button>
 									</div>
@@ -443,7 +443,10 @@
         			Object.keys(vm.clinicalVisit).forEach(function(key, index){
         				vm.clinicalVisit[key] = null;
         			});
-        		}
+        		},
+        		displayModal(){
+        			$('#clinical_visit_modal').modal();
+        		},
         	},
         });
 
