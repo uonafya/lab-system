@@ -1,4 +1,4 @@
-<div class="modal fade" role="dialog" tabindex="-1" style="display: block;" aria-modal="true" id="clinical_visit_modal">
+<div class="modal fade" role="dialog" tabindex="-1" style="display: block;" aria-modal="true" id="clinical_visit_modal"  aria-labelledby="clinical_visit_modal" aria-hidden="true">
 	<div role="document" class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header text-white bg-warning">
