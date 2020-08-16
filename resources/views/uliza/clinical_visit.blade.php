@@ -1,4 +1,4 @@
-<div class="modal fade show" role="dialog" tabindex="-1" style="display: block;" aria-modal="true" id="clinical_visit_modal">
+<div class="modal fade" role="dialog" tabindex="-1" style="display: block;" aria-modal="true" id="clinical_visit_modal">
 	<div role="document" class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header text-white bg-warning">
@@ -17,14 +17,14 @@
 						</div>
 						<div class="form-group col-md-6">
 							<label for="cd4">CD4 Results(c/mm3):</label>
-							<input aria-describedby="cd4" v-model="clinicalVisit.clinicvisitdate" class="form-control" name="cd4" type="text">
+							<input aria-describedby="cd4" v-model="clinicalVisit.cd4" class="form-control" name="cd4" type="text">
 						</div>
 					</div>
 
 					<div class="form-row mb-3">
 						<div class="form-group col-md-6">
 							<label for="hb">HB Results(g/dl):</label>
-							<input aria-describedby="hb" class="form-control" v-model="clinicalVisit.clinicvisitdate" name="hb" type="text">
+							<input aria-describedby="hb" class="form-control" v-model="clinicalVisit.hb" name="hb" type="text">
 						</div>
 						<div class="form-group col-md-6">
 							<label for="crclegfr">CrCl/eGFR Results(ml/min):</label>
