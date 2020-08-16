@@ -349,7 +349,7 @@
 					</div>
 				  
 					<div class="mb-3 float-right">
-						<button class="btn btn-warning" type="button" disabled="">Submit</button>
+						<button class="btn btn-warning" type="submit" >Submit</button>
 					</div>
 				  
 					<div class="mb-3 float-centre">
