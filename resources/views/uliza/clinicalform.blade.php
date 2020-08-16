@@ -439,7 +439,7 @@
         			console.log(this.myForm)
         		},
         		addVisit(){
-        			vm.myForm.push(vm.clinicalVisit);
+        			vm.myForm.clinical_visits.push(vm.clinicalVisit);
         			Object.keys(vm.clinicalVisit).forEach(function(key, index){
         				vm.clinicalVisit[key] = null;
         			});
