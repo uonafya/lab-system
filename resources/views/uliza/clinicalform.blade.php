@@ -435,7 +435,12 @@
             format: "yyyy-mm-dd"
         });
 		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
-        
+
+        $("#facility_id").change(function(){
+            var val = $(this).val();
+            vm.myForm.facility_id = val;
+        }); 
+
 	});
 </script>
 @endsection
