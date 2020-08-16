@@ -179,7 +179,8 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button type="button" class="btn btn-warning float-right" @click.prevent="displayModal()">
+										<!-- <button class="btn btn-warning float-right" @click.prevent="displayModal()" type="button"> -->
+										<button class="btn btn-warning float-right" data-toggle="modal" data-target="#clinical_visit_modal" type="button">
 											Add Clinical Visit
 										</button>
 									</div>
@@ -469,6 +470,17 @@
             // endDate: new Date(),
             format: "yyyy-mm-dd"
         });
+
+        $("#clinical_date").datepicker({
+            startView: 2,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            // startDate: "-6m",
+            // endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
 		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
         $("#facility_id").change(function(){
@@ -480,6 +492,11 @@
             var val = $(this).val();
             var name = $(this).attr('name');
             vm.myForm[name] = val;
+        }); 
+
+        $("#clinical_date").change(function(){
+            var val = $(this).val();
+            vm.clinicalVisit['clinicvisitdate'] = val;
         }); 
 
 	});

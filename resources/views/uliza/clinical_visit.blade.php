@@ -1,5 +1,5 @@
-<div class="modal fade" role="dialog" tabindex="-1" style="display: block;" aria-modal="true" id="clinical_visit_modal"  aria-labelledby="clinical_visit_modal" aria-hidden="true">
-	<div role="document" class="modal-dialog modal-lg">
+<div class="modal fade" role="dialog" tabindex="-1" aria-modal="true" id="clinical_visit_modal"  aria-labelledby="clinical_visit_modal" aria-hidden="true">
+	<div role="dialog" class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header text-white bg-warning">
 				<h4 class="modal-title pull-left">Add Clinical Visit</h4>
@@ -13,7 +13,7 @@
 					<div class="form-row mb-3">
 						<div class="form-group col-md-6 required">
 							<label for="clinicvisitdate">Clinic Visit Date:</label>
-							<input class="form-control date" v-model="clinicalVisit.clinicvisitdate" id="clinicvisitdate" name="clinicvisitdate" required="" type="text">
+							<input class="form-control clinical_date" v-model="clinicalVisit.clinicvisitdate" id="clinicvisitdate" name="clinicvisitdate" required="" type="text">
 						</div>
 						<div class="form-group col-md-6">
 							<label for="cd4">CD4 Results(c/mm3):</label>
