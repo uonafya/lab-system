@@ -179,7 +179,7 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12 mb-3">
-										<button type="button" class="btn btn-warning float-right" @click="displayModal()">
+										<button type="button" class="btn btn-warning float-right" @click.prevent="displayModal()">
 											Add Clinical Visit
 										</button>
 									</div>
