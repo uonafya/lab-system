@@ -440,9 +440,10 @@
         			console.log(this.myForm)
         		},
         		addVisit(){
-        			vm.myForm.clinical_visits.push(vm.clinicalVisit);
-        			Object.keys(vm.clinicalVisit).forEach(function(key, index){
-        				vm.clinicalVisit[key] = null;
+        			this.myForm.clinical_visits.push(this.clinicalVisit);
+        			console.log(this.clinicalVisit);
+        			Object.keys(this.clinicalVisit).forEach(function(key, index){
+        				this.clinicalVisit[key] = null;
         			});
         		},
         		displayModal(){
@@ -471,7 +472,7 @@
             format: "yyyy-mm-dd"
         });
 
-        $("#clinical_date").datepicker({
+        $("#clinicvisitdate").datepicker({
             startView: 2,
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -494,7 +495,7 @@
             vm.myForm[name] = val;
         }); 
 
-        $("#clinical_date").change(function(){
+        $("#clinicvisitdate").change(function(){
             var val = $(this).val();
             vm.clinicalVisit['clinicvisitdate'] = val;
         }); 

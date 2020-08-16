@@ -13,7 +13,7 @@
 					<div class="form-row mb-3">
 						<div class="form-group col-md-6 required">
 							<label for="clinicvisitdate">Clinic Visit Date:</label>
-							<input class="form-control clinical_date" v-model="clinicalVisit.clinicvisitdate" id="clinicvisitdate" name="clinicvisitdate" required="" type="text">
+							<input class="form-control" v-model="clinicalVisit.clinicvisitdate" id="clinicvisitdate" name="clinicvisitdate" required="" type="text">
 						</div>
 						<div class="form-group col-md-6">
 							<label for="cd4">CD4 Results(c/mm3):</label>
