@@ -374,25 +374,6 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
-		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
-
-        $(".form-horizontal").validate({
-            errorPlacement: function (error, element)
-            {
-                element.before(error);
-            }
-        });
-
-        $(".date").datepicker({
-            startView: 2,
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            autoclose: true,
-            // startDate: "-6m",
-            // endDate: new Date(),
-            format: "yyyy-mm-dd"
-        });
 
         var vm = new Vue({
         	el: "#my-vue-instance",
@@ -433,7 +414,28 @@
         			console.log(this.myForm)
         		},
         	},
-        })
+        });
+
+
+        $(".form-horizontal").validate({
+            errorPlacement: function (error, element)
+            {
+                element.before(error);
+            }
+        });
+
+        $(".date").datepicker({
+            startView: 2,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            // startDate: "-6m",
+            // endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+		set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        
 	});
 </script>
 @endsection
