@@ -441,6 +441,12 @@
             vm.myForm.facility_id = val;
         }); 
 
+        $(".date").change(function(){
+            var val = $(this).val();
+            var name = $(this).attr('name');
+            vm.myForm[name] = val;
+        }); 
+
 	});
 </script>
 @endsection
