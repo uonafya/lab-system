@@ -442,13 +442,10 @@
         		addVisit(){
         			this.myForm.clinical_visits.push(this.clinicalVisit);
         			console.log(this.clinicalVisit);
+        			var tempVm = this
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
-        				this.clinicalVisit[key] = null;
+        				tempVm.clinicalVisit[key] = null;
         			});
-        		},
-        		displayModal(){
-        			$('#clinical_visit_modal').modal();
-        			console.log("Modal opened");
         		},
         	},
         });
