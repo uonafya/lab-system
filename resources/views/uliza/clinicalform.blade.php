@@ -395,7 +395,7 @@
         });
 
         var vm = new Vue({
-        	el: "my-vue-instance",
+        	el: "#my-vue-instance",
         	data: {
         		myForm: {
         			facility_id: null,
