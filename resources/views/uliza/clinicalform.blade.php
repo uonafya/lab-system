@@ -41,7 +41,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_name">
 									Facility:
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
 						</div>
@@ -56,7 +56,7 @@
 						    <div class="input-group-prepend">
 								<span class="input-group-text" id="cccno">Patient’s CCC No:
 									<small>(Do not write name)</small>
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 						    </div>
 						    <input aria-describedby="cccno" class="form-control" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
@@ -65,7 +65,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="reporting_date">
 									Case Reporting Date:
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
 							<input class="form-control date" v-model="myForm.reporting_date" name="reporting_date" required>
@@ -83,7 +83,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="dob">
 											Date of Birth:
-											<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
 									<input class="form-control date" v-model="myForm.dob" name="dob" required>
@@ -92,7 +92,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="artstart_date">
 											ART Start Date:
-											<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
 									<input class="form-control date" v-model="myForm.artstart_date" name="artstart_date" required>
@@ -104,7 +104,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" for="gender">
 											Gender:
-											<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
 									<select class="custom-select" v-model="myForm.gender" id="gender" name="gender" required="required">
@@ -118,7 +118,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="curr_weight">
 											Current Weight (Kg):
-											<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
 									<input aria-describedby="curr_weight" v-model="myForm.curr_weight" class="form-control" maxlength="3" name="curr_weight" required="" type="number">
@@ -127,7 +127,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="height">
 											Height (cm):
-											<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
 									<input aria-describedby="height" class="form-control" v-model="myForm.height" maxlength="3" name="height" required="required" type="number">
@@ -141,7 +141,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text text-left" id="clinician_name">
 									Clinician’s Name:
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
 							<input aria-describedby="clinician_name" class="form-control" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
@@ -159,7 +159,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_email">
 									Facility Email Address:
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
 							<input aria-describedby="facility_email" class="form-control" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
@@ -171,7 +171,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_tel">
 									Facility Tel No:
-									<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
 							<input aria-describedby="facility_tel" class="form-control" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
@@ -182,7 +182,7 @@
 					<div class="form-row mb-3 required">
 						<label class="col-md-12">
 							What is the primary reason for this consultation:
-							<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+							<div style='color: #ff0000; display: inline;'>*</div>
 						</label>
 					</div>
 
@@ -268,7 +268,7 @@
 					<div class="form-group required row">
 						<label class="col-md-4 col-form-label">
 							Number of adherence counseling/assessment sessions done in the last 3-6 months:
-							<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+							<div style='color: #ff0000; display: inline;'>*</div>
 						</label>
 						<div class="col-md-8">
 							<input class="form-control" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
@@ -477,7 +477,7 @@
 			            {
 			                element.before(error);
 			            }
-					})
+					});
         			axios.post('/uliza-form', this.myForm).then(function(response){
         				console.log(response);
         			}).catch(function(error){
