@@ -143,6 +143,7 @@ class CovidSampleController extends Controller
 
     public function download_excel($request)
     {
+        ini_set("memory_limit", "-1");
         $user = auth()->user();
         // dd($request->all());
         extract($request->all());
