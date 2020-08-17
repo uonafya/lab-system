@@ -444,9 +444,15 @@
             @else
                 $("#identifier").blur(function(){
                     check_new_patient();
+                    @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                        check_cif_patient();
+                    @endif
                 });
                 $("#national_id").blur(function(){
                     check_new_patient();
+                    @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                        check_cif_patient();
+                    @endif
                 });
 
                 @if(in_array(env('APP_LAB'), [1,2,3,6]))
@@ -659,11 +665,15 @@
             // console.log('Here');
             // return;
             var patient_name = $("#patient_name").val();
+            var national_id = $("#national_id").val();
+            var identifier = $("#identifier").val();
 
             $.ajax({
                 type: "POST",
                 data: {
                     patient_name : patient_name,
+                    national_id : national_id,
+                    identifier : identifier,
                 },
                 url: "{{ url('/covid_sample/cif_patient') }}",
 
