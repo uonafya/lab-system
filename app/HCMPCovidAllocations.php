@@ -9,7 +9,7 @@ class HCMPCovidAllocations extends Model
 {
     protected $table = 'hcmp_covid_allocations';
 
-    private $base = 'http://rtk.nascop.org/api/';
+    private $base = 'https://rtk.nascop.org/api/';
 
     public function kit()
     {
