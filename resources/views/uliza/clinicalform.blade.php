@@ -388,7 +388,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		const axios = require('axios');
+		// const axios = require('axios');
 
 
         var vm = new Vue({
