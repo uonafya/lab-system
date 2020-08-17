@@ -43,7 +43,7 @@ class HCMPCovidAllocations extends Model
 				],
 			]);
 			$body = json_decode($response->getBody());
-			
+			dd($body);
 			foreach ($body->data as $key => $item) {
 				$data_existing = ['material_number' => $item->material_number, 'allocation_date' => $item->allocation_date, 'allocation_type' => $item->allocation_type, 'lab_id' => $item->lab_id];
 				$existing = HCMPCovidAllocations::existing( $data_existing )->get();
