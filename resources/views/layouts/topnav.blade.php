@@ -459,21 +459,26 @@
                                     <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
                                 </ul>
                             </li>
-                            
+
                             <li class="">
                                 <a href="{{ route('reports') }}">Reports</a>
                             </li>
-                            <li class="">
-                                <a href="{{ route('dashboard') }}">Dashboard</a>
-                            </li>
-                            <li class="">
-                                <a href="
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dashboard <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                                    <li class=""><a class="dropdown-item" href="
                                     @if(session('testingSystem') == 'Viralload')
                                         {{ 'https://viralload.nascop.org/labs' }}
                                     @else
                                         {{ 'https://eid.nascop.org/labPerformance' }}
-                                    @endif">Nascop Dashboard</a>
+                                    @endif">Nascop Dashboard</a></li>
+                                </ul>
                             </li>
+                            
                             @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
                                 <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
