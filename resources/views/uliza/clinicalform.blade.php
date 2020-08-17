@@ -472,7 +472,8 @@
         		update(){
         			console.log(this.myForm);
         			var validator = $( "#myClinicalForm" ).validate();
-					validator.form();
+					var res = validator.form();
+					console.log(res);
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
