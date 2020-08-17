@@ -239,9 +239,6 @@ class MiscCovid extends Common
             $sample->date_email_sent = date('Y-m-d');
             $sample->save();
         }
-
-
     }
-
 
 }
