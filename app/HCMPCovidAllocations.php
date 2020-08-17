@@ -9,7 +9,7 @@ class HCMPCovidAllocations extends Model
 {
     protected $table = 'hcmp_covid_allocations';
 
-    private $base = 'https://rtk.nascop.org/api/';
+    private $base = 'http://rtk.nascop.org/api/';
 
     public function kit()
     {
@@ -31,7 +31,7 @@ class HCMPCovidAllocations extends Model
 			],
 		]);
 		$body = json_decode($response->getBody());
-		// print_r($body->data);
+		dd($body);
 		foreach ($body->data as $key => $item) {
 			if (env('APP_LAB') == $item->lab_id) {
 				$lab = Lab::find($item->lab_id);
