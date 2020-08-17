@@ -98,7 +98,6 @@
                         <li class="">
                             <a href="{{ url('covidkits/reports') }}">Kits</a>
                         </li>
-
                     @elseif(session('testingSystem') == 'DR')
                         <li class="dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
