@@ -1198,9 +1198,10 @@ class Synch
 	}
 
 
-	public static function get_covid_samples($patient_name=null)
+	public static function get_covid_samples($filters=null)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			extract($filters);
 			$sql = '';
 			$names = explode(' ', $patient_name);
 			foreach ($names as $key => $name) {
@@ -1208,7 +1209,8 @@ class Synch
 				$sql .= "patient_name LIKE '%{$n}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
-			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
+			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0])
+				->whereIn('lab_id', [11, 101])
 				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-4 days')))
 				->whereNull('original_sample_id')
 				->whereNull('receivedstatus')
@@ -1239,7 +1241,7 @@ class Synch
 	public static function set_covid_samples($samples)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0])->whereIn('lab_id', [11, 101])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 			foreach ($nat_samples as $key => $nat_sample) {
 		        $nat_sample->lab_id = auth()->user()->lab_id;

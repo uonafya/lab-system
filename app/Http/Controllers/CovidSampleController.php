@@ -960,8 +960,7 @@ class CovidSampleController extends Controller
 
     public function cif_patient(Request $request)
     {
-        $patient_name = $request->input('patient_name');
-        $samples = \App\Synch::get_covid_samples($patient_name);
+        $samples = \App\Synch::get_covid_samples($request->only(['patient_name']));
         $div = \Str::random(20);
         if($samples){
             return view('tables.cif_samples_partial', compact('samples', 'div'));
