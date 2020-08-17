@@ -175,6 +175,7 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::get('cif', 'CovidSampleController@cif_samples');
+				Route::get('jitenge', 'CovidSampleController@jitenge_samples');
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
 			

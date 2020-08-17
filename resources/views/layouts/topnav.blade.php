@@ -84,6 +84,9 @@
                             <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('covid_worksheet') }}">Worksheets</a>
                         </li>
                         <li class="">
@@ -95,7 +98,6 @@
                         <li class="">
                             <a href="{{ url('covidkits/reports') }}">Kits</a>
                         </li>
-
                     @elseif(session('testingSystem') == 'DR')
                         <li class="dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -195,9 +197,12 @@
                                 <li>
                                     <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
-                            @elseif(Auth::user()->user_type_id == 12)
+                            @elseif(in_array(Auth::user()->user_type_id, [12, 15]))
                                 <li class="">
                                     <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                                 </li>
                             @else
                                 @if(!Session('pendingTasks') || env('APP_LAB') == 2)
@@ -298,6 +303,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                     </li>
                     <li class="">
                         <a href="{{ url('covid_worksheet') }}">Worksheets</a>
@@ -424,9 +432,12 @@
                                 <li>
                                     <a href="{{ url('covid_sample/transfer_samples') }}">Transfer Covid Samples</a>
                                 </li>
-                        @elseif(Auth::user()->user_type_id == 12)
+                        @elseif(in_array(Auth::user()->user_type_id, [12, 15]))
                             <li class="">
                                 <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                             </li>
 
 
@@ -478,7 +489,7 @@
                                     @endif">Nascop Dashboard</a></li>
                                 </ul>
                             </li>
-                            
+
                             @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
                                 <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">

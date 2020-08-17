@@ -667,6 +667,12 @@ class CovidSampleController extends Controller
         return view('tables.cif_covid_samples', compact('samples'));
     }
 
+    public function jitenge_samples()
+    {
+        $samples = \App\Synch::get_covid_samples(null, true);
+        return view('tables.cif_covid_samples', compact('samples'));
+    }
+
     public function set_cif_samples(Request $request)
     {
         $samples = $request->input('sample_ids');
