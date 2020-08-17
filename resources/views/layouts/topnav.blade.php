@@ -97,14 +97,14 @@
                         </li>
 
                     @elseif(session('testingSystem') == 'DR')
-                        <li class="">
-                            <a href="{{ url('home') }}">Home</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('dr_dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Dashboard <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class=""><a class="dropdown-item" href="{{ url('dr_dashboard') }}">Dashboard</a></li>
+                                <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
+                            </ul>
                         </li>
                         <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
@@ -206,12 +206,16 @@
                                     <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
                                     <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
 
-                                    <li class="">
-                                        <a href="{{ url('facility') }}">Facilities</a>
+                                    <li class="dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Facilities <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
+                                            <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                        <a href="{{ url('facility/lab') }}">Lab Facilities</a>
-                                    </li>
+
                                     <li class="">
                                         <a href="{{ route('reports') }}">Reports</a>
                                     </li>
@@ -290,9 +294,6 @@
                     </li>
                 @elseif(Session('testingSystem') == 'Covid')
                     <li class="">
-                        <a href="{{ url('home') }}">Home</a>
-                    </li>
-                    <li class="">
                         <a href="{{ url('covid_sample') }}">Samples</a>
                     </li>
                     <li class="">
@@ -311,14 +312,14 @@
                         <a href="{{ url('covidkits/reports') }}">Kits</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
-                    <li class="">
-                        <a href="{{ url('home') }}">Home</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('dr_dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dashboard <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class=""><a class="dropdown-item" href="{{ url('dr_dashboard') }}">Dashboard</a></li>
+                            <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
+                        </ul>
                     </li>
                     <li class="">
                         <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
@@ -449,12 +450,16 @@
                             <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
                             <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
 
-                            <li class="">
-                                <a href="{{ url('facility') }}">Facilities</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Facilities <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                </ul>
                             </li>
-                            <li>
-                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
-                            </li>
+                            
                             <li class="">
                                 <a href="{{ route('reports') }}">Reports</a>
                             </li>
