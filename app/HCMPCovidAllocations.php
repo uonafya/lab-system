@@ -33,6 +33,7 @@ class HCMPCovidAllocations extends Model
     		$response = $client->request('get', 'covid_19', [
 	            'http_errors' => true,
 	            'debug' => true,
+	            'verify' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'apitoken' => env('HCMP_TOKEN'),
@@ -50,7 +51,7 @@ class HCMPCovidAllocations extends Model
 					if (env('APP_LAB') == $item->lab_id) {
 						$lab = Lab::find($item->lab_id);
 						$kit = CovidKit::where('material_no', $item->material_number)->first();
-
+						dd($kit);
 						$model = new $this;
 						$model->allocation_date = $item->allocation_date;
 						$model->allocation_type = $item->allocation_type;
