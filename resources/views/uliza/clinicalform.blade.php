@@ -388,8 +388,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		// const axios = require('axios');
-
 
         var vm = new Vue({
         	el: "#my-vue-instance",
@@ -439,7 +437,7 @@
         	methods: {
         		update(){
         			console.log(this.myForm);
-        			axios.post('uliza-form', this.myForm).then(function(response){
+        			axios.post('/uliza-form', this.myForm).then(function(response){
         				console.log(response);
         			}).catch(function(error){
         				console.log(error);
