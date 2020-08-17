@@ -31,6 +31,7 @@ class HCMPCovidAllocations extends Model
 			],
 		]);
 		$body = json_decode($response->getBody());
+		dd($body);
 		foreach ($body->data as $key => $item) {
 			if (env('APP_LAB') == $item->lab_id) {
 				$lab = Lab::find($item->lab_id);
