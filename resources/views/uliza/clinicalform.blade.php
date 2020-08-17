@@ -290,7 +290,7 @@
 							Support structures (e.g. treatment buddy, support group attendance, caregivers) in place for this patient?
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.support_structures" name="support_structures"  rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.support_structures" name="support_structures" rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -299,7 +299,7 @@
 							Evidence of adherence concerns (e.g. missed appointments, pill counts?):
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.adherence_concerns" name="adherence_concerns"  rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.adherence_concerns" name="adherence_concerns" rows="4"></textarea>
 						</div>
 					</div>
 				  
