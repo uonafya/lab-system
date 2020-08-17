@@ -81,7 +81,7 @@ class Random
 
         extract(Lookup::covid_form());
 
-        $data = [];
+        $rows = [];
 
         foreach ($samples as $key => $sample) {
             $row = [
@@ -111,7 +111,7 @@ class Random
             ];
             if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
             if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
-            $data[] = $row;
+            $rows[] = $row;
         }
 
         $file = 'all_covid_samples';
