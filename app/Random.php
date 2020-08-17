@@ -121,7 +121,7 @@ class Random
 
         $attachments = [storage_path("exports/" . $file . ".csv")];
 
-        Mail::to(['joelkith@gmail.com'])->send(new TestMail($attachments));
+        Mail::to(['joelkith@gmail.com', 'cchiera@ampath.or.ke'])->send(new TestMail($attachments));
     }
 
 
