@@ -441,6 +441,8 @@
         			console.log(this.myForm);
         			axios.post('uliza-form', this.myForm).then(function(response){
         				console.log(response);
+        			}).catch(function(error){
+        				console.log(error);
         			});
         		},
         		addVisit(){
