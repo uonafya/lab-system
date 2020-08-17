@@ -73,6 +73,7 @@ class Random
 
     public static function download_covid_excel()
     {
+        ini_set("memory_limit", "-1");
         $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
             ->where('repeatt', 0)
             ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
