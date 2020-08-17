@@ -388,6 +388,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
+		const axios = require('axios');
 
 
         var vm = new Vue({
@@ -437,7 +438,10 @@
         	},
         	methods: {
         		update(){
-        			console.log(this.myForm)
+        			console.log(this.myForm);
+        			axios.post('uliza-form', this.myForm).then(function(response){
+        				console.log(response);
+        			});
         		},
         		addVisit(){
         			// var tempObj = this.clinicalVisit;
