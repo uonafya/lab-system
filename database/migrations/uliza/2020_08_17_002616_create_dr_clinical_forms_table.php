@@ -18,6 +18,7 @@ class CreateDrClinicalFormsTable extends Migration
             $table->integer('facility_id')->unsigned()->index();
             $table->string('cccno');
             $table->date('reporting_date');
+            $table->date('dob');
             $table->date('artstart_date');
             $table->string('gender');
             $table->integer('curr_weight');
@@ -30,7 +31,7 @@ class CreateDrClinicalFormsTable extends Migration
             $table->tinyInteger('no_adherance_counseling')->nullable();
             $table->tinyInteger('no_homevisits')->nullable();
             $table->text('support_structures')->nullable();
-            $table->text('adherence_concerns');
+            $table->text('adherence_concerns')->nullable();
             $table->tinyInteger('no_dotsdone')->nullable();
             $table->text('likely_rootcauses')->nullable();
             $table->text('inadequate_dosing')->nullable();

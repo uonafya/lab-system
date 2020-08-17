@@ -471,13 +471,14 @@
         	methods: {
         		update(){
         			console.log(this.myForm);
-        			$("#myClinicalForm").validate({
-						rules: {},
+        			var validator = $( "#myClinicalForm" ).validate();
+					validator.form();
+        			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
 			                element.before(error);
 			            }
-					});
+					});*/
         			axios.post('/uliza-form', this.myForm).then(function(response){
         				console.log(response);
         			}).catch(function(error){
