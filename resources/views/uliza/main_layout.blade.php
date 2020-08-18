@@ -19,6 +19,13 @@
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/summernote/summernote.css') }}" rel="stylesheet" type="text/css">
 
+    <style type="text/css">
+    	.bg-purple{
+    		color: #fff;
+    		background-color: #e38fe3;
+    	}
+    </style>
+
 </head>
 <body>
 	<header class="sticky-top">

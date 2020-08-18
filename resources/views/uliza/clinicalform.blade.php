@@ -501,6 +501,13 @@
         				tempVm.clinicalVisit[key] = null;
         			});
         		},
+        		editVisit(index){
+        			console.log(index);
+        			this.myForm.clinical_visits.splice(index, 1);
+
+        			this.clinicalVisit = {...this.myForm.clinical_visits[index]};
+        			$('#clinical_visit_modal').modal('show')
+        		},
         		delVisit(index){
         			console.log(index);
         			this.myForm.clinical_visits.splice(index, 1);
