@@ -913,21 +913,22 @@ class Common
 	        try {
 	        	ini_set("memory_limit", "-1");
 	        	echo "==> Sending Email \n";
+	        	Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail);
 	        	// dd($mailinglist);
-	        	Mail::to($mainRecepient)/*->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])*/
-	        	->send(new LabTracker($data));
-	        	$allemails = array_merge($mainRecepient, $mailinglist);
-	        	echo "==> Updating recipients last received emials \n";
-	        	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-	        	echo "==> Updating records last received emials \n";
-	        	foreach ($data->performance as $key => $performance) {
-	        		$performance->dateemailsent = date('Y-m-d');
-	        		$performance->save();
-	        	}
-	        	foreach ($data->equipments as $key => $equipment) {
-	        		$equipment->dateemailsent = date('Y-m-d');
-	        		$equipment->save();
-	        	}
+	        	// Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
+	        	// ->send(new LabTracker($data));
+	        	// $allemails = array_merge($mainRecepient, $mailinglist);
+	        	// echo "==> Updating recipients last received emials \n";
+	        	// MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
+	        	// echo "==> Updating records last received emials \n";
+	        	// foreach ($data->performance as $key => $performance) {
+	        	// 	// $performance->dateemailsent = date('Y-m-d');
+	        	// 	$performance->save();
+	        	// }
+	        	// foreach ($data->equipments as $key => $equipment) {
+	        	// 	// $equipment->dateemailsent = date('Y-m-d');
+	        	// 	$equipment->save();
+	        	// }
 	        	echo "==> Lab tracker notifications complete \n";
 	        	return true;
 	        } catch (Exception $exception) {
