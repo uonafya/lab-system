@@ -43,7 +43,6 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 
 	Route::get('pages', 'UlizaController@pages');
 
-	
 	Route::get('clinicalform', 'UlizaController@clinicalform');
 	Route::get('clinical-review', 'UlizaController@clinical_review');
 });

@@ -106,13 +106,15 @@ class UlizaPage extends Model
         ");
 
         \DB::table('uliza_recommendations')->insert([
-            ['name' => 'Additional Information Required From Facility'],
-            ['name' => 'Additional Information Required From RTWG'],
-            ['name' => 'Provide Feedback To Facility Directly'],
-            ['name' => 'Refer To Technical Reviewer'],
-            ['name' => 'Send Feedback To RTWG'],
+            ['id' => 1, 'name' => 'Additional Information Required From Facility'],
+            ['id' => 5, 'name' => 'Additional Information Required From RTWG'],
+            ['id' => 3, 'name' => 'Provide Feedback To Facility Directly'],
+            ['id' => 2, 'name' => 'Refer To Technical Reviewer'],
+            ['id' => 6, 'name' => 'Send Feedback To RTWG'],
         ]);
 
     }
+
+
 
 }
