@@ -50,7 +50,7 @@ class HCMPCovidAllocations extends Model
 				if ($existing->isEmpty()) {
 					if (env('APP_LAB') == $item->lab_id) {
 						$lab = Lab::find($item->lab_id);
-						$kit = CovidKit::where('material_no', $item->material_number)->get();
+						$kit = CovidKit::withTrashed()->where('material_no', $item->material_number)->get();
 						if (!$kit->isEmpty()) {
 							$model = new $this;
 							$model->allocation_date = $item->allocation_date;
