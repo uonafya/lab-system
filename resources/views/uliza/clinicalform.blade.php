@@ -488,9 +488,9 @@
         		},
         		addVisit(){
         			// var tempObj = this.clinicalVisit;
-        			var tempObj = [];
-        			// this.myForm.clinical_visits.push(this.clinicalVisit);
+        			this.myForm.clinical_visits.push({...this.clinicalVisit});
 
+        			/*var tempObj = [];
         			var tempVm = this;
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				tempObj[key] = tempVm.clinicalVisit[key];
@@ -499,7 +499,7 @@
 
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				tempVm.clinicalVisit[key] = null;
-        			});
+        			});*/
         		},
         		saveDraft(){
 					const data = JSON.stringify(this.myForm)
