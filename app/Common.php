@@ -911,6 +911,7 @@ class Common
 	        	return null;
 
 	        try {
+	        	ini_set("memory_limit", "-1");
 	        	echo "==> Sending Email \n";
 	        	// dd($mailinglist);
 	        	Mail::to($mainRecepient)/*->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])*/
