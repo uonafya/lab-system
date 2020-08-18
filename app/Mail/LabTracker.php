@@ -14,7 +14,7 @@ class LabTracker extends Mailable
 
     public $lab;
     public $path;
-    public $title;
+    // public $title;
     /**
      * Create a new message instance.
      *
@@ -22,21 +22,22 @@ class LabTracker extends Mailable
      */
     public function __construct($data)
     {
-        $this->path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+        // $this->path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
 
-        if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
+        // if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
 
-        if(file_exists($this->path)) unlink($this->path);
+        // if(file_exists($this->path)) unlink($this->path);
         
-        $mpdf = new Mpdf();
-        $this->lab = \App\Lab::find(env('APP_LAB'));
-        $lab = $this->lab;
-        $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
-        $view_data = view('exports.mpdf_labtracker', $pageData)->render();
-        $mpdf->WriteHTML($view_data);
-        $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
+        // $mpdf = new Mpdf();
+        // $this->lab = \App\Lab::find(env('APP_LAB'));
+        // $lab = $this->lab;
+        // $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
+        // $view_data = view('exports.mpdf_labtracker', $pageData)->render();
+        // $mpdf->WriteHTML($view_data);
+        // $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
 
-        $this->title = strtoupper($this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year);
+        // $this->title = strtoupper($this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year);
+        // dd($this->title);
     }
 
     /**
@@ -46,7 +47,7 @@ class LabTracker extends Mailable
      */
     public function build()
     {
-        $this->attach($this->path, ['as' => $this->title]);
+        // $this->attach($this->path, ['as' => $this->title]);
 
         return $this->subject($this->title)->view('emails.labtracker');
     }

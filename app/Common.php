@@ -900,10 +900,10 @@ class Common
     	$data = Random::__getLablogsData($year, $previousMonth);
     	if ($data) {
     		echo "==> Getting mailing list\n";
-    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
-	        $mainRecepient = ['baksajoshua09@gmail.com'];
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com'];
+	        $mainRecepient = ['bakasajoshua09@gmail.com'];
 	        if(env('APP_ENV') == 'production') {
-	        	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+	        	// $mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
 	    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
 	        }
 	        
@@ -912,7 +912,8 @@ class Common
 
 	        try {
 	        	echo "==> Sending Email \n";
-	        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
+	        	// dd($mailinglist);
+	        	Mail::to($mainRecepient)/*->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])*/
 	        	->send(new LabTracker($data));
 	        	$allemails = array_merge($mainRecepient, $mailinglist);
 	        	echo "==> Updating recipients last received emials \n";
