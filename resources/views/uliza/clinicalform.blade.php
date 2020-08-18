@@ -248,7 +248,13 @@
 													<td> @{{ clinical_visit.arv_regimen }} </td>
 													<td> @{{ clinical_visit.reason_switch }} </td>
 													<td> @{{ clinical_visit.new_oi }} </td>
-													<td></td>
+													<td>
+														<div class="btn-group" role="group">
+															<button class="btn btn-sm btn-warning">Edit</button>
+															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click="delVisit(clinical_visit_index)">Del</button>
+															
+														</div> 
+													</td>
 												</tr>
 											</tbody>
 										</table>
@@ -487,24 +493,16 @@
         			});
         		},
         		addVisit(){
-        			// var tempObj = this.clinicalVisit;
         			this.myForm.clinical_visits.push({...this.clinicalVisit});
 
         			var tempVm = this;
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				tempVm.clinicalVisit[key] = null;
         			});
-
-        			/*var tempObj = [];
-        			var tempVm = this;
-        			Object.keys(this.clinicalVisit).forEach(function(key, index){
-        				tempObj[key] = tempVm.clinicalVisit[key];
-        			});
-        			this.myForm.clinical_visits.push(tempObj);
-
-        			Object.keys(this.clinicalVisit).forEach(function(key, index){
-        				tempVm.clinicalVisit[key] = null;
-        			});*/
+        		},
+        		delVisit(index){
+        			console.log(index);
+        			this.myForm.clinical_visits.splice(index, 1);
         		},
         		saveDraft(){
 					const data = JSON.stringify(this.myForm)
