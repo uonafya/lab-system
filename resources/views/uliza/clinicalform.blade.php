@@ -480,6 +480,7 @@
         			var validator = $( "#myClinicalForm" ).validate();
 					var res = validator.form();
 					console.log(res);
+					if(!res) return;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
