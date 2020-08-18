@@ -210,6 +210,13 @@ Artisan::command('send:weekly-backlog', function(){
     $this->info($str);
 })->describe('Send out weekly backlog sms alert.');
 
+Artisan::command('send:labtrackermail', function() {
+    $lastmonth = date('Y-m-d', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+    $year = date('Y', strtotime($lastmonth));
+    $month = date('m', strtotime($lastmonth));
+    $str = \App\Common::send_lab_tracker($year, $month);
+    $this->info($str);
+})->describe('Send out monthly labtracker report email');
 
 Artisan::command('synch:covid', function(){
     $str = \App\Synch::synch_covid();

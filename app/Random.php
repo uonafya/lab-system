@@ -2010,8 +2010,8 @@ class Random
 		$performance = LabPerformanceTracker::where('year', $year)
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
-							})->get();
-		$eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
+							})->whereNull('dateemailsent')->get();
+        $eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
 							->when($month, function($query) use ($month){
 								return $query->whereMonth('datetested', $month);
 							})->where('flag', '=', 1)->first()->tests;
@@ -2040,7 +2040,9 @@ class Random
 		$equipment = LabEquipmentTracker::where('year', $year)
 							->when($month, function($query) use ($month){
 								return $query->where('month', $month);
-							})->get();
+							})->whereNull('dateemailsent')->get();
+        if ($performance->isEmpty() && $equipment->isEmpty())
+            return false;
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 	}
 

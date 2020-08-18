@@ -895,31 +895,48 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    // public static function send_lab_tracker($year, $previousMonth) {
-    // 	$data = Random::__getLablogsData($year, $previousMonth);
+    public static function send_lab_tracker($year, $previousMonth) {
+    	echo "==> Pulling the data \n";
+    	$data = Random::__getLablogsData($year, $previousMonth);
+    	if ($data) {
+    		echo "==> Getting mailing list\n";
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
+	        $mainRecepient = ['baksajoshua09@gmail.com'];
+	        if(env('APP_ENV') == 'production') {
+	        	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
+	    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+	        }
+	        
+	        if(!$mainRecepient) 
+	        	return null;
 
-    // 	$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com'];
-    //     $mainRecepient = ['baksajoshua09@gmail.com'];
-    //     if(env('APP_ENV') == 'production') {
-    //     	$mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
-    // 		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
-    //     }
-        
-    //     if(!$mainRecepient) 
-    //     	return null;
-
-    //     try {
-    //     	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
-    //     	->send(new LabTracker($data));
-    //     	$allemails = array_merge($mainRecepient, $mailinglist);
-    //     	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-    //     	return true;
-    //     } catch (Exception $exception) {
-    //     	\Log::error($exception);
-    //     	// print_r($exception);
-    //     	return false;
-    //     }
-    // }
+	        try {
+	        	echo "==> Sending Email \n";
+	        	Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
+	        	->send(new LabTracker($data));
+	        	$allemails = array_merge($mainRecepient, $mailinglist);
+	        	echo "==> Updating recipients last received emials \n";
+	        	MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
+	        	echo "==> Updating records last received emials \n";
+	        	foreach ($data->performance as $key => $performance) {
+	        		$performance->dateemailsent = date('Y-m-d');
+	        		$performance->save();
+	        	}
+	        	foreach ($data->equipments as $key => $equipment) {
+	        		$equipment->dateemailsent = date('Y-m-d');
+	        		$equipment->save();
+	        	}
+	        	echo "==> Lab tracker notifications complete \n";
+	        	return true;
+	        } catch (Exception $exception) {
+	        	\Log::error($exception);
+	        	print_r($exception);
+	        	return false;
+	        }
+    	}
+    	echo "==> No pending lab tracker notification found \n";
+    	return false;
+    }
 
     private static function extractConsumptionDetails($consumption, $class, $machine)
     {
