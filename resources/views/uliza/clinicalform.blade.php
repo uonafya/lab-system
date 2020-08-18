@@ -490,6 +490,7 @@
         			// var tempObj = this.clinicalVisit;
         			this.myForm.clinical_visits.push({...this.clinicalVisit});
 
+        			var tempVm = this;
         			Object.keys(this.clinicalVisit).forEach(function(key, index){
         				tempVm.clinicalVisit[key] = null;
         			});
