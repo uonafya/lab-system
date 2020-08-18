@@ -33,7 +33,7 @@ class HCMPCovidAllocations extends Model
     		$response = $client->request('get', 'covid_19', [
 	            'http_errors' => true,
 	            'debug' => true,
-	            'verify' => true,
+	            'verify' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'apitoken' => env('HCMP_TOKEN'),
