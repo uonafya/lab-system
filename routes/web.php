@@ -45,6 +45,7 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 
 	
 	Route::get('clinicalform', 'UlizaController@clinicalform');
+	Route::get('clinical-review', 'UlizaController@clinical_review');
 });
 
 Route::resource('uliza-form', 'DrClinicalFormController');
