@@ -150,11 +150,18 @@ class CovidConsumptionController extends Controller
         if (!$request->has(['received', 'response'])) {
             session(['toast_error' => true, 'toast_message' => 'Bad request. The posted details are incomplete']);
         }
-
+        
         foreach ($request->input('received') as $key => $value) {
             $allocation_line = HCMPCovidAllocations::find($key);
-            $allocation_line->received_kits = $value;
             $allocation_line->received = $request->input('response');
+            if ($request->input('response') == 'YES') {
+                $allocation_line->received_kits = $value;
+                $allocation_line->responded = 'YES';
+            } else if ($request->input('response') == 'NO') {
+                $allocation_line->responded = 'POSTPONED';
+            }
+            $allocation_line->respond_count = $allocation_line->respond_count+1;
+            $allocation_line->date_responded = date('Y-m-d');
             $allocation_line->save();
         }
         return redirect('covidkits');
@@ -203,9 +210,19 @@ class CovidConsumptionController extends Controller
     private function checkCovidAllocations($end_of_week)
     {
         $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
+
+        // Check there is an allocation made that has been received in the previous week
         $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
                             ->whereDate('allocation_date', $allocation_date)
+                            ->where('responded', 'NO')
                             ->get();
+        if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
+            $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
+                            ->whereDate('allocation_date', $allocation_date)
+                            ->where('responded', 'POSTPONED')
+                            ->where('date_responded', '<', $end_of_week)
+                            ->get();
+        }
         
         $newallocation = [];
         foreach ($allocations as $key => $allocation) 
