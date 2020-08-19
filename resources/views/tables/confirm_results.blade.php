@@ -241,8 +241,10 @@
 
                                 @if($worksheet->status_id == 2)
 
-                                    @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) || 
-                                     (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby)) )
+                                    @if((!in_array(env('APP_LAB'), $double_approval) && $worksheet->uploadedby != auth()->user()->id) 
+                                    || 
+                                     (in_array(env('APP_LAB'), $double_approval) && ($worksheet->reviewedby != auth()->user()->id || !$worksheet->reviewedby))
+                                     || auth()->user()->user_type_id == 12 )
 
                                         <tr bgcolor="#999999">
                                             <td  colspan="10" bgcolor="#00526C" >

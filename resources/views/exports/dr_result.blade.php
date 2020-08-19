@@ -35,9 +35,11 @@
 						<tr>
 							<td rowspan="{{ $dr_call->call_drug->count() }}">{{ $dr_call->drug_class }}  </td>
 							<td rowspan="{{ $dr_call->call_drug->count() }}">
-								@foreach($dr_call->mutations as $mutation)
-									{{ $mutation }} <br />
-								@endforeach
+								@if($dr_call->mutations)
+									@foreach($dr_call->mutations as $mutation)
+										{{ $mutation }} <br />
+									@endforeach
+								@endif
 							</td>
 
 						@foreach($dr_call->call_drug as $key => $call_drug)

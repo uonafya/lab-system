@@ -529,7 +529,7 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid') $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -585,7 +585,7 @@ class Synch
 				}
 
 				$token = self::get_token();
-				if($type == 'covid') $token = self::get_covid_token();
+				if($type == 'covid' && env('APP_LAB') != 25) $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
@@ -1038,194 +1038,6 @@ class Synch
 		}
 	}
 
-	public static function send_weekly_activity()
-	{
-		$eid = self::weeklylabactivity('eid');
-		$vl = self::weeklylabactivity('vl');
-
-		$users = DB::table('musers')->where('weeklyalert', 1)->get();
-
-		foreach ($users as $user) {
-
-			$message = 
-			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$eid['weekstartdisplay']} - {$eid['currentdaydisplay']}\n{$eid['smsfoot']}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
-			$message .=
-			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
-
-			\App\Common::sms($user->mobile, $message);
-		}
-	}
-
-	public static function weeklylabactivity($type)
-	{
-		ini_set('memory_limit', '-1');
-		$classes = self::$synch_arrays[$type];
-		$sample_class = $classes['sample_class'];
-		$sampleview_class = $classes['sampleview_class'];
-		$view_table = $classes['view_table'];
-		$worksheets_table = $classes['worksheets_table'];
-
-		$data['smsfoot'] = \App\Lab::find(env('APP_LAB'))->labname ?? '';
-		$data['testtype'] = 1;
-
-		if($type == 'vl') $data['testtype'] = 2;
-
-		$today = date("Y-m-d");
-		$weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
-
-		$currentdaydisplay =date('d-M-Y');
-		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
-
-		$data['currentdaydisplay'] = $currentdaydisplay;
-		$data['weekstartdisplay'] = $weekstartdisplay;
-
-		$minimum_date= date ( "Y-m-d", strtotime ('-1 year') );
-
-		$data['numsamplesreceived'] = $sampleview_class::selectRaw('count(id) as totals')
-								->whereBetween('datereceived', [$weekstartdate, $today])
-								->where('site_entry', '!=', 2)
-								->where(['flag' => 1, 'parentid' => 0, 'lab_id' => env('APP_LAB', null)])
-								->first()->totals;
-
-		$data['roche_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 1)
-						->where('site_entry', '!=', 2)
-						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->whereBetween('datetested', [$weekstartdate, $today])
-						->first()->totals;
-
-		$data['abbott_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 2)
-						->where('site_entry', '!=', 2)
-						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->whereBetween('datetested', [$weekstartdate, $today])
-						->first()->totals;
-
-		$data['c8800_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 3)
-						->where('site_entry', '!=', 2)
-						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->whereBetween('datetested', [$weekstartdate, $today])
-						->first()->totals;
-
-		$data['pantha_tested'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('machine_type', 4)
-						->where('site_entry', '!=', 2)
-						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->whereBetween('datetested', [$weekstartdate, $today])
-						->first()->totals;
-
-		$data['tested'] = $data['roche_tested'] + $data['abbott_tested'] + $data['pantha_tested'];
-
-		$data['inprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
-						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")
-						->where('status_id', 1)
-						->where('site_entry', '!=', 2)
-						->where(["{$view_table}.flag" => 1, "{$view_table}.lab_id" => env('APP_LAB', null)])
-						->first()->totals;
-
-
-		$samples = $sampleview_class::select('datereceived', 'datedispatched')
-						->where('site_entry', '!=', 2)
-						->where('batch_complete', 1)
-						->where('repeatt', 0)
-						->whereBetween('datetested', [$weekstartdate, $today])
-						->get();
-
-		$sample_count = $samples->count();
-
-		$tat = 0;
-
-		foreach ($samples as $sample) {
-			$tat += \App\Common::get_days($sample->datereceived, $sample->datedispatched);
-		}
-		$data['tat'] = round(@($tat / $sample_count), 1);
-
-		$data['dispatched'] = $sample_count;
-
-		$data['pendingresults'] = $sampleview_class::selectRaw('count(id) as totals')
-								->where('site_entry', '!=', 2)
-								->whereNull('worksheet_id')
-								->whereNull('datedispatched')
-								->whereRaw("(result is null or result=0)")
-								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
-								->first()->totals;
-
-		$mindate = $sampleview_class::selectRaw('MIN(datereceived) as mindate')
-								->where('datereceived', '>', $minimum_date)
-								->whereNull('worksheet_id')
-								->whereNull('approvedby')
-								->whereNull('datedispatched')
-								// ->where('receivedstatus', '!=', 2)
-								->where('site_entry', '!=', 2)
-								->whereRaw("(result is null or result=0)")
-								->where(['receivedstatus' => 1, 'flag' => 1, 'input_complete' => 1, 'lab_id' => env('APP_LAB', null)])
-								->first()->mindate;
-
-		$data['oldestinqueuesample'] = \App\Common::get_days($mindate, $today);
-		return $data;
-	}
-
-	public static function send_weekly_backlog()
-	{
-		$currentdaydisplay =date('d-M-Y');
-		$lab = \App\Lab::where('id', '=', env('APP_LAB'))->first()->labname;
-		$logs = self::get_backlogs();
-    	
-    	$users = DB::table('musers')->where('weeklyalert', 1)->get();
-
-		foreach ($users as $user) {
-
-			$message = "Hi ".$user->name."\n"." BACK LOG ALERT AS OF ".$currentdaydisplay." " . $lab."\n". " EID "."\n"." Samples Logged in NOT in Worksheet : ". $logs->pendingeidsamples."\n"." Samples In Process : ".$logs->totaleidsamplesrun."\n"." VL "."\n". " Samples Logged in and NOT in Worksheet :".$logs->pendingvlsamples."\n"." Samples In Process:".$logs->totalvlsamplesrun;
-
-
-			\App\Common::sms($user->mobile, $message);
-		}
-	}
-
-	public static function get_backlogs(){    	
-    	/**** Total samples run ****/
-    	$totaleidsamplesrun = SampleView::selectRaw("count(*) as samples_run")
-    								->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
-    								->where('site_entry', '!=', 2)
-    								->where(['samples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
-    								->where('worksheets.status_id', '<', 3)->first()->samples_run;
-    	$totalvlsamplesrun = ViralsampleView::selectRaw("count(*) as samples_run")
-    								->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
-    								->where('site_entry', '!=', 2)
-    								->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
-    								->where('viralworksheets.status_id', '<', 3)->first()->samples_run;
-
-    	/**** Samples pending results ****/
-    	$pendingeidsamples = SampleView::selectRaw("count(*) as pending_samples")
-							    	->whereNull('worksheet_id')
-    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result = 0 ))")
-    								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
-    								->where('flag', '=', 1)->first()->pending_samples;
-    	$pendingvlsamples = ViralsampleView::selectRaw("count(*) as pending_samples")
-							    	->whereNull('worksheet_id')
-    								->whereNull('approvedby')->whereRaw("YEAR(datereceived) > 2015")
-    								->whereRaw("((result IS NULL ) OR (result ='0' ) OR (result !='Collect New Sample') )")
-    								->where('sampletype', '>', 0)
-    								->where('site_entry', '!=', 2)
-    								->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0, 'receivedstatus' => 1, 'input_complete' => 1])
-    								->where('flag', '=', 1)->first()->pending_samples;
-
-    	return (object)[
-    					'totaleidsamplesrun' => $totaleidsamplesrun,
-						'totalvlsamplesrun' => $totalvlsamplesrun,
-						'pendingeidsamples' => $pendingeidsamples,
-						'pendingvlsamples' => $pendingvlsamples
-					];
-	}
-
-
 
 
 
@@ -1281,7 +1093,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		// if(env('APP_LAB') == 23) $client = new Client(['base_uri' => self::$base]);
+		if(env('APP_LAB') == 25) $client = new Client(['base_uri' => self::$base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1325,7 +1137,7 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
-			if(env('APP_LAB') == 230) $token = self::get_token();
+			if(env('APP_LAB') == 25) $token = self::get_token();
 			else{
 				$token = self::get_covid_token();				
 			}
@@ -1386,9 +1198,11 @@ class Synch
 	}
 
 
-	public static function get_covid_samples($patient_name=null)
+	public static function get_covid_samples($filters=null, $jitenge=false)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			if(!$filters) $filters = ['patient_name' => null, 'identifier' => null, 'national_id' => null];
+			extract($filters);
 			$sql = '';
 			$names = explode(' ', $patient_name);
 			foreach ($names as $key => $name) {
@@ -1396,14 +1210,26 @@ class Synch
 				$sql .= "patient_name LIKE '%{$n}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
-			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
-				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-21 days')))
+
+			$identifier_sql = null;			
+			if($national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
+			else if($identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
+
+			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0])
+				->whereIn('lab_id', [11, 101])
+				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-5 days')))
 				->whereNull('original_sample_id')
 				->whereNull('receivedstatus')
-				->when($patient_name, function($query) use ($sql){
+				->when(($patient_name && !$identifier_sql), function($query) use ($sql){
 					return $query->select('covid_samples.*')
 					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
 					->whereRaw($sql);
+				})
+				->when($identifier_sql, function($query) use($identifier_sql){
+					return $query->whereRaw($identifier_sql);
+				})
+				->when($jitenge, function($query){
+					return $query->where('lab_id', 101);
 				})
 				->with(['patient'])->get();
 			return $samples;
@@ -1427,10 +1253,10 @@ class Synch
 	public static function set_covid_samples($samples)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0])->whereIn('lab_id', [11, 101])->where('created_at', '>', date('Y-m-d', strtotime('-5 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 			foreach ($nat_samples as $key => $nat_sample) {
-		        $nat_sample->lab_id = auth()->lab()->id;
+		        $nat_sample->lab_id = auth()->user()->lab_id;
 
 		        $p = CovidPatient::where('national_patient_id', $nat_sample->patient->id)->first();
 		        if(!$p){
@@ -1889,8 +1715,8 @@ class Synch
 		$url = 'insert/covidconsumption';
 		
 		while (true) {
-			// $consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
-			$consumptions = CovidConsumption::with(['details.kit'])->get();
+			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
+			// $consumptions = CovidConsumption::with(['details.kit'])->get();
 			// dd($consumptions->toJson());
 			if($consumptions->isEmpty())
 				break;
@@ -1913,7 +1739,7 @@ class Synch
 			// print_r($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
-				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, $body));
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
 				return false;
 			} else {
 				foreach ($body as $key => $consumption) {

@@ -79,7 +79,8 @@ p.breakhere {page-break-before: always}
 						<span class="style1 style7"><br>
 						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
 							P.O. BOX 7674-00100, GPO, NAIROBI <br />
-							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke
+							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke <br />
+							PCR SARS COV-2 (COVID-19) RESULT FORM
 						</span>
 					</td>					
 				</tr>
@@ -105,7 +106,7 @@ p.breakhere {page-break-before: always}
 					<td colspan="7" align="center">
 						<span class="style1 style7"><br>
 						  <span class="style7">AMREF <br />
-						  COVID-19 RESULT FORM</span>
+						  PCR SARS COV-2 (COVID-19) RESULT FORM</span>
 						</span>
 					</td>					
 				</tr>
@@ -119,7 +120,7 @@ p.breakhere {page-break-before: always}
 						@endif
 						<span class="style1"><br>
 						  <span class="style7">MINISTRY OF HEALTH <br />
-						  COVID-19 RESULT FORM</span>
+						  PCR SARS COV-2 (COVID-19) RESULT FORM</span>
 						</span>
 					</td>
 				</tr>
@@ -399,7 +400,17 @@ p.breakhere {page-break-before: always}
 					<td colspan="2" class="style4 style1 comment">
 					</td>
 	            </tr>
-
+			@endif
+		
+			@if(Str::contains(get_class($sample), 'CovidModel') && $sample->result == 1)
+				<tr>
+					<td colspan="5" class="style4 style1 comment">
+		                <b> Attestation Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->id }} <br />
+		                {!! QrCode::size(100)->generate($sample->id) !!}
+					</td>
+					<td colspan="2" class="style4 style1 comment">
+					</td>
+	            </tr>
 			@endif
 
 

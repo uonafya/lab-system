@@ -16,10 +16,12 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!property_exists($row, 'mfl_code')){
-            session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
+
+        if(!property_exists($row, 'mfl_code') && !property_exists($row, 'quarantine_site_id')){
+            session(['toast_error' => 1, 'toast_message' => 'MFL Code OR Quarantine Site ID column is not present.']);
             return;
         }
         if(!property_exists($row, 'patient_name')){
@@ -39,16 +41,27 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->mfl_code || !$row->patient_name || !$row->identifier || !$row->age || !$row->gender) return;
+        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
 
         $mfl = (int) $row->mfl_code;
 
         $fac = Facility::locate($mfl)->first();
-        if(!$fac) return;
+        if(!$fac && !isset($row->quarantine_site_id)){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);   
+            return;
+        }
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $row->identifier && strlen($row->identifier) > 5) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && $row->identifier && strlen($row->identifier) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
@@ -56,6 +69,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
         $p->fill([
             'identifier' => $row->identifier ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
+            'quarantine_site_id' => $row->quarantine_site_id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,

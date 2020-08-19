@@ -1,8 +1,7 @@
 @extends('layouts.master')
 
-@section('css_scripts')
-    
-@endsection
+@component('/tables/css')
+@endcomponent
 
 @section('custom_css')
 	<style type="text/css">
@@ -61,7 +60,7 @@
 			                </center>
 			            </div>
 	                    <div class="panel-body">
-	                        <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+	                        <table class="table table-striped table-bordered table-hover" style="font-size: 10px;margin-top: 1em;">
 			                    <thead>
 			                        <tr>
 			                            <th>Period</th>
@@ -136,7 +135,7 @@
                     </div>
                     <div id="labs-equipment" class="tab-pane">
                         <div class="panel-body">
-                            <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+                            <table class="table table-striped table-bordered table-hover data-table-long" style="font-size: 10px;margin-top: 1em;">
 			                    <thead>
 			                        <tr>
 			                            <th>#</th>
@@ -156,9 +155,26 @@
 			                        <tr>
 			                            <td>{{ $key+1 }}</td>
 			                            <td>{{ $equipment->equipment->name ?? '' }}</td>
-			                            <td>@isset($equipment->datebrokendown){{ date('d M, Y', strtotime($equipment->datebrokendown)) }} @endisset</td>
-			                            <td>@isset($equipment->datereported){{ date('d M, Y', strtotime($equipment->datereported)) }} @endisset</td>
-			                            <td>@isset($equipment->datefixed){{ date('d M, Y', strtotime($equipment->datefixed)) }} @endisset</td>
+			                            <td>
+			                            	@isset($equipment->datebrokendown)
+			                            		{{ date('d M, Y', strtotime($equipment->datebrokendown)) }}
+			                            	@else
+			                            		''
+			                            	@endisset
+			                            </td>
+			                            <td>
+			                            	@isset($equipment->datereported)
+			                            		{{ date('d M, Y', strtotime($equipment->datereported)) }}
+			                            	@else
+			                            		''
+			                            	@endisset
+			                            </td>
+			                            <td>
+			                            	@isset($equipment->datefixed)
+			                            		{{ date('d M, Y', strtotime($equipment->datefixed)) }}
+			                            	@else
+			                            		''
+			                            	@endisset</td>
 			                            <td>{{ $equipment->downtime ?? '' }}</td>
 			                            <td>{{ $equipment->samplesnorun ?? '' }}</td>
 			                            <td>{{ $equipment->failedruns ?? '' }}</td>
@@ -186,15 +202,8 @@
 @endsection
 
 @section('scripts')
-    @component('/forms/scripts')
-        @slot('js_scripts')
-            
-        @endslot
+    @component('/tables/scripts')
 
-
-        @slot('val_rules')
-           
-        @endslot
     @endcomponent
    	<script type="text/javascript">
    		$().ready(function(){

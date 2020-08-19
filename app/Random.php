@@ -71,6 +71,61 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function download_covid_excel()
+    {
+        ini_set("memory_limit", "-1");
+        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
+            ->where('repeatt', 0)
+            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
+            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+            ->get();
+
+        extract(Lookup::covid_form());
+
+        $rows = [];
+
+        foreach ($samples as $key => $sample) {
+            $row = [
+                'Lab ID' => $sample->id,
+                'Identifier' => $sample->identifier,
+                'National ID' => $sample->national_id,
+                'Patient Name' => $sample->patient_name,
+                'Phone Number' => $sample->phone_no,
+                'County' => $sample->countyname ?? $sample->county,
+                'Subcounty' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
+                'Age' => $sample->age,
+                'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
+                'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
+                'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
+                'Worksheet Number' => $sample->worksheet_id,
+                'Machine' => $sample->machine,
+                'Date Collected' => $sample->my_date_format('datecollected'),
+                'Date Received' => $sample->my_date_format('datereceived'),
+                'Date Tested' => $sample->my_date_format('datetested'),
+                'TAT (Receipt to Testing)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInDays($sample->datereceived) : '',
+                'TAT (Receipt to Testing, Weekdays Only)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInWeekdays($sample->datereceived) : '',
+                'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
+                'Result' => $sample->get_prop_name($results, 'result'),
+                'Entered By' => $sample->creator->full_name ?? null,
+                'Date Entered' => $sample->my_date_format('created_at'),
+            ];
+            if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
+            $rows[] = $row;
+        }
+
+        $file = 'all_covid_samples';
+
+        Common::csv_download($rows, $file, true, true);
+        // storage_path("exports/" . $file . ".csv");
+
+        $attachments = [storage_path("exports/" . $file . ".csv")];
+
+        Mail::to(['joelkith@gmail.com', 'cchiera@ampath.or.ke'])->send(new TestMail($attachments));
+    }
+
+
     public static function export_facilities()
     {
         $data = DB::table('hcm.view_facilitys')->selectRaw("DHIScode, facilitycode AS `MFL Code`, NAME, is_surge, WardDHISCode, wardname, SubCountyDHISCode, subcounty, CountyDHISCode, countyname AS `County`, partnername AS `Partner`")->get();
@@ -2199,7 +2254,7 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
     }
 
-	public static function eid_worksheets($year = null)
+	public static function eid_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2243,7 +2298,7 @@ class Random
 		return storage_path("exports/" . $file . ".csv");
 	}
 
-	public static function vl_worksheets($year = null)
+	public static function vl_worksheets($year = null, $download=true)
 	{
 		if(!$year) $year = date('Y');
 		$data = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
@@ -2301,7 +2356,7 @@ class Random
         return storage_path("exports/" . $file . ".csv");
 	}
 
-    public static function covid_worksheets($year = null)
+    public static function covid_worksheets($year = null, $download=true)
     {
         if(!$year) $year = date('Y');
         $data = CovidSample::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
@@ -2317,7 +2372,7 @@ class Random
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
-        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott'];
+        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
 
         $rows = [];
 
@@ -2329,6 +2384,7 @@ class Random
 
                 foreach ($results as $rkey => $rvalue) {
                     $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    if($rkey == 3) $row[$rvalue] += $data->where('result', null)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
                     $total += $row[$rvalue];
                 }
 
@@ -2339,6 +2395,8 @@ class Random
         }
 
         $file = 'covid_worksheets_data';
+
+        if($download) return Common::csv_download($rows, $file);
 
         Common::csv_download($rows, $file, true, true);
 

@@ -85,7 +85,7 @@ class MiscCovid extends Common
             return false;
         }
 
-        $sample = $original->replicate(['national_sample_id', 'worksheet_id', 'interpretation', 'result', 'repeatt', 'datetested', 'dateapproved', 'dateapproved2', 'approvedby', 'approvedby2']); 
+        $sample = $original->replicate(['national_sample_id', 'worksheet_id', 'interpretation', 'result', 'repeatt', 'datetested', 'dateapproved', 'dateapproved2', 'target1', 'target2', 'error', 'approvedby', 'approvedby2']); 
         $sample->run++;
         if($original->parentid == 0) $sample->parentid = $original->id;
 
@@ -95,7 +95,6 @@ class MiscCovid extends Common
         $sample->save();
         return $sample;
     }
-
 
     public static function get_worksheet_samples($machine_type, $limit, $entered_by=null)
     {
@@ -240,9 +239,6 @@ class MiscCovid extends Common
             $sample->date_email_sent = date('Y-m-d');
             $sample->save();
         }
-
-
     }
-
 
 }

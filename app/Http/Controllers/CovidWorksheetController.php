@@ -653,7 +653,6 @@ class CovidWorksheetController extends Controller
 
 
 
-
     public function approve_results(CovidWorksheet $worksheet)
     {    
         if($worksheet->lab_id != auth()->user()->lab_id && auth()->user()->user_type_id) abort(403);    
@@ -737,7 +736,7 @@ class CovidWorksheetController extends Controller
             
             $sample = CovidSample::find($samples[$key]);
             $sample->fill($data);
-            if($sample->result == 3 && $sample->repeatt == 0){
+            if(($sample->result == 3 || !$sample->result) && $sample->repeatt == 0){
                 $sample->result = 5;
                 $sample->labcomment = 'Failed Run';
             }

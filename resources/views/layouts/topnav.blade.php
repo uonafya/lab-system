@@ -44,6 +44,18 @@
             </button>
             <div class="collapse mobile-navbar" id="mobile-collapse">
                 <ul class="nav navbar-nav">
+                    @if(in_array(Auth::user()->user_type_id, [0,1,4]))
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Help Desk <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
+                            <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
+                            <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                        </ul>
+                    </li>
+                    @endif
                 @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                     @if(Session('testingSystem') == 'CD4')
                         <li class="">
@@ -72,6 +84,9 @@
                             <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('covid_worksheet') }}">Worksheets</a>
                         </li>
                         <li class="">
@@ -83,16 +98,15 @@
                         <li class="">
                             <a href="{{ url('covidkits/reports') }}">Kits</a>
                         </li>
-
                     @elseif(session('testingSystem') == 'DR')
-                        <li class="">
-                            <a href="{{ url('home') }}">Home</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('dr_dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="">
-                            <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Dashboard <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class=""><a class="dropdown-item" href="{{ url('dr_dashboard') }}">Dashboard</a></li>
+                                <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
+                            </ul>
                         </li>
                         <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
@@ -122,24 +136,36 @@
                                     <li class=""><a href="{{ url('covid_sample/index/2') }}">Covid Results</a></li>
                                 @endif
 
-                                <li class="">
-                                    <a href="{{ url('batch') }}">EID Samples</a>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Samples <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('batch/index/1') }}">EID Results</a>
+
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Results <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('batch/index/1') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralbatch/index/1') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch') }}">VL Samples</a>
+
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        POC Samples <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('sample/list_poc') }}">EID</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralsample/list_poc') }}">VL</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                                </li>
-                                <li class="">
-                                    <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                                </li>
+
                                 <li class="">
                                     <a href="{{ url('cancersample') }}">HPV Samples</a>
                                 </li>
@@ -171,9 +197,12 @@
                                 <li>
                                     <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
-                            @elseif(Auth::user()->user_type_id == 12)
+                            @elseif(in_array(Auth::user()->user_type_id, [12, 15]))
                                 <li class="">
                                     <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                                </li>
+                                <li class="">
+                                    <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                                 </li>
                             @else
                                 @if(!Session('pendingTasks') || env('APP_LAB') == 2)
@@ -182,12 +211,16 @@
                                     <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
                                     <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
 
-                                    <li class="">
-                                        <a href="{{ url('facility') }}">Facilities</a>
+                                    <li class="dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Facilities <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
+                                            <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                        <a href="{{ url('facility/lab') }}">Lab Facilities</a>
-                                    </li>
+
                                     <li class="">
                                         <a href="{{ route('reports') }}">Reports</a>
                                     </li>
@@ -229,6 +262,18 @@
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
+                @if(in_array(Auth::user()->user_type_id, [0,1,4]))
+                <li class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Help Desk <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
+                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
+                        <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                    </ul>
+                </li>
+                @endif
             @if(!in_array(Auth::user()->user_type_id, [7,8,10,11]))
                 @if(Session('testingSystem') == 'CD4')
                     <li class="">
@@ -254,13 +299,13 @@
                     </li>
                 @elseif(Session('testingSystem') == 'Covid')
                     <li class="">
-                        <a href="{{ url('home') }}">Home</a>
-                    </li>
-                    <li class="">
                         <a href="{{ url('covid_sample') }}">Samples</a>
                     </li>
                     <li class="">
                         <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                     </li>
                     <li class="">
                         <a href="{{ url('covid_worksheet') }}">Worksheets</a>
@@ -275,14 +320,14 @@
                         <a href="{{ url('covidkits/reports') }}">Kits</a>
                     </li>
                 @elseif(session('testingSystem') == 'DR')
-                    <li class="">
-                        <a href="{{ url('home') }}">Home</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('dr_dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="">
-                        <a href="{{ url('dr_testing') }}">Testing Dashboard</a>
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dashboard <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class=""><a class="dropdown-item" href="{{ url('dr_dashboard') }}">Dashboard</a></li>
+                            <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
+                        </ul>
                     </li>
                     <li class="">
                         <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
@@ -316,24 +361,37 @@
                                 </li>
                             @endif
 
-                            <li class="">
-                                <a href="{{ url('batch') }}">EID Samples</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Samples <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('batch') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralbatch') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('batch/index/1') }}">EID Results</a>
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Results <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('batch/index/1') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralbatch/index/1') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('viralbatch') }}">VL Samples</a>
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    POC Samples <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('sample/list_poc') }}">EID</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralsample/list_poc') }}">VL</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('viralbatch/index/1') }}">VL Results</a>
-                            </li>
-                            <li class="">
-                                <a href="{{ url('sample/list_poc') }}">EID POC Samples</a>
-                            </li>
-                            <li class="">
-                                <a href="{{ url('viralsample/list_poc') }}">VL POC Samples</a>
-                            </li>
+
+                            
                             <li class="">
                                 <a href="{{ url('cancersample') }}">HPV Samples</a>
                             </li>
@@ -374,9 +432,12 @@
                                 <li>
                                     <a href="{{ url('covid_sample/transfer_samples') }}">Transfer Covid Samples</a>
                                 </li>
-                        @elseif(Auth::user()->user_type_id == 12)
+                        @elseif(in_array(Auth::user()->user_type_id, [12, 15]))
                             <li class="">
                                 <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
+                            </li>
+                            <li class="">
+                                <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                             </li>
 
 
@@ -400,26 +461,35 @@
                             <li class=""> <a href="{{ url($widgets['prefix'] . 'worksheet') }}">Worksheets</a> </li>
                             <li class=""> <a href="{{ url($widgets['prefix'] . 'batch/index/1') }}">Dispatched Results</a> </li>
 
-                            <li class="">
-                                <a href="{{ url('facility') }}">Facilities</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Facilities <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                </ul>
                             </li>
-                            <li>
-                                <a href="{{ url('facility/lab') }}">Lab Facilities</a>
-                            </li>
+
                             <li class="">
                                 <a href="{{ route('reports') }}">Reports</a>
                             </li>
-                            <li class="">
-                                <a href="{{ route('dashboard') }}">Dashboard</a>
-                            </li>
-                            <li class="">
-                                <a href="
+
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dashboard <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                                    <li class=""><a class="dropdown-item" href="
                                     @if(session('testingSystem') == 'Viralload')
                                         {{ 'https://viralload.nascop.org/labs' }}
                                     @else
                                         {{ 'https://eid.nascop.org/labPerformance' }}
-                                    @endif">Nascop Dashboard</a>
+                                    @endif">Nascop Dashboard</a></li>
+                                </ul>
                             </li>
+
                             @if(env('APP_LAB') != 7 && in_array(session('testingSystem'), ['EID', 'Viralload']))
                             <li class="">                   <a href="{{ url('reports/kits') }}">Kits
                                 <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">

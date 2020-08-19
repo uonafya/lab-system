@@ -29,7 +29,7 @@ class DrDashboardTestingController extends DrDashboardBaseController
 	{
 		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
 			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
-			->selectRaw(" COUNT(dr_samples.id) AS samples")
+			->selectRaw("COUNT(dr_samples.id) AS samples")
 			->when(true, $this->get_callback('samples', 'datetested'))
 			->whereNotNull('datetested')
 			->get();
@@ -37,6 +37,29 @@ class DrDashboardTestingController extends DrDashboardBaseController
 		// dd($rows);
 
 		$data = DrDashboard::bars(['Samples Tested'], 'column', ["#00ff00"]);
+
+		foreach ($rows as $key => $row) {
+			$data['categories'][$key] = DrDashboard::get_category($row);
+
+			$data["outcomes"][0]["data"][$key] = (int) $row->samples;
+		}
+		return view('charts.bar_graph', $data);
+	}
+
+
+	// Charts
+	public function rejected()
+	{
+		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
+			->selectRaw("COUNT(dr_samples.id) AS samples")
+			->when(true, $this->get_callback('samples', 'datereceived'))
+			->where('receivedstatus', 2)
+			->get();
+
+		// dd($rows);
+
+		$data = DrDashboard::bars(['Rejected Samples'], 'column', ["#ff1a1a"]);
 
 		foreach ($rows as $key => $row) {
 			$data['categories'][$key] = DrDashboard::get_category($row);

@@ -90,7 +90,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Facility</label>
                             <div class="col-sm-8">
-                                <select class="form-control" @if(env('APP_LAB') == 4 || auth()->user()->facility_user) required @endif name="facility_id" id="facility_id">
+                                <select class="form-control" @if((env('APP_LAB') == 4 && !$m) || auth()->user()->facility_user) required @endif name="facility_id" id="facility_id">
                                     @if(isset($sample) && $sample->patient->facility)
                                         <option value="{{ $sample->patient->facility->id }}" selected>{{ $sample->patient->facility->facilitycode }} {{ $sample->patient->facility->name }}</option>
                                     @endif
@@ -444,9 +444,15 @@
             @else
                 $("#identifier").blur(function(){
                     check_new_patient();
+                    @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                        check_cif_patient();
+                    @endif
                 });
                 $("#national_id").blur(function(){
                     check_new_patient();
+                    @if(in_array(env('APP_LAB'), [1,2,3,6]))
+                        check_cif_patient();
+                    @endif
                 });
 
                 @if(in_array(env('APP_LAB'), [1,2,3,6]))
@@ -613,6 +619,8 @@
 
                 success: function(data){
 
+                    // console.log(data);
+
                     if(data['message']){
                         set_message(data['message']);
                         $("#new_patient_info").html(data['message']);
@@ -657,11 +665,15 @@
             // console.log('Here');
             // return;
             var patient_name = $("#patient_name").val();
+            var national_id = $("#national_id").val();
+            var identifier = $("#identifier").val();
 
             $.ajax({
                 type: "POST",
                 data: {
                     patient_name : patient_name,
+                    national_id : national_id,
+                    identifier : identifier,
                 },
                 url: "{{ url('/covid_sample/cif_patient') }}",
 

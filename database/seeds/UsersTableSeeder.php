@@ -40,6 +40,8 @@ class UsersTableSeeder extends Seeder
 		    ['id' => '11', 'user_type' => 'Quarantine Site'],
 		    ['id' => '12', 'user_type' => 'Other Lab User'],
 		    ['id' => '13', 'user_type' => 'Covid Data Clerk'],
+		    ['id' => '14', 'user_type' => 'Covid Lab User'],
+		    ['id' => '15', 'user_type' => 'Other Data Clerk'],
 		]);
 
 		// return;

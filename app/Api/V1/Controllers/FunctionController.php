@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers;
 use App\Api\V1\Controllers\BaseController;
 use App\Api\V1\Requests\EidRequest;
 use App\Api\V1\Requests\BlankRequest;
+use App\Api\V1\Requests\WeeklyAlertRequest;
 use DB;
 
 use App\Lookup;
@@ -55,6 +56,8 @@ class FunctionController extends BaseController
         else if($test == 3){
             $class = Cd4SampleView::class;
             if(env('APP_LAB') != 5) return $this->response->errorBadRequest("This lab does not do CD4 tests.");
+        }else{
+            return $this->response->errorBadRequest("The selected test is not valid.");
         }
         // else if($test == 4) $class = CragSampleView::class;
 
@@ -188,6 +191,23 @@ class FunctionController extends BaseController
         });
 
         return $result;
+    }
+
+    public function weekly_alerts(WeeklyAlertRequest $request)
+    {     
+        $lab = $request->input('lab', env('APP_LAB'));
+
+        $w = \App\WeeklyAlert::where(['lab_id' => $lab])
+            // ->whereBetween('end_date', [date('Y-m-d'), date('Y-m-d', strtotime('+2 days'))])
+            ->where('end_date', '>=', date('Y-m-d'))
+            ->first();
+
+        if(!$w) return ['message' => 'Send Later'];
+
+        $w->fill($request->except(['lab']));
+        $w->save();
+
+        return $w;
     }
 
     

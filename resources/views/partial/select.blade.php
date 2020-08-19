@@ -11,7 +11,7 @@
                         @endif
                     </label>
 					<div class="col-sm-8">
-						<select class="form-control" id="{{ $prop }}" name="{{ $prop }}" @if($is_required) required @endif> 
+						<select class="form-control {{ $is_required ? 'requirable' : '' }} " id="{{ $prop }}" name="{{ $prop }}" @if($is_required) required @endif> 
 							<option></option>
 							@foreach($items as $item)
 								<option value="{{ $item->id }}" @if((isset($model) && $model->$prop == $item->id) || (isset($default_val) && $default_val == $item->id)) selected @endif> {{ $item->$prop2 }} </option>

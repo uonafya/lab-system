@@ -36,7 +36,7 @@ class UlizaPage extends Model
     	$this->create_rows();
     }
 
-    public function create_table()
+    public function create_pages()
     {
     	\DB::statement('DROP TABLE IF EXISTS uliza_pages');
     	\DB::statement("
@@ -47,29 +47,30 @@ class UlizaPage extends Model
                 PRIMARY KEY (`id`)
     		)
     	");
+        \DB::table('uliza_pages')->insert([
+            ['link' => 'home', 'title' => 'Executive Summary'],
+            ['link' => 'uliza', 'title' => 'Uliza-NASCOP'],
+            ['link' => 'ushauri', 'title' => 'Ushauri'],
+            ['link' => 'trainsmart', 'title' => 'TrainSMART'],
+            ['link' => 'echo', 'title' => 'Echo'],
+            ['link' => 'faqs', 'title' => 'Frequently Asked Questions'],
+            ['link' => 'contactus', 'title' => 'Contact Us'],
 
+            ['link' => 'home2', 'title' => 'Functions'],
+        ]);
+    }
+
+    public function create_reasons()
+    {
         \DB::statement('DROP TABLE IF EXISTS uliza_reasons');
         \DB::statement("
             CREATE TABLE uliza_reasons(
                 id tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-                name varchar(80),
+                name varchar(100),
+                public tinyint(3) DEFAULT 1,
                 PRIMARY KEY (`id`)
             )
         ");
-    }
-
-    public function create_rows(){
-    	\DB::table('uliza_pages')->insert([
-    		['link' => 'home', 'title' => 'Executive Summary'],
-    		['link' => 'uliza', 'title' => 'Uliza-NASCOP'],
-    		['link' => 'ushauri', 'title' => 'Ushauri'],
-    		['link' => 'trainsmart', 'title' => 'TrainSMART'],
-    		['link' => 'echo', 'title' => 'Echo'],
-    		['link' => 'faqs', 'title' => 'Frequently Asked Questions'],
-    		['link' => 'contactus', 'title' => 'Contact Us'],
-
-    		['link' => 'home2', 'title' => 'Functions'],
-    	]);
 
         \DB::table('uliza_reasons')->insert([
             ['name' => 'Adverse drug reaction'],
@@ -82,6 +83,38 @@ class UlizaPage extends Model
             ['name' => 'Single AZT out of stock'],
             ['name' => 'Other (Please Specify)'],
         ]);
+
+        \DB::table('uliza_reasons')->insert([
+            ['name' => 'Confirmed first line failure', 'public' => 0],
+            ['name' => 'Confirmed first line PI based regimen failure', 'public' => 0],
+            ['name' => 'Confirmed second line failure', 'public' => 0],
+            ['name' => 'Suspected First line failure', 'public' => 0],
+            ['name' => 'Suspected first line PI regimen failure', 'public' => 0],
+            ['name' => 'Suspected Second line failure', 'public' => 0],
+        ]);
     }
+
+    public function create_recommendations()
+    {
+        \DB::statement('DROP TABLE IF EXISTS uliza_recommendations');
+        \DB::statement("
+            CREATE TABLE uliza_recommendations(
+                id tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+                name varchar(100),
+                PRIMARY KEY (`id`)
+            )
+        ");
+
+        \DB::table('uliza_recommendations')->insert([
+            ['id' => 1, 'name' => 'Additional Information Required From Facility'],
+            ['id' => 5, 'name' => 'Additional Information Required From RTWG'],
+            ['id' => 3, 'name' => 'Provide Feedback To Facility Directly'],
+            ['id' => 2, 'name' => 'Refer To Technical Reviewer'],
+            ['id' => 6, 'name' => 'Send Feedback To RTWG'],
+        ]);
+
+    }
+
+
 
 }

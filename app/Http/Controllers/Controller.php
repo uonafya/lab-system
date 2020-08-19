@@ -61,6 +61,13 @@ class Controller extends BaseController
             }
         }
 
+        $check = false;
+        if (auth()->user()->covid_consumption_allowed)
+            $check = true;
+
+        if (in_array(date('l', strtotime(date('Y-m-d'))), ['Thursday', 'Friday', 'Saturday', 'Sunday']) && auth()->user()->user_type_id == 1)
+            $check = true;
+
         if (auth()->user()->covid_consumption_allowed) {
             $time = $this->getPreviousWeek();
             $covidsubmittedstatus = 1;
