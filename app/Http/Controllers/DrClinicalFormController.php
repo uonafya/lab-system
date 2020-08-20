@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DrClinicalForm;
 use App\DrClinicalVisit;
+use DB;
 use Illuminate\Http\Request;
 
 class DrClinicalFormController extends Controller
@@ -15,7 +16,8 @@ class DrClinicalFormController extends Controller
      */
     public function index()
     {
-        //
+        $forms = DrClinicalForm::with(['facility', 'twg'])->get();
+        return view('uliza.tables.cases', compact('forms'));
     }
 
     /**
@@ -25,7 +27,9 @@ class DrClinicalFormController extends Controller
      */
     public function create()
     {
-        //
+        $reasons = DB::table('uliza_reasons')->get();
+        $regimens = DB::table('viralregimen')->get();
+        return view('uliza.clinicalform', compact('reasons', 'regimens'));
     }
 
     /**
@@ -69,7 +73,9 @@ class DrClinicalFormController extends Controller
      */
     public function edit(DrClinicalForm $drClinicalForm)
     {
-        //
+        $reasons = DB::table('uliza_reasons')->get();
+        $regimens = DB::table('viralregimen')->get();
+        return view('uliza.clinicalform', compact('reasons', 'regimens', 'drClinicalForm'));      
     }
 
     /**
@@ -81,7 +87,9 @@ class DrClinicalFormController extends Controller
      */
     public function update(Request $request, DrClinicalForm $drClinicalForm)
     {
-        //
+        $form->fill($request->except('clinical_visits'));
+        $form->save();
+        return response()->json(['status' => 'ok'], 201);
     }
 
     /**

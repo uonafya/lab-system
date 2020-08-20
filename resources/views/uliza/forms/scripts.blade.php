@@ -13,6 +13,18 @@
             placeholder: "Select One",
             allowClear: true
         }); 
+        
+        $(".date").datepicker({
+            startView: 2,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            // startDate: "-6m",
+            // endDate: new Date(),
+            format: "yyyy-mm-dd"
+        });
+
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }

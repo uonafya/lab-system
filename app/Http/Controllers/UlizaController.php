@@ -65,7 +65,7 @@ class UlizaController extends Controller
 	{
 		$reasons = DB::table('uliza_reasons')->get();
 		$regimens = DB::table('viralregimen')->get();
-		return view('uliza.clinicalform', compact('reasons', 'regimens'));		
+		return view('uliza.clinicalform', compact('reasons', 'regimens'));
 	}
 
 

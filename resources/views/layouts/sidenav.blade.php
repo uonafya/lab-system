@@ -462,7 +462,7 @@
                 <a href="{{ url('allocationcontacts') }}"><span class="nav-label">Allocation Contacts</span></a>
             </li>
             <hr />
-            @if(in_array(env('APP_LAB'), [1, 5]))
+            @if(in_array(env('APP_LAB'), [1, 3, 5]))
                 <li>
                     <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                 </li>

@@ -17,6 +17,8 @@ class CreateDrClinicalFormsTable extends Migration
             $table->increments('id');
             $table->integer('facility_id')->unsigned()->index();
             $table->integer('twg_id')->unsigned()->index()->nullable();
+            $table->integer('status_id')->unsigned()->nullable();
+            $table->string('nat_no')->nullable();
             $table->string('cccno');
             $table->date('reporting_date');
             $table->date('dob');

@@ -135,6 +135,29 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\QuarantineSite', 'facility_id');
     }
 
+    public function twg()
+    {
+        return $this->belongsTo('App\DrTwg', 'twg_id');        
+    }
+
+    public function getUlizaAdminAttribute()
+    {
+        if($this->user_type_id == 101 || $this->user_type_id == 102) return true;
+        return false;
+    }
+
+    public function getUlizaSecretariatAttribute()
+    {
+        if($this->user_type_id == 103) return true;
+        return false;
+    }
+
+    public function getUlizaReviewerAttribute()
+    {
+        if($this->user_type_id == 104) return true;
+        return false;
+    }
+
     public function set_last_access()
     {
         $this->last_access = date('Y-m-d H:i:s');

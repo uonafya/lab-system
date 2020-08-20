@@ -12,8 +12,13 @@ class DrClinicalForm extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function twg()
+    {
+        return $this->belongsTo('App\DrTwg', 'twg_id');        
+    }
+
     public function visit()
     {
-        return $this->hasMany('App\DrClinicalVisit');
+        return $this->hasMany('App\DrClinicalVisit', 'dr_clinical_form_id');
     }
 }
