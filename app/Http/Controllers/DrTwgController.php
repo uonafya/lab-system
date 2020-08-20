@@ -15,7 +15,9 @@ class DrTwgController extends Controller
      */
     public function index()
     {
-        //
+        $twgs = DrTwg::with(['county'])->get();
+        return view('uliza.twgs', compact('twgs'));
+
     }
 
     /**

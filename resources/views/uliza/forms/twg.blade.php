@@ -14,7 +14,6 @@
 			</div>
 			<div class="card mt-1">
 				<div class="card-body">
-					<form class="val-form" action="/ " >
 			        @if(isset($drTwg))
 			            <form method="POST" class="val-form" action='{{ url("/uliza-twg/{$drTwg->id}") }}' >
 			            @method('PUT')
