@@ -231,7 +231,7 @@ class ReportController extends Controller
         }
         $max_tat = $request->input('max_tat');
         $model = $model->selectRaw("view_facilitys.facilitycode, view_facilitys.name as facility, COUNT({$table}.id) as samples_no, ROUND(AVG(tat1), 2) as tat1, ROUND(AVG(tat2), 2) as tat2, ROUND(AVG(tat3), 2) as tat3, ROUND(AVG(tat4), 2) as tat4, ROUND(AVG(tat5), 2) as tat5")->join("view_facilitys", "view_facilitys.id", "=", "$table.facility_id")->where('repeatt', '=', 0)
-                    ->when($max_tat, function($query), use($max_tat){
+                    ->when($max_tat, function($query) use($max_tat){
                         $max_tat++;
                         return $query->where('tat5', '<', $max_tat);
                     })
