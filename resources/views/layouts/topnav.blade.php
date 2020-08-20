@@ -52,7 +52,7 @@
                         <ul class="dropdown-menu">
                             <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
                             <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
-                            <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                            <li class=""><a class="dropdown-item" target="_blank" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
                         </ul>
                     </li>
                     @endif
@@ -270,7 +270,7 @@
                     <ul class="dropdown-menu">
                         <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
                         <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
-                        <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                        <li class=""><a class="dropdown-item" target="_blank" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
                     </ul>
                 </li>
                 @endif

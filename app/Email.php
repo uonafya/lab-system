@@ -61,14 +61,14 @@ class Email extends BaseModel
 
     public function dispatch()
     {
-        if(env('APP_LAB') == 1) $this->request_files();
+        if(in_array(env('APP_LAB'), [1, 2, 3, 6])) $this->request_files();
         $this->save_blade();
         ini_set("memory_limit", "-1");
         $min_date = date('Y-m-d', strtotime('-2years'));
         $supported_query = "(id IN (select distinct facility_id from viralbatches where site_entry != 2 and datereceived > '{$min_date}') OR id IN (select distinct facility_id from batches where site_entry != 2 and datereceived > '{$min_date}'))"; 
         $county_id = $this->county_id;
 
-        $facilities = \App\Facility::where('flag', 1)
+        $facilities = Facility::where('flag', 1)
             ->whereRaw($supported_query)
             ->when($this->county_id, function($query) use ($county_id){
                 return $query->whereRaw("id IN (select id from view_facilitys where county_id = {$county_id})");

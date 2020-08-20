@@ -291,6 +291,12 @@
                                 @endif
                                 @endif
                             </div>
+                            <div id="max_tat_row">
+                                <label class="col-sm-3 control-label">Set Max Lab TAT</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="max_tat" class="form-control" name="max_tat">
+                                </div>
+                            </div>
                         </div>
                         @if(Auth::user()->user_type_id == 5)
                         <input type="hidden" name="testtype" value="{{ $testtype }}">
@@ -344,6 +350,14 @@
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#max_tat_row').hide();
+            $('input[name="types"]').change(function(){
+                var val = $('input[name="types"]:checked').val();
+                if(val == 'tat') $('#max_tat_row').show();
+                else{
+                    $('#max_tat_row').hide();
+                }
+            });
             // $('.period').click(function(){
             $('input[name="period"]').change(function(){
                 period = $(this).val();
