@@ -44,7 +44,7 @@ class DrTwgController extends Controller
         $drTwg->save();
 
         $counties = $request->input('counties');
-        if($counties) County::whereIn(['id' => $counties])->update(['twg_id' => $drTwg->id]);
+        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $drTwg->id]);
         session(['toast_message' => 'The TWG has been created']);
         return back();
     }
@@ -86,7 +86,7 @@ class DrTwgController extends Controller
 
         County::where(['twg_id' => $drTwg->id])->update(['twg_id' => null]);
         $counties = $request->input('counties');
-        if($counties) County::whereIn(['id' => $counties])->update(['twg_id' => $drTwg->id]);
+        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $drTwg->id]);
     }
 
     /**
