@@ -183,7 +183,7 @@
                                             <tr>
                                                 <th>Select Year and Month </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -211,7 +211,7 @@
                                             <tr>
                                                 <th>Select Year and Quarter </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control"  name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -239,7 +239,7 @@
                                             <tr>
                                                 <th>Select Year </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control"  name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -353,6 +353,7 @@
             $('#max_tat_row').hide();
             $('input[name="types"]').change(function(){
                 var val = $('input[name="types"]:checked').val();
+                console.log(val);
                 if(val == 'tat') $('#max_tat_row').show();
                 else{
                     $('#max_tat_row').hide();
