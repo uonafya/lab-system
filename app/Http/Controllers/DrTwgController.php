@@ -43,6 +43,8 @@ class DrTwgController extends Controller
 
         $counties = $request->input('counties');
         if($counties) County::where(['twg_id' => $drTwg->id])->update(['twg_id' => null]);
+        session(['toast_message' => 'The TWG has been created']);
+        return back();
     }
 
     /**
