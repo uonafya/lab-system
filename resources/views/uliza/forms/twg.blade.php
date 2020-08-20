@@ -40,7 +40,7 @@
 										Counties:
 									</span>
 								</div>
-								<select class="form-control select2" name="counties[]">
+								<select class="form-control select2" multiple name="counties[]">
 									<option></option>
 									@foreach($counties as $county)
 										<option value="{{ $county->id }}" @if(isset($drTwg) && $county->twg_id == $drTwg->id) selected  @endif > {{ $county->name }} </option>
