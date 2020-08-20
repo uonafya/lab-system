@@ -268,26 +268,26 @@
                                         Detailed Report 
                                     </label>
                                 @else
-                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
-                                <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
+                                <label> <input type="radio" name="types" value="tested" required> All Samples Tested </label>
+                                <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
                                 @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
-                                <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
+                                <label> <input type="radio" name="types" value="positives" required> Positives </label>
                                 @endif
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
-                                <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>
                                 @if(Auth::user()->user_type_id == 5)
-                                <label> <input type="radio" name="types" value="poc" class="i-checks" required> All POC Samples Tested </label>
+                                <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
                                 @else
-                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
-                                <label> <input type="radio" name="types" value="remoteentrydoing" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
-                                <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
+                                <label> <input type="radio" name="types" value="remoteentry" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
+                                <label> <input type="radio" name="types" value="remoteentrydoing" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                <label> <input type="radio" name="types" value="sitessupported" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                                 @endif                                
-                                <label> <input type="radio" name="types" value="tat" class="i-checks" required> TAT Report </label>
-                                <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
+                                <label> <input type="radio" name="types" value="tat" required> TAT Report </label>
+                                <label><input type="radio" name="types" value="failed" required> Failed Tests</label>
                                 @if(Auth::user()->user_type_id == 5)
-                                <label><input type="radio" name="types" value="manifest" class="i-checks" required> Print/Generate Sample Manifest</label>
+                                <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
                                 @endif
                                 @endif
                             </div>
