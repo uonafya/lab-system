@@ -39,6 +39,7 @@ class DrTwgController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $drTwg = new DrTwg;
         $drTwg->fill($request->except(['counties']));
         $drTwg->save();
