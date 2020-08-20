@@ -353,7 +353,7 @@
             $('#max_tat_row').hide();
             $('input[name="types"]').change(function(){
                 var val = $('input[name="types"]:checked').val();
-                console.log(val);
+                console.log("Value is "+ val);
                 if(val == 'tat') $('#max_tat_row').show();
                 else{
                     $('#max_tat_row').hide();
