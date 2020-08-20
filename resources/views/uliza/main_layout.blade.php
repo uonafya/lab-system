@@ -16,6 +16,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{{ asset('css/toastr/toastr.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/summernote/summernote.css') }}" rel="stylesheet" type="text/css">
 
@@ -66,6 +67,7 @@
 	<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
     <script src="{{ asset('js/summernote/summernote.js') }}"></script>
+	<script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 	<script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
 
 
