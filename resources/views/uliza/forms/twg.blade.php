@@ -34,19 +34,17 @@
 						</div>
 
 						<div class="form-row mb-3">
-							<div class="col-md-12 input-group required">
-								<div class="input-group-prepend">
-									<span class="input-group-text text-left">
-										Counties:
-									</span>
-								</div>
-								<select class="form-control select2" multiple name="counties[]">
-									<option></option>
-									@foreach($counties as $county)
-										<option value="{{ $county->id }}" @if(isset($drTwg) && $county->twg_id == $drTwg->id) selected  @endif > {{ $county->name }} </option>
-									@endforeach
-								</select>
+							<div class="col-md-4">
+								<span class="input-group-text text-left">
+									Counties:
+								</span>
 							</div>
+							<select class="form-control col-md-8 select2" multiple name="counties[]">
+								<option></option>
+								@foreach($counties as $county)
+									<option value="{{ $county->id }}" @if(isset($drTwg) && $county->twg_id == $drTwg->id) selected  @endif > {{ $county->name }} </option>
+								@endforeach
+							</select>
 						</div>
 
 						<div class="form-row mb-3">
