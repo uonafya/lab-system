@@ -16,6 +16,7 @@ class CreateDrClinicalFormsTable extends Migration
         Schema::create('dr_clinical_forms', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('facility_id')->unsigned()->index();
+            $table->integer('twg_id')->unsigned()->index()->nullable();
             $table->string('cccno');
             $table->date('reporting_date');
             $table->date('dob');

@@ -48,6 +48,7 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 });
 
 Route::resource('uliza-form', 'DrClinicalFormController');
+Route::resource('uliza-twg', 'DrTwgController');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');

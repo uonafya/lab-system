@@ -380,6 +380,7 @@
 
             $("#generate_report").click(function(e){
                 var selValue = $('input[name=category]:checked').val();
+                var category = null;
                 if (selValue == 'county') {
                     category = $("#report_county_search").val();
                     cat = 'County';
