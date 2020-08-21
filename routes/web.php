@@ -214,6 +214,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('covid_patient', 'CovidPatientController');
 
 		Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
+			Route::resource('covid_kit_type', 'CovidKitTypeController');
+			
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 				Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
