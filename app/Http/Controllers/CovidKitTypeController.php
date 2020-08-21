@@ -27,7 +27,7 @@ class CovidKitTypeController extends Controller
     public function create()
     {
         $machines = Machine::all();
-        return view('forms.covid_kit_type', compact('machine'));
+        return view('forms.covid_kit_type', compact('machines'));
     }
 
     /**
@@ -65,7 +65,7 @@ class CovidKitTypeController extends Controller
     public function edit(CovidKitType $covidKitType)
     {
         $machines = Machine::all();
-        return view('forms.covid_kit_type', compact('machine', 'covidKitType'));
+        return view('forms.covid_kit_type', compact('machines', 'covidKitType'));
     }
 
     /**
