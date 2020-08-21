@@ -469,7 +469,7 @@ class CovidWorksheetController extends Controller
             return back();
         }
         $worksheet->load(['creator']);
-        $users = User::covidLabUser()->get();
+        $users = User::covidLabUser()->where(['lab_id' => auth()->user()->lab_id])->get();
         return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
     }
 

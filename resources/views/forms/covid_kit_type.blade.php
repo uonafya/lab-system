@@ -27,8 +27,7 @@
         @else
             <form method="POST" class="form-horizontal" action='{{ url("/covid_kit_type/") }}'>
         @endif
-            <?php $m = $covidKitType ?? null; ?>
-
+            <?php $model = $covidKitType ?? null; ?>
         @csrf
 
                 
@@ -44,7 +43,7 @@
                         @include('partial.input', ['required' => true, 'prop' => 'target1', 'label' => 'Target 1'])
                         @include('partial.input', ['required' => true, 'prop' => 'target2', 'label' => 'Target 2'])
                         @include('partial.input', ['required' => true, 'prop' => 'control_gene', 'label' => 'Control Gene'])
-                        @include('partial.input', ['prop' => 'threshhold', 'label' => 'Threshhold'])
+                        @include('partial.input', ['prop' => 'threshhold', 'label' => 'Threshhold', 'is_number' => true])
 
                         <div class="form-group">
                             <center>
