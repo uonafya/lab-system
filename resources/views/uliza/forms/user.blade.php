@@ -52,6 +52,18 @@
 							<div class="col-md-12 input-group required">
 								<div class="input-group-prepend">
 									<span class="input-group-text text-left">
+										Email:
+										<span style='color: #ff0000;'>*</span>
+									</span>
+								</div>
+								<input class="form-control" name="email" required="required" type="email" value="{{ $user->email ?? '' }}">
+							</div>
+						</div>
+
+						<div class="form-row mb-3">
+							<div class="col-md-12 input-group required">
+								<div class="input-group-prepend">
+									<span class="input-group-text text-left">
 										Surname:
 										<span style='color: #ff0000;'>*</span>
 									</span>

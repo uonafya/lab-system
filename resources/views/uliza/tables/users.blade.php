@@ -15,6 +15,7 @@
 					<table class="table table-striped table-bordered table-hover data-table">
                         <thead>
                             <tr>
+                                <th>Email</th>
                                 <th>Name</th>
                                 <th>User Type</th>
                                 <th>TWG</th>
@@ -24,7 +25,8 @@
                         <tbody> 
                         	@foreach($users as $user)
                         		<tr>
-                        			<td> {{ $user->full_name }} </td>
+                        			<td> {{ $user->email }} </td>
+                                    <td> {{ $user->full_name }} </td>
                                     <td> {{ $user->user_type->user_type }} </td>
                                     <td> {{ $user->twg->twg }} </td>
                         			<td> <a href="{{ url('uliza-user/' . $user->id . '/edit') }} "> Edit</a> </td>
