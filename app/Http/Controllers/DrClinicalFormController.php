@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DrClinicalForm;
 use App\DrClinicalVisit;
+use App\DrTwg;
+use App\County;
 use DB;
 use Illuminate\Http\Request;
 
@@ -42,6 +44,10 @@ class DrClinicalFormController extends Controller
     {
         $form = new DrClinicalForm;
         $form->fill($request->except('clinical_visits'));
+        $f = $form->view_facility;
+        $county = County::find($f->county_id);
+        $twg = DrTwg::where('default', 1)->first();
+        $form->twg_id = $county->twg_id ?? $twg->id ?? null;
         $form->save();
 
         $visits = $request->input('clinical_visits');

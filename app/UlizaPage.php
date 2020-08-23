@@ -115,6 +115,26 @@ class UlizaPage extends Model
 
     }
 
+    public function create_case_statuses()
+    {
+        \DB::statement('DROP TABLE IF EXISTS uliza_case_statuses');
+        \DB::statement("
+            CREATE TABLE uliza_case_statuses(
+                id tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+                name varchar(100),
+                PRIMARY KEY (`id`)
+            )
+        ");
+
+        \DB::table('uliza_case_statuses')->insert([
+            ['id' => 1, 'name' => 'Pending'],
+            ['id' => 2, 'name' => 'Under Review'],
+            ['id' => 3, 'name' => 'Completed'],
+            ['id' => 4, 'name' => 'Finalised'],
+        ]);
+
+    }
+
 
 
 }
