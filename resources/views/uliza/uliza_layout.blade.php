@@ -102,7 +102,7 @@
 	                @if($toast_error)
 	                    toastr.error("{!! $toast_message !!}", "Warning!");
 	                @else
-	                    toastr.warning("{!! $toast_message !!}");
+	                    toastr.success("{!! $toast_message !!}");
 	                @endif
 	            });
 	        @endif
