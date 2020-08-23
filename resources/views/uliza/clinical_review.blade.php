@@ -199,13 +199,13 @@
 							Support structures (e.g. treatment buddy, support group attendance, caregivers) in place for this patient?
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->support_structures ?? '' }}" name="support_structures" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="support_structures" readonly="" rows="4">{{ $ulizaClinicalForm->support_structures ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Evidence of adherence concerns (e.g. missed appointments, pill counts?):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->adherence_concerns ?? '' }}" name="adherence_concerns" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="adherence_concerns" readonly="" rows="4">{{ $ulizaClinicalForm->adherence_concerns ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -219,7 +219,7 @@
 							Likely root cause/s of poor adherence, for this patient (e.g. stigma, disclosure, side effects, alcohol or other drugs, mental health issues, caregiver changes, religious beliefs, inadequate preparation, etc):
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->likely_rootcauses ?? '' }}" name="likely_rootcauses" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="likely_rootcauses" readonly="" rows="4">{{ $ulizaClinicalForm->likely_rootcauses ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -232,25 +232,25 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Inadequate dosing/dose adjustments (particularly for children)::</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->inadequate_dosing ?? '' }}" name="inadequate_dosing" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="inadequate_dosing" readonly="" rows="4">{{ $ulizaClinicalForm->inadequate_dosing ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Drug-drug interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->drug_interactions ?? '' }}" name="drug_interactions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="drug_interactions" readonly="" rows="4">{{ $ulizaClinicalForm->drug_interactions ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->food_interactions ?? '' }}" name="food_interactions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="food_interactions" readonly="" rows="4">{{ $ulizaClinicalForm->food_interactions ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Impaired absorption (e.g. chronic severe diarrhea):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->impaired_absorption ?? '' }}" name="impaired_absorption" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="impaired_absorption" readonly="" rows="4">{{ $ulizaClinicalForm->impaired_absorption ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -261,7 +261,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Comment on treatment interruptions, if any:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->treatment_interruptions ?? '' }}" name="treatment_interruptions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="treatment_interruptions" readonly="" rows="4">{{ $ulizaClinicalForm->treatment_interruptions ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -269,7 +269,7 @@
 							Has Drug Resistance/Sensitivity Testing been done for this patient? If yes, state date done and attach the detailed results.
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->drt_testing ?? '' }}" name="drt_testing" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="drt_testing" readonly="" rows="4">{{ $ulizaClinicalForm->drt_testing ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -279,7 +279,7 @@
 							(indicate how treatment failure was established and confirmed, proposed regimen and dosage, current source of drugs if patient already on 3rd line). If yes, state date done and attach the detailed results:
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->mdt_discussions ?? '' }}" name="mdt_discussions" readonly="" rows="6"></textarea>
+							<textarea class="form-control" name="mdt_discussions" readonly="" rows="6">{{ $ulizaClinicalForm->mdt_discussions ?? '' }}</textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -287,7 +287,7 @@
 							MDT members who participated in the case discussion (names and titles)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->mdt_members ?? '' }}" name="mdt_members" readonly="" rows="4"></textarea>
+							<textarea class="form-control" name="mdt_members" readonly="" rows="4">{{ $ulizaClinicalForm->mdt_members ?? '' }}</textarea>
 						</div>
 					</div>
 				</form>
@@ -355,7 +355,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="facility_name">Facility Name:</span>
 									</div>
-									<input aria-describedby="facility_Name" class="form-control" value="{{ $ulizaClinicalForm->facility->name ?? '' }}" name="facility_name" readonly="" type="text">
+									<input aria-describedby="facility_Name" class="form-control" value="{{ $ulizaClinicalForm->facility->name ?? '' }}" name="facility_name" readonly="" disabled type="text">
 								</div>
 							</div>
 
@@ -364,7 +364,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="cccno">Patient's CCCNo:</span>
 									</div>
-									<input aria-describedby="cccno" value="{{ $ulizaClinicalForm->cccno ?? '' }}" class="form-control" name="cccno" readonly="" type="text">
+									<input aria-describedby="cccno" value="{{ $ulizaClinicalForm->cccno ?? '' }}" disabled class="form-control" name="cccno" readonly="" type="text">
 								</div>
 							</div>
 
@@ -373,7 +373,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="clinician_name">Name of Clinician Consulting:</span>
 									</div>
-									<input aria-describedby="clinician_name" class="form-control" value="{{ $ulizaClinicalForm->clinician_name ?? '' }}" name="clinician_name" readonly="" type="text">
+									<input aria-describedby="clinician_name" class="form-control" value="{{ $ulizaClinicalForm->clinician_name ?? '' }}" name="clinician_name" readonly="" disabled type="text">
 								</div>
 							</div>
 
@@ -382,7 +382,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="facility_email">Contact details of clinician (email) :</span>
 									</div>
-									<input aria-describedby="facility_email" value="{{ $ulizaClinicalForm->facility_email ?? '' }}" class="form-control" name="facility_email" readonly="" type="text">
+									<input aria-describedby="facility_email" value="{{ $ulizaClinicalForm->facility_email ?? '' }}" disabled class="form-control" name="facility_email" readonly="" type="text">
 								</div>
 							</div>
 
@@ -393,7 +393,7 @@
 											Contact details of clinician (telephone):
 										</span>
 									</div>
-									<input aria-describedby="facility_tel" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}" class="form-control" name="facility_tel" readonly="" type="text">
+									<input aria-describedby="facility_tel" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}" disabled class="form-control" name="facility_tel" readonly="" type="text">
 								</div>
 							</div>
 
@@ -402,7 +402,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="artstart_date">ART Start Date :</span>
 									</div>
-									<input aria-describedby="artstart_date" value="{{ $ulizaClinicalForm->artstart_date ?? '' }}" class="form-control" name="artstart_date" readonly="" type="text">
+									<input aria-describedby="artstart_date" value="{{ $ulizaClinicalForm->artstart_date ?? '' }}" disabled class="form-control" name="artstart_date" readonly="" type="text">
 								</div>
 							</div>
 
@@ -411,7 +411,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="natno">NASCOP's NAT-No :</span>
 									</div>
-									<input aria-describedby="natno" value="{{ $ulizaClinicalForm->natno ?? '' }}" class="form-control" name="natno" readonly="" type="text">
+									<input aria-describedby="natno" value="{{ $ulizaClinicalForm->natno ?? '' }}" disabled class="form-control" name="natno" readonly="" type="text">
 								</div>
 							</div>
 
