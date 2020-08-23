@@ -38,13 +38,13 @@
 		<div class="d-flex flex-column flex-md-row align-items-center p-1 px-md-4 mb-3 border-bottom box-shadow bg-white">
 			<div class="text-center mr-md-auto">
 				<h4>
-					Welcome, Timothy Ngugi  - NASCOP TWG |
-					Super Admin
+					Welcome, {{ auth()->user()->full_name ?? '' }}  - {{ auth()->user()->twg->twg ?? '' }} TWG |
+					{{ auth()->user()->user_type->user_type ?? '' }}
 				</h4>
 			</div>
 
 			<nav class="my-2 my-md-0 mr-md-3 text-uppercase">
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/cases">Cases</a>
+				<a class="p-2" routerlinkactive="active" href="/uliza-form">Cases</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/users">Users</a>
