@@ -400,6 +400,10 @@
 							<textarea class="form-control" v-model="myForm.mdt_members" maxlength="255" name="mdt_members"  rows="6"></textarea>
 						</div>
 					</div>
+
+					<div v-if="successful_submission" class="row alert alert-success">
+						You have successfully submitted your request.
+					</div>
 				  
 					<div class="mb-3 float-right">
 						<button class="btn btn-warning" type="submit" >Submit</button>
@@ -473,14 +477,15 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
+        		successful_submission: false,
         	},
         	methods: {
         		update(){
-        			console.log(this.myForm);
+        			// console.log(this.myForm);
         			var validator = $( "#myClinicalForm" ).validate();
-					var res = validator.form();
-					console.log(res);
-					if(!res) return;
+					this.successful_submission = validator.form();
+					// console.log(res);
+					if(!this.successful_submission) return;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {

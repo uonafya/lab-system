@@ -45,10 +45,12 @@
 
 			<nav class="my-2 my-md-0 mr-md-3 text-uppercase">
 				<a class="p-2" routerlinkactive="active" href="/uliza-form">Cases</a>
-				<a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
-				<a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a>
+				@if(auth()->user()->uliza_admin)
+					<a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a>
+					<a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a>
+				@endif
 			</nav>
 			<a class="btn btn-outline-primary" href="{{ url('uliza/logout') }}" >Sign Out</a>
 		</div>
