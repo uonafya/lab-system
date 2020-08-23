@@ -28,7 +28,7 @@
 							<div class="col-md-3">
 								<span class="input-group-text text-left"> User Type: </span>
 							</div>
-							<select class="form-control col-md-9 select2" name="user_type_id">
+							<select class="form-control col-md-9 select2" name="user_type_id" required>
 								<option></option>
 								@foreach($user_types as $user_type)
 									<option value="{{ $user_type->id }}" @if(isset($user) && $user->user_type_id == $user_type->id) selected  @endif > {{ $user_type->user_type }} </option>
@@ -40,7 +40,7 @@
 							<div class="col-md-3">
 								<span class="input-group-text text-left"> TWG: </span>
 							</div>
-							<select class="form-control col-md-9 select2" name="twg_id">
+							<select class="form-control col-md-9 select2" name="twg_id" required>
 								<option></option>
 								@foreach($twgs as $twg)
 									<option value="{{ $twg->id }}" @if(isset($user) && $user->twg_id == $twg->id) selected  @endif > {{ $twg->twg }} </option>
