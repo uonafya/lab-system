@@ -21,6 +21,14 @@
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/summernote/summernote.css') }}" rel="stylesheet" type="text/css">
 
+    <style type="text/css">
+    	label.error {
+    		color: #e74c3c;
+		    margin: 5px 0 0 0;
+		    font-weight: 400;
+    	}
+    </style>
+
 </head>
 <body>
 	<div class="container-fluid">
