@@ -28,7 +28,7 @@
                         			<td> {{ $user->email }} </td>
                                     <td> {{ $user->full_name }} </td>
                                     <td> {{ $user->user_type->user_type }} </td>
-                                    <td> {{ $user->twg->twg }} </td>
+                                    <td> {{ $user->twg->twg ?? '' }} </td>
                         			<td> <a href="{{ url('uliza-user/' . $user->id . '/edit') }} "> Edit</a> </td>
                         		</tr>
                         	@endforeach
