@@ -24,7 +24,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = ['id', 'password', '_token', 'created_at', 'updated_at'];
 
     /**
      * The attributes that are automatically mutated to dates.
@@ -125,6 +125,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function user_type()
+    {
+        return $this->belongsTo('App\UserType');
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');
@@ -137,7 +142,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function twg()
     {
-        return $this->belongsTo('App\DrTwg', 'twg_id');        
+        return $this->belongsTo('App\UlizaTwg', 'twg_id');        
     }
 
     public function getUlizaSuperAdminAttribute()

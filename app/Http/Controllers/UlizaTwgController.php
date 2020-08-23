@@ -87,6 +87,8 @@ class UlizaTwgController extends Controller
         County::where(['twg_id' => $ulizaTwg->id])->update(['twg_id' => null]);
         $counties = $request->input('counties');
         if($counties) County::whereIn('id', $counties)->update(['twg_id' => $ulizaTwg->id]);
+        session(['toast_message' => 'The TWG has been updated']);
+        return redirect('uliza-twg');
     }
 
     /**

@@ -52,6 +52,8 @@ Route::get('uliza-review/create/{ulizaClinicalForm}', 'UlizaTwgFeedbackControlle
 Route::resource('uliza-review', 'UlizaTwgFeedbackController');
 Route::resource('uliza-form', 'UlizaClinicalFormController');
 Route::resource('uliza-twg', 'UlizaTwgController');
+Route::post('uliza/login', 'UlizaUserController@login');
+Route::resource('uliza-user', 'UlizaUserController');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');
