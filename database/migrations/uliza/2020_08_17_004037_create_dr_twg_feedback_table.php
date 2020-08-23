@@ -17,16 +17,16 @@ class CreateDrTwgFeedbackTable extends Migration
             $table->bigIncrements('id');
             $table->integer('uliza_clinical_form_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
-            $table->date('review_date');
-            $table->string('casesummary');
-            $table->string('observationsofsummary');
-            $table->tinyInteger('diagnosis');
-            $table->string('diagnosis_other');
-            $table->text('supportivemanagement')->nullable();
-            $table->text('definativemanagement')->nullable();
-            $table->text('additionalinfo')->nullable();
-            $table->text('nascop_comments')->nullable();
-            $table->tinyInteger('recommendation_id');
+            $table->date('review_date')->nullable();
+            $table->text('casesummary')->nullable();
+            $table->text('observationsofsummary')->nullable();
+            $table->tinyInteger('diagnosis')->nullable();
+            $table->string('diagnosis_other')->nullable();
+            $table->text('supportivemanagement')->nullable()->nullable();
+            $table->text('definativemanagement')->nullable()->nullable();
+            $table->text('additionalinfo')->nullable()->nullable();
+            $table->text('nascop_comments')->nullable()->nullable();
+            $table->tinyInteger('recommendation_id')->nullable();
             $table->timestamps();
         });
     }
