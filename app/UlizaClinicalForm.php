@@ -26,4 +26,10 @@ class UlizaClinicalForm extends BaseModel
     {
         return $this->hasMany('App\UlizaClinicalVisit', 'uliza_clinical_form_id');
     }
+
+    public function feedback()
+    {
+        return $this->hasOne('App\UlizaTwgFeedback', 'uliza_clinical_form_id');
+    }
+
 }

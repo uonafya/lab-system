@@ -46,9 +46,9 @@
 						</div>
 						<div class="col-md-5 input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text" value="{{ $ulizaClinicalForm->reporting_date ?? '' }}" id="reporting_date">Case Reporting Date:</span>
+								<span class="input-group-text" id="reporting_date">Case Reporting Date:</span>
 							</div>
-							<input class="form-control"  name="reporting_date" readonly="">
+							<input class="form-control" value="{{ $ulizaClinicalForm->reporting_date ?? '' }}"  name="reporting_date" readonly="">
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -328,25 +328,27 @@
 			<br>
 			<div class="card mr-2">
 				<div class="card-body">
-					<div class="d-flex align-items-center justify-content-center p-1 text-white bg-success rounded box-shadow">
-						<div class="text-center">
-							<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
-						</div>
-					</div>
-					<div class="card my-1 ml-2">
-						<div class="card-body p-2">
-							<div class="d-flex justify-content-end align-items-center w-100">
-								<button class="btn btn-warning btn-sm" type="button" disabled="">
-									Submit Review
-								</button>
+					<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza-review') }} ">
+						@csrf
+						<div class="d-flex align-items-center justify-content-center p-1 text-white bg-success rounded box-shadow">
+							<div class="text-center">
+								<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
 							</div>
 						</div>
-					</div>
+						<div class="card my-1 ml-2">
+							<div class="card-body p-2">
+								<div class="d-flex justify-content-end align-items-center w-100">
+									<button class="btn btn-warning btn-sm" type="button" disabled="">
+										Submit Review
+									</button>
+								</div>
+							</div>
+						</div>
 
-					<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">
-						<form autocomplete="off" class="val-form" novalidate="" class="ng-untouched ng-pristine ng-invalid">
+						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">
+						
 
-							<input type="hidden" name="">
+							<input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaClinicalForm->id }}" >
 
 							<div class="form-row mb-3">
 								<div class="col-md-12 input-group">
@@ -418,7 +420,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" for="review_date">Date of Review :</span>
 									</div>
-									<input class="form-control date" name="review_date" required="" type="text">
+									<input class="form-control date" name="review_date" value="{{ $ulizaClinicalForm->feedback->review_date ?? '' }}" required type="text">
 								</div>
 							</div>
 
@@ -438,7 +440,9 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Case Summary of consultation:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="casesummary" required="" rows="5"></textarea>
+									<textarea class="form-control" name="casesummary" rows="5">
+										{{ $ulizaClinicalForm->feedback->casesummary ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
@@ -462,7 +466,9 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Observations/Interpretation on summary provided:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="observationsofsummary" required="" rows="5"></textarea>
+									<textarea class="form-control" name="observationsofsummary" rows="5">
+										{{ $ulizaClinicalForm->feedback->observationsofsummary ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
@@ -479,7 +485,7 @@
 							<div class="form-row form-group mb-3">
 								@foreach($reasons as $reason)
 									<div class="col-md-6">
-										<input class="form-check-input ml-1" v-model="myForm.diagnosis" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}">
+										<input class="form-check-input ml-1" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}">
 										<label class="form-check-label ml-5" for="diagnosis_A{{ $reason->id }}">{{ $reason->name }}</label>
 									</div>
 								@endforeach
@@ -491,14 +497,18 @@
 									Supportive Management: (Includes palliative care, social, psychosocial etc.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="supportivemanagement" required="" rows="5"></textarea>
+									<textarea class="form-control" name="supportivemanagement"  rows="5">
+										{{ $ulizaClinicalForm->feedback->supportivemanagement ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Definative Management: (Includes recommended investigations, medicines).</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="definativemanagement" required="" rows="5"></textarea>
+									<textarea class="form-control" name="definativemanagement" rows="5">
+										{{ $ulizaClinicalForm->feedback->definativemanagement ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
@@ -507,14 +517,18 @@
 									Additional Information Required:(Includes recommended investigations, medicines.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="additionalinfo" required="" rows="5"></textarea>
+									<textarea class="form-control" name="additionalinfo" rows="5">
+										{{ $ulizaClinicalForm->feedback->additionalinfo ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row ng-star-inserted">
 								<label class="col-md-4 col-form-label">NASCOP Comments</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="nascop_comments" required="" rows="5"></textarea>
+									<textarea class="form-control" name="nascop_comments"  rows="5">
+										{{ $ulizaClinicalForm->feedback->nascop_comments ?? '' }}
+									</textarea>
 								</div>
 							</div>
 
@@ -527,20 +541,36 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="recommendation_id" required="">
+									<select class="custom-select" name="recommendation_id" required>
 										<option selected="">Choose...</option>
-										<option value="1" class="ng-star-inserted">Additional Information Required From Facility</option>
+										@foreach($recommendations as $recommendation)
+											<option value="{{ $recommendation->id }} " class="ng-star-inserted"> {{ $recommendation->name }} </option>
+										@endforeach
+										<!-- <option value="1" class="ng-star-inserted">Additional Information Required From Facility</option>
 										<option value="5" class="ng-star-inserted">Additional Information Required From RTWG</option>
 										<option value="3" class="ng-star-inserted">Provide Feedback To Facility Directly</option>
 										<option value="2" class="ng-star-inserted">Refer To Technical Reviewer</option>
-										<option value="6" class="ng-star-inserted">Send Feedback To RTWG</option>
+										<option value="6" class="ng-star-inserted">Send Feedback To RTWG</option> -->
 									</select>
 								</div>
 							</div>
 
+							<div class="row ng-star-inserted" id="reviewers_row">
+								<div class="col-md-12">
+									<h4> Choose Reviewers: </h4>
+								</div>
 
-						</form>
-					</div>
+								@foreach($reviewers as $reviewer)
+									<div class="col-md-6">
+										<input _ngcontent-c18="" class="form-check-input ng-untouched ng-pristine ng-valid" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}">
+										<label _ngcontent-c18="" class="form-check-label" for="user_{{ $reviewer->id }}">
+											{{ $reviewer->full_name }}                  
+										</label>
+									</div>
+								@endforeach
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

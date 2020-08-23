@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\UlizaTwgFeedback;
 use App\UlizaClinicalForm;
+use App\User;
 use DB;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,11 @@ class UlizaTwgFeedbackController extends Controller
      */
     public function create(UlizaClinicalForm $ulizaClinicalForm)
     {
-        $reasons = DB::table('uliza_reasons')->get();
+        $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
+        $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
         $regimens = DB::table('viralregimen')->get();
-        return view('uliza.clinical_review', compact('reasons', 'regimens', 'ulizaClinicalForm'));       
+        $reviewers = User::where(['user_type_id' => 104, 'twg_id' => $ulizaClinicalForm->twg_id])->get();
+        return view('uliza.clinical_review', compact('reasons', 'recommendations', 'regimens', 'ulizaClinicalForm', 'reviewers'));       
     }
 
     /**
@@ -39,7 +42,13 @@ class UlizaTwgFeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $ulizaTwgFeedback = UlizaTwgFeedback::where($request->only(['uliza_clinical_form_id']))->first();
+        if(!$ulizaTwgFeedback) $ulizaTwgFeedback = new UlizaTwgFeedback;
+        $ulizaTwgFeedback->fill($request->all());
+        $ulizaTwgFeedback->save();
+        session(['toast_message' => 'The feedback has been saved.']);
+        return redirect('uliza-form');
+
     }
 
     /**
