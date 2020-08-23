@@ -325,7 +325,7 @@
 					</table>
 				</div>
 			</div>
-			<br>
+			<br />
 			<div class="card mr-2">
 				<div class="card-body">
 					<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza-review') }} ">
