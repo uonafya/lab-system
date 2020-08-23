@@ -13,9 +13,9 @@ class CreateDrTwgFeedbackTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_twg_feedback', function (Blueprint $table) {
+        Schema::create('uliza_twg_feedback', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('dr_clinical_form_id')->unsigned()->index();
+            $table->integer('uliza_clinical_form_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
             $table->date('review_date');
             $table->string('casesummary');

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\DrTwgFeedback;
-use App\DrClinicalForm;
+use App\UlizaTwgFeedback;
+use App\UlizaClinicalForm;
 use DB;
 use Illuminate\Http\Request;
 
-class DrTwgFeedbackController extends Controller
+class UlizaTwgFeedbackController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,11 +24,11 @@ class DrTwgFeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(DrClinicalForm $drClinicalForm)
+    public function create(UlizaClinicalForm $ulizaClinicalForm)
     {
         $reasons = DB::table('uliza_reasons')->get();
         $regimens = DB::table('viralregimen')->get();
-        return view('uliza.clinical_review', compact('reasons', 'regimens', 'drClinicalForm'));       
+        return view('uliza.clinical_review', compact('reasons', 'regimens', 'ulizaClinicalForm'));       
     }
 
     /**
@@ -45,10 +45,10 @@ class DrTwgFeedbackController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\DrTwgFeedback  $drTwgFeedback
+     * @param  \App\UlizaTwgFeedback  $ulizaTwgFeedback
      * @return \Illuminate\Http\Response
      */
-    public function show(DrTwgFeedback $drTwgFeedback)
+    public function show(UlizaTwgFeedback $ulizaTwgFeedback)
     {
         //
     }
@@ -56,10 +56,10 @@ class DrTwgFeedbackController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\DrTwgFeedback  $drTwgFeedback
+     * @param  \App\UlizaTwgFeedback  $ulizaTwgFeedback
      * @return \Illuminate\Http\Response
      */
-    public function edit(DrTwgFeedback $drTwgFeedback)
+    public function edit(UlizaTwgFeedback $ulizaTwgFeedback)
     {
         //
     }
@@ -68,10 +68,10 @@ class DrTwgFeedbackController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DrTwgFeedback  $drTwgFeedback
+     * @param  \App\UlizaTwgFeedback  $ulizaTwgFeedback
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DrTwgFeedback $drTwgFeedback)
+    public function update(Request $request, UlizaTwgFeedback $ulizaTwgFeedback)
     {
         //
     }
@@ -79,10 +79,10 @@ class DrTwgFeedbackController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\DrTwgFeedback  $drTwgFeedback
+     * @param  \App\UlizaTwgFeedback  $ulizaTwgFeedback
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DrTwgFeedback $drTwgFeedback)
+    public function destroy(UlizaTwgFeedback $ulizaTwgFeedback)
     {
         //
     }

@@ -3,11 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DB;
+use Hash;
+use App\User;
 use App\UlizaPage;
 
 class UlizaController extends Controller
 {
+
+	public function login(Request $request)
+	{
+		$user = User::where('email', $request->input('email'))->whereNotNull('email')->where('user_type_id', '>', 100)->first();
+		if(!$user || $user->password != Hash::make($request->input('password'))){
+			session(['toast_error' => 1, 'toast_message' => 'These credentials do not match our records.']);
+			return back();
+		}
+
+        Auth::login($user);
+        return redirect('uliza-review');
+	}
 
 	public function home()
 	{

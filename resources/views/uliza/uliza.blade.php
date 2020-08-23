@@ -57,11 +57,12 @@
 							<div class="col-md-3">
 								<img src="{{ asset('uliza_nascop/uliza-logo.png') }}">
 								<h2 class="text-center">Log In</h2>
-								<form autocomplete="off">
+								<form autocomplete="off" method="POST" action="{{ url('uliza/login') }}">
+									@csrf
 									<input class="form-control mb-2" type="email" name="email" placeholder="Username" required>
 									<input class="form-control mb-2" type="password" name="password" placeholder="Password" required>
 
-									<button disabled class="btn btn-primary btn-lg  btn-block">
+									<button class="btn btn-primary btn-lg  btn-block">
 										Login
 									</button>
 									<a href="#">Forgot Password?</a>

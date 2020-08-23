@@ -84,6 +84,23 @@
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	            }
 	        });
+	        
+        
+	        @if($toast_message)
+	            setTimeout(function(){
+	                toastr.options = {
+	                    closeButton: false,
+	                    progressBar: false,
+	                    showMethod: 'slideDown',
+	                    timeOut: 10000
+	                };
+	                @if($toast_error)
+	                    toastr.error("{!! $toast_message !!}", "Warning!");
+	                @else
+	                    toastr.warning("{!! $toast_message !!}");
+	                @endif
+	            });
+	        @endif
 
         });
     </script>

@@ -13,7 +13,7 @@ class CreateDrTwgsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_twgs', function (Blueprint $table) {
+        Schema::create('uliza_twgs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('twg');
             $table->tinyInteger('default_twg')->default(0);

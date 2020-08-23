@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DrTwg extends BaseModel
+class UlizaTwg extends BaseModel
 {
 
     public function county()

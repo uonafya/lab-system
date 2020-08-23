@@ -26,13 +26,13 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_name">Facility Name:</span>
 							</div>
-							<input aria-describedby="facility_name" class="form-control" value="{{ $drClinicalForm->facility->name ?? '' }}" name="facility_name" readonly="" type="text">
+							<input aria-describedby="facility_name" class="form-control" value="{{ $ulizaClinicalForm->facility->name ?? '' }}" name="facility_name" readonly="" type="text">
 						</div>
 						<div class="col-md-5 input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="mfl_code">MFL Code:</span>
 							</div>
-							<input aria-describedby="mfl_code" class="form-control" value="{{ $drClinicalForm->facility->facilitycode ?? '' }}" name="mfl_code" readonly="" type="text">
+							<input aria-describedby="mfl_code" class="form-control" value="{{ $ulizaClinicalForm->facility->facilitycode ?? '' }}" name="mfl_code" readonly="" type="text">
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -43,11 +43,11 @@
 									<small>(Do not write name)</small>
 								</span>
 							</div>
-							<input aria-describedby="cccno" class="form-control" value="{{ $drClinicalForm->cccno ?? '' }}" name="cccno" readonly="" type="text">
+							<input aria-describedby="cccno" class="form-control" value="{{ $ulizaClinicalForm->cccno ?? '' }}" name="cccno" readonly="" type="text">
 						</div>
 						<div class="col-md-5 input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text" value="{{ $drClinicalForm->reporting_date ?? '' }}" id="reporting_date">Case Reporting Date:</span>
+								<span class="input-group-text" value="{{ $ulizaClinicalForm->reporting_date ?? '' }}" id="reporting_date">Case Reporting Date:</span>
 							</div>
 							<input class="form-control"  name="reporting_date" readonly="">
 						</div>
@@ -60,13 +60,13 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="dob">Date of Birth:</span>
 									</div>
-									<input class="form-control" value="{{ $drClinicalForm->dob ?? '' }}" name="dob" readonly="">
+									<input class="form-control" value="{{ $ulizaClinicalForm->dob ?? '' }}" name="dob" readonly="">
 								</div>
 								<div class="col-md-6 input-group">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="artstart_date">ART Start Date:</span>
 									</div>
-									<input class="form-control" value="{{ $drClinicalForm->artstart_date ?? '' }}" name="artstart_date" readonly="">
+									<input class="form-control" value="{{ $ulizaClinicalForm->artstart_date ?? '' }}" name="artstart_date" readonly="">
 								</div>
 							</div>
 							<div class="form-row">
@@ -74,19 +74,19 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text" for="gender">Gender:</span>
 									</div>
-									<input class="form-control" value="{{ $drClinicalForm->gender ?? '' }}" name="gender" readonly="">
+									<input class="form-control" value="{{ $ulizaClinicalForm->gender ?? '' }}" name="gender" readonly="">
 								</div>
 								<div class="col-md-4 input-group">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="curr_weight">Current Weight (Kg):</span>
 									</div>
-									<input aria-describedby="curr_weight" value="{{ $drClinicalForm->curr_weight ?? '' }}" class="form-control" name="curr_weight" readonly="" type="text">
+									<input aria-describedby="curr_weight" value="{{ $ulizaClinicalForm->curr_weight ?? '' }}" class="form-control" name="curr_weight" readonly="" type="text">
 								</div>
 								<div class="col-md-4 input-group">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="height">Height (cm):</span>
 									</div>
-									<input aria-describedby="height" value="{{ $drClinicalForm->height ?? '' }}" class="form-control" name="height" readonly="" type="text">
+									<input aria-describedby="height" value="{{ $ulizaClinicalForm->height ?? '' }}" class="form-control" name="height" readonly="" type="text">
 								</div>
 							</div>
 						</div>
@@ -96,7 +96,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text text-left" id="clinician_name">Clinician’s Name:</span>
 							</div>
-							<input aria-describedby="clinician_name" value="{{ $drClinicalForm->clinician_name ?? '' }}" class="form-control" name="clinician_name" readonly="" type="text">
+							<input aria-describedby="clinician_name" value="{{ $ulizaClinicalForm->clinician_name ?? '' }}" class="form-control" name="clinician_name" readonly="" type="text">
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -104,7 +104,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_email">Facility Email Address:</span>
 							</div>
-							<input aria-describedby="facility_email" value="{{ $drClinicalForm->facility_email ?? '' }}" class="form-control" name="facility_email" readonly="" type="text">
+							<input aria-describedby="facility_email" value="{{ $ulizaClinicalForm->facility_email ?? '' }}" class="form-control" name="facility_email" readonly="" type="text">
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -112,13 +112,13 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="facility_tel">Facility Tel No:</span>
 							</div>
-							<input aria-describedby="facility_tel" value="{{ $drClinicalForm->facility_tel ?? '' }}" class="form-control" name="facility_tel" readonly="" type="text">
+							<input aria-describedby="facility_tel" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}" class="form-control" name="facility_tel" readonly="" type="text">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">What is the primary reason for this consultation:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->primary_reason ?? '' }}" name="primary_reason" readonly="" rows="3"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->primary_reason ?? '' }}" name="primary_reason" readonly="" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -126,7 +126,7 @@
 							Clinical Evaluation: history, physical, diagnostics, working diagnosis:(excluding the information in the table below)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->clinical_eval ?? '' }}" name="clinical_eval" readonly="" rows="3"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->clinical_eval ?? '' }}" name="clinical_eval" readonly="" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -152,8 +152,8 @@
 										</tr>
 									</thead>
 									<tbody>
-										@isset($drClinicalForm)
-										@foreach($drClinicalForm->visit as $key => $visit)
+										@isset($ulizaClinicalForm)
+										@foreach($ulizaClinicalForm->visit as $key => $visit)
 											<tr>
 												<td> {{ $key }} </td>
 												<td> {{ $visit->clinicvisitdate }} </td>
@@ -186,13 +186,13 @@
 							Number of adherence counseling/assessment sessions done in the last 3-6 months:
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" value="{{ $drClinicalForm->no_adhearance_counseling ?? '' }}" name="no_adhearance_counseling" readonly="" type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_adhearance_counseling ?? '' }}" name="no_adhearance_counseling" readonly="" type="number">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Number of home visits conducted in last 3-6 months, and findings:</label>
 						<div class="col-md-8">
-							<input class="form-control" value="{{ $drClinicalForm->no_homevisits ?? '' }}" name="no_homevisits" readonly="" type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_homevisits ?? '' }}" name="no_homevisits" readonly="" type="number">
 						</div>
 					</div>
 					<div class="form-group row">
@@ -200,19 +200,19 @@
 							Support structures (e.g. treatment buddy, support group attendance, caregivers) in place for this patient?
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->support_structures ?? '' }}" name="support_structures" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->support_structures ?? '' }}" name="support_structures" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Evidence of adherence concerns (e.g. missed appointments, pill counts?):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->adherence_concerns ?? '' }}" name="adherence_concerns" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->adherence_concerns ?? '' }}" name="adherence_concerns" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Number of DOTS done in last 3-6 months:</label>
 						<div class="col-md-8">
-							<input class="form-control" value="{{ $drClinicalForm->no_dotsdone ?? '' }}" name="no_dotsdone" readonly="" type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_dotsdone ?? '' }}" name="no_dotsdone" readonly="" type="number">
 						</div>
 					</div>
 					<div class="form-group row">
@@ -220,7 +220,7 @@
 							Likely root cause/s of poor adherence, for this patient (e.g. stigma, disclosure, side effects, alcohol or other drugs, mental health issues, caregiver changes, religious beliefs, inadequate preparation, etc):
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->likely_rootcauses ?? '' }}" name="likely_rootcauses" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->likely_rootcauses ?? '' }}" name="likely_rootcauses" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -233,25 +233,25 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Inadequate dosing/dose adjustments (particularly for children)::</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->inadequate_dosing ?? '' }}" name="inadequate_dosing" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->inadequate_dosing ?? '' }}" name="inadequate_dosing" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Drug-drug interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->drug_interactions ?? '' }}" name="drug_interactions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->drug_interactions ?? '' }}" name="drug_interactions" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->food_interactions ?? '' }}" name="food_interactions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->food_interactions ?? '' }}" name="food_interactions" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Impaired absorption (e.g. chronic severe diarrhea):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->impaired_absorption ?? '' }}" name="impaired_absorption" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->impaired_absorption ?? '' }}" name="impaired_absorption" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-row mb-3">
@@ -262,7 +262,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Comment on treatment interruptions, if any:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->treatment_interruptions ?? '' }}" name="treatment_interruptions" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->treatment_interruptions ?? '' }}" name="treatment_interruptions" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -270,7 +270,7 @@
 							Has Drug Resistance/Sensitivity Testing been done for this patient? If yes, state date done and attach the detailed results.
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->drt_testing ?? '' }}" name="drt_testing" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->drt_testing ?? '' }}" name="drt_testing" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -280,7 +280,7 @@
 							(indicate how treatment failure was established and confirmed, proposed regimen and dosage, current source of drugs if patient already on 3rd line). If yes, state date done and attach the detailed results:
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->mdt_discussions ?? '' }}" name="mdt_discussions" readonly="" rows="6"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->mdt_discussions ?? '' }}" name="mdt_discussions" readonly="" rows="6"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -288,7 +288,7 @@
 							MDT members who participated in the case discussion (names and titles)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $drClinicalForm->mdt_members ?? '' }}" name="mdt_members" readonly="" rows="4"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->mdt_members ?? '' }}" name="mdt_members" readonly="" rows="4"></textarea>
 						</div>
 					</div>
 				</form>

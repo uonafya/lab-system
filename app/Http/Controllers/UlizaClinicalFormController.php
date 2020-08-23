@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\DrClinicalForm;
-use App\DrClinicalVisit;
-use App\DrTwg;
+use App\UlizaClinicalForm;
+use App\UlizaClinicalVisit;
+use App\UlizaTwg;
 use App\County;
 use DB;
 use Illuminate\Http\Request;
 
-class DrClinicalFormController extends Controller
+class UlizaClinicalFormController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +18,7 @@ class DrClinicalFormController extends Controller
      */
     public function index()
     {
-        $forms = DrClinicalForm::with(['facility', 'twg'])->get();
+        $forms = UlizaClinicalForm::with(['facility', 'twg'])->get();
         return view('uliza.tables.cases', compact('forms'));
     }
 
@@ -42,18 +42,18 @@ class DrClinicalFormController extends Controller
      */
     public function store(Request $request)
     {
-        $form = new DrClinicalForm;
+        $form = new UlizaClinicalForm;
         $form->fill($request->except('clinical_visits'));
         $f = $form->view_facility;
         $county = County::find($f->county_id);
-        $twg = DrTwg::where('default', 1)->first();
+        $twg = UlizaTwg::where('default', 1)->first();
         $form->twg_id = $county->twg_id ?? $twg->id ?? null;
         $form->save();
 
         $visits = $request->input('clinical_visits');
 
         foreach ($visits as $key => $value) {            
-            $visit = new DrClinicalVisit;
+            $visit = new UlizaClinicalVisit;
             $visit->fill(get_object_vars($value));
             $form->visit()->save($visit);
         }
@@ -63,10 +63,10 @@ class DrClinicalFormController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\DrClinicalForm  $drClinicalForm
+     * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function show(DrClinicalForm $drClinicalForm)
+    public function show(UlizaClinicalForm $ulizaClinicalForm)
     {
         //
     }
@@ -74,24 +74,24 @@ class DrClinicalFormController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\DrClinicalForm  $drClinicalForm
+     * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function edit(DrClinicalForm $drClinicalForm)
+    public function edit(UlizaClinicalForm $ulizaClinicalForm)
     {
         $reasons = DB::table('uliza_reasons')->get();
         $regimens = DB::table('viralregimen')->get();
-        return view('uliza.clinicalform', compact('reasons', 'regimens', 'drClinicalForm'));      
+        return view('uliza.clinicalform', compact('reasons', 'regimens', 'ulizaClinicalForm'));      
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DrClinicalForm  $drClinicalForm
+     * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DrClinicalForm $drClinicalForm)
+    public function update(Request $request, UlizaClinicalForm $ulizaClinicalForm)
     {
         $form->fill($request->except('clinical_visits'));
         $form->save();
@@ -101,10 +101,10 @@ class DrClinicalFormController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\DrClinicalForm  $drClinicalForm
+     * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DrClinicalForm $drClinicalForm)
+    public function destroy(UlizaClinicalForm $ulizaClinicalForm)
     {
         //
     }

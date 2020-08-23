@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\DrTwg;
+use App\UlizaTwg;
 use App\County;
 use Illuminate\Http\Request;
 
-class DrTwgController extends Controller
+class UlizaTwgController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class DrTwgController extends Controller
      */
     public function index()
     {
-        $twgs = DrTwg::with(['county'])->get();
+        $twgs = UlizaTwg::with(['county'])->get();
         return view('uliza.tables.twgs', compact('twgs'));
 
     }
@@ -39,12 +39,12 @@ class DrTwgController extends Controller
      */
     public function store(Request $request)
     {
-        $drTwg = new DrTwg;
-        $drTwg->fill($request->except(['counties']));
-        $drTwg->save();
+        $ulizaTwg = new UlizaTwg;
+        $ulizaTwg->fill($request->except(['counties']));
+        $ulizaTwg->save();
 
         $counties = $request->input('counties');
-        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $drTwg->id]);
+        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $ulizaTwg->id]);
         session(['toast_message' => 'The TWG has been created']);
         return back();
     }
@@ -52,10 +52,10 @@ class DrTwgController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\DrTwg  $drTwg
+     * @param  \App\UlizaTwg  $ulizaTwg
      * @return \Illuminate\Http\Response
      */
-    public function show(DrTwg $drTwg)
+    public function show(UlizaTwg $ulizaTwg)
     {
         //
     }
@@ -63,39 +63,39 @@ class DrTwgController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\DrTwg  $drTwg
+     * @param  \App\UlizaTwg  $ulizaTwg
      * @return \Illuminate\Http\Response
      */
-    public function edit(DrTwg $drTwg)
+    public function edit(UlizaTwg $ulizaTwg)
     {
         $counties = County::orderBy('name', 'asc')->get();
-        return view('uliza.forms.twg', compact('counties', 'drTwg'));
+        return view('uliza.forms.twg', compact('counties', 'ulizaTwg'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DrTwg  $drTwg
+     * @param  \App\UlizaTwg  $ulizaTwg
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DrTwg $drTwg)
+    public function update(Request $request, UlizaTwg $ulizaTwg)
     {
-        $drTwg->fill($request->except(['counties']));
-        $drTwg->save();
+        $ulizaTwg->fill($request->except(['counties']));
+        $ulizaTwg->save();
 
-        County::where(['twg_id' => $drTwg->id])->update(['twg_id' => null]);
+        County::where(['twg_id' => $ulizaTwg->id])->update(['twg_id' => null]);
         $counties = $request->input('counties');
-        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $drTwg->id]);
+        if($counties) County::whereIn('id', $counties)->update(['twg_id' => $ulizaTwg->id]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\DrTwg  $drTwg
+     * @param  \App\UlizaTwg  $ulizaTwg
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DrTwg $drTwg)
+    public function destroy(UlizaTwg $ulizaTwg)
     {
         //
     }

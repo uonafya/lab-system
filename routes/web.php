@@ -43,15 +43,15 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 
 	Route::get('pages', 'UlizaController@pages');
 
-	Route::get('clinicalform', 'DrClinicalFormController@create');
+	Route::get('clinicalform', 'UlizaClinicalFormController@create');
 	Route::get('clinical-review', 'UlizaController@clinical_review');
 });
 
 
-Route::get('uliza-review/create/{drClinicalForm}', 'DrTwgFeedbackController@create');
-Route::resource('uliza-review', 'DrTwgFeedbackController');
-Route::resource('uliza-form', 'DrClinicalFormController');
-Route::resource('uliza-twg', 'DrTwgController');
+Route::get('uliza-review/create/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
+Route::resource('uliza-review', 'UlizaTwgFeedbackController');
+Route::resource('uliza-form', 'UlizaClinicalFormController');
+Route::resource('uliza-twg', 'UlizaTwgController');
 
 // Route::get('/addsample', function () {
 // 	return view('addsample');

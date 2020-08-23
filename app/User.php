@@ -140,6 +140,12 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\DrTwg', 'twg_id');        
     }
 
+    public function getUlizaSuperAdminAttribute()
+    {
+        if($this->user_type_id == 101) return true;
+        return false;
+    }
+
     public function getUlizaAdminAttribute()
     {
         if($this->user_type_id == 101 || $this->user_type_id == 102) return true;
