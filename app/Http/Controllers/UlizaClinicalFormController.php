@@ -35,7 +35,7 @@ class UlizaClinicalFormController extends Controller
      */
     public function create()
     {
-        $reasons = DB::table('uliza_reasons')->get();
+        $reasons = DB::table('uliza_reasons')->where('public', 1)->get();
         $regimens = DB::table('viralregimen')->get();
         return view('uliza.clinicalform', compact('reasons', 'regimens'));
     }
@@ -52,7 +52,7 @@ class UlizaClinicalFormController extends Controller
         $form->fill($request->except('clinical_visits'));
         $f = $form->view_facility;
         $county = County::find($f->county_id);
-        $twg = UlizaTwg::where('default', 1)->first();
+        $twg = UlizaTwg::where('default_twg', 1)->first();
         $form->twg_id = $county->twg_id ?? $twg->id ?? null;
         $form->save();
 

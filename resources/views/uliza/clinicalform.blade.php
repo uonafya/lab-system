@@ -200,7 +200,7 @@
 							Clinical Evaluation: history, physical, diagnostics, working diagnosis:(excluding the information in the table below)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" required="required" rows="3"></textarea>
+							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" rows="3"></textarea>
 						</div>
 					</div>
 				  
@@ -348,7 +348,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.no_adherance_counseling" name="food_interactions"  rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.food_interactions" name="food_interactions"  rows="4"></textarea>
 						</div>
 					</div>
 				  
