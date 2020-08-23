@@ -440,9 +440,7 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Case Summary of consultation:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="casesummary" rows="5">
-										{{ $ulizaClinicalForm->feedback->casesummary ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="casesummary" rows="5">{{ $ulizaClinicalForm->feedback->casesummary ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -466,9 +464,7 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Observations/Interpretation on summary provided:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="observationsofsummary" rows="5">
-										{{ $ulizaClinicalForm->feedback->observationsofsummary ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="observationsofsummary" rows="5">{{ $ulizaClinicalForm->feedback->observationsofsummary ?? null }}</textarea>
 								</div>
 							</div>
 
