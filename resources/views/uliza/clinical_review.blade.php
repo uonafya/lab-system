@@ -39,8 +39,7 @@
 						<div class="col-md-7 input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="cccno">
-									Patient’s CCC No: <br>
-									<small>(Do not write name)</small>
+									CCC No:
 								</span>
 							</div>
 							<input aria-describedby="cccno" class="form-control" value="{{ $ulizaClinicalForm->cccno ?? '' }}" name="cccno" readonly="" type="text">
@@ -58,7 +57,7 @@
 							<div class="form-row mb-3">
 								<div class="col-md-6 input-group">
 									<div class="input-group-prepend">
-										<span class="input-group-text" id="dob">Date of Birth:</span>
+										<span class="input-group-text" id="dob">DOB:</span>
 									</div>
 									<input class="form-control" value="{{ $ulizaClinicalForm->dob ?? '' }}" name="dob" readonly="">
 								</div>
