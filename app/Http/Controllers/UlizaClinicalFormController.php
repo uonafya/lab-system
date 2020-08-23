@@ -19,6 +19,7 @@ class UlizaClinicalFormController extends Controller
     public function index()
     {
         $user = auth()->user();
+        if(!$user) return redirect('uliza/uliza');
         $forms = UlizaClinicalForm::with(['facility', 'twg'])
         ->when(true, function($query) use ($user){
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
