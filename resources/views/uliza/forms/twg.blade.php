@@ -14,8 +14,8 @@
 			</div>
 			<div class="card mt-1">
 				<div class="card-body">
-			        @if(isset($drTwg))
-			            <form method="POST" class="val-form" action='{{ url("/uliza-twg/{$drTwg->id}") }}' >
+			        @if(isset($ulizaTwg))
+			            <form method="POST" class="val-form" action='{{ url("/uliza-twg/{$ulizaTwg->id}") }}' >
 			            @method('PUT')
 			        @else
 			            <form method="POST" class="val-form" action='{{ url("/uliza-twg/") }}'>
@@ -30,7 +30,7 @@
 										<div style='color: #ff0000; display: inline;'>*</div>
 									</span>
 								</div>
-								<input class="form-control" name="twg" required="required" type="text" value="{{ $drTwg->twg ?? '' }}">
+								<input class="form-control" name="twg" required="required" type="text" value="{{ $ulizaTwg->twg ?? '' }}">
 							</div>
 						</div>
 
@@ -43,7 +43,7 @@
 							<select class="form-control col-md-9 select2" multiple name="counties[]">
 								<option></option>
 								@foreach($counties as $county)
-									<option value="{{ $county->id }}" @if(isset($drTwg) && $county->twg_id == $drTwg->id) selected  @endif > {{ $county->name }} </option>
+									<option value="{{ $county->id }}" @if(isset($ulizaTwg) && $county->twg_id == $ulizaTwg->id) selected  @endif > {{ $county->name }} </option>
 								@endforeach
 							</select>
 						</div>
@@ -53,11 +53,11 @@
 								Default TWG
 							</label>
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" name="default_twg" required="required" type="radio" value="1">
+								<input class="form-check-input ml-1" name="default_twg"  required="required" type="radio" value="1"  @if(isset($ulizaTwg) && $ulizaTwg->default_twg == 1) checked  @endif>
 								<label class="form-check-label ml-5" >Default</label>
 							</div>
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" name="default_twg" required="required" type="radio" value="0">
+								<input class="form-check-input ml-1" name="default_twg" required="required" type="radio" value="0"  @if(isset($ulizaTwg) && $ulizaTwg->default_twg == 0) checked  @endif>
 								<label class="form-check-label ml-5" >Not Default</label>
 							</div>
 						</div>

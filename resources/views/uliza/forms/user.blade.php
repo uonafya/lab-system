@@ -43,7 +43,7 @@
 							<select class="form-control col-md-9 select2" name="twg_id">
 								<option></option>
 								@foreach($twgs as $twg)
-									<option value="{{ $user_type->id }}" @if(isset($user) && $user->twg_id == $twg->id) selected  @endif > {{ $twg->twg }} </option>
+									<option value="{{ $twg->id }}" @if(isset($user) && $user->twg_id == $twg->id) selected  @endif > {{ $twg->twg }} </option>
 								@endforeach
 							</select>
 						</div>
