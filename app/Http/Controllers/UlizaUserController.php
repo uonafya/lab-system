@@ -22,6 +22,12 @@ class UlizaUserController extends Controller
         }
     }
 
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('uliza/uliza');
+    }
+
     /**
      * Display a listing of the resource.
      *

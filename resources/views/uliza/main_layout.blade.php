@@ -49,7 +49,7 @@
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
 				<a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a>
 			</nav>
-			<a class="btn btn-outline-primary">Sign Out</a>
+			<a class="btn btn-outline-primary" href="{{ url('uliza/logout') }}" >Sign Out</a>
 		</div>
 	</header>
 
