@@ -22,7 +22,7 @@
                         @csrf
                         <div class="form-group" style="padding-bottom: -;padding-right: 20px;padding-left: 20px;margin-bottom: 16px;margin-top: 10px;">
                             <label class="control-label" for="email" style="color: black;margin-bottom: 8px;">Facility:</label>
-                                <select class="form-control" required name="facility_id" id="facility_id" multiple>
+                                <select class="form-control" required name="facility_id" id="facility_id">
 
                                 </select>
                             @if ($errors->has('email'))
