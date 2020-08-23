@@ -338,7 +338,7 @@
 						<div class="card my-1 ml-2">
 							<div class="card-body p-2">
 								<div class="d-flex justify-content-end align-items-center w-100">
-									<button class="btn btn-warning btn-sm" type="button" disabled="">
+									<button class="btn btn-warning btn-sm" type="button">
 										Submit Review
 									</button>
 								</div>
