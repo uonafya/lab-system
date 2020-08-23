@@ -79,6 +79,11 @@
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	            }
 	        });
+
+	        @php
+	            $toast_message = session()->pull('toast_message');
+	            $toast_error = session()->pull('toast_error');
+	        @endphp
         
 	        @if($toast_message)
 	            setTimeout(function(){
