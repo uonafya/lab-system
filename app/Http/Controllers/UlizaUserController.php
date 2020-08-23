@@ -13,14 +13,13 @@ class UlizaUserController extends Controller
 
     public function login(Request $request)
     {
-        $user = User::where('email', $request->input('email'))->whereNotNull('email')->where('user_type_id', '>', 100)->first();
-        if(!$user || $user->password != Hash::make($request->input('password'))){
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            return redirect('uliza-review');
+        }else{
             session(['toast_error' => 1, 'toast_message' => 'These credentials do not match our records.']);
-            return back();
+            return back();            
         }
-
-        Auth::login($user);
-        return redirect('uliza-review');
     }
 
     /**
