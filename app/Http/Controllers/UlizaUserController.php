@@ -41,9 +41,9 @@ class UlizaUserController extends Controller
      */
     public function create()
     {
-        $user_types = DB::table('user_types')->get();
+        $user_types = DB::table('user_types')->where('id', '>', 100)->get();
         $twgs = DB::table('uliza_twgs')->get();        
-        return view('uliza.form.user', compact('twgs', 'user_types'));
+        return view('uliza.forms.user', compact('twgs', 'user_types'));
     }
 
     /**
@@ -81,9 +81,9 @@ class UlizaUserController extends Controller
      */
     public function edit(User $user)
     {
-        $user_types = DB::table('user_types')->get();
+        $user_types = DB::table('user_types')->where('id', '>', 100)->get();
         $twgs = DB::table('uliza_twgs')->get();        
-        return view('uliza.form.user', compact('twgs', 'user_types', 'user'));
+        return view('uliza.forms.user', compact('twgs', 'user_types', 'user'));
     }
 
     /**
