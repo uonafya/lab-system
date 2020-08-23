@@ -32,4 +32,9 @@ class UlizaClinicalForm extends BaseModel
         return $this->hasOne('App\UlizaTwgFeedback', 'uliza_clinical_form_id');
     }
 
+    public function getNatNumberAttribute()
+    {
+        return "NAT-{$this->id}";
+    }
+
 }

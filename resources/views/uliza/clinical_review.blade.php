@@ -409,9 +409,9 @@
 							<div class="form-row mb-3">
 								<div class="col-md-12 input-group">
 									<div class="input-group-prepend">
-										<span class="input-group-text text-left" id="natno">NASCOP's NAT-No :</span>
+										<span class="input-group-text text-left" id="nat_no">NASCOP's NAT-No :</span>
 									</div>
-									<input aria-describedby="natno" value="{{ $ulizaClinicalForm->natno ?? '' }}" disabled class="form-control" name="natno" readonly="" type="text">
+									<input aria-describedby="nat_no" value="{{ $ulizaClinicalForm->nat_number ?? '' }}" disabled class="form-control" name="nat_no" readonly="" type="text">
 								</div>
 							</div>
 

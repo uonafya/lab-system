@@ -28,7 +28,7 @@
                         	@foreach($forms as $key => $form)
                         		<tr>
                         			<td> {{ $key }} </td>
-                                    <td> {{ $form->nat_no }} </td>
+                                    <td> {{ $form->nat_number }} </td>
                                     <td> {{ $form->twg->twg }} </td>
                                     <td> {{ $form->facility->name }} </td>
                                     <td> </td>
