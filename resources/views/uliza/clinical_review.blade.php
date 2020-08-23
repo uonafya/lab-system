@@ -353,7 +353,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="facility_name">Facility Name:</span>
 									</div>
-									<input aria-describedby="facility_Name" class="form-control" name="facility_name" readonly="" type="text">
+									<input aria-describedby="facility_Name" class="form-control" value="{{ $ulizaClinicalForm->facility->name ?? '' }}" name="facility_name" readonly="" type="text">
 								</div>
 							</div>
 
@@ -362,7 +362,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="cccno">Patient's CCCNo:</span>
 									</div>
-									<input aria-describedby="cccno" class="form-control" name="cccno" readonly="" type="text">
+									<input aria-describedby="cccno" value="{{ $ulizaClinicalForm->cccno ?? '' }}" class="form-control" name="cccno" readonly="" type="text">
 								</div>
 							</div>
 
@@ -371,7 +371,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="clinician_name">Name of Clinician Consulting:</span>
 									</div>
-									<input aria-describedby="clinician_name" class="form-control" name="clinician_name" readonly="" type="text">
+									<input aria-describedby="clinician_name" class="form-control" value="{{ $ulizaClinicalForm->clinician_name ?? '' }}" name="clinician_name" readonly="" type="text">
 								</div>
 							</div>
 
@@ -380,7 +380,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="facility_email">Contact details of clinician (email) :</span>
 									</div>
-									<input aria-describedby="facility_email" class="form-control" name="facility_email" readonly="" type="text">
+									<input aria-describedby="facility_email" value="{{ $ulizaClinicalForm->facility_email ?? '' }}" class="form-control" name="facility_email" readonly="" type="text">
 								</div>
 							</div>
 
@@ -391,7 +391,7 @@
 											Contact details of clinician (telephone):
 										</span>
 									</div>
-									<input aria-describedby="facility_tel" class="form-control" name="facility_tel" readonly="" type="text">
+									<input aria-describedby="facility_tel" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}" class="form-control" name="facility_tel" readonly="" type="text">
 								</div>
 							</div>
 
@@ -400,7 +400,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="artstart_date">ART Start Date :</span>
 									</div>
-									<input aria-describedby="artstart_date" class="form-control" name="artstart_date" readonly="" type="text">
+									<input aria-describedby="artstart_date" value="{{ $ulizaClinicalForm->artstart_date ?? '' }}" class="form-control" name="artstart_date" readonly="" type="text">
 								</div>
 							</div>
 
@@ -409,7 +409,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="natno">NASCOP's NAT-No :</span>
 									</div>
-									<input aria-describedby="natno" class="form-control" name="natno" readonly="" type="text">
+									<input aria-describedby="natno" value="{{ $ulizaClinicalForm->natno ?? '' }}" class="form-control" name="natno" readonly="" type="text">
 								</div>
 							</div>
 
