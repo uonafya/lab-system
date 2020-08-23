@@ -493,18 +493,14 @@
 									Supportive Management: (Includes palliative care, social, psychosocial etc.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="supportivemanagement"  rows="5">
-										{{ $ulizaClinicalForm->feedback->supportivemanagement ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="supportivemanagement"  rows="5">{{ $ulizaClinicalForm->feedback->supportivemanagement ?? null }}</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Definative Management: (Includes recommended investigations, medicines).</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="definativemanagement" rows="5">
-										{{ $ulizaClinicalForm->feedback->definativemanagement ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="definativemanagement" rows="5">{{ $ulizaClinicalForm->feedback->definativemanagement ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -513,18 +509,14 @@
 									Additional Information Required:(Includes recommended investigations, medicines.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="additionalinfo" rows="5">
-										{{ $ulizaClinicalForm->feedback->additionalinfo ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="additionalinfo" rows="5">{{ $ulizaClinicalForm->feedback->additionalinfo ?? null }}</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row ng-star-inserted">
 								<label class="col-md-4 col-form-label">NASCOP Comments</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="nascop_comments"  rows="5">
-										{{ $ulizaClinicalForm->feedback->nascop_comments ?? '' }}
-									</textarea>
+									<textarea class="form-control" name="nascop_comments"  rows="5">{{ $ulizaClinicalForm->feedback->nascop_comments ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -540,7 +532,7 @@
 									<select class="custom-select" name="recommendation_id" required>
 										<option selected="">Choose...</option>
 										@foreach($recommendations as $recommendation)
-											<option value="{{ $recommendation->id }} " class="ng-star-inserted"> {{ $recommendation->name }} </option>
+											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
 										@endforeach
 										<!-- <option value="1" class="ng-star-inserted">Additional Information Required From Facility</option>
 										<option value="5" class="ng-star-inserted">Additional Information Required From RTWG</option>
@@ -558,8 +550,8 @@
 
 								@foreach($reviewers as $reviewer)
 									<div class="col-md-6">
-										<input _ngcontent-c18="" class="form-check-input ng-untouched ng-pristine ng-valid" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}">
-										<label _ngcontent-c18="" class="form-check-label" for="user_{{ $reviewer->id }}">
+										<input class="form-check-input" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}">
+										<label class="form-check-label" for="user_{{ $reviewer->id }}">
 											{{ $reviewer->full_name }}                  
 										</label>
 									</div>
