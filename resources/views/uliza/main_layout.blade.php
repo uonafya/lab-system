@@ -47,7 +47,7 @@
 				<a class="p-2" routerlinkactive="active" href="/uliza-form">Cases</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
 				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/users">Users</a>
+				<a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a>
 			</nav>
 			<a class="btn btn-outline-primary">Sign Out</a>
 		</div>

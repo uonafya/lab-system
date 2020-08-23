@@ -15,7 +15,7 @@ class UlizaUserController extends Controller
     {
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect('uliza-review');
+            return redirect('uliza-form');
         }else{
             session(['toast_error' => 1, 'toast_message' => 'These credentials do not match our records.']);
             return back();            
