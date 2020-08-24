@@ -47,6 +47,10 @@ class UlizaTwgFeedbackController extends Controller
         $ulizaTwgFeedback->fill($request->all());
         $ulizaTwgFeedback->user_id = auth()->user()->id;
         $ulizaTwgFeedback->save();
+
+        $clinical_form = $ulizaTwgFeedback->clinical_form;
+        $clinical_form->status_id = 2;
+        $clinical_form->save();
         session(['toast_message' => 'The feedback has been saved.']);
         return redirect('uliza-form');
 

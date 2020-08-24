@@ -132,7 +132,6 @@ class UlizaPage extends Model
             ['id' => 3, 'name' => 'Completed'],
             ['id' => 4, 'name' => 'Finalised'],
         ]);
-
     }
 
 
