@@ -49,18 +49,18 @@
 			</div>
 
 			<nav class="my-2 my-md-0 mr-md-3 text-uppercase">
-				<a class="p-2" routerlinkactive="active" href="/uliza-form">Cases</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
+				<a class="p-2" href="/uliza-form">Cases</a>
+				<a class="p-2" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
+				<a class="p-2" href="/ulizaplatform/dashboard">DashBoard</a>
 				@if(auth()->user()->uliza_admin)
-					<div class="dropdown show">
-						<a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
+					<!-- <div class="dropdown show"> -->
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
 
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 							<a class="dropdown-item" href="/uliza-twg">View TWGs</a>
 							<a class="dropdown-item" href="/uliza-twg/create">Create TWGs</a>
 						</div>
-					</div>
+					<!-- </div> -->
 					<div class="dropdown show">
 						<a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
 
