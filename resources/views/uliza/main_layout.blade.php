@@ -48,32 +48,32 @@
 				</h4>
 			</div>
 
-			<div class="my-2 my-md-0 mr-md-3 text-uppercase">
+			<nav class="my-2 my-md-0 mr-md-3 text-uppercase">
 				<a class="p-2" href="/uliza-form">Cases</a>
 				<a class="p-2" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
 				<a class="p-2" href="/ulizaplatform/dashboard">DashBoard</a>
 				@if(auth()->user()->uliza_admin)
-					<div class="dropdown show">
+					<!-- <div class="dropdown show"> -->
 						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
 
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 							<a class="dropdown-item" href="/uliza-twg">View TWGs</a>
 							<a class="dropdown-item" href="/uliza-twg/create">Create TWGs</a>
 						</div>
-					</div>
-					<div class="dropdown show">
+					<!-- </div> -->
+					<!-- <div class="dropdown show"> -->
 						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
 
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLinkTwo">
 							<a class="dropdown-item" href="/uliza-user">View Users</a>
 							<a class="dropdown-item" href="/uliza-user/create">Create Users</a>
 						</div>
-					</div>
+					<!-- </div> -->
 
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
 				@endif
-			</div>
+			</nav>
 			<a class="btn btn-outline-primary" href="{{ url('uliza/logout') }}" >Sign Out</a>
 		</div>
 	</header>
