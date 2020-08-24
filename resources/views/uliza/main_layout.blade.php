@@ -62,7 +62,7 @@
 						</div>
 					<!-- </div> -->
 					<!-- <div class="dropdown show"> -->
-						<a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
 
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuLinkTwo">
 							<a class="dropdown-item" href="/uliza-user">View Users</a>
