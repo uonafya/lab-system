@@ -406,7 +406,7 @@
 					</div>
 
 					<div v-if="successful_submission === false" class="row alert alert-warning">
-						You have successfully submitted your request.
+						You have validation errors.
 					</div>
 				  
 					<div class="mb-3 float-right">
