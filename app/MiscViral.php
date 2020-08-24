@@ -1069,7 +1069,9 @@ class MiscViral extends Common
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])
                 ->where('created_at', '>', $min_date)
-                ->when($batch_id)
+                ->when($batch_id, function($query) use($batch_id){
+                    return $query->where('batch_id', $batch_id);
+                })
                 ->whereNull('receivedstatus')
                 ->get();
 
