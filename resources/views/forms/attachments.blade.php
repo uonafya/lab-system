@@ -19,7 +19,7 @@
    <div class="content">
         <div>
 
-        <form action="{{ url('/email/attachment/add/' . $email->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('/email/attachment/' . $email->id) }}" class="form-horizontal" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
