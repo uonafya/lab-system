@@ -19,6 +19,7 @@ class UlizaClinicalFormController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $statuses = DB::table('uliza_case_statuses')->get();
         if(!$user) return redirect('uliza/uliza');
         $forms = UlizaClinicalForm::with(['facility', 'twg'])
         ->when(true, function($query) use ($user){
@@ -26,7 +27,7 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
         })
         ->get();
-        return view('uliza.tables.cases', compact('forms'));
+        return view('uliza.tables.cases', compact('forms', 'statuses'));
     }
 
     /**

@@ -31,7 +31,7 @@
                                     <td> {{ $form->nat_number }} </td>
                                     <td> {{ $form->twg->twg }} </td>
                                     <td> {{ $form->facility->name }} </td>
-                                    <td> </td>
+                                    <td> {{ $form->get_prop_name($statuses, 'status_id') }} </td>
                         			<td> {{ $form->created_at }} </td>
                         			<td> <a href="{{ url('uliza-review/create/' . $form->id) }} "><button class="btn btn-primary"> Process Feedback </button></a> </td>
                         		</tr>
