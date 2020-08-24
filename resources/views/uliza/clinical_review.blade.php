@@ -550,7 +550,7 @@
 
 								@foreach($reviewers as $reviewer)
 									<div class="col-md-6">
-										<input class="form-check-input" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}">
+										<input class="form-check-input" name="reviewer_id" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}" @if($ulizaClinicalForm->reviewer_id == $reviewer->id) checked  @endif >
 										<label class="form-check-label" for="user_{{ $reviewer->id }}">
 											{{ $reviewer->full_name }}                  
 										</label>
