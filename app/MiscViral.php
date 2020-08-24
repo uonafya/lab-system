@@ -1067,10 +1067,10 @@ class MiscViral extends Common
         $min_date = date('Y-m-d', strtotime('-1 week'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
-                ->where(['repeatt' => 0, 'county_id' => 17])
-                ->where('created_at', '>', $min_date)
-                ->when($batch_id, function($query) use($batch_id){
-                    return $query->where('batch_id', $batch_id);
+                ->where(['repeatt' => 0, 'county_id' => 17])                
+                ->when(true, function($query) use($batch_id, $min_date){
+                    if($batch_id) return $query->where('batch_id', $batch_id);
+                    return $query->where('created_at', '>', $min_date);
                 })
                 ->whereNull('receivedstatus')
                 ->get();
