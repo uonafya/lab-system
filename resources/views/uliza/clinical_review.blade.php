@@ -14,7 +14,7 @@
 				<div class="card-body p-2">
 					<div class="d-flex justify-content-between align-items-center w-100">
 						<button class="btn btn-dark btn-sm" disabled="disabled" type="button">
-							<strong>Facility: </strong>SOTIK HEALTH CENTRE
+							<strong>Facility: </strong>{{ $ulizaClinicalForm->facility->name ?? '' }}
 						</button>
 					</div>
 				</div>

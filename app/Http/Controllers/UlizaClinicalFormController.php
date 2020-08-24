@@ -62,7 +62,12 @@ class UlizaClinicalFormController extends Controller
 
         foreach ($visits as $key => $value) {            
             $visit = new UlizaClinicalVisit;
-            $visit->fill(get_object_vars($value));
+            if(is_array($value)) $visit->fill($value);
+            else{
+                $visit->fill(get_object_vars($value));
+            }
+            // $visit->uliza_clinical_form_id = $form->id;
+            // $visit->save();
             $form->visit()->save($visit);
         }
         return response()->json(['status' => 'ok'], 201);
