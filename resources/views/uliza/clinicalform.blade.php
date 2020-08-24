@@ -404,6 +404,10 @@
 					<div v-if="successful_submission" class="row alert alert-success">
 						You have successfully submitted your request.
 					</div>
+
+					<div v-if="successful_submission === false" class="row alert alert-warning">
+						You have successfully submitted your request.
+					</div>
 				  
 					<div class="mb-3 float-right">
 						<button class="btn btn-warning" type="submit" >Submit</button>
@@ -477,7 +481,7 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
-        		successful_submission: false,
+        		successful_submission: null,
         	},
         	methods: {
         		update(){
@@ -507,7 +511,7 @@
         			});
         		},
         		editVisit(index){
-        			console.log(index);
+        			// console.log(index);
         			this.myForm.clinical_visits.splice(index, 1);
 
         			this.clinicalVisit = {...this.myForm.clinical_visits[index]};
