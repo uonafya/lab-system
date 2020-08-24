@@ -464,7 +464,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('download_attachment/{email}', 'EmailController@download_attachment');
 				Route::get('attachment/{email}', 'EmailController@add_attachment');
-				Route::post('attachment/{email}', 'EmailController@save_attachment');
+				Route::post('attachment/add/{email}', 'EmailController@save_attachment');
 				Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 			});
 			Route::resource('email', 'EmailController');
