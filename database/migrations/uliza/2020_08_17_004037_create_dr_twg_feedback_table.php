@@ -27,6 +27,7 @@ class CreateDrTwgFeedbackTable extends Migration
             $table->text('additionalinfo')->nullable()->nullable();
             $table->text('nascop_comments')->nullable()->nullable();
             $table->tinyInteger('recommendation_id')->nullable();
+            $table->tinyInteger('facility_recommendation_id')->nullable();
             $table->timestamps();
         });
     }

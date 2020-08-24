@@ -1058,7 +1058,7 @@ class MiscViral extends Common
     }
 
 
-    public static function machakos_edarp()
+    public static function machakos_edarp($batch_id=null)
     {
         ini_set('memory_limit', "-1");
         $prophylaxis = \DB::table('viralregimen')->get();
@@ -1069,6 +1069,7 @@ class MiscViral extends Common
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])
                 ->where('created_at', '>', $min_date)
+                ->when($batch_id)
                 ->whereNull('receivedstatus')
                 ->get();
 
@@ -1095,7 +1096,7 @@ class MiscViral extends Common
                 ];
 
             $response = $client->request('post', '', [
-                // 'debug' => true,
+                'debug' => true,
                 'http_errors' => false,
                 'verify' => false,
                 'json' => $post_data,

@@ -520,7 +520,6 @@
 								</div>
 							</div>
 
-
 							<div class="form-group row ng-star-inserted">
 								<div class="col-md-6">
 									<label class=" col-form-label">
@@ -534,16 +533,30 @@
 										@foreach($recommendations as $recommendation)
 											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
 										@endforeach
-										<!-- <option value="1" class="ng-star-inserted">Additional Information Required From Facility</option>
-										<option value="5" class="ng-star-inserted">Additional Information Required From RTWG</option>
-										<option value="3" class="ng-star-inserted">Provide Feedback To Facility Directly</option>
-										<option value="2" class="ng-star-inserted">Refer To Technical Reviewer</option>
-										<option value="6" class="ng-star-inserted">Send Feedback To RTWG</option> -->
 									</select>
 								</div>
 							</div>
 
-							<div class="row ng-star-inserted" id="reviewers_row">
+							<div class="form-group row ng-star-inserted">
+								<div class="col-md-6">
+									<label class=" col-form-label">
+										Facility Feedback Recomendations
+									</label>
+								</div>
+
+								<div class="col-md-6">
+									<select class="custom-select" name="recommendation_id" required>
+										<option selected="">Choose...</option>
+										@foreach($recommendations as $recommendation)
+											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
+										@endforeach
+									</select>
+								</div>
+							</div>
+
+
+							@if(auth()->user()->user_type_id != 104)
+							<div class="row ng-star-inserted" id="reviewers_row" v-if="myForm.recommendation_id == 2">
 								<div class="col-md-12">
 									<h4> Choose Reviewers: </h4>
 								</div>
@@ -557,6 +570,7 @@
 									</div>
 								@endforeach
 							</div>
+							@endif
 						</div>
 					</form>
 				</div>
@@ -569,6 +583,23 @@
 
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+
+        var vm = new Vue({
+        	el: "#my-vue-instance",
+        	data: {
+        		successful_submission: null,
+        		myForm: {
+        			recommendation_id: {{ $ulizaClinicalForm->feedback->recommendation_id ?? null }},
+
+        		},
+        	},
+        });
+    });
+</script>
+
     @component('/uliza/forms/scripts')
 	@endcomponent
 @endsection

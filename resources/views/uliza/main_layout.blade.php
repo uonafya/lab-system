@@ -80,7 +80,7 @@
 
 
 	<div class="container-fluid">
-		<div class="row">
+		<div class="row" id="my-vue-instance">
 			@yield('content')
 		</div>		
 	</div>
