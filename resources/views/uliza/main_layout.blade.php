@@ -26,6 +26,11 @@
     		color: #fff;
     		background-color: #e38fe3;
     	}
+    	label.error {
+    		color: #e74c3c;
+		    margin: 5px 0 0 0;
+		    font-weight: 400;
+    	}
     </style>
 
 </head>
