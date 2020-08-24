@@ -180,7 +180,10 @@ class Email extends BaseModel
             ],
         ]);
         $status_code = $response->getStatusCode();
-        if($status_code > 399) die();
+        $body = json_decode($response->getBody());
+        if($status_code > 399) {
+            dd($body);
+        }
 
         $body = json_decode($response->getBody());
         $token = $body->token;

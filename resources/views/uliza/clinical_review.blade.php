@@ -513,14 +513,21 @@
 								</div>
 							</div>
 
-							<div class="form-group row ng-star-inserted">
+							<div class="form-group row">
 								<label class="col-md-4 col-form-label">NASCOP Comments</label>
 								<div class="col-md-8">
 									<textarea class="form-control" name="nascop_comments"  rows="5">{{ $ulizaClinicalForm->feedback->nascop_comments ?? null }}</textarea>
 								</div>
 							</div>
 
-							<div class="form-group row ng-star-inserted">
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Reviewer Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->reviewer_comments ?? null }}</textarea>
+								</div>
+							</div>
+
+							<div class="form-group row">
 								<div class="col-md-6">
 									<label class=" col-form-label">
 										Case-Summary (Recomendation feedback)
@@ -537,7 +544,7 @@
 								</div>
 							</div>
 
-							<div class="form-group row ng-star-inserted">
+							<div class="form-group row" v-if="myForm.recommendation_id == 3">
 								<div class="col-md-6">
 									<label class=" col-form-label">
 										Facility Feedback Recomendations
@@ -545,10 +552,10 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="recommendation_id" required>
+									<select class="custom-select" name="facility_recommendation_id">
 										<option selected="">Choose...</option>
-										@foreach($recommendations as $recommendation)
-											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
+										@foreach($feedbacks as $feedback)
+											<option value="{{ $feedback->id }}"  > {{ $feedback->name }} </option>
 										@endforeach
 									</select>
 								</div>
@@ -597,6 +604,8 @@
         		},
         	},
         });
+
+
     });
 </script>
 

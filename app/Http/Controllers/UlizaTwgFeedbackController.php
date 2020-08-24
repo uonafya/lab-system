@@ -29,10 +29,10 @@ class UlizaTwgFeedbackController extends Controller
     {
         $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
         $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
-        $recommendations = DB::table('uliza_facility_feedbacks')->orderBy('name', 'ASC')->get();
+        $feedbacks = DB::table('uliza_facility_feedbacks')->orderBy('name', 'ASC')->get();
         $regimens = DB::table('viralregimen')->get();
         $reviewers = User::where(['user_type_id' => 104, 'twg_id' => $ulizaClinicalForm->twg_id])->get();
-        return view('uliza.clinical_review', compact('reasons', 'recommendations', 'regimens', 'ulizaClinicalForm', 'reviewers'));       
+        return view('uliza.clinical_review', compact('reasons', 'recommendations', 'feedbacks', 'regimens', 'ulizaClinicalForm', 'reviewers'));       
     }
 
     /**
