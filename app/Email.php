@@ -169,7 +169,7 @@ class Email extends BaseModel
         $client = new Client(['base_uri' => $base]);
 
         $response = $client->request('post', 'auth/login', [
-            'http_errors' => false,
+            // 'http_errors' => false,
             // 'debug' => true,
             'headers' => [
                 'Accept' => 'application/json',

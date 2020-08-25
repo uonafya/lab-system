@@ -25,6 +25,7 @@
                             <table class="table table-striped table-bordered table-hover data-table" >
                                 <thead>
                                     <tr class="colhead">
+                                        <th> # </th>
                                         <th> CIF ID </th>
                                         <th> Identifier </th>
                                         <th> National ID </th>
@@ -38,8 +39,9 @@
                                 </thead>
                                 <tbody>
 
-                                    @foreach($samples as $sample)
+                                    @foreach($samples as $key => $sample)
                                         <tr>
+                                            <td> {{ $key }} </td>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
                                             <td> {{ $sample->patient->national_id ?? '' }} </td>
