@@ -1231,7 +1231,8 @@ class Synch
 				->when($jitenge, function($query){
 					return $query->where('lab_id', 101);
 				})
-				->orderBy('datecollected', 'desc')
+				// ->orderBy('datecollected', 'desc')
+				// ->orderBy('id', 'desc')
 				->with(['patient'])->get();
 			return $samples;
 		}

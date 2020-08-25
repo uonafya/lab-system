@@ -41,7 +41,7 @@
 
                                     @foreach($samples as $key => $sample)
                                         <tr>
-                                            <td> {{ $key }} </td>
+                                            <td> {{ $key+1 }} </td>
                                             <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
                                             <td> {{ $sample->patient->national_id ?? '' }} </td>
