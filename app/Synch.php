@@ -1232,7 +1232,7 @@ class Synch
 					return $query->where('lab_id', 101);
 				})
 				// ->orderBy('datecollected', 'desc')
-				// ->orderBy('id', 'desc')
+				->orderBy('id', 'desc')
 				->with(['patient'])->get();
 			return $samples;
 		}
