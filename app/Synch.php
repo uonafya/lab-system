@@ -184,7 +184,7 @@ class Synch
 	{
 		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
-		$response = $client->request('get', '', ['timeout' => 1]);
+		$response = $client->request('get', '', ['timeout' => 1, 'http_errors' => false]);
 		$body = json_decode($response->getBody());
 		if($response->getStatusCode() < 399) return true;
 		return false;

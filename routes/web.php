@@ -182,6 +182,7 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
+			Route::get('print/{covidSample}', 'CovidSampleController@print_result');
 
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::get('cif', 'CovidSampleController@cif_samples');
