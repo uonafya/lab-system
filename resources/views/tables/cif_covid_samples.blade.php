@@ -26,6 +26,7 @@
                                 <thead>
                                     <tr class="colhead">
                                         <th> # </th>
+                                        <th> Border Point </th>
                                         <th> CIF ID </th>
                                         <th> Identifier </th>
                                         <th> National ID </th>
@@ -42,7 +43,7 @@
                                     @foreach($samples as $key => $sample)
                                         <tr>
                                             <td> {{ $key+1 }} </td>
-                                            <td> {{ $sample->cif_sample_id ?? '' }} </td>
+                                            <td> {{ $sample->border_point ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
                                             <td> {{ $sample->patient->national_id ?? '' }} </td>
                                             <td> {{ $sample->patient->county ?? '' }} </td>
