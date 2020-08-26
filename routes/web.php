@@ -58,8 +58,20 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 
 	Route::get('pages', 'UlizaController@pages');
 
-	
-	Route::get('clinicalform', 'UlizaController@clinicalform');
+	Route::get('clinicalform', 'UlizaClinicalFormController@create');
+	Route::get('clinical-review', 'UlizaController@clinical_review');
+});
+
+Route::resource('uliza-form', 'UlizaClinicalFormController');
+Route::post('uliza/login', 'UlizaUserController@login');
+
+Route::middleware(['auth'])->group(function(){
+
+	Route::resource('uliza-twg', 'UlizaTwgController');
+	Route::get('uliza-review/create/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
+	Route::resource('uliza-review', 'UlizaTwgFeedbackController');
+	Route::get('uliza/logout', 'UlizaUserController@logout');
+	Route::resource('uliza-user', 'UlizaUserController');
 });
 
 // Route::get('/addsample', function () {
@@ -185,14 +197,17 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
+			Route::get('print/{covidSample}', 'CovidSampleController@print_result');
 
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::get('cif', 'CovidSampleController@cif_samples');
+				Route::get('jitenge', 'CovidSampleController@jitenge_samples');
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
 			
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
+				Route::get('release/{covidSample}', 'CovidSampleController@release_redraw');
 				
 				Route::get('lab/upload', 'CovidSampleController@lab_sample_page');
 				Route::post('lab/upload', 'CovidSampleController@upload_lab_samples');
@@ -221,6 +236,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::resource('covid_patient', 'CovidPatientController');
 
 		Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
+			Route::resource('covid_kit_type', 'CovidKitTypeController');
+			
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');
 				Route::post('create', 'CovidWorksheetController@set_details')->name('set_details');
@@ -463,7 +480,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('download_attachment/{email}', 'EmailController@download_attachment');
 				Route::get('attachment/{email}', 'EmailController@add_attachment');
-				Route::post('attachment/{email}', 'EmailController@save_attachment');
+				Route::put('attachment/{email}', 'EmailController@save_attachment');
 				Route::delete('attachment/{attachment}', 'EmailController@delete_attachment');
 			});
 			Route::resource('email', 'EmailController');

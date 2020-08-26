@@ -118,13 +118,13 @@ p.breakhere {page-break-before: always}
 				<tr></tr>
 
 				<tr>
-					<td  class="style4 style1 comment" ><strong> {{ $labaddress }} </strong></td>	
+					<td  class="style4 style1 comment" ><strong> {{ $labaddress ?? null }} </strong></td>	
 				</tr>
 				<tr>
 					<td  class="style4 style1 comment" ><strong>&nbsp; </strong></td>
 				</tr>
 				<tr>
-					<td  class="style4 style1 comment" ><strong> TEL NO: {{ $labtelno }}</strong> </td></td>
+					<td  class="style4 style1 comment" ><strong> TEL NO: {{ $labtelno ?? null }}</strong> </td></td>
 				</tr>
 			</table>
 		</td>

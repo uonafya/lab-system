@@ -143,6 +143,7 @@ class CovidSampleController extends Controller
 
     public function download_excel($request)
     {
+        ini_set("memory_limit", "-1");
         $user = auth()->user();
         // dd($request->all());
         extract($request->all());
@@ -235,7 +236,7 @@ class CovidSampleController extends Controller
                 'TAT (Receipt to Testing, Weekdays Only)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInWeekdays($sample->datereceived) : '',
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
                 'Result' => $sample->get_prop_name($results, 'result'),
-                'Entered By' => $sample->creator->full_name,
+                'Entered By' => $sample->creator->full_name ?? null,
                 'Date Entered' => $sample->my_date_format('created_at'),
             ];
             if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
@@ -667,6 +668,12 @@ class CovidSampleController extends Controller
         return view('tables.cif_covid_samples', compact('samples'));
     }
 
+    public function jitenge_samples()
+    {
+        $samples = \App\Synch::get_covid_samples(null, true);
+        return view('tables.cif_covid_samples', compact('samples'));
+    }
+
     public function set_cif_samples(Request $request)
     {
         $samples = $request->input('sample_ids');
@@ -772,6 +779,33 @@ class CovidSampleController extends Controller
             return back();            
         }
 
+
+        $mpdf = new Mpdf();
+        $data = Lookup::covid_form();
+        $data['samples'] = [$covidSample];
+        $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "500000000");
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
+        // $data['print'] = true;
+        // return view('exports.mpdf_covid_samples', $data);
+    }
+
+    public function print_result(CovidSample $covidSample)
+    {
+        $user = auth()->user();
+        if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
+
+        if(!$covidSample->datedispatched){
+            session(['toast_error' => 1, 'toast_message' => 'The results have not yet been dispatched.']);
+            return back();
+        }
+        if($covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot print a failed run.']);
+            return back();            
+        }
+
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $data['print'] = true;
@@ -805,6 +839,37 @@ class CovidSampleController extends Controller
             $sample->save();
         }
         session(['toast_message' => 'The samples have been marked as received.']);
+        return back();
+    }
+
+    public function release_redraw(CovidSample $covidSample)
+    {
+        if($covidSample->run == 1){
+            session(['toast_message' => 'The sample cannot be released as a redraw.']);
+            session(['toast_error' => 1]);
+            return back();
+        } 
+        else if($covidSample->run == 2){
+            // $prev_sample = Sample::find($sample->parentid);
+            $prev_sample = $covidSample->parent;
+        }
+        else{
+            $run = $covidSample->run - 1;
+            $prev_sample = CovidSample::where(['parentid' => $covidSample->parentid, 'run' => $run])->first();
+        }
+        
+        $covidSample->delete();
+
+        $prev_sample->labcomment = "Failed Test";
+        $prev_sample->repeatt = 0;
+        $prev_sample->result = 5;
+        $prev_sample->approvedby = auth()->user()->id;
+        $prev_sample->approvedby2 = auth()->user()->id;
+        $prev_sample->dateapproved = date('Y-m-d');
+        $prev_sample->dateapproved2 = date('Y-m-d');
+
+        $prev_sample->save();
+        session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
     }
 
@@ -929,8 +994,7 @@ class CovidSampleController extends Controller
 
     public function cif_patient(Request $request)
     {
-        $patient_name = $request->input('patient_name');
-        $samples = \App\Synch::get_covid_samples($patient_name);
+        $samples = \App\Synch::get_covid_samples($request->only(['patient_name']));
         $div = \Str::random(20);
         if($samples){
             return view('tables.cif_samples_partial', compact('samples', 'div'));

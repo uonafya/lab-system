@@ -77,6 +77,19 @@ class CovidSample extends BaseModel
     }
 
 
+    public function calc_result()
+    {
+        if(!$this->result){
+            if(is_numeric($this->target1) || is_numeric($this->target2)){
+                $this->result = 2;
+            }else{
+                $this->result = 1;
+            }
+            $this->pre_update();
+        }
+    }
+
+
     public function setResultAttribute($value)
     {
         if(is_numeric($value) || !$value) $this->attributes['result'] = $value;

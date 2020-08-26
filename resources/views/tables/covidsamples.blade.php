@@ -399,6 +399,7 @@
 
                                                 @else
                                                     <a href="/covid_sample/result/{{ $sample->id }}">Result</a> |
+                                                    <a href="/covid_sample/print/{{ $sample->id }}">Print</a> |
                                                 @endif
                                             @endif                                         
                                         </td>

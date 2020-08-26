@@ -184,7 +184,7 @@ class Synch
 	{
 		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
-		$response = $client->request('get', '', ['timeout' => 1]);
+		$response = $client->request('get', '', ['timeout' => 1, 'http_errors' => false]);
 		$body = json_decode($response->getBody());
 		if($response->getStatusCode() < 399) return true;
 		return false;
@@ -1198,9 +1198,11 @@ class Synch
 	}
 
 
-	public static function get_covid_samples($patient_name=null)
+	public static function get_covid_samples($filters=null, $jitenge=false)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
+			if(!$filters) $filters = ['patient_name' => null, 'identifier' => null, 'national_id' => null];
+			extract($filters);
 			$sql = '';
 			$names = explode(' ', $patient_name);
 			foreach ($names as $key => $name) {
@@ -1208,15 +1210,29 @@ class Synch
 				$sql .= "patient_name LIKE '%{$n}%' AND ";
 			}
 			$sql = substr($sql, 0, -4);
-			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0, 'lab_id' => 11])
-				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-4 days')))
+
+			$identifier_sql = null;			
+			if($national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
+			else if($identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
+
+			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0])
+				->whereIn('lab_id', [11, 101])
+				->where('covid_samples.created_at', '>', date('Y-m-d', strtotime('-5 days')))
 				->whereNull('original_sample_id')
 				->whereNull('receivedstatus')
-				->when($patient_name, function($query) use ($sql){
+				->when(($patient_name && !$identifier_sql), function($query) use ($sql){
 					return $query->select('covid_samples.*')
 					->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
 					->whereRaw($sql);
 				})
+				->when($identifier_sql, function($query) use($identifier_sql){
+					return $query->whereRaw($identifier_sql);
+				})
+				->when($jitenge, function($query){
+					return $query->where('lab_id', 101);
+				})
+				// ->orderBy('datecollected', 'desc')
+				->orderBy('id', 'desc')
 				->with(['patient'])->get();
 			return $samples;
 		}
@@ -1239,7 +1255,7 @@ class Synch
 	public static function set_covid_samples($samples)
 	{
 		if(in_array(env('APP_LAB'), [1,2,3,6])){
-			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0, 'lab_id' => 11])->where('created_at', '>', date('Y-m-d', strtotime('-21 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
+			$nat_samples = \App\CovidModels\CovidSample::where(['synched' => 0])->whereIn('lab_id', [11, 101])->where('created_at', '>', date('Y-m-d', strtotime('-5 days')))->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('id', $samples)->get();
 
 			foreach ($nat_samples as $key => $nat_sample) {
 		        $nat_sample->lab_id = auth()->user()->lab_id;
