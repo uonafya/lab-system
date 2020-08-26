@@ -32,8 +32,8 @@
             buttons: [
                 {extend: 'copy',className: 'btn-sm'},
                 {extend: 'csv',title: 'Download', className: 'btn-sm'},
-                {extend: 'pdf', title: 'Download', className: 'btn-sm'},
-                {extend: 'print',className: 'btn-sm'}
+                /*{extend: 'pdf', title: 'Download', className: 'btn-sm'},
+                {extend: 'print',className: 'btn-sm'}*/
             ]
         });
 
