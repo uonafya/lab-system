@@ -399,6 +399,14 @@ class ViralsampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the justification cannot be baseline when the client is over 2 years of age.']);
             return back();
         }
+        if($viralsample->age < 12 && $viralsample->pmtct < 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is underage but pmtct is set.']);
+            return back();
+        }
+        if($viralsample->age > 55 && $viralsample->pmtct < 3){
+            session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is overage but pmtct is set.']);
+            return back();
+        }
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
