@@ -14,6 +14,7 @@ use App\Mail\LabTracker;
 use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
+use Mpdf\Mpdf;
 
 use App\Synch;
 
@@ -912,8 +913,34 @@ class Common
 
 	        try {
 	        	ini_set("memory_limit", "-1");
+	        	echo "==> Creating Attachment file. \n";
+	        	// $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+		        // if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
+		        // if(file_exists($path)) unlink($path);
+		        
+		        // $mpdf = new Mpdf();
+		        $lab = \App\Lab::find(env('APP_LAB'));
+		        // $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
+		        // $view_data = view('exports.mpdf_labtracker', $pageData)->render();
+		        // $mpdf->WriteHTML($view_data);
+		        // $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
+		        // $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+	        	echo "==> Finding storage path\n";
+	        	$path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+	        	if(!is_dir(storage_path("app/lablogs/"))) mkdir(storage_path("app/lablogs/"), 0777, true);
+	        	echo "==> Creating attachment \n";
+		        $mpdf = new Mpdf([
+							    'mode' => 'utf-8',
+							    'format' => 'A4-L',
+							    'orientation' => 'L'
+							]);
+		        $view_data = view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => false])->render();
+		        $mpdf->WriteHTML($view_data);
+		        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+		        echo "==> Finished creating attachment file. \n";
 	        	echo "==> Sending Email \n";
-	        	Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail);
+	        	// Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail);
 	        	// dd($mailinglist);
 	        	// Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
 	        	// ->send(new LabTracker($data));

@@ -21,6 +21,21 @@
     // return view('emergency');
 // });
 
+Route::get('testtracker', function(){
+	$year = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+	$month = date('m', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+	$lab = \App\Lab::find(env('APP_LAB'));
+	$data = \App\Random::__getLablogsData($year, $month);
+	$path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+	if(!is_dir(storage_path("app/lablogs/"))) mkdir(storage_path("app/lablogs/"), 0777, true);
+    $mpdf = new Mpdf(['format' => 'A4-L']);
+    $view_data = view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => false])->render();
+    $mpdf->WriteHTML($view_data);
+    $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+	// dd($data);
+	return view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => true]);
+});
+
 Route::redirect('/', '/login');
 Route::redirect('/eid', '/login');
 Route::redirect('/knh', '/login');
