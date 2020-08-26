@@ -1726,7 +1726,7 @@ class Synch
 				break;
 			
 			$response = $client->request('post', $url, [
-				'http_errors' => false,
+				'http_errors' => true,
 				'debug' => true,
 				'headers' => [
 					'Accept' => 'application/json',
@@ -1740,7 +1740,7 @@ class Synch
 			]);
 			
 			$body = json_decode($response->getBody());
-			// print_r($body);
+			print_r($body);
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
