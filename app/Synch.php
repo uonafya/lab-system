@@ -1712,6 +1712,8 @@ class Synch
 	public static function synchCovidConsumption()
 	{
 		$client = new Client(['base_uri' => self::$base]);
+		if (env('APP_LAB') == 23)
+			$client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		$url = 'insert/covidconsumption';
