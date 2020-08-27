@@ -464,7 +464,7 @@ class CovidController extends Controller
                 ],
                 'json' => $request->all(),
             ]);
-        return response()->json(json_decode($response->getBody()));
+        return response()->json($response->getBody());
     }
 }
 
