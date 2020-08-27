@@ -24,7 +24,7 @@ class DistrictController extends Controller
         foreach ($districts as $key => $value) {
             $table .= '<tr>';
             $table .= '<td>'.($key+1).'</td>';
-            $table .= '<td>'.$value->district.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
             $table .= '<td>'.$value->county.'</td>';
             $table .= '<td>'.$value->subcounty_person1.'</td>';
             $table .= '<td>'.$value->subcounty_position1.'</td>';
