@@ -454,7 +454,7 @@ class CovidController extends Controller
 
     public function ku_consumption(CovidRequest $request)
     {
-        return response()->json($request->all());
+        return response()->json($request->input('consumptions'));
         $client = new Client(['base_uri' => "http://lab-2.test.nascop.org/api/insert/covidconsumption"]);
         $response = $client->request('post', '', [
                 'http_errors' => true,
