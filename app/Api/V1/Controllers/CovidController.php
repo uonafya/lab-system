@@ -454,22 +454,8 @@ class CovidController extends Controller
 
     public function ku_consumption(CovidRequest $request)
     {
-        $client = new Client(['base_uri' => "http://lab-2.test.nascop.org/api/insert/covidconsumption"]);
-        $response = $client->request('post', '', [
-                'http_errors' => true,
-                'debug' => true,
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . \App\Synch::get_token(),
-                ],
-                'json' => [
-                    'consumptions' => $request->input('consumptions'),
-                    'lab' => $request->input('lab')
-                ],
-            ]);
-        print_r($response->getBody());
-        return response($response->getBody(), 200);
-                    // ->header('Content-Type', 'application/json');
+        $consumptions = json_decode($request->input('consumptions'));
+        return response()->json($consumptions);
     }
 }
 
