@@ -1763,16 +1763,26 @@ class Synch
 
 	public static function hello()
 	{
-		$client = new Client(['base_uri' => "https://kemrinairobi.nascop.org/api/hello"]);
-		$response = $client->request('get', '', [
-			'http_errors' => true,
-			'debug' => true,
-			'headers' => [
-				'Accept' => 'application/json',
-			],
-		]);
+		$client = new Client(['base_uri' => "https://kemrinairobi.nascop.org/api/consumption/covid"]);
+		while (true) {
+			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
+			if($consumptions->isEmpty())
+				break;
+
+			$response = $client->request('post', '', [
+				'http_errors' => true,
+				'debug' => true,
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+				'json' => [
+					'consumptions' => $consumptions->toJson(),
+					'lab' => env('APP_LAB')
+				],
+			]);
 		
-		$body = json_decode($response->getBody());
-		dd($body);
+			$body = json_decode($response->getBody());
+			dd($body);
+		}
 	}
 }
