@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use District;
 use Illuminate\Http\Request;
 
 class DistrictController extends Controller
@@ -14,22 +15,24 @@ class DistrictController extends Controller
      */
     public function index()
     {
-        $columns = parent::_columnBuilder(['#', 'Name', 'County', 'Province', 'Comment']);
-        $districts = DB::table('districts')
-                ->select('districts.id', 'districts.name as district', 'districts.comment', 'countys.name as county', 'provinces.name as province')
+        $columns = parent::_columnBuilder(['#', 'Name', 'County', 'Contact Person 1', 'Position', 'Email', 'Contact Person 2', 'Position', 'Email', 'Edit Contacts']);
+        $districts = District::select('districts.*', 'countys.name as county', 'provinces.name as province')
                 ->join('countys', 'countys.id', '=', 'districts.county')
                 ->join('provinces', 'provinces.id', '=', 'districts.province')
                 ->get();
-        $count = 0;
         $table = '';
         foreach ($districts as $key => $value) {
-            $count ++;
             $table .= '<tr>';
-            $table .= '<td>'.$count.'</td>';
+            $table .= '<td>'.($key+1).'</td>';
             $table .= '<td>'.$value->district.'</td>';
             $table .= '<td>'.$value->county.'</td>';
-            $table .= '<td>'.$value->province.'</td>';
-            $table .= '<td>'.$value->comment.'</td>';
+            $table .= '<td>'.$value->subcounty_person1.'</td>';
+            $table .= '<td>'.$value->subcounty_position1.'</td>';
+            $table .= '<td>'.$value->subcounty_email1.'</td>';
+            $table .= '<td>'.$value->subcounty_person2.'</td>';
+            $table .= '<td>'.$value->subcounty_position2.'</td>';
+            $table .= '<td>'.$value->subcounty_email2.'</td>';
+            $table .= "<td> <a href='".url('district/' . $district->id . '/edit')."'>Edit Contacts </a></td>";
             $table .= '</tr>';
         }
         return view('tables.display', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Districts');
@@ -73,9 +76,9 @@ class DistrictController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(District $district)
     {
-        //
+        return view('forms.districts', compact('district'));
     }
 
     /**
@@ -85,9 +88,12 @@ class DistrictController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, District $district)
     {
-        //
+        $district->fill($request->all());
+        $district->save();
+        session(['toast_message' => 'The subcounty contact details have been updated.']);
+        return redirect('district');
     }
 
     /**

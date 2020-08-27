@@ -218,6 +218,9 @@
                                         <ul class="dropdown-menu">
                                             <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                             <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                            @if(env('APP_LAB') == 5)
+                                            <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                            @endif
                                         </ul>
                                     </li>
 
@@ -468,6 +471,9 @@
                                 <ul class="dropdown-menu">
                                     <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                     <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                    @if(env('APP_LAB') == 5)
+                                    <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                    @endif
                                 </ul>
                             </li>
 
