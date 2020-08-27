@@ -20,7 +20,7 @@ class Facility extends BaseModel
 
     public function subcounty()
     {
-        return $this->belongsTo('App\District', 'district_id');
+        return $this->belongsTo('App\District', 'district');
     }
 
     public function facility_contact()
