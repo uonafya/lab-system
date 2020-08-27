@@ -1760,4 +1760,19 @@ class Synch
 	{
 		Mail::to(['bakasajoshua09@gmail.com'])->send(new AllocationReview(self::$allocationReactionCounts));
 	}
+
+	public static function hello()
+	{
+		$client = new Client(['base_uri' => "https://kemrinairobi.nascop.org/api/hello"]);
+		$response = $client->request('get', '', [
+			'http_errors' => true,
+			'debug' => true,
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+		]);
+		
+		$body = json_decode($response->getBody());
+		dd($body);
+	}
 }
