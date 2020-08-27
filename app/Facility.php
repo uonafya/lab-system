@@ -138,8 +138,8 @@ class Facility extends BaseModel
         $emails = [];
         if($this->email) $emails[] = $this->email;
         if($this->contact_email) $emails[] = $this->contact_email;
-        if($this->district->subcounty_email1 && filter_var($this->district->subcounty_email1, FILTER_VALIDATE_EMAIL))  $emails[] = $this->district->subcounty_email1;
-        if($this->district->subcounty_email2 && filter_var($this->district->subcounty_email2, FILTER_VALIDATE_EMAIL))  $emails[] = $this->district->subcounty_email2;
+        if($this->district->subcounty_email1 && filter_var($this->district->subcounty_email1, FILTER_VALIDATE_EMAIL)) $emails[] = $this->district->subcounty_email1;
+        if($this->district->subcounty_email2 && filter_var($this->district->subcounty_email2, FILTER_VALIDATE_EMAIL)) $emails[] = $this->district->subcounty_email2;
         // $f = ['dmltemail', 'dtlcemail', 'subcountyemail', 'countyemail', 'partneremail', 'partnerlabmail', 'partnerpointmail'];
 
         // foreach ($f as $val) {
