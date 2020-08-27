@@ -1746,9 +1746,10 @@ class Synch
 			} else {
 				foreach ($body as $key => $consumption) {
 					$covidconsumption = CovidConsumption::find($consumption->original_id);
-					if (null !== $consumption->national_id)
+					if (null !== $consumption->national_id){
 						$covidconsumption->national_id = $consumption->national_id;
-					$covidconsumption->synchComplete();
+						$covidconsumption->synchComplete();
+					}
 				}
 				return true;
 			}

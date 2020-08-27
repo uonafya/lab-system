@@ -499,7 +499,7 @@ class CovidController extends Controller
                 }
                 DB::commit();               
                 $consumptions_array[] = [
-                                    'original_id' => $db_consumption->id,
+                                    'original_id' => $consumption->id,
                                     'national_id' => $db_consumption->national_id ?? NULL
                                 ];
             } catch (Exception $e) {
