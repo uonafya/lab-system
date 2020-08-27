@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
-use District;
+use App\District;
 use Illuminate\Http\Request;
 
 class DistrictController extends Controller
