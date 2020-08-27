@@ -32,7 +32,7 @@ class DistrictController extends Controller
             $table .= '<td>'.$value->subcounty_person2.'</td>';
             $table .= '<td>'.$value->subcounty_position2.'</td>';
             $table .= '<td>'.$value->subcounty_email2.'</td>';
-            $table .= "<td> <a href='".url('district/' . $district->id . '/edit')."'>Edit Contacts </a></td>";
+            $table .= "<td> <a href='".url('district/' . $value->id . '/edit')."'>Edit Contacts </a></td>";
             $table .= '</tr>';
         }
         return view('tables.display', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Districts');
