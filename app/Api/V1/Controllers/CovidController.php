@@ -11,6 +11,7 @@ use App\CovidModels\CovidTravel;
 use App\Facility;
 use App\ViewFacility;
 use App\CovidModels\Lab;
+use GuzzleHttp\Client;
 use DB;
 
 use App\CovidTestModels\CovidPatient as TestPatient;
@@ -449,6 +450,11 @@ class CovidController extends Controller
           'status' => 'ok',
           'samples' => $data,
         ], 200);
+    }
+
+    public function ku_consumption(CovidRequest $request)
+    {
+        return response()->json($request->all());
     }
 }
 

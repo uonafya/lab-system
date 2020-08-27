@@ -154,7 +154,6 @@ class Common
 	public static function sms($recepient, $message)
 	{
 		$client = new Client(['base_uri' => self::$sms_url]);
-
 		/*$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
@@ -168,7 +167,6 @@ class Common
                 'enqueue' => 0,
 			],
 		]);*/
-
 		$response = $client->request('post', '', [
 			// 'auth' => [env('SMS_USERNAME'), env('SMS_PASSWORD')],
 			'http_errors' => false,
