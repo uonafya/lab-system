@@ -1212,8 +1212,8 @@ class Synch
 			$sql = substr($sql, 0, -4);
 
 			$identifier_sql = null;			
-			if($national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
-			else if($identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
+			if(isset($national_id) && $national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
+			else if(isset($identifier) && $identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
 
 			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0])
 				->whereIn('lab_id', [11, 101])

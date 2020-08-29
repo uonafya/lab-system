@@ -401,7 +401,7 @@ Route::middleware(['auth'])->group(function(){
 
 			Route::prefix('dr_sample')->name('dr_sample.')->group(function () {
 				Route::get('create/{patient}', 'DrSampleController@create_from_patient');
-				Route::get('create_remnant/{viralpatient}', 'DrSampleController@create_from_viralsample');
+				Route::get('create_remnant/{viralsample}', 'DrSampleController@create_from_viralsample');
 				Route::get('email/{drSample}', 'DrSampleController@email');
 				Route::get('report', 'DrSampleController@susceptability')->name('report');
 			});
