@@ -27,7 +27,6 @@
                                     <th>Date Received</th>
                                     <th>Date Tested</th>
                                     <th>Result</th>
-                                    <th>Reason</th>
                                     <th>Patient History</th>
                                     <th>Create DR Sample</th>
                                 </tr>
@@ -41,7 +40,6 @@
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $sample->datetested }} </td>
                                         <td> {{ $sample->result }} </td>
-                                        <td></td>
                                         <td>
                                             <a href="{{ url('viralpatient/' . $sample->patient_id) }}" target="_blank">
                                                 View History 
