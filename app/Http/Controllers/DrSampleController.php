@@ -309,7 +309,7 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        if($drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
+        if($drSample->extraction_worksheet_id || $drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
             return back();
         }

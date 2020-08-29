@@ -236,6 +236,10 @@
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
+                @if(env('APP_LAB') != 7)
+                    <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet</a></li>
+                    <hr />
+                @endif
                 
             @endif
             <!-- <li>

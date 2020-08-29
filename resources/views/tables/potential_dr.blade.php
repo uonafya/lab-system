@@ -24,6 +24,7 @@
                                     <th>#</th>
                                     <th>Sample Code / Patient ID</th>
                                     <th>Facility</th>
+                                    <th>Date Collected</th>
                                     <th>Date Received</th>
                                     <th>Date Tested</th>
                                     <th>Result</th>
@@ -37,6 +38,7 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $sample->patient ?? '' }} </td>
                                         <td> {{ $sample->facilityname ?? '' }} </td>
+                                        <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $sample->datetested }} </td>
                                         <td> {{ $sample->result }} </td>
