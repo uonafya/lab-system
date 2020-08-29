@@ -77,7 +77,7 @@ class ViralsampleController extends Controller
         $data['samples'] = ViralsampleView::whereNotNull('datedispatched')
             ->where(['repeatt' => 0, 'run' => 1, 'lab_id' => auth()->user()->lab_id])
             ->whereRaw("patient_id NOT IN (SELECT DISTINCT patient_id FROM dr_samples)")
-            ->where('result', '>', '5000')
+            ->where('result', '>', 5000)
             ->orderBy('datecollected', 'desc')
             ->paginate(20);
         $data['samples']->setPath(url()->current());
