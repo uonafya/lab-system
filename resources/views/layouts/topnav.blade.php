@@ -108,6 +108,11 @@
                                 <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
                             </ul>
                         </li>
+                        @if(env('APP_LAB') == 1)
+                            <li class="">
+                                <a href="{{ url('viralsample/potential_dr') }}">Potential Samples</a>
+                            </li>
+                        @endif
                         <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                         </li>

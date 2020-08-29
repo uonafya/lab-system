@@ -72,6 +72,19 @@ class ViralsampleController extends Controller
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
     }
 
+    public function potential_dr()
+    {
+        $data['samples'] = ViralsampleView::whereNotNull('datedispatched')
+            ->where(['repeatt' => 0, 'run' => 1])
+            ->whereRaw("patient_id NOT IN (SELECT DISTINCT patient_id FROM dr_samples)")
+            ->where('result', '>', '5000')
+            ->orderBy('datecollected', 'desc')
+            ->paginate(20);
+        $data['samples']->setPath(url()->current());
+
+        return view('tables.potential_dr', $data);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

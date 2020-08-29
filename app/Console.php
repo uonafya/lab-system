@@ -21,7 +21,7 @@ class Console
 		$users = DB::table('musers')->where('edarpalert', 1)->get();
 
 		$currentdaydisplay =date('d-M-Y');
-		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
+		$weekstartdisplay =date("d-M-Y",strtotime('-4 days'));
 		$labname = Lab::find(10)->labname ?? '';
 
 		$row = WeeklyAlert::where(['lab_id' => 10, 'end_date' => date('Y-m-d')])->first();
@@ -46,7 +46,8 @@ class Console
 		$users = DB::table('musers')->where('weeklyalert', 1)->get();
 
 		$currentdaydisplay =date('d-M-Y');
-		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
+		// $weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
+		$weekstartdisplay =date("d-M-Y",strtotime('-4 days'));
 		$labname = Lab::find(env('APP_LAB'))->labname ?? '';
 
 		foreach ($users as $user) {
