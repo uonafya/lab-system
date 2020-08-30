@@ -36,6 +36,31 @@
         </div>
 
         @if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type == 0)
+
+            @if(env('APP_LAB') == 25)
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="hpanel">
+                        <div class="panel-body" style="padding-bottom: 6px;">
+                            <div class="alert alert-warning">
+                                <center>
+                                    Kindly upload the file from the thermocycler. The system expects the following columns: 
+                                    <br /> <b> Sample Name </b> - This contains either the lab id or KEMRI ID
+                                    <br /> <b> Target Name </b> - This contains either the name of the gene
+                                    <br /> <b> CT </b> - This contains the amplification
+                                    <br />
+                                    <br />
+                                    Make sure the kit type selected matches the one you used to run the worksheet. The kit type tells the system which genes to look out for.
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+
+            @else
             
             <div class="row">
                 <div class="col-lg-12">
@@ -61,6 +86,8 @@
                     </div>
                 </div>                
             </div>
+
+            @endif
 
         @endif
 
