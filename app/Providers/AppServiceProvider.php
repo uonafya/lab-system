@@ -71,6 +71,9 @@ class AppServiceProvider extends ServiceProvider
         CovidPatient::observe(CovidPatientObserver::class);
 
 
+        if(in_array(env('APP_LAB'), [1,7])) \App\DrSample::observe(\App\Observers\DrSampleObserver::class);
+
+
         if(env('DOUBLE_ENTRY')){
         
             Sample::observe(SampleObserver::class);

@@ -21,6 +21,14 @@
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/summernote/summernote.css') }}" rel="stylesheet" type="text/css">
 
+    <style type="text/css">
+    	label.error {
+    		color: #e74c3c;
+		    margin: 5px 0 0 0;
+		    font-weight: 400;
+    	}
+    </style>
+
 </head>
 <body>
 	<div class="container-fluid">
@@ -84,6 +92,28 @@
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	            }
 	        });
+
+	        @php
+	            $toast_message = session()->pull('toast_message');
+	            $toast_error = session()->pull('toast_error');
+	        @endphp
+	        
+        
+	        @if($toast_message)
+	            setTimeout(function(){
+	                toastr.options = {
+	                    closeButton: false,
+	                    progressBar: false,
+	                    showMethod: 'slideDown',
+	                    timeOut: 10000
+	                };
+	                @if($toast_error)
+	                    toastr.error("{!! $toast_message !!}", "Warning!");
+	                @else
+	                    toastr.success("{!! $toast_message !!}");
+	                @endif
+	            });
+	        @endif
 
         });
     </script>

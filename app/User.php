@@ -24,7 +24,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = ['id', 'password', '_token', 'created_at', 'updated_at'];
 
     /**
      * The attributes that are automatically mutated to dates.
@@ -125,6 +125,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    public function user_type()
+    {
+        return $this->belongsTo('App\UserType');
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');
@@ -133,6 +138,35 @@ class User extends Authenticatable implements JWTSubject
     public function quarantine()
     {
         return $this->belongsTo('App\QuarantineSite', 'facility_id');
+    }
+
+    public function twg()
+    {
+        return $this->belongsTo('App\UlizaTwg', 'twg_id');        
+    }
+
+    public function getUlizaSuperAdminAttribute()
+    {
+        if($this->user_type_id == 101) return true;
+        return false;
+    }
+
+    public function getUlizaAdminAttribute()
+    {
+        if($this->user_type_id == 101 || $this->user_type_id == 102) return true;
+        return false;
+    }
+
+    public function getUlizaSecretariatAttribute()
+    {
+        if($this->user_type_id == 103) return true;
+        return false;
+    }
+
+    public function getUlizaReviewerAttribute()
+    {
+        if($this->user_type_id == 104) return true;
+        return false;
     }
 
     public function set_last_access()

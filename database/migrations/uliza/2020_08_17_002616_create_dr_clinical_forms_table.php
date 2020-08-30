@@ -13,9 +13,13 @@ class CreateDrClinicalFormsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_clinical_forms', function (Blueprint $table) {
+        Schema::create('uliza_clinical_forms', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('facility_id')->unsigned()->index();
+            $table->integer('twg_id')->unsigned()->index()->nullable();
+            $table->integer('status_id')->unsigned()->nullable()->default(1);
+            $table->integer('reviewer_id')->unsigned()->nullable();
+            $table->string('nat_no')->nullable();
             $table->string('cccno');
             $table->date('reporting_date');
             $table->date('dob');

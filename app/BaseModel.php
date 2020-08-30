@@ -11,7 +11,7 @@ class BaseModel extends Model
     // protected $revisionCleanup = true; 
     // protected $historyLimit = 500; 
     
-    protected $guarded = ['id', 'jitenge_sample', 'time_sent_to_cif', 'time_sent_to_nphl', 'sent_to_nphl', 'age_unit', 'created_at', 'updated_at'];
+    protected $guarded = ['id', 'jitenge_sample', 'border_point', 'time_sent_to_cif', 'time_sent_to_nphl', 'sent_to_nphl', 'age_unit', 'created_at', 'updated_at', '_token'];
     // protected $hidden = [];
 
     protected static function boot()

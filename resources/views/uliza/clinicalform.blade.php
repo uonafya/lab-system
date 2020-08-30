@@ -200,7 +200,7 @@
 							Clinical Evaluation: history, physical, diagnostics, working diagnosis:(excluding the information in the table below)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" required="required" rows="3"></textarea>
+							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" rows="3"></textarea>
 						</div>
 					</div>
 				  
@@ -348,7 +348,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.no_adherance_counseling" name="food_interactions"  rows="4"></textarea>
+							<textarea class="form-control" v-model="myForm.food_interactions" name="food_interactions"  rows="4"></textarea>
 						</div>
 					</div>
 				  
@@ -399,6 +399,14 @@
 						<div class="col-md-8">
 							<textarea class="form-control" v-model="myForm.mdt_members" maxlength="255" name="mdt_members"  rows="6"></textarea>
 						</div>
+					</div>
+
+					<div v-if="successful_submission" class="row alert alert-success">
+						You have successfully submitted your request.
+					</div>
+
+					<div v-if="successful_submission === false" class="row alert alert-warning">
+						You have validation errors.
 					</div>
 				  
 					<div class="mb-3 float-right">
@@ -473,14 +481,15 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
+        		successful_submission: null,
         	},
         	methods: {
         		update(){
-        			console.log(this.myForm);
+        			// console.log(this.myForm);
         			var validator = $( "#myClinicalForm" ).validate();
-					var res = validator.form();
-					console.log(res);
-					if(!res) return;
+					this.successful_submission = validator.form();
+					// console.log(res);
+					if(!this.successful_submission) return;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
@@ -502,7 +511,7 @@
         			});
         		},
         		editVisit(index){
-        			console.log(index);
+        			// console.log(index);
         			this.myForm.clinical_visits.splice(index, 1);
 
         			this.clinicalVisit = {...this.myForm.clinical_visits[index]};

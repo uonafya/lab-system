@@ -14,8 +14,10 @@
     <!-- Vendor styles -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/dt-1.10.21/datatables.min.css"/>
 
     <link rel="stylesheet" href="{{ asset('css/toastr/toastr.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
     <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/summernote/summernote.css') }}" rel="stylesheet" type="text/css">
 
@@ -23,6 +25,11 @@
     	.bg-purple{
     		color: #fff;
     		background-color: #e38fe3;
+    	}
+    	label.error {
+    		color: #e74c3c;
+		    margin: 5px 0 0 0;
+		    font-weight: 400;
     	}
     </style>
 
@@ -36,24 +43,44 @@
 		<div class="d-flex flex-column flex-md-row align-items-center p-1 px-md-4 mb-3 border-bottom box-shadow bg-white">
 			<div class="text-center mr-md-auto">
 				<h4>
-					Welcome, Timothy Ngugi  - NASCOP TWG |
-					Super Admin
+					Welcome, {{ auth()->user()->full_name ?? '' }}  - {{ auth()->user()->twg->twg ?? '' }} TWG |
+					{{ auth()->user()->user_type->user_type ?? '' }}
 				</h4>
 			</div>
 
 			<nav class="my-2 my-md-0 mr-md-3 text-uppercase">
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/cases">Cases</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/dashboard">DashBoard</a>
-				<a class="p-2" routerlinkactive="active" href="/ulizaplatform/users">Users</a>
+				<a class="p-2" href="/uliza-form">Cases</a>
+				<a class="p-2" href="/ulizaplatform/kisianlabs">Lab</a><a class="p-2" routerlinkactive="active" href="/ulizaplatform/reports">Reports</a>
+				<a class="p-2" href="/ulizaplatform/dashboard">DashBoard</a>
+				@if(auth()->user()->uliza_admin)
+					<!-- <div class="dropdown show"> -->
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
+
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+							<a class="dropdown-item" href="/uliza-twg">View TWGs</a>
+							<a class="dropdown-item" href="/uliza-twg/create">Create TWGs</a>
+						</div>
+					<!-- </div> -->
+					<!-- <div class="dropdown show"> -->
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuLinkTwo">
+							<a class="dropdown-item" href="/uliza-user">View Users</a>
+							<a class="dropdown-item" href="/uliza-user/create">Create Users</a>
+						</div>
+					<!-- </div> -->
+
+					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
+					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
+				@endif
 			</nav>
-			<a class="btn btn-outline-primary">Sign Out</a>
+			<a class="btn btn-outline-primary" href="{{ url('uliza/logout') }}" >Sign Out</a>
 		</div>
 	</header>
 
 
 	<div class="container-fluid">
-		<div class="row">
+		<div class="row" id="my-vue-instance">
 			@yield('content')
 		</div>		
 	</div>
@@ -66,6 +93,7 @@
 	<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
     <script src="{{ asset('js/summernote/summernote.js') }}"></script>
+	<script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 	<script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
 
 
@@ -76,6 +104,27 @@
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	            }
 	        });
+
+	        @php
+	            $toast_message = session()->pull('toast_message');
+	            $toast_error = session()->pull('toast_error');
+	        @endphp
+        
+	        @if($toast_message)
+	            setTimeout(function(){
+	                toastr.options = {
+	                    closeButton: false,
+	                    progressBar: false,
+	                    showMethod: 'slideDown',
+	                    timeOut: 10000
+	                };
+	                @if($toast_error)
+	                    toastr.error("{!! $toast_message !!}", "Warning!");
+	                @else
+	                    toastr.success("{!! $toast_message !!}");
+	                @endif
+	            });
+	        @endif
 
         });
     </script>

@@ -13,9 +13,10 @@ class CreateDrClinicalVisitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dr_clinical_visits', function (Blueprint $table) {
+        Schema::create('uliza_clinical_visits', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('dr_clinical_form_id')->unsigned()->index();
+            $table->integer('uliza_clinical_form_id')->unsigned()->index();
+            $table->integer('reviewer_id')->unsigned()->index()->nullable();
             $table->date('clinicvisitdate');
             $table->string('cd4')->nullable();
             $table->string('hb')->nullable();

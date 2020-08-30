@@ -183,7 +183,7 @@
                                             <tr>
                                                 <th>Select Year and Month </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control" name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -211,7 +211,7 @@
                                             <tr>
                                                 <th>Select Year and Quarter </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control"  name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                         @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -239,7 +239,7 @@
                                             <tr>
                                                 <th>Select Year </th>
                                                 <td>
-                                                    <select class="form-control" id="year" name="year" style="width: 100%;">
+                                                    <select class="form-control"  name="year" style="width: 100%;">
                                                         <option selected="true" disabled="true">Select a Year</option>
                                                        @for ($i = 0; $i <= 6; $i++)
                                                             @php
@@ -268,28 +268,34 @@
                                         Detailed Report 
                                     </label>
                                 @else
-                                <label> <input type="radio" name="types" value="tested" class="i-checks" required> All Samples Tested </label>
-                                <label> <input type="radio" name="types" value="awaitingtesting" class="i-checks" required> All Samples Awaiting Testing </label>
+                                <label> <input type="radio" name="types" value="tested" required> All Samples Tested </label>
+                                <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
                                 @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')
-                                <label> <input type="radio" name="types" value="positives" class="i-checks" required> Positives </label>
+                                <label> <input type="radio" name="types" value="positives" required> Positives </label>
                                 @endif
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
-                                <label> <input type="radio" name="types" value="rejected" class="i-checks" required> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>
                                 @if(Auth::user()->user_type_id == 5)
-                                <label> <input type="radio" name="types" value="poc" class="i-checks" required> All POC Samples Tested </label>
+                                <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
                                 @else
-                                <label> <input type="radio" name="types" value="remoteentry" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
-                                <label> <input type="radio" name="types" value="remoteentrydoing" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
-                                <label> <input type="radio" name="types" value="sitessupported" class="i-checks" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
+                                <label> <input type="radio" name="types" value="remoteentry" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
+                                <label> <input type="radio" name="types" value="remoteentrydoing" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                <label> <input type="radio" name="types" value="sitessupported" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
                                 @endif                                
-                                <label> <input type="radio" name="types" value="tat" class="i-checks" required> TAT Report </label>
-                                <label><input type="radio" name="types" value="failed" class="i-checks" required> Failed Tests</label>
+                                <label> <input type="radio" name="types" value="tat" required> TAT Report </label>
+                                <label><input type="radio" name="types" value="failed" required> Failed Tests</label>
                                 @if(Auth::user()->user_type_id == 5)
-                                <label><input type="radio" name="types" value="manifest" class="i-checks" required> Print/Generate Sample Manifest</label>
+                                <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
                                 @endif
                                 @endif
+                            </div>
+                            <div id="max_tat_row">
+                                <label class="col-sm-3 control-label">Set Max Lab TAT</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="max_tat" class="form-control" name="max_tat">
+                                </div>
                             </div>
                         </div>
                         @if(Auth::user()->user_type_id == 5)
@@ -344,6 +350,15 @@
     @endcomponent
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#max_tat_row').hide();
+            $('input[name="types"]').change(function(){
+                var val = $('input[name="types"]:checked').val();
+                console.log("Value is "+ val);
+                if(val == 'tat') $('#max_tat_row').show();
+                else{
+                    $('#max_tat_row').hide();
+                }
+            });
             // $('.period').click(function(){
             $('input[name="period"]').change(function(){
                 period = $(this).val();
@@ -365,6 +380,7 @@
 
             $("#generate_report").click(function(e){
                 var selValue = $('input[name=category]:checked').val();
+                var category = null;
                 if (selValue == 'county') {
                     category = $("#report_county_search").val();
                     cat = 'County';
@@ -379,10 +395,12 @@
                     cat = 'Facility';
                 }
 
+                @if(auth()->user()->is_lab_user)
                 if(category == '' || category == null || category == undefined) {
                     e.preventDefault();
                     set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
                 }
+                @endif
 
                 // var perValue = $('input[name=period]:checked').val();
                 // alert(perValue);

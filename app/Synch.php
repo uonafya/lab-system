@@ -184,7 +184,7 @@ class Synch
 	{
 		$base = 'https://api.nascop.org/eid/ver2.0';
 		$client = new Client(['base_uri' => $base]);
-		$response = $client->request('get', '', ['timeout' => 1]);
+		$response = $client->request('get', '', ['timeout' => 1, 'http_errors' => false]);
 		$body = json_decode($response->getBody());
 		if($response->getStatusCode() < 399) return true;
 		return false;
@@ -1212,8 +1212,8 @@ class Synch
 			$sql = substr($sql, 0, -4);
 
 			$identifier_sql = null;			
-			if($national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
-			else if($identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
+			if(isset($national_id) && $national_id) $identifier_sql = "(identifier='{$national_id}' OR national_id='{$national_id}')";
+			else if(isset($identifier) && $identifier) $identifier_sql .= "(identifier='{$identifier}' OR national_id='{$identifier}')";
 
 			$samples = \App\CovidModels\CovidSample::where(['covid_samples.synched' => 0])
 				->whereIn('lab_id', [11, 101])
@@ -1231,6 +1231,8 @@ class Synch
 				->when($jitenge, function($query){
 					return $query->where('lab_id', 101);
 				})
+				// ->orderBy('datecollected', 'desc')
+				->orderBy('id', 'desc')
 				->with(['patient'])->get();
 			return $samples;
 		}

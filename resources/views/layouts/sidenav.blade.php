@@ -225,7 +225,7 @@
                 <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
                 <hr />
                 @if(env('APP_LAB') != 7)
-                    <li><a href="{{ url('dr_patient') }}">Potential DR Patients List</a></li>
+                    <li><a href="{{ url('viralsamples/potential_dr') }}">Potential DR Patients List</a></li>
                     <hr />
                 @endif
                 <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
@@ -236,6 +236,10 @@
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
+                @if(env('APP_LAB') != 7)
+                    <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet</a></li>
+                    <hr />
+                @endif
                 
             @endif
             <!-- <li>
@@ -462,7 +466,7 @@
                 <a href="{{ url('allocationcontacts') }}"><span class="nav-label">Allocation Contacts</span></a>
             </li>
             <hr />
-            @if(in_array(env('APP_LAB'), [1, 5]))
+            @if(in_array(env('APP_LAB'), [1, 3, 5]))
                 <li>
                     <a href="{{ url('email/create') }}"><span class="nav-label">Add Email</span></a>
                 </li>

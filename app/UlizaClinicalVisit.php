@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DrClinicalVisit extends BaseModel
+class UlizaClinicalVisit extends BaseModel
 {
 
 
     public function clinical_form()
     {
-        return $this->belongsTo('App\DrClinicalForm');
+        return $this->belongsTo('App\UlizaClinicalForm');
     }
 }

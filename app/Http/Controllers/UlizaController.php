@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DB;
+use Hash;
+use App\User;
 use App\UlizaPage;
 
 class UlizaController extends Controller
@@ -65,7 +68,7 @@ class UlizaController extends Controller
 	{
 		$reasons = DB::table('uliza_reasons')->get();
 		$regimens = DB::table('viralregimen')->get();
-		return view('uliza.clinicalform', compact('reasons', 'regimens'));		
+		return view('uliza.clinicalform', compact('reasons', 'regimens'));
 	}
 
 

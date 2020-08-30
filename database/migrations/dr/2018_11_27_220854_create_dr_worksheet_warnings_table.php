@@ -19,7 +19,7 @@ class CreateDrWorksheetWarningsTable extends Migration
             $table->integer('warning_id')->unsigned()->index();
             // $table->boolean('error')->default(0);
             // $table->string('title', 20)->nullable();
-            $table->string('system', 20)->nullable();
+            $table->string('system_field', 20)->nullable();
             $table->string('detail', 100)->nullable();
             $table->timestamps();
         });

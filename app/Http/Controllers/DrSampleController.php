@@ -155,6 +155,18 @@ class DrSampleController extends Controller
         return back();
     }
 
+    public function create_from_viralsample(Viralsample $viralsample)
+    {
+        $drSample = new DrSample;
+        $drSample->fill($viralsample->only(['patient_id', 'prophylaxis', 'receivedstatus', 'sampletype', 'age', 'datecollected']));
+        $drSample->fill($viralsample->patient->only(['facility_id']));
+        $drSample->datereceived = date('Y-m-d');
+        $drSample->save();
+
+        session(['toast_message' => 'The DR sample has been created.']);
+        return back();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -297,7 +309,7 @@ class DrSampleController extends Controller
      */
     public function destroy(DrSample $drSample)
     {
-        if($drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
+        if($drSample->extraction_worksheet_id || $drSample->worksheet_id || ($drSample->datereceived && auth()->user()->facility_id)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot delete this sample.']);
             return back();
         }

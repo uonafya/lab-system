@@ -52,7 +52,7 @@
                         <ul class="dropdown-menu">
                             <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
                             <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
-                            <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                            <li class=""><a class="dropdown-item" target="_blank" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
                         </ul>
                     </li>
                     @endif
@@ -108,6 +108,11 @@
                                 <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
                             </ul>
                         </li>
+                        @if(env('APP_LAB') == 1)
+                            <li class="">
+                                <a href="{{ url('viralsample/potential_dr') }}">Potential Samples</a>
+                            </li>
+                        @endif
                         <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                         </li>
@@ -218,6 +223,9 @@
                                         <ul class="dropdown-menu">
                                             <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                             <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                            @if(env('APP_LAB') == 5)
+                                            <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                            @endif
                                         </ul>
                                     </li>
 
@@ -270,7 +278,7 @@
                     <ul class="dropdown-menu">
                         <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk">SOP</a></li>
                         <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/help_desk_video">SOP Video</a></li>
-                        <li class=""><a class="dropdown-item" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
+                        <li class=""><a class="dropdown-item" target="_blank" href="https://dataposit.mojohelpdesk.com">Submit Query</a></li>
                     </ul>
                 </li>
                 @endif
@@ -329,6 +337,11 @@
                             <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
                         </ul>
                     </li>
+                    @if(env('APP_LAB') == 1)
+                        <li class="">
+                            <a href="{{ url('viralsample/potential_dr') }}">Potential Samples</a>
+                        </li>
+                    @endif
                     <li class="">
                         <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                     </li>
@@ -468,6 +481,9 @@
                                 <ul class="dropdown-menu">
                                     <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                     <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                    @if(env('APP_LAB') == 5)
+                                    <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                    @endif
                                 </ul>
                             </li>
 

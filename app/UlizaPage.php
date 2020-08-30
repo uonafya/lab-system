@@ -115,6 +115,47 @@ class UlizaPage extends Model
 
     }
 
+    public function create_case_statuses()
+    {
+        \DB::statement('DROP TABLE IF EXISTS uliza_case_statuses');
+        \DB::statement("
+            CREATE TABLE uliza_case_statuses(
+                id tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+                name varchar(100),
+                PRIMARY KEY (`id`)
+            )
+        ");
+
+        \DB::table('uliza_case_statuses')->insert([
+            ['id' => 1, 'name' => 'Pending'],
+            ['id' => 2, 'name' => 'Under Review'],
+            ['id' => 3, 'name' => 'Completed'],
+            ['id' => 4, 'name' => 'Finalised'],
+        ]);
+    }
+
+    public function create_facility_feedbacks()
+    {
+        \DB::statement('DROP TABLE IF EXISTS uliza_facility_feedbacks');
+        \DB::statement("
+            CREATE TABLE uliza_facility_feedbacks(
+                id tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+                name varchar(150),
+                PRIMARY KEY (`id`)
+            )
+        ");
+
+        \DB::table('uliza_facility_feedbacks')->insert([
+            ['id' => 1, 'name' => '2nd line Approved'],
+            ['id' => 2, 'name' => '3rd line Recommended'],
+            ['id' => 3, 'name' => 'Continue Current Regimen'],
+            ['id' => 4, 'name' => 'DST Recommended'],
+            ['id' => 5, 'name' => 'Enhance adherence and repeat viral load after 3/12 of good adherence, if detectable, send for a DST'],
+            ['id' => 6, 'name' => 'Repeat viral load'],
+            ['id' => 7, 'name' => 'Substitute ART drugs'],
+        ]);
+    }
+
 
 
 }
