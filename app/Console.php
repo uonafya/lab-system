@@ -40,14 +40,23 @@ class Console
 
 	public static function send_weekly_activity()
 	{
-		$eid = self::weeklylabactivity('eid');
-		$vl = self::weeklylabactivity('vl');
+		$day_of_week = date('N');
+		if($day_of_week == 5) $sub_days = 0;
+		else if($day_of_week > 5){
+			$sub_days = 7 - $day_of_week;
+		}else{
+			die();
+		}
+		$today = date('Y-m-d', strtotime('-' . $sub_days . ' days'));
+		$weekstartdate = date('Y-m-d', strtotime('-' . ($sub_days+4) . ' days'));
+
+		$eid = self::weeklylabactivity('eid', $today, $weekstartdate);
+		$vl = self::weeklylabactivity('vl', $today, $weekstartdate);
 
 		$users = DB::table('musers')->where('weeklyalert', 1)->get();
 
-		$currentdaydisplay =date('d-M-Y');
-		// $weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
-		$weekstartdisplay =date("d-M-Y",strtotime('-4 days'));
+		$currentdaydisplay =date('d-M-Y', strtotime($today));
+		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
 		$labname = Lab::find(env('APP_LAB'))->labname ?? '';
 
 		foreach ($users as $user) {
@@ -61,7 +70,7 @@ class Console
 		}
 	}
 
-	public static function weeklylabactivity($type)
+	public static function weeklylabactivity($type, $today, $weekstartdate)
 	{
 		ini_set('memory_limit', '-1');
 		$classes = Synch::$synch_arrays[$type];
@@ -75,14 +84,14 @@ class Console
 
 		if($type == 'vl') $data['testtype'] = 2;
 
-		$today = date("Y-m-d");
+		/*$today = date("Y-m-d");
 		$weekstartdate= date ( "Y-m-d", strtotime ('-4 days') );
 
 		$currentdaydisplay =date('d-M-Y');
 		$weekstartdisplay =date("d-M-Y",strtotime($weekstartdate));
 
 		$data['currentdaydisplay'] = $currentdaydisplay;
-		$data['weekstartdisplay'] = $weekstartdisplay;
+		$data['weekstartdisplay'] = $weekstartdisplay;*/
 
 		$minimum_date= date ( "Y-m-d", strtotime ('-1 year') );
 
