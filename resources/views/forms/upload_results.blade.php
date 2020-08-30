@@ -59,7 +59,6 @@
                 </div>                
             </div>
 
-
             @else
             
             <div class="row">
