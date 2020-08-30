@@ -149,6 +149,29 @@
                                 </select></div>
                             </div>
 
+
+                            @if($worksheet->machine_type == 0 && env('APP_LAB') == 25)
+                                <div class="hr-line-dashed"></div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">
+                                        Manual Kit Type
+                                        <span style='color: #ff0000;'>*</span>
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="covid_kit_type_id" id="covid_kit_type_id" required>
+                                            <option></option>
+                                        
+                                            @foreach ($kit_types as $kit_type)
+                                                <option value="{{ $kit_type->id }}"> {{ $kit_type->covid_kit_type }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                            @endif
+
                             <div class="hr-line-dashed"></div>
 
                             @if($worksheet->machine_type == 2)

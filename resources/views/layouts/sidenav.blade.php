@@ -209,6 +209,10 @@
                 <hr />
                 <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
+                <li><a href="{{ url('covid_kit_type/create') }}">Create Manual Kit Type</a></li>
+                <hr />
+                <li><a href="{{ url('covid_kit_type/') }}">View Manual Kit Type</a></li>
+                <hr />
                 @if(auth()->user()->other_lab)
                     <li>
                         <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
