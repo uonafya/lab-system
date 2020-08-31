@@ -186,8 +186,11 @@ class CovidConsumptionController extends Controller
         }
     	return view('reports.covidconsumption',
                     ['consumptions' => CovidConsumption::when($user, function ($query) use ($user){
-                                                if ($user->user_type_id == 12)
+                                                if ($user->user_type_id == 12){
                                                     return $query->where('lab_id', '=', $user->lab_id);
+                                                } else {
+                                                    return $query->where('lab_id', env('APP_LAB'));
+                                                }
                                         })->get()
                 ]);
     }
