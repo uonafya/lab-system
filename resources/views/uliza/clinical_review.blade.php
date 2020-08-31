@@ -480,7 +480,7 @@
 							<div class="form-row form-group mb-3">
 								@foreach($reasons as $reason)
 									<div class="col-md-6">
-										<input class="form-check-input ml-1" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}">
+										<input class="form-check-input ml-1" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}"  v-model="myForm.diagnosis">
 										<label class="form-check-label ml-5" for="diagnosis_A{{ $reason->id }}">{{ $reason->name }}</label>
 									</div>
 								@endforeach
@@ -610,6 +610,7 @@
         		successful_submission: null,
         		myForm: {
         			recommendation_id: {{ $ulizaClinicalForm->feedback->recommendation_id ?? null }},
+        			diagnosis: {{ $ulizaClinicalForm->feedback->diagnosis ?? null }},
 
         		},
         	},
