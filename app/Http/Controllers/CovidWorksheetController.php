@@ -468,7 +468,7 @@ class CovidWorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
-        $data['worksheet'] $worksheet->load(['creator']);
+        $data['worksheet'] = $worksheet->load(['creator']);
         $data['users'] = User::covidLabUser()->where(['lab_id' => auth()->user()->lab_id])->get();
         if(env('APP_LAB') == 25) $data['kit_types'] = \App\CovidKitType::all();
         return view('forms.upload_results', $data)->with('pageTitle', 'Worksheet Upload');
