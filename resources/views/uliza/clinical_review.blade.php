@@ -345,8 +345,7 @@
 							</div>
 						</div>
 
-						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">
-						
+						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">						
 
 							<input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaClinicalForm->id }}" >
 
