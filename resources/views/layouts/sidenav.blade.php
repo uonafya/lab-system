@@ -209,6 +209,10 @@
                 <hr />
                 <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>
                 <hr />
+                <li><a href="{{ url('covid_kit_type/create') }}">Create Manual Kit Type</a></li>
+                <hr />
+                <li><a href="{{ url('covid_kit_type/') }}">View Manual Kit Type</a></li>
+                <hr />
                 @if(auth()->user()->other_lab)
                     <li>
                         <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
@@ -225,7 +229,7 @@
                 <li><a href="{{ url('dr_sample/index/11') }}">Verify Site Entry Samples</a></li>
                 <hr />
                 @if(env('APP_LAB') != 7)
-                    <li><a href="{{ url('dr_patient') }}">Potential DR Patients List</a></li>
+                    <li><a href="{{ url('viralsample/potential_dr') }}">Potential DR Patients List</a></li>
                     <hr />
                 @endif
                 <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
@@ -236,6 +240,10 @@
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
+                @if(env('APP_LAB') != 7)
+                    <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet</a></li>
+                    <hr />
+                @endif
                 
             @endif
             <!-- <li>

@@ -44,6 +44,7 @@
                                         <tr>
                                             <td> {{ $key+1 }} </td>
                                             <td> {{ $sample->border_point ?? '' }} </td>
+                                            <td> {{ $sample->cif_sample_id ?? '' }} </td>
                                             <td> {{ $sample->patient->identifier ?? '' }} </td>
                                             <td> {{ $sample->patient->national_id ?? '' }} </td>
                                             <td> {{ $sample->patient->county ?? '' }} </td>

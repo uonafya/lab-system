@@ -108,6 +108,11 @@
                                 <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
                             </ul>
                         </li>
+                        @if(env('APP_LAB') == 1)
+                            <li class="">
+                                <a href="{{ url('viralsample/potential_dr') }}">Potential Samples</a>
+                            </li>
+                        @endif
                         <li class="">
                             <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                         </li>
@@ -218,6 +223,9 @@
                                         <ul class="dropdown-menu">
                                             <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                             <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                            @if(env('APP_LAB') == 5)
+                                            <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                            @endif
                                         </ul>
                                     </li>
 
@@ -329,6 +337,11 @@
                             <li class=""><a class="dropdown-item" href="{{ url('dr_testing') }}">Testing Dashboard</a></li>
                         </ul>
                     </li>
+                    @if(env('APP_LAB') == 1)
+                        <li class="">
+                            <a href="{{ url('viralsample/potential_dr') }}">Potential Samples</a>
+                        </li>
+                    @endif
                     <li class="">
                         <a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheets</a>
                     </li>
@@ -468,6 +481,9 @@
                                 <ul class="dropdown-menu">
                                     <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                     <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                    @if(env('APP_LAB') == 5)
+                                    <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
+                                    @endif
                                 </ul>
                             </li>
 

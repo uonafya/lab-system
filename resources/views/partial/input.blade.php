@@ -6,7 +6,7 @@
 		<div class="form-group {{ $form_class ?? '' }} ">
 			<label class="col-sm-4 control-label">{{ $label }}
                 @if($is_required)
-                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                    <strong><span style='color: #ff0000;'>*</span></strong>
                 @endif
 			</label>
 			<div class="col-sm-8">

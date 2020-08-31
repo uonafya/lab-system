@@ -11,4 +11,9 @@ class CovidKitType extends BaseModel
     {
         return $this->belongsTo('App\Machine');
     }
+
+	public function worksheet()
+    {
+        return $this->hasMany('App\CovidWorksheet');
+    }
 }

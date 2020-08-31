@@ -72,6 +72,19 @@ class ViralsampleController extends Controller
         return view('tables.sms_log', $data)->with('pageTitle', 'VL Patient SMS Log');
     }
 
+    public function potential_dr()
+    {
+        $data['samples'] = ViralsampleView::whereNotNull('datedispatched')
+            ->where(['repeatt' => 0, 'run' => 1, 'lab_id' => auth()->user()->lab_id])
+            ->whereRaw("patient_id NOT IN (SELECT DISTINCT patient_id FROM dr_samples)")
+            ->where('result', '>', 5000)
+            ->orderBy('datecollected', 'desc')
+            ->paginate(20);
+        $data['samples']->setPath(url()->current());
+
+        return view('tables.potential_dr', $data);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -397,6 +410,14 @@ class ViralsampleController extends Controller
         $viralsample->age = Lookup::calculate_viralage($request->input('datecollected'), $viralpatient->dob);
         if($viralsample->age > 2 && $viralsample->justification == 10){
             session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the justification cannot be baseline when the client is over 2 years of age.']);
+            return back();
+        }
+        if($viralsample->age < 12 && in_array($viralsample->pmtct, [1,2])){
+            session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is underage but pmtct is set.']);
+            return back();
+        }
+        if($viralsample->age > 60 && in_array($viralsample->pmtct, [1,2])){
+            session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is overage but pmtct is set.']);
             return back();
         }
         $viralsample->batch_id = $batch->id;
