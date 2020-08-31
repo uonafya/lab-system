@@ -535,7 +535,7 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="recommendation_id" required>
+									<select class="custom-select" name="recommendation_id" required v-model="myForm.recommendation_id">
 										<option selected="">Choose...</option>
 										@foreach($recommendations as $recommendation)
 											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
