@@ -619,6 +619,8 @@
         		myForm: {
         			recommendation_id: {{ $ulizaClinicalForm->feedback->recommendation_id ?? null }},
         			diagnosis: {{ $ulizaClinicalForm->feedback->diagnosis ?? null }},
+        			facility_recommendation_id: {{ $ulizaClinicalForm->feedback->facility_recommendation_id ?? null }},
+        			reviewer_id: {{ $ulizaClinicalForm->reviewer_id ?? null }},
 
         		},
         	},
