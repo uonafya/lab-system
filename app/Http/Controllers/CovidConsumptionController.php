@@ -49,7 +49,7 @@ class CovidConsumptionController extends Controller
                 return view('tasks.covid.allocation', ['allocations' => $allocations]);
             }
             
-            $allocations = $this->getCovidAllocations($time->week_end);
+            $allocations = $this->getWeekCovidAllocations($time->week_start,$time->week_end);
             $kits = $kits->groupby('machine');
             return view('tasks.covid.consumption',
                         [
@@ -205,6 +205,18 @@ class CovidConsumptionController extends Controller
     		}
     	}
     	return $data;
+    }
+
+    private function getWeekCovidAllocations($start_of_week, $end_of_week)
+    {
+        $allocations = HCMPCovidAllocations::whereRaw("allocation_date BETWEEN {$start_of_week} AND {$end_of_week}")
+                            ->where('responded', 'YES')->get();
+        
+        $newallocation = [];
+        foreach ($allocations as $key => $allocation) 
+            $newallocation[$allocation->kit->machine ?? ''][] = $allocation;
+        
+        return collect($newallocation);
     }
 
     private function checkCovidAllocations($end_of_week)
