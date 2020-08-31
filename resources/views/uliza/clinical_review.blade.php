@@ -526,6 +526,17 @@
 								</div>
 							</div>
 
+							@if(auth()->user()->user_type_id != 104)
+
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->technical_reviewer_comments ?? null }}</textarea>
+								</div>
+							</div>
+
+							@endif
+
 							<div class="form-group row">
 								<div class="col-md-6">
 									<label class=" col-form-label">
