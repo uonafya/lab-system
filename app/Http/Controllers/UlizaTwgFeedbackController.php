@@ -55,7 +55,7 @@ class UlizaTwgFeedbackController extends Controller
         $clinical_form = $ulizaTwgFeedback->clinical_form;
         $clinical_form->status_id = 2;
         if($ulizaTwgFeedback->recommendation_id == 3){
-            if(auth()->user()->user_type_id == 104) $clinical_form->status_id = 3;
+            if(auth()->user()->user_type_id == 103) $clinical_form->status_id = 3;
             else{
                 $clinical_form->status_id = 4;
             }
