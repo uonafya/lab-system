@@ -526,7 +526,7 @@
 								</div>
 							</div>
 
-							@if(auth()->user()->user_type_id == 104)
+							@if(auth()->user()->user_type_id > 102)
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
