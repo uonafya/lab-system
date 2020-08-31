@@ -410,7 +410,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="nat_no">NASCOP's NAT-No :</span>
 									</div>
-									<input aria-describedby="nat_no" value="{{ $ulizaClinicalForm->nat_number ?? '' }}" disabled class="form-control" name="nat_no" readonly="" type="text">
+									<input aria-describedby="nat_no" value="{{ $ulizaClinicalForm->nat_no ?? '' }}" disabled class="form-control" name="nat_no" readonly="" type="text">
 								</div>
 							</div>
 
@@ -603,6 +603,12 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
+
+		@if($view)
+			$(".form-control").attr("readonly", true);
+			$(".custom-select").attr("readonly", true);
+			$(".form-check-input").attr("readonly", true);
+		@endif
 
         var vm = new Vue({
         	el: "#my-vue-instance",
