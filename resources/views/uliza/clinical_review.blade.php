@@ -335,6 +335,7 @@
 								<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
 							</div>
 						</div>
+						@if(!$view)
 						<div class="card my-1 ml-2">
 							<div class="card-body p-2">
 								<div class="d-flex justify-content-end align-items-center w-100">
@@ -344,6 +345,7 @@
 								</div>
 							</div>
 						</div>
+						@endif
 
 						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">						
 
@@ -562,7 +564,7 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="facility_recommendation_id">
+									<select class="custom-select" name="facility_recommendation_id" v-model="myForm.facility_recommendation_id">
 										<option selected="">Choose...</option>
 										@foreach($feedbacks as $feedback)
 											<option value="{{ $feedback->id }}"  > {{ $feedback->name }} </option>

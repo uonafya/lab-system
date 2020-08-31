@@ -34,7 +34,7 @@
                                     <td> {{ $form->get_prop_name($statuses, 'status_id') }} </td>
                         			<td> {{ $form->created_at }} </td>
                         			<td> 
-                                        @if($form->status_id == 3)
+                                        @if($form->status_id == 4)
                                             <a href="{{ url('uliza-review/view/' . $form->id) }} ">
                                                 <button class="btn btn-success"> View Feedback </button>
                                             </a> 
