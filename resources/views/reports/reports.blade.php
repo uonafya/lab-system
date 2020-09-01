@@ -396,7 +396,7 @@
                 }
 
                 @if(auth()->user()->is_lab_user)
-                if(category == '' || category == null || category == undefined) {
+                if((category == '' || category == null || category == undefined) && selValue != 'overall') {
                     e.preventDefault();
                     set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
                 }
