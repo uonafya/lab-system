@@ -23,6 +23,7 @@ use App\Imports\AmpathCovidImport;
 use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
 use App\Imports\NairobiCovidImport;
+use App\Imports\KisumuCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -704,6 +705,7 @@ class CovidSampleController extends Controller
         $lab_id = auth()->user()->lab_id;
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
+        else if($lab_id == 2) $c = new KisumuCovidImport;
         else if($lab_id == 3) $c = new AlupeCovidImport;
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
