@@ -26,7 +26,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             return;
         }*/
 
-        $mfl = (int) $row->mfl_code;
+        // $mfl = (int) $row->mfl_code;
 
         /*$fac = Facility::locate($mfl)->first();
         if(!$fac && !isset($row->quarantine_site_id)){
