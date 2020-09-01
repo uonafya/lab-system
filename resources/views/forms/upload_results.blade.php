@@ -176,7 +176,7 @@
                             </div>
 
 
-                            @if($worksheet->machine_type == 0 && env('APP_LAB') == 25)
+                            @if($worksheet->machine_type == 0 && env('APP_LAB') == 250)
                                 <div class="hr-line-dashed"></div>
 
                                 <div class="form-group">
