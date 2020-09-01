@@ -34,8 +34,8 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);   
             return;
-        }
-        $p = null;*/
+        }*/
+        $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         // if(!$p && $row->identifier && strlen($row->identifier) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
