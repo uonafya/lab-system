@@ -486,7 +486,7 @@ class CovidWorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/covid'); 
 
-        if($worksheet->machine_type == 0 && env('APP_LAB') == 25){
+        if($worksheet->machine_type == 0 && env('APP_LAB') == 250){
             $c = new CovidManualWorksheetImport($worksheet, $request);
             Excel::import($c, $path);
 
