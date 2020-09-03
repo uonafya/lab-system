@@ -50,7 +50,7 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         }
         else if($request->input('types') == 'worksheet_report'){
-            if($request->input('period') == 'range')) $year = date('Y', strtotime($request->input('toDate')));
+            if($request->input('period') == 'range') $year = date('Y', strtotime($request->input('toDate')));
             else{
                 $year = $request->input('year');
             }
