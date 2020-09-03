@@ -206,6 +206,13 @@ class ReportController extends Controller
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else 
                 $this->__getExcel($data, $dateString, $request);
+        }else if($request->input('types') == 'worksheet_report'){
+            if($request->input('period') == 'range') $year = date('Y', strtotime($request->input('toDate')));
+            else{
+                $year = $request->input('year');
+            }
+            if(session('testingSystem') == 'EID') return \App\Misc::eid_worksheets($year);
+            else if(session('testingSystem') == 'Viralload') return \App\MiscViral::vl_worksheets($year);
         }else {
             if($request->input('types') == 'sitessupported' || $request->input('types') == 'remoteentrydoing') {
                 $data = self::__getSiteEntryData($request,$dateString)->get();
