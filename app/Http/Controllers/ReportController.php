@@ -48,7 +48,16 @@ class ReportController extends Controller
         if (session('testingSystem') == 'CD4') {
             $data = self::__getCD4Data($request, $dateString)->get();
             $this->__getExcel($data, $dateString, $request);
-        } else {
+        }
+        else if($request->input('types') == 'worksheet_report'){
+            if($request->input('period') == 'range')) $year = date('Y', strtotime($request->input('toDate')));
+            else{
+                $year = $request->input('year');
+            }
+            if(session('testingSystem') == 'EID') return \App\Misc::eid_worksheets($year);
+            else if ('testingSystem') == 'Viralload') return \App\MiscViral::vl_worksheets($year); 
+        }
+        else {
             $data = self::__getDateData($request, $dateString)->get();
             $this->__getExcel($data, $dateString, $request);
         }
