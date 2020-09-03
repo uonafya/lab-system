@@ -14,8 +14,8 @@ class AlterRegimen
 		DB::statement('ALTER TABLE viraljustifications CHANGE `rank` `rank_id` TINYINT;');
 		DB::statement('ALTER TABLE prophylaxis CHANGE `rank` `rank_id` TINYINT;');
 		if(env('APP_LAB') != 1){
-			DB::statement("DROP TABLE IF EXISTS dr_warnings;")
-			DB::statement("DROP TABLE IF EXISTS dr_worksheet_warnings;")
+			DB::statement("DROP TABLE IF EXISTS dr_warnings;");
+			DB::statement("DROP TABLE IF EXISTS dr_worksheet_warnings;");
 		}
 		Lookup::cacher();
 	}
