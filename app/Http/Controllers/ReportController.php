@@ -55,7 +55,7 @@ class ReportController extends Controller
                 $year = $request->input('year');
             }
             if(session('testingSystem') == 'EID') return \App\Misc::eid_worksheets($year);
-            else if ('testingSystem') == 'Viralload') return \App\MiscViral::vl_worksheets($year); 
+            else if(session('testingSystem') == 'Viralload') return \App\MiscViral::vl_worksheets($year);
         }
         else {
             $data = self::__getDateData($request, $dateString)->get();
