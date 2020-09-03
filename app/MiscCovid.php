@@ -257,7 +257,7 @@ class MiscCovid extends Common
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
-        $machines = [0 => 'Manual', 1 => 'Roche', 2 => 'Abbott', 3 => 'C8800'];
+        $machines = [0 => 'Manual', 2 => 'Abbott', 3 => 'C8800'];
 
         $rows = [];
 
