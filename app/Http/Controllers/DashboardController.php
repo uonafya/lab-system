@@ -8,6 +8,8 @@ use App\Sample;
 use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
+use App\CovidSample;
+use App\CovidSampleView;
 use App\Facility;
 
 class DashboardController extends Controller
@@ -48,7 +50,7 @@ class DashboardController extends Controller
     public function lab_monthly_tests($year = null)
     {
         $currentTestingSystem = session('testingSystem');
-        $result = ($currentTestingSystem == 'Viralload') ? 
+        $result = ($currentTestingSystem == 'Viralload'||$currentTestingSystem == 'Covid') ? 
                             ['received','tests','rejected','non_suppression'] : 
                             ['tests','positives','negatives','rejected'];
         
@@ -56,40 +58,61 @@ class DashboardController extends Controller
         foreach ($result as $key => $value) {
             ($value == 'received' || $value == 'rejected') ? $table = "datereceived" : $table = "datetested";
             
-            $data[$value] = ($currentTestingSystem == 'Viralload') ? 
-                            DB::table('viralsamples_view')
-                                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
-                                ->when($value, function($query) use ($value){
-                                    if($value == 'received'){
-                                        return $query->where('receivedstatus', 1);
-                                    } else if($value == 'tests'){
-                                        return $query->where('result', '<>', NULL);
-                                    } else if($value == 'rejected'){
-                                        return $query->where('receivedstatus', 2);
-                                    }  else if($value == 'non_suppression'){
-                                        return $query->where('result', '< LDL copies/ml');
-                                    }                
-                                })
-                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
-                                ->whereYear($table, $year)
-                                ->groupBy('month', 'monthname')->get() 
-                            :
-                            DB::table('samples_view')
-                                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
-                                ->when($value, function($query) use ($value){
-                                    if($value == 'tests'){
-                                        return $query->whereRaw('result between 1 and 7');
-                                    } else if($value == 'positives'){
-                                        return $query->where('result', 2);
-                                    } else if($value == 'negatives'){
-                                        return $query->where('result', 1);
-                                    }  else if($value == 'rejected'){
-                                        return $query->where('receivedstatus', 2);
-                                    }                
-                                }) 
-                                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
-                                ->whereYear($table, $year)
-                                ->groupBy('month', 'monthname')->get();
+            if($currentTestingSystem == 'Viralload')
+            {
+                $data[$value] = DB::table('viralsamples_view')
+                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                ->when($value, function($query) use ($value){
+                    if($value == 'received'){
+                        return $query->where('receivedstatus', 1);
+                    } else if($value == 'tests'){
+                        return $query->where('result', '<>', NULL);
+                    } else if($value == 'rejected'){
+                        return $query->where('receivedstatus', 2);
+                    }  else if($value == 'non_suppression'){
+                        return $query->where('result', '< LDL copies/ml');
+                    }                
+                })
+                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
+                ->whereYear($table, $year)
+                ->groupBy('month', 'monthname')->get();
+
+            } elseif ($currentTestingSystem == 'Covid') {
+                $data[$value] = DB::table('covid_sample_view')
+                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                ->when($value, function($query) use ($value){
+                    if($value == 'received'){
+                        return $query->where('receivedstatus', 1);
+                    } else if($value == 'tests'){
+                        return $query->where('result', '<>', NULL);
+                    } else if($value == 'rejected'){
+                        return $query->where('receivedstatus', 2);
+                    }  else if($value == 'non_suppression'){
+                        return $query->where('result', '< LDL copies/ml');
+                    }                
+                })
+                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
+                ->whereYear($table, $year)
+                ->groupBy('month', 'monthname')->get();
+            } else {
+                DB::table('samples_view')
+                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                ->when($value, function($query) use ($value){
+                    if($value == 'tests'){
+                        return $query->whereRaw('result between 1 and 7');
+                    } else if($value == 'positives'){
+                        return $query->where('result', 2);
+                    } else if($value == 'negatives'){
+                        return $query->where('result', 1);
+                    }  else if($value == 'rejected'){
+                        return $query->where('receivedstatus', 2);
+                    }                
+                }) 
+                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
+                ->whereYear($table, $year)
+                ->groupBy('month', 'monthname')->get();
+            }
+                            
         }
         
         $chartData = self::__mergeMonthlyTests($data);
@@ -102,7 +125,14 @@ class DashboardController extends Controller
             $data['testtrends'][3]['name'] = 'Non-Suppressed';
             
             $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'spline';
-        } else {
+        } elseif ($currentTestingSystem == 'Covid') {
+            $data['testtrends'][0]['name'] = 'Received';
+            $data['testtrends'][1]['name'] = 'Tests';
+            $data['testtrends'][2]['name'] = 'Rejected';
+            $data['testtrends'][3]['name'] = 'Non-Suppressed';
+            
+            $data['testtrends'][0]['type'] = $data['testtrends'][1]['type'] = $data['testtrends'][2]['type'] = 'spline';
+        } else { 
             $data['testtrends'][0]['name'] = 'Rejected';
             $data['testtrends'][1]['name'] = 'Positives';
             $data['testtrends'][2]['name'] = 'Negatives';
@@ -120,6 +150,11 @@ class DashboardController extends Controller
         foreach ($chartData as $key => $value) {
             $data['categories'][$key] = $value['monthname'];
             if ($currentTestingSystem == 'Viralload') {
+                $data['testtrends'][0]['data'][$key] = (int) $value['received'];
+                $data['testtrends'][1]['data'][$key] = (int) $value['tests'];
+                $data['testtrends'][2]['data'][$key] = (int) $value['rejected'];
+                $data['testtrends'][3]['data'][$key] = (int) $value['non_suppression'];
+            } elseif ($currentTestingSystem == 'Covid') {
                 $data['testtrends'][0]['data'][$key] = (int) $value['received'];
                 $data['testtrends'][1]['data'][$key] = (int) $value['tests'];
                 $data['testtrends'][2]['data'][$key] = (int) $value['rejected'];
@@ -268,6 +303,23 @@ class DashboardController extends Controller
                     if ($value->month == $value2->month)
                         $newData[$key]['non_suppression'] =  (isset($value2->non_suppression)) ? $value2->non_suppression : 0 ;
                 }
+            } elseif (session('testingSystem') == 'Covid'){
+                $newData[$key] += [ 'received' => 0, 'rejected' => 0, 'non_suppression' => 0 ];
+
+                foreach ($data->received as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['received'] =  (isset($value2->received)) ? $value2->received : 0 ;
+                }
+
+                foreach ($data->rejected as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['rejected'] =  (isset($value2->rejected)) ? $value2->rejected : 0 ;
+                }
+
+                foreach ($data->non_suppression as $key2 => $value2) {
+                    if ($value->month == $value2->month)
+                        $newData[$key]['non_suppression'] =  (isset($value2->non_suppression)) ? $value2->non_suppression : 0 ;
+                }
             } else {
                 $newData[$key] += [ 'positives' => 0, 'negatives' => 0, 'rejected' => 0 ];
 
@@ -367,28 +419,46 @@ class DashboardController extends Controller
 
     public static function __joinedToBatches()
     {
-        (session('testingSystem') == 'Viralload') ?
-            $model = DB::table('viralsamples_view') :
+        if(session('testingSystem') == 'Viralload'){
+            $model = DB::table('viralsamples_view');
+
+        } elseif (session('testingSystem') == 'Covid') {
+            $model = DB::table('covid_sample_view');
+        } else {
             $model = DB::table('samples_view')
-                        ->where('samples_view.flag', '=', 1);
+            ->where('samples_view.flag', '=', 1);
+        }
+            
+            
         return $model->where('lab_id', env('APP_LAB'));
     }
 
 
     public static function __getsamples_view()
     {
-        (session('testingSystem') == 'Viralload') ?
-            $model = ViralsampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1) :
+        if(session('testingSystem') == 'Viralload'){
+            $model = ViralsampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1);
+        } elseif (session('testingSystem') == 'Covid') {
+            $model = CovidSampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1);
+
+        } else {
             $model = SampleView::where('flag', '=', 1);
+        }
+            
+            
 
         return $model->where('lab_id', env('APP_LAB'));
     }
 
     public static function __getTotalsamples_view()
     {
-        (session('testingSystem') == 'Viralload') ?
-            $model = ViralsampleView::where('result', '<>', '') :
+        if (session('testingSystem') == 'Viralload'){
+            $model = ViralsampleView::where('result', '<>', '');
+        } elseif (session('testingSystem') == 'Covid'){
+            $model = CovidSampleView::where('result', '<>', '');
+        } else {
             $model = SampleView::where('flag', '=', 1);
+        }
 
         return $model->where('lab_id', env('APP_LAB'));
     }
@@ -404,6 +474,9 @@ class DashboardController extends Controller
         } else if (session('testingSystem') == 'EID') {
             $model = SampleView::where('flag', '=', 1);
             $table = 'samples_view';
+        } else if (session('testingSystem') == 'Covid') {
+            $model = CovidSampleView::where('flag', '=', 1);
+            $table = 'covid_sample_view';
         }
 
         $model = $model->selectRaw("AVG(tat1) as tat1,  AVG(tat2) as tat2,  AVG(tat3) as tat3,  AVG(tat4) as tat4,  AVG(tat5) as tat5  ")

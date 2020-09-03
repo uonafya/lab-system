@@ -12,6 +12,7 @@ use App\Facility;
 use App\FacilityContact;
 use App\SampleView;
 use App\ViralsampleView;
+use App\CovidSampleView;
 use App\Worksheet;
 use App\Viralworksheet;
 use App\Cd4Worksheet;
@@ -174,6 +175,23 @@ class DashboardCacher
                         ->where('flag', '1')->get()->first()->total; 
                 }
             }
+        } elseif ($testingSystem == 'Covid') {
+            if ($over == true) {
+                $model = CovidSampleView::selectRaw('COUNT(id) as total')
+                                ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
+                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->where('site_entry', '<>', 2)
+                                ->whereNull('result')->get()->first()->total;
+            } else {
+                $model = CovidSampleView::selectRaw('COUNT(id) as total')
+                    ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
+                    ->where('datereceived', '>', $date_str)
+                    ->whereRaw("(result is null or result = '0')")
+                    ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'input_complete' => 1])
+                    ->where('site_entry', '<>', 2)
+                    ->where('flag', '1')->get()->first()->total;
+            }
         } else {
             if ($over == true) {
                 $model = SampleView::selectRaw('COUNT(id) as total')
@@ -209,6 +227,11 @@ class DashboardCacher
                         // ->where('repeatt', '=', '0')
                         // ->whereRaw('(receivedstatus is null or receivedstatus=0)')
                         // ->where('site_entry', '=', '1')
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->whereNull('receivedstatus')
+                        ->where('site_entry', 1);
+        } elseif ($testingSystem == 'Covid') {
+            $model = CovidSampleView::selectRaw("COUNT(distinct batch_id) as total")
                         ->where('lab_id', '=', env('APP_LAB'))
                         ->whereNull('receivedstatus')
                         ->where('site_entry', 1);
@@ -264,6 +287,14 @@ class DashboardCacher
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
+        }elseif ($testingSystem == 'Covid') {
+            $model = CovidSampleView::selectRaw('COUNT(*) as total')
+                        ->whereNull('worksheet_id')
+                        ->where('datereceived', '>', $date_str)
+                        ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->where('flag', '=', '1')
+                        ->where('parentid', '>', '0');
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
@@ -297,6 +328,14 @@ class DashboardCacher
                         // ->orWhere('datedispatched', '=', '0000-00-00')
                         // ->orWhere('datedispatched', '=', '1970-01-01')
                         // ->orWhereNotNull('datedispatched');
+        } elseif ($testingSystem == 'Covid') {
+            $model = CovidSampleView::selectRaw('count(*) as total')
+                        ->where('receivedstatus', 2)
+                        ->whereYear('datereceived', '>', $year)
+                        ->whereNotNull('datereceived')
+                        ->where('site_entry', '<>', 2)
+                        ->where('lab_id', '=', env('APP_LAB'))
+                        ->whereNull('datedispatched');
         } else {
             $model = SampleView::selectRaw('count(*) as total')
                         ->where('receivedstatus', 2)
@@ -343,6 +382,8 @@ class DashboardCacher
     public static function overdue($level = 'testing',$testingSystem = 'Viralload') {
         if ($testingSystem == 'Viralload') {
             $model = ViralsampleView::selectRaw('count(*) as total');
+        } elseif ($testingSystem == 'Covid') {
+            $model = CovidSampleView::selectRaw('count(*) as total');
         } else {
             $model = SampleView::selectRaw('count(*) as total');
         }
