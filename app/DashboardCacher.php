@@ -292,6 +292,11 @@ class DashboardCacher
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', $date_str)
                         ->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
+                        ->where(function ($query) {
+                            $query->whereNull('result')
+                                ->orWhere('result', '=', 0);
+                        })
+                        // ->where(DB::raw(('samples.result is null or samples.result = 0')))
                         ->where('lab_id', '=', env('APP_LAB'))
                         ->where('flag', '=', '1')
                         ->where('parentid', '>', '0');
