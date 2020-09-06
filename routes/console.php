@@ -17,6 +17,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('mysql8', function () {
+    \App\AlterRegimen::mysql8_update();
+})->describe('Mysql 8 update');
+
 Artisan::command('clean:emails', function(){
     $str = \App\Synch::clean_emails();
     $this->info($str);

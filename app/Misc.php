@@ -528,6 +528,48 @@ class Misc extends Common
     	}
     }
 
+    public static function eid_worksheets($year = null)
+    {
+        if(!$year) $year = date('Y');
+        $data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
+            ->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['samples_view.lab_id' => env('APP_LAB')])
+            ->groupBy('year', 'month', 'machine_type', 'result')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('result', 'asc')
+            ->get();
+
+        $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
+        $machines = [1 => 'Roche', 2 => 'Abbott'];
+
+        $rows = [];
+
+        for ($i=1; $i < 13; $i++) { 
+            foreach ($machines as $mkey => $mvalue) {
+                $row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
+                $row['Machine'] = $mvalue;
+                $total = 0;
+
+                foreach ($results as $rkey => $rvalue) {
+                    $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    $total += $row[$rvalue];
+                }
+
+                $row['Total'] = $total;
+                $rows[] = $row;
+            }
+            if($year == date('Y') && $i == date('m')) break;
+        }
+
+        $file = 'eid_worksheets_data';
+
+        return Common::csv_download($rows, $file);
+    }
+
     public static function check_patients_list(){
         // $patientsList = ['13805-2018-E02288', '13576-2018-285', '13745-2018-644', '13582-EXP214/2018', '13718-00198/18', '14446/2018/002', '16707-2018-0002', '12976-2018-0014', '18515-2018-0015', '16273/00186/18', '13989/2018/0026', '15204-2018-136', '13528-2018-00093', '14379-2017-0027', '13897-18-647', '15758-2018-0057', '15758/2017/0074', '13960-2018-00137', '13897-18-648', '14061-2017-00081', '14586-2018-0017', 'E0890/18', '15197-18-002', '13740-2017-476', '14555-2018-0072', '14947-2018-0193', '15753-2018-0039', '15732-2018-005', '14555-2018-0084', '13897-18-650', '17979-HEI-389', 'HEI/2018/00450', '14103/2017/0110', '14720-2017-0008', '163642018014', '13576-2017-301', '19990-2018-0001', '14555-2018-0091', '14098-272', '16364-2018-0016', '13805-2018-E02366', '15301-2018-021', '14519-2018-004', '14203-2018-0013', '15758-2018-0074', '138052018-E02367', '13738-2018-E00066', '15758-2018-0079', '15783-2018-0006', '1360/04/18', '11634/2018/0/30', '14753-2018-0001', '15758-2018-0081', '14102/2018/282', '14102/2018/284', '13999/1/00254', '14058-2018-2590', '147792018-0034', '13467-2018-372', '15204-2018-0202', '15758-2018-0085', '13989-2018-0045', '139172017008', '13222-000084', '14082-2018-0385', '14701-2018-036', '13805-2018-E02396', '15138-2018-019', '1416620180064', '13640-2018-56', '13805-2018-E02401', '13576-2017-0299', '14872-2018-0024', '13752-11-011', '15204-2018-0233', '14607-2018-029', '12978-2017-0013', '15834-2018-0136', '14701-2018-0045', '13656-0937', '14506-2017-0003'];
         // $found = [];

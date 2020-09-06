@@ -59,6 +59,11 @@ class CovidWorksheet extends BaseModel
         return $this->belongsTo('App\User', 'reviewedby2');
     }
 
+    public function kit_type()
+    {
+        return $this->belongsTo('App\CovidKitType', 'covid_kit_type_id');
+    }
+
     
 
     public function getFailedAttribute()

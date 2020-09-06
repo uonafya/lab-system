@@ -43,7 +43,7 @@
 		<div class="d-flex flex-column flex-md-row align-items-center p-1 px-md-4 mb-3 border-bottom box-shadow bg-white">
 			<div class="text-center mr-md-auto">
 				<h4>
-					Welcome, {{ auth()->user()->full_name ?? '' }}  - {{ auth()->user()->twg->twg ?? '' }} TWG |
+					Welcome, {{ auth()->user()->full_name ?? '' }} @if(auth()->user()->user_type_id > 102)  - {{ auth()->user()->twg->twg ?? '' }} TWG @endif |
 					{{ auth()->user()->user_type->user_type ?? '' }}
 				</h4>
 			</div>

@@ -1115,4 +1115,60 @@ class MiscViral extends Common
         }
     }
     
+
+    public static function vl_worksheets($year = null)
+    {
+        if(!$year) $year = date('Y');
+        $data = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, rcategory, count(*) as tests ")
+            ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 0,])
+            ->groupBy('year', 'month', 'machine_type', 'rcategory')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('rcategory', 'asc')
+            ->get();
+
+        $data2 = ViralsampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as tests ")
+            ->join('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['viralsamples_view.lab_id' => env('APP_LAB'), 'repeatt' => 1, 'rcategory' => 5])
+            ->groupBy('year', 'month', 'machine_type')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->get();
+
+        $results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
+        $machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800', 4 => 'Panther'];
+
+        $rows = [];
+
+        for ($i=1; $i < 13; $i++) { 
+            foreach ($machines as $mkey => $mvalue) {
+                $row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
+                $row['Machine'] = $mvalue;
+                $total = 0;
+
+                foreach ($results as $rkey => $rvalue) {
+                    $row[$rvalue] = $data->where('rcategory', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    $total += $row[$rvalue];
+                }
+
+                $row['Failed'] = $data2->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                $total += $row['Failed'];
+
+                $row['Total'] = $total;
+                $rows[] = $row;
+            }
+            if($year == date('Y') && $i == date('m')) break;
+        }
+
+        $file = 'vl_worksheets_data';
+
+        return Common::csv_download($rows, $file);
+    }
 }

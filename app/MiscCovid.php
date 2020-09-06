@@ -241,4 +241,46 @@ class MiscCovid extends Common
         }
     }
 
+    public static function covid_worksheets($year = null, $download=true)
+    {
+        if(!$year) $year = date('Y');
+        $data = CovidSample::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
+            ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+            ->where('site_entry', '!=', 2)
+            ->whereYear('daterun', $year)
+            ->where(['covid_samples.lab_id' => env('APP_LAB')])
+            ->groupBy('year', 'month', 'machine_type', 'result')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->orderBy('machine_type', 'asc')
+            ->orderBy('result', 'asc')
+            ->get();
+
+        $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
+        $machines = [0 => 'Manual', 2 => 'Abbott', 3 => 'C8800'];
+
+        $rows = [];
+
+        for ($i=1; $i < 13; $i++) { 
+            foreach ($machines as $mkey => $mvalue) {
+                $row = ['Year of Testing' => $year, 'Month of Testing' => date('F', strtotime("{$year}-{$i}-1")), ];
+                $row['Machine'] = $mvalue;
+                $total = 0;
+
+                foreach ($results as $rkey => $rvalue) {
+                    $row[$rvalue] = $data->where('result', $rkey)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    if($rkey == 3) $row[$rvalue] += $data->where('result', null)->where('machine_type', $mkey)->where('month', $i)->first()->tests ?? 0;
+                    $total += $row[$rvalue];
+                }
+
+                $row['Total'] = $total;
+                $rows[] = $row;
+            }
+            if($year == date('Y') && $i == date('m')) break;
+        }
+
+        $file = 'covid_worksheets_data';
+        return Common::csv_download($rows, $file);
+    }
+
 }

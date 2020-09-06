@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::resource('uliza-twg', 'UlizaTwgController');
 	Route::get('uliza-review/create/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
+	Route::get('uliza-review/view/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
 	Route::resource('uliza-review', 'UlizaTwgFeedbackController');
 	Route::get('uliza/logout', 'UlizaUserController@logout');
 	Route::resource('uliza-user', 'UlizaUserController');

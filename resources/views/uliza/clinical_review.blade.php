@@ -335,6 +335,7 @@
 								<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
 							</div>
 						</div>
+						@if(!$view)
 						<div class="card my-1 ml-2">
 							<div class="card-body p-2">
 								<div class="d-flex justify-content-end align-items-center w-100">
@@ -344,9 +345,9 @@
 								</div>
 							</div>
 						</div>
+						@endif
 
-						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">
-						
+						<div class="ml-2 px-3" style="overflow-y: scroll; max-height: 73vh;">						
 
 							<input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaClinicalForm->id }}" >
 
@@ -411,7 +412,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" id="nat_no">NASCOP's NAT-No :</span>
 									</div>
-									<input aria-describedby="nat_no" value="{{ $ulizaClinicalForm->nat_number ?? '' }}" disabled class="form-control" name="nat_no" readonly="" type="text">
+									<input aria-describedby="nat_no" value="{{ $ulizaClinicalForm->nat_no ?? '' }}" disabled class="form-control" name="nat_no" readonly="" type="text">
 								</div>
 							</div>
 
@@ -481,7 +482,7 @@
 							<div class="form-row form-group mb-3">
 								@foreach($reasons as $reason)
 									<div class="col-md-6">
-										<input class="form-check-input ml-1" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}">
+										<input class="form-check-input ml-1" name="diagnosis" required="required" type="radio" id="diagnosis_A{{ $reason->id }}" value="{{ $reason->id }}"  v-model="myForm.diagnosis">
 										<label class="form-check-label ml-5" for="diagnosis_A{{ $reason->id }}">{{ $reason->name }}</label>
 									</div>
 								@endforeach
@@ -527,6 +528,17 @@
 								</div>
 							</div>
 
+							@if(auth()->user()->user_type_id > 102)
+
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->technical_reviewer_comments ?? null }}</textarea>
+								</div>
+							</div>
+
+							@endif
+
 							<div class="form-group row">
 								<div class="col-md-6">
 									<label class=" col-form-label">
@@ -535,7 +547,7 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="recommendation_id" required>
+									<select class="custom-select" name="recommendation_id" required v-model="myForm.recommendation_id">
 										<option selected="">Choose...</option>
 										@foreach($recommendations as $recommendation)
 											<option value="{{ $recommendation->id }}"  > {{ $recommendation->name }} </option>
@@ -552,7 +564,7 @@
 								</div>
 
 								<div class="col-md-6">
-									<select class="custom-select" name="facility_recommendation_id">
+									<select class="custom-select" name="facility_recommendation_id" v-model="myForm.facility_recommendation_id">
 										<option selected="">Choose...</option>
 										@foreach($feedbacks as $feedback)
 											<option value="{{ $feedback->id }}"  > {{ $feedback->name }} </option>
@@ -594,12 +606,21 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
+		@if($view)
+			$(".form-control").attr("readonly", true);
+			$(".custom-select").attr("readonly", true);
+			$(".form-check-input").attr("readonly", true);
+		@endif
+
         var vm = new Vue({
         	el: "#my-vue-instance",
         	data: {
         		successful_submission: null,
         		myForm: {
         			recommendation_id: {{ $ulizaClinicalForm->feedback->recommendation_id ?? null }},
+        			diagnosis: {{ $ulizaClinicalForm->feedback->diagnosis ?? null }},
+        			facility_recommendation_id: {{ $ulizaClinicalForm->feedback->facility_recommendation_id ?? null }},
+        			reviewer_id: {{ $ulizaClinicalForm->reviewer_id ?? null }},
 
         		},
         	},

@@ -48,7 +48,7 @@
                                             </a> 
                                         </td>
                                         <td>
-                                            <a href="{{ url('dr_sample/create_remnant/' . $sample->id) }}">
+                                            <a href="{{ url('dr_sample/create_remnant/' . $sample->id) }}" title="Click to select sample for DR testing">
                                                 Create Sample 
                                             </a>                                            
                                         </td>

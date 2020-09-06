@@ -25,8 +25,8 @@ class CovidManualWorksheetImport implements OnEachRow, WithHeadingRow
 	{
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
-        $worksheet->fill($request->except(['_token', 'upload', 'covid_kit_type_id']));
-        $this->covid_kit_type = CovidKitType::find($request->input('covid_kit_type_id'));
+        $worksheet->fill($request->except(['_token', 'upload']));
+        $this->covid_kit_type = $worksheet->kit_type;
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
         $this->daterun = $request->input('daterun');
@@ -72,6 +72,7 @@ class CovidManualWorksheetImport implements OnEachRow, WithHeadingRow
                     $negative_control[$target_column] = $row->ct;
                 }
                 session(['negative_control' => $negative_control]);
+                return;
             }
             else if(Str::contains($sample_id, ['pc', 'pos'])){
                 if($row->target_name == $control_gene && !is_numeric($row->ct)){
@@ -80,10 +81,12 @@ class CovidManualWorksheetImport implements OnEachRow, WithHeadingRow
                     $positive_control[$target_column] = $row->ct;
                 }
                 session(['positive_control' => $positive_control]);
+                return;
             }
         }
 
         $sample = CovidSample::find($sample_id);
+        if(!$sample && env('APP_LAB') == 25) $sample = CovidSample::where('kemri_id', $sample_id)->first();
         if(!$sample) return;
         if($sample->result == 3) return;
 
@@ -103,13 +106,12 @@ class CovidManualWorksheetImport implements OnEachRow, WithHeadingRow
         $sample->$target_column = $row->ct;
         
         $sample->calc_result();
-
     }
 
     /**
     * @param Collection $collection
     */
-    public function collection(Collection $collection)
+    /*public function collection(Collection $collection)
     {
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
@@ -212,5 +214,5 @@ class CovidManualWorksheetImport implements OnEachRow, WithHeadingRow
         $worksheet->save();
 
         session(['toast_message' => "The worksheet has been updated with the results."]);
-    }
+    }*/
 }
