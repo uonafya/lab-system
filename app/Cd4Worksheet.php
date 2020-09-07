@@ -28,6 +28,10 @@ class Cd4Worksheet extends BaseModel
 		return $this->belongsTo('App\User', 'cancelledby');
 	}
 
+	public function sample(){
+		return $this->hasMany('App\Cd4Sample', 'worksheet_id');
+	}
+
 	public function samples(){
 		return $this->hasMany('App\Cd4SampleView', 'worksheet_id');
 	}

@@ -310,6 +310,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 				Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
+				Route::group(['middleware' => ['utype:1']], function () {
+					Route::get('reverse_upload/{worksheet}', 'Cd4WorksheetController@reverse_upload')->name('reverse_upload');
+				});
 			});
 			Route::resource('worksheet', 'Cd4WorksheetController');
 		});
