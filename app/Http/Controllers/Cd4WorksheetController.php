@@ -301,7 +301,7 @@ class Cd4WorksheetController extends Controller
 
     public function reverse_upload(Cd4Worksheet $worksheet)
     {        
-        if(!in_array($worksheet->status_id, [3,7]) || $worksheet->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
+        if(!in_array($worksheet->status_id, [3,7]) ){
             session(['toast_error' => 1, 'toast_message' => 'You cannot reverse results for this worksheet.']);
             return back();
         }
