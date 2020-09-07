@@ -546,11 +546,11 @@ class DashboardCacher
 
         $pending_receipt = CovidSample::selectRaw('count(id) AS my_count')
             ->where(['lab_id' => env('APP_LAB')])
-            ->whereNull('datereceived')->first()->my_count;
+            ->whereNull('datereceived')->whereNull('datedispatched')->first()->my_count;
         $pending_testing = CovidSample::selectRaw('count(id) AS my_count')
             ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'repeatt' => 0])
             ->where('datereceived', '>', date('Y-m-d', strtotime('-2 months')))
-            ->whereNull('datetested')->whereNull('worksheet_id')->first()->my_count;
+            ->whereNull('datetested')->whereNull('datedispatched')->whereNull('worksheet_id')->first()->my_count;
         $worksheets = self::resultsAwaitingpdate('Covid');
 
         Cache::put('covid_pending_receipt', $pending_receipt, $minutes);
