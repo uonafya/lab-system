@@ -243,10 +243,10 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function sample_result($result, $error=null)
+    public static function sample_result($result, $error=null, $units="")
     {
         $str = strtolower($result);
-        $units="";
+        // $units="";
 
         if(\Str::contains($result, ['e+'])){
             return self::exponential_result($result);
@@ -297,15 +297,14 @@ class MiscViral extends Common
             else{
                 $x = preg_replace("/[^<0-9.]/", "", $result);
                 $res = round(pow(10, $x));
-                $units="cp/mL";                 
             }           
         }
 
         else{
             $res = preg_replace("/[^<0-9]/", "", $result);
             $interpretation = $result;
-            $units="cp/mL";
         }
+        if($units == "") $units="cp/mL";
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
