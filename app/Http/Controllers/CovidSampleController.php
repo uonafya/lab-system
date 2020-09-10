@@ -24,6 +24,7 @@ use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
 use App\Imports\NairobiCovidImport;
 use App\Imports\KisumuCovidImport;
+use App\Imports\AmrefCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -711,6 +712,7 @@ class CovidSampleController extends Controller
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;
         else if($lab_id == 18 || $lab_id == 16) $c = new KemriWRPImport;
+        else if($lab_id == 25) $c = new AmrefCovidImport;
         Excel::import($c, $path);
 
         if(session('toast_error')) return back();
