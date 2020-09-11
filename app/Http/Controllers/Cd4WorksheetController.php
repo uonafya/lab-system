@@ -327,6 +327,34 @@ class Cd4WorksheetController extends Controller
         return back();
     }
 
+    public function cancel_upload(Cd4Worksheet $worksheet)
+    {        
+        if(!in_array($worksheet->status_id, [2]) ){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot cancel the upload for this worksheet.']);
+            return back();
+        }
+
+        $nullable_fields = ['THelperSuppressorRatio', 'AVGCD3percentLymph', 'AVGCD3AbsCnt', 'AVGCD3CD4percentLymph', 'AVGCD3CD4AbsCnt', 'AVGCD3CD8percentLymph', 'AVGCD3CD8AbsCnt', 'AVGCD3CD4CD8percentLymph', 'AVGCD3CD4CD8AbsCnt', 'CD45AbsCnt', 'result', 'datemodified', 'datetested', 'datedispatched', 'printedby', 'sent_email'];
+
+        foreach ($worksheet->sample as $sample) {
+            foreach ($nullable_fields as $nullable_field) {
+                $sample->$nullable_field = null;
+            }
+            if($sample->repeatt == 1){
+                $sample->remove_rerun();
+                $sample->repeatt = 0;
+            }
+            $sample->status_id = 1;
+            $sample->save();
+        }
+
+        $worksheet->status_id = 1;
+        $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+        session(['toast_message' => 'Reversal was successful']);
+        return back();
+    }
+
     public function print(Cd4Worksheet $worksheet) {
         return view('worksheets.cd4', compact('worksheet'))->with('pageTitle', 'Worksheets');
     }

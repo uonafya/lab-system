@@ -301,6 +301,7 @@ Route::middleware(['auth'])->group(function(){
 			
 			Route::prefix('worksheet')->name('worksheet.')->group(function(){
 				Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+				Route::get('cancel_upload/{worksheet}', 'Cd4WorksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
 				Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
 				Route::post('search', 'Cd4WorksheetController@search')->name('search');
