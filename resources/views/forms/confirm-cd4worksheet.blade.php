@@ -21,7 +21,7 @@
                     Worksheet Summary 
                     
                     <div class="panel-tools">
-                        <a href="{{ url('/cd4/worksheet/cancel_upload/' . $worksheet->id) }} ">
+                        <a href="{{ url('/cd4/worksheet/cancel_upload/' . $data->worksheet->id) }} ">
                             <button class="btn btn-danger">Cancel Upload</button>
                         </a>
                     </div>
