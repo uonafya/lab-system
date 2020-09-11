@@ -263,11 +263,12 @@ class Cd4WorksheetController extends Controller
             $sample->AVGCD3CD4percentLymph = $AVGCD3CD4percentLymph[$value];
             $sample->AVGCD3CD4AbsCnt = $AVGCD3CD4AbsCnt[$value];
             $sample->CD45AbsCnt = $CD45AbsCnt[$value];
-            if($repeatt[$value] == 0){
-                $sample->repeatt = $repeatt[$value];
-            } else {
-                $sample->repeatt = $repeatt[$value];
+            $sample->repeatt = $repeatt[$value];
+            if($repeatt[$value] == 2){
+                $sample->AVGCD3CD4percentLymph = null;
+                $sample->AVGCD3CD4AbsCnt = null;
             }
+
             $sample->save();
             if($sample->repeatt == 1){
                 $repeatSample = new Cd4Sample();
