@@ -591,6 +591,11 @@ class Common
     	$sample_table = self::$my_classes[$type]['sample_table'];
 
         $samples = $sampleview_class::whereNull('receivedstatus')
+	        ->when((env('APP_LAB') == 1 && $type == 'vl'), function($query){
+	        	return $query->select('viralsamples_view.*')
+		        	->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+		        	->where('county_id', '!=', 17);
+	        })
         	->where(['batch_complete' => 0, 'lab_id' => env('APP_LAB')])
         	->where('created_at', '<', date('Y-m-d H:i:s', strtotime("-{$days} days")))
             ->get();
