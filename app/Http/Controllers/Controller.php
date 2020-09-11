@@ -70,11 +70,10 @@ class Controller extends BaseController
 
         if (auth()->user()->covid_consumption_allowed) {
             $time = $this->getPreviousWeek();
-            dd($time);
+            dd(CovidConsumption::whereDate('start_of_week', $time->week_start)->get());
             $covidsubmittedstatus = 1;
             if (!in_array(env('APP_LAB'), [8]) && 
-                CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
-                auth()->user()->covid_consumption_allowed) {
+                CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty()) {
                 return false;
             }
         }
