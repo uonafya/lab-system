@@ -338,19 +338,19 @@ class CovidWorksheetController extends Controller
         $worksheet->load(['sample.patient']);
 
         $data = [];
-        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Run', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
         else{
-            $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
+            $data[] = ['Lab ID', 'Run', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
         }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
 
         foreach ($worksheet->sample as $sample) {
             if(in_array(env('APP_LAB'), [1,25])){
-                $data[] = [$sample->id, $sample->result_name, $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
             else{
-                $data[] = [$sample->id, $sample->result_name, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
         }
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
