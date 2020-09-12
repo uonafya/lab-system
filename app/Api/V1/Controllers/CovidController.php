@@ -8,9 +8,13 @@ use App\Api\V1\Requests\CovidRequest;
 use App\CovidModels\CovidPatient;
 use App\CovidModels\CovidSample;
 use App\CovidModels\CovidTravel;
+use App\CovidConsumption;
+use App\CovidKit;
+use App\CovidConsumptionDetail;
 use App\Facility;
 use App\ViewFacility;
 use App\CovidModels\Lab;
+use GuzzleHttp\Client;
 use DB;
 
 use App\CovidTestModels\CovidPatient as TestPatient;
@@ -449,6 +453,66 @@ class CovidController extends Controller
           'status' => 'ok',
           'samples' => $data,
         ], 200);
+    }
+
+    public function ku_consumption(CovidRequest $request)
+    {
+        $consumptions = json_decode($request->input('consumptions'));
+        $consumptions_array = [];
+        foreach ($consumptions as $key => $consumption) {
+            $consumption = (object) $consumption;
+            $existing = CovidConsumption::existing($consumption->start_of_week, $consumption->lab_id)->first();
+            if ($existing){
+                $consumptions_array[] = [
+                                    'original_id' => $consumption->id,
+                                    'national_id' => $existing->national_id ?? NULL
+                                ];
+                continue;
+            }
+                        
+            DB::beginTransaction();
+            try
+            {
+                // Inserting the covid consumptions
+                $db_consumption = new CovidConsumption;
+                $consumptions_data = get_object_vars($consumption);
+                $db_consumption->fill($consumptions_data);
+                unset($db_consumption->id);
+                unset($db_consumption->details);
+                $db_consumption->save();
+
+                // Inserting the covid details
+                foreach ($consumption->details as $key => $detail) {
+                    $detail = (object)$detail;
+                    if (null !== $detail->kit) {
+                        $detailKit = (object)$detail->kit;
+                        $kit = CovidKit::withTrashed()->where('material_no', $detailKit->material_no)->first();
+                        $db_detail = new CovidConsumptionDetail;
+                        $detail_data = get_object_vars($detail);
+                        $db_detail->fill($detail_data);
+                        $db_detail->consumption_id = $db_consumption->id;
+                        $db_detail->kit_id = $kit->material_no;
+                        unset($db_detail->id);
+                        unset($db_detail->kit);
+                        $save = $db_detail->save();
+                    }
+                }
+                DB::commit();               
+                $consumptions_array[] = [
+                                    'original_id' => $consumption->id,
+                                    'national_id' => $db_consumption->national_id ?? NULL
+                                ];
+            } catch (Exception $e) {
+                DB::rollback();
+                return response()->json([
+                        'error' => true,
+                        'message' => 'Insert failed: Unexpected error occured while inserting lab' . json_decode($request->input('lab')) . ' data.',
+                        'code' => 500,
+                        'detailed' => $e
+                    ], 500);
+            }
+        }
+        return response()->json($consumptions_array);
     }
 }
 

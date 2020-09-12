@@ -30,6 +30,7 @@ class Synch
 {
 	// public static $base = 'http://eiddash.nascop.org/api/';
 	public static $base = 'http://lab-2.test.nascop.org/api/';
+	public static $p3_base = 'https://kemrinairobi.nascop.org/api/';
 	// public static $cov_base = 'https://lab-covid19.health.go.ke/api';
 	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
@@ -1712,14 +1713,14 @@ class Synch
 	public static function synchCovidConsumption()
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		$today = date('Y-m-d');
-
 		$url = 'insert/covidconsumption';
-		
+		if (env('APP_LAB') == 23) {
+			$client = new Client(['base_uri' => self::$p3_base]);
+			$url = 'consumption/covid';
+		}
+
 		while (true) {
 			$consumptions = CovidConsumption::with(['details.kit'])->where('synced', 0)->get();
-			// $consumptions = CovidConsumption::with(['details.kit'])->get();
-			// dd($consumptions->toJson());
 			if($consumptions->isEmpty())
 				break;
 			
@@ -1734,11 +1735,10 @@ class Synch
 					'consumptions' => $consumptions->toJson(),
 					'lab' => env('APP_LAB')
 				],
-
 			]);
 			
 			$body = json_decode($response->getBody());
-			// print_r($body);
+			
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
@@ -1746,7 +1746,10 @@ class Synch
 			} else {
 				foreach ($body as $key => $consumption) {
 					$covidconsumption = CovidConsumption::find($consumption->original_id);
-					$covidconsumption->synchComplete();
+					if (null !== $consumption->national_id){
+						$covidconsumption->national_id = $consumption->national_id;
+						$covidconsumption->synchComplete();
+					}
 				}
 				return true;
 			}

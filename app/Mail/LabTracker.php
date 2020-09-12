@@ -22,19 +22,23 @@ class LabTracker extends Mailable
      */
     public function __construct($data)
     {
-        $this->path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+        // $this->path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+        $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
 
         if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
 
-        if(file_exists($this->path)) unlink($this->path);
+        // if(file_exists($this->path)) unlink($this->path);
+        if(file_exists($path)) unlink($path);
         
         $mpdf = new Mpdf();
-        $this->lab = \App\Lab::find(env('APP_LAB'));
-        $lab = $this->lab;
+        // $this->lab = \App\Lab::find(env('APP_LAB'));
+        $lab = \App\Lab::find(env('APP_LAB'));
+        // $lab = $this->lab;
         $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
         $view_data = view('exports.mpdf_labtracker', $pageData)->render();
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
+        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
 
         $this->title = strtoupper($this->lab->labname . ' monthly lab tracker for '. date("F", mktime(null, null, null, $data->month)) . ' ' .$data->year);
     }
