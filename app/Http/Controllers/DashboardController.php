@@ -394,8 +394,7 @@ class DashboardController extends Controller
             $model = DB::table('viralsamples_view');
 
         } elseif (session('testingSystem') == 'Covid') {
-            $model = DB::table('covid_samples')
-            ->where('covid_samples.flag', '=', 1);
+            $model = DB::table('covid_samples');
         } else {
             $model = DB::table('samples_view');
         }
