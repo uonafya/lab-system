@@ -161,6 +161,8 @@ class DashboardController extends Controller
     {
         $data = [];
         $current = session('testingSystem');
+        $table = 'samples_view';
+        if($current == 'Covid') $table = 'covid_samples';
 
         $tests = self::__getsamples_view()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
@@ -178,7 +180,7 @@ class DashboardController extends Controller
                                             ->whereRaw("YEAR(datereceived) = ".$year);
                             })->count();
         $received = self::__joinedToBatches()
-                            ->when($current, function ($query) use ($current, $year, $month) {
+                            ->when($current, function ($query) use ($current, $year, $month, $table) {
                                 if ($current == 'Viralload') {
                                     return $query->whereRaw("((parentid=0)||(parentid IS NULL))")
                                                 ->when($month, function($query) use ($month){
@@ -188,7 +190,7 @@ class DashboardController extends Controller
                                     return $query->whereRaw("YEAR(datereceived) = ".$year)
                                                 ->when($month, function($query) use ($month){
                                                     return $query->whereMonth('datereceived', $month);
-                                                })->whereRaw("((samples_view.parentid=0)||(samples_view.parentid IS NULL))");
+                                                })->whereRaw("(({$table}.parentid=0)||({$table}.parentid IS NULL))");
                                 }
                             })->count();
 
