@@ -397,8 +397,7 @@ class DashboardController extends Controller
             $model = DB::table('covid_samples')
             ->where('covid_samples.flag', '=', 1);
         } else {
-            $model = DB::table('samples_view')
-            ->where('samples_view.flag', '=', 1);
+            $model = DB::table('samples_view');
         }
             
             
@@ -411,7 +410,7 @@ class DashboardController extends Controller
         if(session('testingSystem') == 'Viralload'){
             $model = ViralsampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1);
         } elseif (session('testingSystem') == 'Covid') {
-            $model = CovidSample::where('flag', '=', 1);
+            $model = CovidSample::where('id', '>', 0);
 
         } else {
             $model = SampleView::where('flag', '=', 1);
@@ -427,7 +426,7 @@ class DashboardController extends Controller
         if (session('testingSystem') == 'Viralload'){
             $model = ViralsampleView::where('result', '<>', '');
         } elseif (session('testingSystem') == 'Covid'){
-            $model = CovidSample::where('flag', '=', 1);
+            $model = CovidSample::where('id', '>', 0);
         } else {
             $model = SampleView::where('flag', '=', 1);
         }
@@ -449,7 +448,7 @@ class DashboardController extends Controller
             $model = SampleView::where('flag', '=', 1);
             $table = 'samples_view';
         } else if (session('testingSystem') == 'Covid') {
-            $model = CovidSample::where('flag', '=', 1);
+            $model = CovidSample::where('id', '>', 0);
             $table = 'covid_samples';
             $sql = "AVG(tat1) as tat1, AVG(tat2) as tat2, AVG(tat3) as tat3, AVG(tat4) as tat4 ";
         }
