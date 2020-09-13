@@ -263,10 +263,12 @@
 		                			<td>Processing - Dispatch</td>
 		                			<td>{{ $lab_tat_stats->tat3 }} days</td>
 		                		</tr>
-		                		<tr>
-		                			<td>Receipt at Lab - Dispatch</td>
-		                			<td>{{ $lab_tat_stats->tat5 }} days</td>
-		                		</tr>
+                                @if(session('testingSystem') != 'Covid')
+    		                		<tr>
+    		                			<td>Receipt at Lab - Dispatch</td>
+    		                			<td>{{ $lab_tat_stats->tat5 }} days</td>
+    		                		</tr>
+                                @endif
 		                		<tr>
 		                			<td><strong>Collection at Facility - Dispatch</strong></td>
 		                			<td><strong>{{ $lab_tat_stats->tat4 }} days</strong></td>
