@@ -102,7 +102,8 @@ class CovidConsumptionController extends Controller
             }
         }
     	
-        if (CovidConsumption::where('start_of_week', '=', $time->week_start)->get()->isEmpty()) {
+        if (CovidConsumption::where('start_of_week', '=', $time->week_start)
+                    ->where('lab_id', env('APP_LAB'))->get()->isEmpty()) {
             // Start transaction!
             DB::beginTransaction();
 
@@ -129,8 +130,6 @@ class CovidConsumptionController extends Controller
                 DB::commit();
             } catch(\Exception $e) {
                 DB::rollback();
-                $message = ">> GL Data Deletion unsuccessful " . json_encode($e) . " "  . date('Y-m-d H:i:s') . "\n";
-                dd($message);
                 throw $e;
             }
         }
