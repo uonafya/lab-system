@@ -70,7 +70,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 15, 'name' => 'Burundian'],
 		]);
 
-		return;
+		// return;
 
     	
 		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
