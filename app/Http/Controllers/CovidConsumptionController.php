@@ -129,6 +129,8 @@ class CovidConsumptionController extends Controller
                 DB::commit();
             } catch(\Exception $e) {
                 DB::rollback();
+                $message = ">> GL Data Deletion unsuccessful " . json_encode($e) . " "  . date('Y-m-d H:i:s') . "\n";
+                dd($message);
                 throw $e;
             }
         }
