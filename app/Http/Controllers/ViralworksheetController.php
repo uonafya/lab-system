@@ -1013,7 +1013,7 @@ class ViralworksheetController extends Controller
                     $worksheet->lab_id = env('APP_LAB');
                     $worksheet->machine_type = $request->input('machine');
                     $worksheet->sampletype = $request->input('sampletype');
-                    $worksheet->createdby = $sample->batch->user_id ?? auth()->user()->user_id;
+                    $worksheet->createdby = $received_by;
                     $worksheet->sample_prep_lot_no = 44444;
                     $worksheet->bulklysis_lot_no = 44444;
                     $worksheet->control_lot_no = 44444;
