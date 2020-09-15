@@ -89,25 +89,11 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->save();
             }
 
-            $sample_count = $batch->sample->count();
+            $batch_sample_count = $batch->sample->count();
 
             $countItem -= 1;
-            if($counter == 10) {
-                if (!in_array($batch->id, $dataArray))
-                    $dataArray[] = $batch->id;
-                $batch->full_batch();
-                $batch = null;
-                $counter = 0;
-            } 
-
-            if ($countItem == 1) {
-                $sample_count = $batch->sample->count() ?? 0;
-                if ($sample_count != 10) {
-                    $batch->premature();
-                    if (!in_array($batch->id, $dataArray))
-                    	$dataArray[] = $batch->id;
-                }
-            }
+            if($batch_sample_count > 9) $batch->full_batch();
+            
        	}
         // 23327
         // 23328
