@@ -986,7 +986,7 @@ class ViralworksheetController extends Controller
 
             return view('forms.viralworksheetsexcel', $data)->with('pageTitle', 'Add Worksheet');
         } else {
-            $received_by = $request->input('received_by');
+            $received_by = $request->input('receivedby');
             $samples = Viralsample::with(['batch' => function($query) use ($received_by) {
                                     $query->where('received_by', $received_by);
                         }])->whereNull('worksheet_id')->orderBy('id','asc')->get();
