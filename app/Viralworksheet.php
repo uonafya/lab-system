@@ -124,4 +124,17 @@ class Viralworksheet extends BaseModel
     {
         return $query->where(['createdby' => $createdby, 'created_at' => $created_at]);
     }
+
+    public static function dump()
+    {
+        $batches = \App\Viralbatch::where('received_by', 80)->get();
+        foreach ($batches as $key => $batch) {
+            foreach ($batch->sample as $key => $sample) {
+                $worksheet = $sample->worksheet;
+                $worksheet->createdby = $batch->received_by;
+                $worksheet->save();
+            }
+        }
+        return true;
+    }
 }
