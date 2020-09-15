@@ -25,6 +25,14 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 		$this->receivedby = $request->input('receivedby');
 	}
 
+    /*$u = \App\User::where('email', 'like', 'joelkith%')->first();
+    $viralbatches = \App\Viralbatch::where('user_id', $u->id)->where('created_at', '>', date('Y-m-d'))->get();
+    $batch_ids = $viralbatches->pluck('id')->toArray();
+    \App\Viralsample::whereIn('batch_id', $batch_ids)->delete();
+    \App\Viralbatch::whereIn('id', $batch_ids)->delete();
+
+    $u = \App\User::where('email', 'like', 'joelkith%')->first(); $viralbatches = \App\Viralbatch::where('user_id', $u->id)->where('created_at', '>', date('Y-m-d'))->get(); $batch_ids = $viralbatches->pluck('id')->toArray(); \App\Viralsample::whereIn('batch_id', $batch_ids)->delete(); \App\Viralbatch::whereIn('id', $batch_ids)->delete();
+    */
     
     /**
     * @param Collection $collection
@@ -93,7 +101,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
             $countItem -= 1;
             if($batch_sample_count > 9) $batch->full_batch();
-            
+
        	}
         // 23327
         // 23328
