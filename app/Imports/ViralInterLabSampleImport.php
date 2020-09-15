@@ -54,11 +54,11 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             
             if ($existing){
                 $patient = $existing;
-            } else {            	
+            } else {            
                 $patient = new Viralpatient();
                 $patient->patient = $samplevalue['specimenclientcode'];
                 $patient->facility_id = $facility->id;
-                $patient->sex = $lookups['genders']->where('gender', $samplevalue['sex'])->first()->id;
+                $patient->sex = $lookups['genders']->where('gender', strtoupper($samplevalue['sex']))->first()->id;
                 $patient->dob = $dob;
                 // $patient->initiation_date = $initiation_date;
                 $patient->save();
@@ -70,9 +70,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             if (!(null !== $batch->id))
                 $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
 
-            // $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
+            $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
         
-            
+            if (!$existingSample) {
                 $sample = new Viralsample();
                 $sample->batch_id = $batch->id;
                 $sample->receivedstatus = $samplevalue['receivedstatus'];
@@ -84,10 +84,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->regimenline = $samplevalue['regimenline'];
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
                 $sample->justification = $lookups['justifications']->where('rank', $samplevalue['justification'])->first()->id ?? 8;
-                $sample->sampletype = $samplevalue['sampletype'];
-                
+                $sample->sampletype = $samplevalue['sampletype'];                
                 $sample->save();
-            
+            }
 
             $sample_count = $batch->sample->count();
 
@@ -109,6 +108,8 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 }
             }
        	}
+        // 23327
+        // 23328
        	// $file = 'public/worksheets/otherlab/SamplesUploadedFromOther' . date('YmdHis') . '.xlsx';
 
        	// Excel::store(new ViralInterLabSampleExport($dataArray), $file);
