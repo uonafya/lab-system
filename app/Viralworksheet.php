@@ -131,7 +131,9 @@ class Viralworksheet extends BaseModel
         $batches = Viralbatch::where('received_by', $getBakasa->id)->get();
         // Purge the samples
         if (!$batches->isEmpty()){
-            dd($batches);
+            foreach ($batches as $key => $batch) {
+                $samples = $batch->sample;
+            }
         }
 
         // if (!$batches->isEmpty()) {
