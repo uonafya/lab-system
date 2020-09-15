@@ -72,8 +72,12 @@ class Viralworksheet extends BaseModel
 
     public function getSampleTypeNameAttribute()
     {
-        if($this->sampletype == 1) return "DBS";
-        if($this->sampletype == 2) return "Plasma / EDTA";
+        // if($this->sampletype == 1) return "DBS";
+        // if($this->sampletype == 2) return "Plasma / EDTA";
+
+        if($this->sampletype == 1) return "Plasma";
+        if($this->sampletype == 2) return "EDTA";
+        if($this->sampletype == 3) return "DBS";
     }
 
     public function getDumpLinkAttribute()

@@ -25,9 +25,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group"><label class="col-sm-4 control-label">Excel to upload</label>
+                            <div class="form-group"><label class="col-sm-4 control-label">User to put samples under</label>
                                 <div class="col-sm-8">
-                                    <input type="file" name="excelupload" class="form-control">
+                                    <select name="receivedby" class="form-control">
+                                    @foreach($excelusers as $user)
+                                    <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                    @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-4 control-label">Platform to use</label>
+                                <div class="col-sm-8">
+                                    <select name="machine" class="form-control">
+                                    @foreach($machines as $machine)
+                                    <option value="{{ $machine->id }}">{!! $machine->output !!}</option>
+                                    @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
