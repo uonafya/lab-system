@@ -127,14 +127,24 @@ class Viralworksheet extends BaseModel
 
     public static function dump()
     {
-        $batches = \App\Viralbatch::where('received_by', 76)->get();
-        foreach ($batches as $key => $batch) {
-            foreach ($batch->sample as $key => $sample) {
-                $worksheet = $sample->worksheet;
-                $worksheet->createdby = $batch->received_by;
-                $worksheet->save();
-            }
+        $getBakasa = User::where('email', 'like', '%bakasa%')->first();
+        $batches = Viralbatch::where('received_by', $getBakasa->id)->get();
+        // Purge the samples
+        if (!$batches->isEmpty()){
+            dd($batches);
         }
+
+        // if (!$batches->isEmpty()) {
+        //    foreach ($batches as $key => $batch) {
+        //         $samples = $batch->sample
+        //         foreach ($batch->sample as $key => $sample) {
+        //             $worksheet = $sample->worksheet;
+        //             $worksheet->createdby = $batch->received_by;
+        //             $worksheet->save();
+        //         }
+        //     }
+        // }
+        
         return true;
     }
 }
