@@ -12,6 +12,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\ViralsampleView;
 use App\Viralsample;
+use App\Viralworksheet;
 use App\Exports\ViralInterLabSampleExport;
 use Carbon\Carbon;
 
@@ -45,6 +46,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         	$datereceived = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['datereceived']))->format('Y-m-d');
 
        		$counter++;
+            $sample_count = $counter % 100;
+            if($sample_count == 1) $worksheet = $this->createWorksheet($receivedby);
+
             $facility = Facility::where('facilitycode', '=', $samplevalue['mflcode'])->first();
             // if (!isset($facility)){
             //     $nofacility[] = $samplevalue;
@@ -80,7 +84,8 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->regimenline = $samplevalue['regimenline'];
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
                 $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
-                $sample->sampletype = $samplevalue['sampletype'];                
+                $sample->sampletype = $samplevalue['sampletype'];   
+                if($sample_count < 94) $sample->worksheet_id = $worksheet->id;             
                 $sample->save();
             }
 
@@ -152,5 +157,26 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $batch->facility_id = $facility->id;
         $batch->save();
         return $batch;
+    }
+
+    private function createWorksheet($receivedby)
+    {
+        $worksheet = new Viralworksheet();
+        $worksheet->lab_id = env('APP_LAB');
+        $worksheet->machine_type = 2;
+        $worksheet->sampletype = 2;
+        $worksheet->createdby = $received_by;
+        $worksheet->sample_prep_lot_no = 44444;
+        $worksheet->bulklysis_lot_no = 44444;
+        $worksheet->control_lot_no = 44444;
+        $worksheet->calibrator_lot_no = 44444;
+        $worksheet->amplification_kit_lot_no = 44444;
+        $worksheet->sampleprepexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->bulklysisexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->controlexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->save();
+        return $worksheet;
     }
 }
