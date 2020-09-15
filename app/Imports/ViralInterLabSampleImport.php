@@ -64,11 +64,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $patient->save();
             }
 
-            if ($counter == 1) 
-                $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
-
-            if (!(null !== $batch->id))
-                $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
+            $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
 
             $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
         
@@ -83,7 +79,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->datecollected = $datecollected;
                 $sample->regimenline = $samplevalue['regimenline'];
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
-                $sample->justification = $lookups['justifications']->where('rank', $samplevalue['justification'])->first()->id ?? 8;
+                $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
                 $sample->sampletype = $samplevalue['sampletype'];                
                 $sample->save();
             }
@@ -135,7 +131,18 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
     private function createBatch($facility, $patient, $datecollected, $receivedby, $datereceived)
     {
-        $batch = new Viralbatch();
+        $batch = Viralbatch::eligible($facility->id, $datereceived)->withCount(['sample'])->first();
+        if($batch && $batch->sample_count < 10){
+            unset($batch->sample_count);
+        }
+        else if($batch && $batch->sample_count > 9){
+            unset($batch->sample_count);
+            $batch->full_batch();
+            $batch = new Viralbatch;
+        }
+        else{
+            $batch = new Viralbatch;
+        }
         $batch->user_id = $receivedby;
         $batch->lab_id = env('APP_LAB');
         $batch->received_by = $receivedby;
