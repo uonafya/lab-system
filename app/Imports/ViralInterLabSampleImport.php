@@ -70,9 +70,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             if (!(null !== $batch->id))
                 $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
 
-            $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
+            // $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
         
-            if ($existingSample){
+            
                 $sample = new Viralsample();
                 $sample->batch_id = $batch->id;
                 $sample->receivedstatus = $samplevalue['receivedstatus'];
@@ -85,8 +85,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
                 $sample->justification = $lookups['justifications']->where('rank', $samplevalue['justification'])->first()->id ?? 8;
                 $sample->sampletype = $samplevalue['sampletype'];
+                
                 $sample->save();
-            }
+            
 
             $sample_count = $batch->sample->count();
 
