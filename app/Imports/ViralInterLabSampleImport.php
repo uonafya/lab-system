@@ -97,7 +97,6 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
             $batch_sample_count = $batch->sample->count();
 
-            $countItem -= 1;
             if($batch_sample_count > 9) $batch->full_batch();
 
        	}
