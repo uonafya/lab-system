@@ -136,6 +136,7 @@ class ViralsampleController extends Controller
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
             return view('forms.viralsamplesexcel', $data)->with('pageTitle', 'Add Sample');
         } else {
+            ini_set('memory_limit', '-1');
             $file = $request->excelupload->path();
             $path = $request->excelupload->store('public/samples/otherlab');
             $importclass = new ViralInterLabSampleImport($request);            

@@ -95,6 +95,7 @@ p.breakhere {page-break-before: always}
 		else if(in_array($labss, [5, 6, 9])) $envelope_logo = 'img/envelope_logos/ampath_cpgh_knh.jpg';
 		else if(in_array($labss, [2])) $envelope_logo = 'img/envelope_logos/cdc_kisumu.jpg';
 		else if(in_array($labss, [5])) $envelope_logo = 'img/envelope_logos/walter_reed.jpg';
+		else $envelope_logo = '';
 
 	?>
 
