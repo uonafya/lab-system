@@ -127,7 +127,7 @@ class Viralworksheet extends BaseModel
 
     public static function dump()
     {
-        $batches = \App\Viralbatch::where('received_by', 80)->get();
+        $batches = \App\Viralbatch::where('received_by', 76)->get();
         foreach ($batches as $key => $batch) {
             foreach ($batch->sample as $key => $sample) {
                 $worksheet = $sample->worksheet;
