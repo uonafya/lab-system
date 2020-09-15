@@ -133,6 +133,12 @@ class Viralworksheet extends BaseModel
         if (!$batches->isEmpty()){
             foreach ($batches as $key => $batch) {
                 $samples = $batch->sample;
+                if (!$samples->isEmpty()){
+                    foreach ($samples as $key => $sample) {
+                        $sample->delete();
+                    }
+                }
+                $batch->delete();
             }
         }
 
