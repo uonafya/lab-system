@@ -1052,7 +1052,7 @@ class ViralworksheetController extends Controller
             //     });
 
             // })->download('csv');
-            
+            session(['toast_message' => "The worksheets have been created."]);
             return back();
         }
     }
