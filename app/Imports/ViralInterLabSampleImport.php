@@ -45,6 +45,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
        	// $dataArray = [];
        	// $countItem = $collection->count();
        	$counter = 0;
+        $worksheet_counter = 0;
        	$receivedby = $this->receivedby;
 
        	foreach ($collection as $samplekey => $samplevalue) {
@@ -56,7 +57,10 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
        		$counter++;
             $sample_count = $counter % 100;
-            if($sample_count == 1) $worksheet = $this->createWorksheet($receivedby);
+            if($sample_count == 1){
+                $worksheet = $this->createWorksheet($receivedby);
+                $worksheet_counter = 0;
+            }
 
             $facility = Facility::where('facilitycode', '=', $samplevalue['mflcode'])->first();
 
@@ -78,7 +82,8 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
             $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
 
-            if($existingSample) dd($existingSample);
+            if($existingSample) continue;
+            $worksheet_counter++;
         
             $sample = new Viralsample();
             $sample->batch_id = $batch->id;
@@ -92,7 +97,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
             $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
             $sample->sampletype = $samplevalue['sampletype'];   
-            if($sample_count < 94) $sample->worksheet_id = $worksheet->id;             
+            if($worksheet_counter < 94) $sample->worksheet_id = $worksheet->id;             
             $sample->save();
 
             $batch_sample_count = $batch->sample->count();
