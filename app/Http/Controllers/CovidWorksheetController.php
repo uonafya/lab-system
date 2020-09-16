@@ -338,9 +338,9 @@ class CovidWorksheetController extends Controller
         $worksheet->load(['sample.patient']);
 
         $data = [];
-        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Run', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Run', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
         else{
-            $data[] = ['Lab ID', 'Run', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
+            $data[] = ['Lab ID', 'Result', 'Run', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
         }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
