@@ -1097,7 +1097,7 @@ class MiscViral extends Common
                 ];
 
             $response = $client->request('post', '', [
-                'debug' => true,
+                // 'debug' => true,
                 'http_errors' => false,
                 'verify' => false,
                 'json' => $post_data,
