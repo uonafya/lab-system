@@ -69,6 +69,7 @@ class TaskController extends Controller
             session(['range'=>$range, 'quarter'=>$quarter]);
             $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
             $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
+
         }
   //       $data['requisitions'] = count($this->getRequisitions());
         if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed){
@@ -82,6 +83,7 @@ class TaskController extends Controller
         $data['prevmonth'] = $this->previousMonth;
         $data['year'] = date('Y');
         $data['prevyear'] = $this->previousYear;
+        $data['allowed'] = $this->pendingTasks();
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }
