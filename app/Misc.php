@@ -542,4 +542,56 @@ class Misc extends Common
         // }
         // dd($found);        
     }
+
+    public static function getCovidConsumptionDailyReport()
+    {
+        \DB::table('test_dump')->truncate();
+        $consumptions = CovidConsumption::with('details')->get();
+        foreach ($consumptions as $key => $consumption) {
+            $plartform_test = json_decode($consumption->tests);
+            foreach ($plartform_test as $platformkey => $platform) {
+                $platform = (array)$platform;
+                $key = array_key_first($platform);
+                $machine = Machine::where('machine', $key)->first();
+                $week_tests = $platform[$machine->machine];
+                $worksheets = CovidWorksheet::/*with('sample')->*/where('machine_type', $machine->id)
+                                    ->whereRaw("`daterun` BETWEEN '{$consumption->start_of_week}' AND '{$consumption->end_of_week}'")->orderBy('daterun')->get();
+                
+                foreach ($worksheets as $worksheetkey => $worksheet) {
+                    $day_tests = $worksheet->sample->count();
+                    $kits = $consumption->details->first();
+                    $incoming = [
+                            'date' => $worksheet->daterun,
+                            'tests' => $day_tests,
+                            'platform' => $key,
+                            'begining_balance' => ($kits->begining_balance * ($day_tests/$week_tests)),
+                            'received' => ($kits->received * ($day_tests/$week_tests)),
+                            'kits_used' => ($kits->kits_used * ($day_tests/$week_tests)),
+                            'positive' => ($kits->positive * ($day_tests/$week_tests)),
+                            'negative' => ($kits->negative * ($day_tests/$week_tests)),
+                            'wastage' => ($kits->wastage * ($day_tests/$week_tests)),
+                            'ending' => ($kits->ending * ($day_tests/$week_tests)),
+                        ];
+                    $records = \DB::table('test_dump')->where('date', $worksheet->daterun)->get();
+                    if ($records->isEmpty()){
+                        \DB::table('test_dump')->insert($incoming);
+                    } else {
+                        $record = $records->first();
+                        \DB::table('test_dump')
+                        ->where('date', $record->date)
+                        ->update([
+                            'tests' => $record->tests += $incoming['tests'],
+                            'begining_balance' => $record->begining_balance += $incoming['begining_balance'],
+                            'received' => $record->received += $incoming['received'],
+                            'kits_used' => $record->kits_used += $incoming['kits_used'],
+                            'positive' => $record->positive += $incoming['positive'],
+                            'negative' => $record->negative += $incoming['negative'],
+                            'wastage' => $record->wastage += $incoming['wastage'],
+                            'ending' => $record->ending += $incoming['ending'],
+                        ]);
+                    }
+                }
+            }
+        }
+    }
 }
