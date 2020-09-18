@@ -42,6 +42,7 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
+        return true;
         if (auth()->user()->eidvl_consumption_allowed) {
             if (env('APP_LAB') != 23) {
                 $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
