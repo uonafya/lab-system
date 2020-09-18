@@ -1071,7 +1071,7 @@ class MiscViral extends Common
                     if($batch_id) return $query->where('batch_id', $batch_id);
                     return $query->where('created_at', '>', $min_date);
                 })
-                ->whereNull('receivedstatus')
+                // ->whereNull('receivedstatus')
                 ->get();
 
         $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
