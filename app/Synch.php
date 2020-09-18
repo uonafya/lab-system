@@ -646,6 +646,7 @@ class Synch
 	public static function synch_deletes($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
+		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
 		$today = date('Y-m-d');
 
 		$updates = self::$update_arrays[$type];
@@ -664,10 +665,13 @@ class Synch
 							            })->limit(20)->get();
 				if($models->isEmpty()) break;
 
+				$token = self::get_token();
+				if($type == 'covid' && env('APP_LAB') != 25) $token = self::get_covid_token();
+
 				$response = $client->request('post', $value['delete_url'], [
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer ' . self::get_token(),
+						'Authorization' => 'Bearer ' . $token,
 					],
 					'json' => [
 						$key => $models->toJson(),

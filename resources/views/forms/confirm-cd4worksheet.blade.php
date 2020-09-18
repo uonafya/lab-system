@@ -13,9 +13,20 @@
 	@endphp
 @endisset
 <div class="content">
+
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
+                <div class="panel-heading" style="margin-bottom: 0.5em;">
+                    Worksheet Summary 
+                    
+                    <div class="panel-tools">
+                        <a href="{{ url('/cd4/worksheet/cancel_upload/' . $data->worksheet->id) }} ">
+                            <button class="btn btn-danger">Cancel Upload</button>
+                        </a>
+                    </div>
+                    
+                </div>
                 <div class="panel-body">
                     <div class="row">
                                               

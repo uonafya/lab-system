@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::resource('uliza-twg', 'UlizaTwgController');
 	Route::get('uliza-review/create/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
+	Route::get('uliza-review/view/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
 	Route::resource('uliza-review', 'UlizaTwgFeedbackController');
 	Route::get('uliza/logout', 'UlizaUserController@logout');
 	Route::resource('uliza-user', 'UlizaUserController');
@@ -321,6 +322,7 @@ Route::middleware(['auth'])->group(function(){
 			
 			Route::prefix('worksheet')->name('worksheet.')->group(function(){
 				Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+				Route::get('cancel_upload/{worksheet}', 'Cd4WorksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
 				Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
 				Route::post('search', 'Cd4WorksheetController@search')->name('search');
@@ -330,6 +332,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 				Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
+				Route::group(['middleware' => ['utype:1']], function () {
+					Route::get('reverse_upload/{worksheet}', 'Cd4WorksheetController@reverse_upload')->name('reverse_upload');
+				});
 			});
 			Route::resource('worksheet', 'Cd4WorksheetController');
 		});

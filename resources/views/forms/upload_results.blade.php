@@ -37,7 +37,7 @@
 
         @if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type == 0)
 
-            @if(env('APP_LAB') == 25)
+            @if(env('APP_LAB') == 250)
             
             <div class="row">
                 <div class="col-lg-12">
@@ -176,7 +176,7 @@
                             </div>
 
 
-                            @if($worksheet->machine_type == 0 && env('APP_LAB') == 25)
+                            @if($worksheet->machine_type == 0 && env('APP_LAB') == 250)
                                 <div class="hr-line-dashed"></div>
 
                                 <div class="form-group">

@@ -26,6 +26,9 @@ $api->version('v1', function (Router $api) {
         $api->get('hello_nascop', 'RandomController@hello_nascop');
 
 
+        $api->post('vl/result', 'VlResultController@result');
+
+
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
             $api->get('protected', 'RandomController@protected_route');
 

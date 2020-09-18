@@ -529,7 +529,7 @@
                                             selected
                                         @endif
 
-                                        > {{ $justification->rank . ' ' . $justification->name }}
+                                        > {{ $justification->rank_id . ' ' . $justification->name }}
                                         </option>
                                     @endforeach
                                 </select>

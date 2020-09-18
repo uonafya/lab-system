@@ -197,7 +197,7 @@
                 @endif
             
             @elseif (session('testingSystem') == 'Covid')
-                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18,16]))
+                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18,16,25]))
                     <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
                     <hr />               
                 @endif
@@ -230,6 +230,8 @@
                 <hr />
                 @if(env('APP_LAB') != 7)
                     <li><a href="{{ url('viralsample/potential_dr') }}">Potential DR Patients List</a></li>
+                    <hr />
+                    <li><a href="{{ url('dr_extraction_worksheet/create/24') }}">Create Extraction Worksheet (24)</a></li>
                     <hr />
                 @endif
                 <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>

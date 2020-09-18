@@ -283,11 +283,13 @@
                                 <label> <input type="radio" name="types" value="remoteentry" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
                                 <label> <input type="radio" name="types" value="remoteentrydoing" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
                                 <label> <input type="radio" name="types" value="sitessupported" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
-                                @endif                                
+                                @endif
                                 <label> <input type="radio" name="types" value="tat" required> TAT Report </label>
                                 <label><input type="radio" name="types" value="failed" required> Failed Tests</label>
                                 @if(Auth::user()->user_type_id == 5)
                                 <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
+                                @else
+                                <label><input type="radio" name="types" value="worksheet_report" required> Worksheet Report</label>
                                 @endif
                                 @endif
                             </div>
@@ -396,7 +398,7 @@
                 }
 
                 @if(auth()->user()->is_lab_user)
-                if(category == '' || category == null || category == undefined) {
+                if((category == '' || category == null || category == undefined) && selValue != 'overall') {
                     e.preventDefault();
                     set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
                 }

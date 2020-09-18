@@ -383,7 +383,7 @@ class Lookup
     {
         self::cacher();       
         $my_array = Cache::get('iprophylaxis');       
-        return $my_array->where('rank', $val)->first()->id ?? 14;
+        return $my_array->where('rank_id', $val)->first()->id ?? 14;
     } 
 
 
@@ -391,7 +391,7 @@ class Lookup
     {
         self::cacher();       
         $my_array = Cache::get('interventions');   
-        if(is_numeric($val)) return $my_array->where('rank', $val)->first()->id ?? 7;   
+        if(is_numeric($val)) return $my_array->where('rank_id', $val)->first()->id ?? 7;   
         return $my_array->where('alias', $val)->first()->id ?? 7;
     } 
 
@@ -510,7 +510,7 @@ class Lookup
     {
         self::cacher();       
         $my_array = Cache::get('justifications');       
-        return $my_array->where('rank', $val)->first()->id ?? 8;
+        return $my_array->where('rank_id', $val)->first()->id ?? 8;
     }    
 
     public static function sample_type($val)
@@ -627,8 +627,8 @@ class Lookup
             // Eid Lookup Data
             $rejected_reasons = DB::table('rejectedreasons')->get();
             $feedings = DB::table('feedings')->get();
-            $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->orderBy('rank', 'asc')->get();
-            $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->orderBy('rank', 'asc')->get();
+            $iprophylaxis = DB::table('prophylaxis')->where(['ptype' => 2, 'flag' => 1])->orderBy('rank_id', 'asc')->get();
+            $interventions = DB::table('prophylaxis')->where(['ptype' => 1, 'flag' => 1])->orderBy('rank_id', 'asc')->get();
             $entry_points = DB::table('entry_points')->get();
             $hiv_statuses = DB::table('results')->whereNotIn('id', [3, 5])->get();
             $pcr_types = DB::table('pcrtype')->get();
@@ -638,7 +638,7 @@ class Lookup
             $viral_rejected_reasons = DB::table('viralrejectedreasons')->get();
             $pmtct_types = DB::table('viralpmtcttype')->get();
             $prophylaxis = DB::table('viralregimen')->get();
-            $justifications = DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
+            $justifications = DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
             $sample_types = DB::table('viralsampletype')->where('flag', 1)->get();
             // $regimen_lines = DB::table('viralregimenline')->where('flag', 1)->get();
             $vl_result_guidelines = DB::table('vlresultsguidelines')->get();

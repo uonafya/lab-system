@@ -23,6 +23,8 @@ use App\Imports\AmpathCovidImport;
 use App\Imports\AlupeCovidImport;
 use App\Imports\KNHCovidImport;
 use App\Imports\NairobiCovidImport;
+use App\Imports\KisumuCovidImport;
+use App\Imports\AmrefCovidImport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -584,6 +586,11 @@ class CovidSampleController extends Controller
             return back();
         }
 
+        if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
+            return back();
+        }
+
         if(in_array(env('APP_LAB'), [5, 3, 4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
             return back();
@@ -699,11 +706,13 @@ class CovidSampleController extends Controller
         $lab_id = auth()->user()->lab_id;
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
+        else if($lab_id == 2) $c = new KisumuCovidImport;
         else if($lab_id == 3) $c = new AlupeCovidImport;
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;
         else if($lab_id == 18 || $lab_id == 16) $c = new KemriWRPImport;
+        else if($lab_id == 25) $c = new AmrefCovidImport;
         Excel::import($c, $path);
 
         if(session('toast_error')) return back();

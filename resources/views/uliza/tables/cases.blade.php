@@ -33,7 +33,17 @@
                                     <td> {{ $form->facility->name }} </td>
                                     <td> {{ $form->get_prop_name($statuses, 'status_id') }} </td>
                         			<td> {{ $form->created_at }} </td>
-                        			<td> <a href="{{ url('uliza-review/create/' . $form->id) }} "><button class="btn btn-primary"> Process Feedback </button></a> </td>
+                        			<td> 
+                                        @if($form->status_id == 4)
+                                            <a href="{{ url('uliza-review/view/' . $form->id) }} ">
+                                                <button class="btn btn-success"> View Feedback </button>
+                                            </a> 
+                                        @else
+                                            <a href="{{ url('uliza-review/create/' . $form->id) }} ">
+                                                <button class="btn btn-primary"> Process Feedback </button>
+                                            </a> 
+                                        @endif
+                                    </td>
                         		</tr>
                         	@endforeach
                         </tbody>						

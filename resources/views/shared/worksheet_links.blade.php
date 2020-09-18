@@ -82,6 +82,12 @@
 		{!! $worksheet->dump_link !!}
 	@endif
 
+	@if($worksheet->route_name == 'covid_worksheet')
+		<a href="{{ url($worksheet->route_name . '/result_file/' . $worksheet->id) }}" title="Click to Download Worksheet Result File">
+			Results File
+		</a> | 
+	@endif
+
 	<a href="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}" title="Click to view Samples in this Worksheet" target='_blank'>
 		View Results
 	</a> | 

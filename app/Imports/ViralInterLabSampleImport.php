@@ -12,6 +12,7 @@ use App\Viralpatient;
 use App\Viralbatch;
 use App\ViralsampleView;
 use App\Viralsample;
+use App\Viralworksheet;
 use App\Exports\ViralInterLabSampleExport;
 use Carbon\Carbon;
 
@@ -45,6 +46,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         	$datereceived = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['datereceived']))->format('Y-m-d');
 
        		$counter++;
+            $sample_count = $counter % 100;
+            if($sample_count == 1) $worksheet = $this->createWorksheet($receivedby);
+
             $facility = Facility::where('facilitycode', '=', $samplevalue['mflcode'])->first();
             // if (!isset($facility)){
             //     $nofacility[] = $samplevalue;
@@ -64,11 +68,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $patient->save();
             }
 
-            if ($counter == 1) 
-                $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
-
-            if (!(null !== $batch->id))
-                $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
+            $batch = $this->createBatch($facility, $patient, $datecollected, $receivedby, $datereceived);
 
             $existingSample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
         
@@ -83,30 +83,17 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->datecollected = $datecollected;
                 $sample->regimenline = $samplevalue['regimenline'];
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
-                $sample->justification = $lookups['justifications']->where('rank', $samplevalue['justification'])->first()->id ?? 8;
-                $sample->sampletype = $samplevalue['sampletype'];                
+                $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
+                $sample->sampletype = $samplevalue['sampletype'];   
+                if($sample_count < 94) $sample->worksheet_id = $worksheet->id;             
                 $sample->save();
             }
 
-            $sample_count = $batch->sample->count();
+            $batch_sample_count = $batch->sample->count();
 
             $countItem -= 1;
-            if($counter == 10) {
-                if (!in_array($batch->id, $dataArray))
-                    $dataArray[] = $batch->id;
-                $batch->full_batch();
-                $batch = null;
-                $counter = 0;
-            } 
-
-            if ($countItem == 1) {
-                $sample_count = $batch->sample->count() ?? 0;
-                if ($sample_count != 10) {
-                    $batch->premature();
-                    if (!in_array($batch->id, $dataArray))
-                    	$dataArray[] = $batch->id;
-                }
-            }
+            if($batch_sample_count > 9) $batch->full_batch();
+            
        	}
         // 23327
         // 23328
@@ -136,7 +123,18 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
     private function createBatch($facility, $patient, $datecollected, $receivedby, $datereceived)
     {
-        $batch = new Viralbatch();
+        $batch = Viralbatch::eligible($facility->id, $datereceived)->withCount(['sample'])->first();
+        if($batch && $batch->sample_count < 10){
+            unset($batch->sample_count);
+        }
+        else if($batch && $batch->sample_count > 9){
+            unset($batch->sample_count);
+            $batch->full_batch();
+            $batch = new Viralbatch;
+        }
+        else{
+            $batch = new Viralbatch;
+        }
         $batch->user_id = $receivedby;
         $batch->lab_id = env('APP_LAB');
         $batch->received_by = $receivedby;
@@ -146,5 +144,26 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $batch->facility_id = $facility->id;
         $batch->save();
         return $batch;
+    }
+
+    private function createWorksheet($receivedby)
+    {
+        $worksheet = new Viralworksheet();
+        $worksheet->lab_id = env('APP_LAB');
+        $worksheet->machine_type = 2;
+        $worksheet->sampletype = 2;
+        $worksheet->createdby = $received_by;
+        $worksheet->sample_prep_lot_no = 44444;
+        $worksheet->bulklysis_lot_no = 44444;
+        $worksheet->control_lot_no = 44444;
+        $worksheet->calibrator_lot_no = 44444;
+        $worksheet->amplification_kit_lot_no = 44444;
+        $worksheet->sampleprepexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->bulklysisexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->controlexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        $worksheet->save();
+        return $worksheet;
     }
 }

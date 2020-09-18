@@ -60,6 +60,7 @@
                                     <th>Lab ID</th>
                                     @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
                                         <th> KEMRI ID </th>
+                                        <th> Patient Name </th>
                                     @endif
                                     <th>Run</th>
                                     <th>Result</th>                
@@ -172,6 +173,7 @@
                                         <td> {{ $sample->id }}  </td>
                                         @if(in_array(env('APP_LAB'), [1,25]) && isset($covid))
                                             <td> {{ $sample->kemri_id }} </td>
+                                            <td> {{ $sample->patient->patient_name }} </td>
                                         @endif
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->interpretation }} </td>

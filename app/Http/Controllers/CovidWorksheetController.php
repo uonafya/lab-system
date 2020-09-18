@@ -338,19 +338,19 @@ class CovidWorksheetController extends Controller
         $worksheet->load(['sample.patient']);
 
         $data = [];
-        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Run', 'Result', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
         else{
-            $data[] = ['Lab ID', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
+            $data[] = ['Lab ID', 'Run', 'Result', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
         }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
 
         foreach ($worksheet->sample as $sample) {
             if(in_array(env('APP_LAB'), [1,25])){
-                $data[] = [$sample->id, '', $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
             else{
-                $data[] = [$sample->id, '', $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
         }
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
@@ -468,7 +468,7 @@ class CovidWorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
-        $data['worksheet'] $worksheet->load(['creator']);
+        $data['worksheet'] = $worksheet->load(['creator']);
         $data['users'] = User::covidLabUser()->where(['lab_id' => auth()->user()->lab_id])->get();
         if(env('APP_LAB') == 25) $data['kit_types'] = \App\CovidKitType::all();
         return view('forms.upload_results', $data)->with('pageTitle', 'Worksheet Upload');
@@ -486,7 +486,7 @@ class CovidWorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/covid'); 
 
-        if($worksheet->machine_type == 0 && env('APP_LAB') == 25){
+        if($worksheet->machine_type == 0 && env('APP_LAB') == 250){
             $c = new CovidManualWorksheetImport($worksheet, $request);
             Excel::import($c, $path);
 
