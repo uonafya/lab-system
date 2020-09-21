@@ -319,8 +319,10 @@
                                     <th rowspan="2">Lab</th>
                                     @endif
                                     <th rowspan="2">CIF ID</th>
-                                    @if(in_array(env('APP_LAB'), [1,25]))
+                                    @if(in_array(env('APP_LAB'), [1]))
                                     <th rowspan="2">Kemri ID</th>
+                                    @elseif(in_array(env('APP_LAB'), [25]))
+                                    <th rowspan="2">AMREF ID</th>
                                     @endif
                                     <th rowspan="2">Patient Name</th>
                                     <th rowspan="2">Facility</th>

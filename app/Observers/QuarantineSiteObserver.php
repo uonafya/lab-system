@@ -19,13 +19,17 @@ class QuarantineSiteObserver
     {
         if($quarantineSite->email) $quarantineSite->email = str_replace(' ', '', $quarantineSite->email);
 
+        if(in_array(env('APP_LAB'), [25])) $client = new Client(['base_uri' => Synch::$base]);
+        else{
+            $client = new Client(['base_uri' => Synch::$cov_base]);
+        }
 
-        $client = new Client(['base_uri' => Synch::$cov_base]);
-
-        if(in_array(env('APP_LAB'), [1,2,3,6,25])){
+        if(in_array(env('APP_LAB'), [1,2,3,6])){
             $id = DB::connection('covid')->table('quarantine_sites')->insertGetId($quarantineSite->toArray());
             $quarantineSite->id = $id;
         }else{
+            $token = Synch::get_covid_token();
+            if(in_array(env('APP_LAB'), [25])) $token = Synch::get_token();
             $response = $client->request('post', 'quarantine_site', [
                 'headers' => [
                     'Accept' => 'application/json',

@@ -22,6 +22,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->first();
+        if(strlen($row->identifier) > 6) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
 
 
         if(!$p) $p = new CovidPatient;
