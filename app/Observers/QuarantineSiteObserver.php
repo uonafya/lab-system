@@ -41,10 +41,10 @@ class QuarantineSiteObserver
                     'lab_id' => env('APP_LAB', null),
                 ],
             ]);
-            if($response->getStatusCode() > 399) dd($response);
+            $body = json_decode($response->getBody());
+            if($response->getStatusCode() > 399) dd($body);
             
 
-            $body = json_decode($response->getBody());
 
             $quarantineSite->id = $body->id;
         }
