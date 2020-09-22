@@ -103,7 +103,7 @@
                         @endif
 
                         @if(auth()->user()->lab_id == 25 || (auth()->user()->lab_id == 1 && !auth()->user()->user_type_id))
-                            @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'KEMRI ID'])
+                            @include('partial.input', ['model' => $m, 'prop' => 'kemri_id', 'label' => 'AMREF ID'])
                         @endif
 
                         @include('partial.select', ['model' => $m, 'prop' => 'amrs_location', 'label' => '(*for Ampath Sites only) AMRS Location', 'items' => $amrslocations, 'form_class' => 'ampath-div'])
