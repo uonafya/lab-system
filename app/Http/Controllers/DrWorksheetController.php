@@ -253,7 +253,7 @@ class DrWorksheetController extends Controller
                 $data[] = [
                     'Sample Number' => $sample->mid,
                     'Patient CCC' => $sample->patient->patient,
-                    'Primer Label' = $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $date_created;
+                    'Primer Label' => $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $date_created,
                 ];
             }
             $row_key++;
