@@ -48,7 +48,7 @@ class NodeResultController extends BaseController
         $units = $request->input('units');
         $error = $request->input('test_error');
         $assay = strtolower($request->input('assay_name'));
-        $worksheet_id = strtolower($request->input('carrier_id'));
+        $worksheet_id = $request->input('carrier_id');
 
         if(Str::contains($assay, ['cov'])) $test_type = 'covid';
         else if(Str::contains($assay, ['hiv'])) $test_type = 'vl';

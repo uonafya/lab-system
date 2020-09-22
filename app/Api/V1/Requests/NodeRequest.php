@@ -9,7 +9,13 @@ class NodeRequest extends BaseRequest
 {
     public function authorize()
     {
-        return true;
+        $apikey = $this->headers->get('apikey');
+    	$apikey2 = $this->input('apikey');
+        $actual_key = env('NODE_API_KEY');
+    	if(($apikey != $actual_key && $apikey2 != $actual_key) || !$actual_key) return false;
+    	else{
+    		return true;
+    	} 
     }
 
     
