@@ -26,7 +26,7 @@ $api->version('v1', function (Router $api) {
         $api->get('hello_nascop', 'RandomController@hello_nascop');
 
 
-        $api->post('vl/result', 'VlResultController@result');
+        $api->post('node/result', 'NodeResultController@result');
 
 
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
@@ -35,6 +35,7 @@ $api->version('v1', function (Router $api) {
             $api->group(['middleware' => 'jwt.refresh'], function(Router $api) {
                 $api->get('refresh', 'RandomController@refresh_route');
             });
+
 
             $api->post('email', 'RandomController@email');
             $api->post('attachment', 'RandomController@attachment');
