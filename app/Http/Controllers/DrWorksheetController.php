@@ -233,6 +233,36 @@ class DrWorksheetController extends Controller
         return MiscDr::csv_download($data, $filename);
     }
 
+    public function abfiles(DrWorksheet $worksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['worksheet_id' => $worksheet->id])->get();
+        $primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
+        $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        $data = [];
+        $row_key = 0;
+        $column = 1;
+        $created_at = $worksheet->my_date_format('created_at', "Y-m-d");
+
+        foreach ($samples as $sample_key => $sample) {
+            if(!$rows[$row_key]){
+                $row_key = 0;
+                $column++;
+            }
+
+            foreach ($primers as $key => $primer) {
+                $data[] = [
+                    'Sample Number' => $sample->mid,
+                    'Patient CCC' => $sample->patient->patient,
+                    'Primer Label' = $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $date_created;
+                ];
+            }
+            $row_key++;
+        }
+        $filename = 'ab1_file_names_' . $worksheet->id;
+
+        return MiscDr::csv_download($data, $filename);
+    }
+
 
     public function upload(DrWorksheet $worksheet)
     {

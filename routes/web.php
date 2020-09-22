@@ -475,6 +475,7 @@ Route::middleware(['auth'])->group(function(){
 
 				// Download bulk template
 				Route::get('download/{worksheet}', 'DrWorksheetController@download')->name('download');
+				Route::get('abfiles/{worksheet}', 'DrWorksheetController@abfiles')->name('abfiles');
 
 			});
 			Route::resource('dr_worksheet', 'DrWorksheetController');

@@ -2,6 +2,10 @@
 	Download Bulk Template
 </a> | 
 <br />
+<a href="{{ url('dr_worksheet/abfiles/' . $worksheet->id) }}" title="Click to Download AB File Names">
+	Download AB Filenames
+</a> | 
+<br />
 
 @if($worksheet->status_id == 1)
 
