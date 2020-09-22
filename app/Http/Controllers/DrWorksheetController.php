@@ -62,7 +62,10 @@ class DrWorksheetController extends Controller
                         })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
-                        ->limit(16)
+                        ->when(true, function($query){
+                            if(env('APP_LAB') == 1) return $query; 
+                            return $query->limit(16);
+                        })
                         ->get();
 
         $data = Lookup::get_dr();
@@ -85,11 +88,15 @@ class DrWorksheetController extends Controller
         $limit = 16;
         $c = $request->input('control_samples');
         $extraction_worksheet_id = $request->input('extraction_worksheet_id');
+        $selected_samples = $request->input('samples');
         if($c) $limit = 14;
 
         $samples = DrSampleView::whereNull('worksheet_id')
                         ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
+                        ->when($selected_samples, function($query) use($selected_samples){
+                            return $query->whereIn('id', $selected_samples); 
+                        })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
                         ->limit($limit)
