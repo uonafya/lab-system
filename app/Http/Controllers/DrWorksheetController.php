@@ -57,7 +57,7 @@ class DrWorksheetController extends Controller
         $samples = DrSampleView::whereNull('worksheet_id')
                         ->where(['receivedstatus' => 1, 'control' => 0, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
-                        ->when($extraction_worksheet, function($query) use ($extraction_worksheet_id){
+                        ->when($extraction_worksheet_id, function($query) use ($extraction_worksheet_id){
                             return $query->where('extraction_worksheet_id', $extraction_worksheet_id);
                         })
                         ->orderBy('run', 'desc')
