@@ -244,7 +244,7 @@ class DrWorksheetController extends Controller
         $created_at = $worksheet->my_date_format('created_at', "Y-m-d");
 
         foreach ($samples as $sample_key => $sample) {
-            if(!$rows[$row_key]){
+            if(!isset($rows[$row_key])){
                 $row_key = 0;
                 $column++;
             }
