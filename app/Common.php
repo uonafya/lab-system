@@ -71,7 +71,6 @@ class Common
 	}
 
 
-
 	public static function csv_download($data, $file_name='page-data-export', $first_row=true, $save_file=false)
 	{
 		if(!$data) return;
