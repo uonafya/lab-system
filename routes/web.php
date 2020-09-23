@@ -20,12 +20,7 @@
     // return view('auth.login');
     // return view('emergency');
 // });
-Route::get('tested', function () {
-	// $str = '{"dateFormat":"dd/MM/yyyy","nowTime":"2020/09/12 12:19:51","page":{"pageCount":1,"pageNo":1,"pageSize":0,"totalSize":0},"records":[],"timeFormat":"dd/MM/yyyy HH24:mi:ss"}';
-	// echo("<pre>");print_r(base64_encode($str));
-	$str = "eyJkYXRlRm9ybWF0IjoiZGQvTU0veXl5eSIsIm5vd1RpbWUiOiIyMDIwLzA5LzA5IDIzOjI5OjI5IiwicGFnZSI6eyJwYWdlQ291bnQiOjAsInBhZ2VObyI6MSwicGFnZVNpemUiOjEwLCJ0b3RhbFNpemUiOjB9LCJyZWNvcmRzIjpbXSwidGltZUZvcm1hdCI6ImRkL01NL3l5eXkgSEgyNDptaTpzcyJ9";
-	echo("<pre>");print_r(base64_decode($str));
-});
+
 
 Route::get('testtracker', function(){
 	$year = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
