@@ -62,13 +62,11 @@ class Common
 	public static function api_limit()
 	{
 		$h = date('H');
-		// $time = 3;
 		if(env('APP_LAB') == 5){
 			if($h < 5 || $h > 19) return 10000;
 		}else{
-			if($h < 5 || $h > 20) return 10000;			
+			if($h < 5 || $h > 19) return 10000;			
 		}
-		// if($h < $time) return 10000;
 		return env('API_LIMIT', 30);
 	}
 
