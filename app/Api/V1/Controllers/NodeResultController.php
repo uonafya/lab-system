@@ -54,7 +54,7 @@ class NodeResultController extends BaseController
         else if(Str::contains($assay, ['hiv'])) $test_type = 'vl';
         else if(Str::contains($assay, ['qual'])) $test_type = 'eid';
 
-        if($test == 'vl'){
+        if($test_type == 'vl'){
             $result_array = MiscViral::sample_result($result, $error, $units);
             $worksheet = Viralworksheet::find($worksheet_id);
             if(!$worksheet) return $this->plate_not_found();
@@ -77,7 +77,7 @@ class NodeResultController extends BaseController
             return $this->sample_updated(Viralsample::class, $sample_id, $result_array, $worksheet_id, $datetested);
 
         }
-        else if($test == 'covid'){
+        else if($test_type == 'covid'){
             $result_array = MiscCovid::sample_result($result, $error);
             $worksheet = CovidWorksheet::find($worksheet_id);
             if(!$worksheet) return $this->plate_not_found();
@@ -98,7 +98,7 @@ class NodeResultController extends BaseController
             }
             return $this->sample_updated(CovidSample::class, $sample_id, $result_array, $worksheet_id, $datetested);
         }
-        else if($test == 'eid'){
+        else if($test_type == 'eid'){
             $result_array = Misc::sample_result($result, $error);
             $worksheet = Worksheet::find($worksheet_id);
 
