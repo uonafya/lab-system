@@ -31,19 +31,21 @@ class SampleController extends Controller
     {
         $user = auth()->user();
         $string = "1";
-        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-
+        if($user->user_type_id == 5) 
+            $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
         $data = Lookup::get_lookups();
 
         $samples = SampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->whereNull('result')->where(['receivedstatus' => 1]);
+                return $query->where(['receivedstatus' => 1]);
+                // return $query->whereNull('result')->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->paginate(50);
-
+        
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
@@ -138,8 +140,9 @@ class SampleController extends Controller
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
-        }     
-
+        }
+        
+        
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);

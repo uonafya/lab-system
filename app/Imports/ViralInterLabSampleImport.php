@@ -139,7 +139,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
     {
         $worksheet = new Viralworksheet();
         $worksheet->lab_id = env('APP_LAB');
-        $worksheet->machine_type = 2;
+        $worksheet->machine_type = 1;
         $worksheet->sampletype = 2;
         $worksheet->createdby = $receivedby;
         $worksheet->sample_prep_lot_no = 44444;
