@@ -59,6 +59,13 @@ class Common
 		],
 	];
 
+	public static function api_limit()
+	{
+		$h = date('H');
+		if($h < 3) return 10000;
+		return env('API_LIMIT', 30);
+	}
+
 
 
 	public static function csv_download($data, $file_name='page-data-export', $first_row=true, $save_file=false)
