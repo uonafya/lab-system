@@ -822,7 +822,9 @@ class WorksheetController extends Controller
         else if($status == 4 || $status == 5)
         {
             $d = "<a href='" . url('worksheet/' . $worksheet_id) . "' title='Click to View Cancelled Worksheet Details' target='_blank'>Details</a> ";
-
+        }
+        else{
+            $d = '';
         }
         return $d;
     }
