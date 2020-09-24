@@ -92,10 +92,13 @@ class DrWorksheetController extends Controller
         if($c) $limit = 14;
 
         $samples = DrSampleView::whereNull('worksheet_id')
-                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
                         ->when($selected_samples, function($query) use($selected_samples){
                             return $query->whereIn('id', $selected_samples); 
+                        })
+                        ->when($extraction_worksheet_id, function($query) use ($extraction_worksheet_id){
+                            return $query->where('extraction_worksheet_id', $extraction_worksheet_id);
                         })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
