@@ -41,8 +41,8 @@ class NodeResultController extends BaseController
             ], 400);
         }
         $sample_id = $request->input('sample_id');
-        $datetested = $request->input('test_datetime');
-        $datetested = date('Y-m-d', strtotime($datetested));
+        $datetested_unix_timestamp = $request->input('test_datetime');
+        $datetested = date('Y-m-d', $datetested_unix_timestamp);
         if($datetested == '1970-01-01') $datetested = date('Y-m-d');
         $result = $request->input('result');
         $units = $request->input('units');
