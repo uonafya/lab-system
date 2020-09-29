@@ -29,6 +29,11 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
         $mfl = (int) $row->mfl_code ?? null;
         $fac = Facility::locate($mfl)->first();
 
+        if( !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){        
+            return;
+        }
+
+
         $p->fill([
             'identifier' => $row->identifier ?? $row->national_id ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
