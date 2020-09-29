@@ -702,7 +702,7 @@ class CovidSampleController extends Controller
     {
         // if(env('APP_LAB') != 1) abort(403);
         $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
+        $path = $request->upload->storeAs('public/site_samples/covid', \Str::random(20) . '.' . $request->upload->extension());
         $lab_id = auth()->user()->lab_id;
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
