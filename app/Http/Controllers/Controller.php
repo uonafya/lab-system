@@ -69,11 +69,12 @@ class Controller extends BaseController
             $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
             
             if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                // return true;
-                dd('Lab tracker not submitted');
-            dd('Lab tracker submitted well well');
-            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
+
+            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                // return true;
+                dd('Lab equip tracker not submitted');
+            dd('Lab equip tracker submitted well well');
             
             if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
                 return true;
