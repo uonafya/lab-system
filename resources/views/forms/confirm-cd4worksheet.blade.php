@@ -13,9 +13,20 @@
 	@endphp
 @endisset
 <div class="content">
+
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
+                <div class="panel-heading" style="margin-bottom: 0.5em;">
+                    Worksheet Summary 
+                    
+                    <div class="panel-tools">
+                        <a href="{{ url('/cd4/worksheet/cancel_upload/' . $data->worksheet->id) }} ">
+                            <button class="btn btn-danger">Cancel Upload</button>
+                        </a>
+                    </div>
+                    
+                </div>
                 <div class="panel-body">
                     <div class="row">
                                               
@@ -145,12 +156,15 @@
                                         <select name="repeatt[]" class="form-control" style="width: 104px;">
                                             <option value='0' selected style='color:#339900'>Dispatch</option>
                                             <option value='1' style='color:#FFD324'>Rerun</option>
+                                            <option value='2' style='color:#ee5253'>Collect New Sample</option>
                                         </select>
                                     @else
                                         @if($sample->repeatt == 0)
                                             <strong><font color='#339900'> Dispatch </font></strong>
                                         @elseif($sample->repeatt == 1)
                                             <strong><font color='#FFD324'> Rerun </font></strong>
+                                        @elseif($sample->repeatt == 2)
+                                            <strong><font color='#ee5253'> Collect New Sample </font></strong>
                                         @endif
                                     @endif
                                     </td>

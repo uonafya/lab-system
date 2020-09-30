@@ -87,7 +87,7 @@ class ViralworksheetController extends Controller
         $data['machine_type'] = $machine_type;
         $data['calibration'] = $calibration;
         $data['limit'] = $limit;
-        $data['users'] = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+        $data['users'] = User::whereIn('user_type_id', [0, 1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
             ->whereRaw(" (
                 id IN 
                 (SELECT DISTINCT received_by FROM viralsamples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) 
@@ -981,31 +981,39 @@ class ViralworksheetController extends Controller
     public function exceluploadworksheet(Request $request) {
         if ($request->method() == "GET") {
             $data = Lookup::get_viral_lookups();
+            $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
+            $data['machines'] = \App\Machine::get();
 
             return view('forms.viralworksheetsexcel', $data)->with('pageTitle', 'Add Worksheet');
         } else {
-            $file = $request->excelupload->path();
-            $path = $request->excelupload->store('public/samples/otherlab/batches');
-            $excelData = Excel::load($file, function($reader){
-                $reader->toArray();
-            })->get();
+            $received_by = $request->input('receivedby');
+            $samples = Viralsample::with(['batch' => function($query) use ($received_by) {
+                                    $query->where('received_by', $received_by);
+                        }])->whereNull('worksheet_id')->orderBy('id','asc')->get();
 
-            $batches = collect($excelData->toArray())->first();
-            $samples = Viralsample::whereIn('batch_id', $batches)->orderBy('id','asc')->get();
-            $sample_count = $samples->count();
             
-            $dataArray = [];
-            $dataArray[] = ['Lab ID', 'Batch ID'];
+            // $file = $request->excelupload->path();
+            // $path = $request->excelupload->store('public/samples/otherlab/batches');
+            // $excelData = Excel::load($file, function($reader){
+            //     $reader->toArray();
+            // })->get();
+
+            // $batches = collect($excelData->toArray())->first();
+            // $samples = Viralsample::whereIn('batch_id', $batches)->orderBy('id','asc')->get();
+            $sample_count = $samples->count();
+            // dd($sample_count);
+            // $dataArray = [];
+            // $dataArray[] = ['Lab ID', 'Batch ID'];
             $worksheet = null;
             $counter = 0;
             foreach ($samples as $key => $sample) {
                 $counter++;
-                if (($counter == 1) && ($sample_count > 93)) {
+                if (($counter == 1)/* && ($sample_count > 93)*/) {
                     $worksheet = new Viralworksheet();
                     $worksheet->lab_id = env('APP_LAB');
-                    $worksheet->machine_type = 3;
+                    $worksheet->machine_type = $request->input('machine');
                     $worksheet->sampletype = $request->input('sampletype');
-                    $worksheet->createdby = $sample->batch->user_id;
+                    $worksheet->createdby = $received_by;
                     $worksheet->sample_prep_lot_no = 44444;
                     $worksheet->bulklysis_lot_no = 44444;
                     $worksheet->control_lot_no = 44444;
@@ -1018,13 +1026,14 @@ class ViralworksheetController extends Controller
                     $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
                     $worksheet->save();
                 }
+                $sample->worksheet_id = $worksheet->id;
+                $sample->save();
 
-                if ($sample_count > 93){
-                    $sample->worksheet_id = $worksheet->id;
-                    $sample->save();
-                }
-                else 
-                    $dataArray[] = ['id' => $sample->id, 'batch' => $sample->batch_id];
+                // if ($sample_count > 93){
+                    
+                // } else {
+                //     $dataArray[] = ['id' => $sample->id, 'batch' => $sample->batch_id];
+                // }
 
                 if ($counter == 93){
                     $worksheet = null;
@@ -1032,18 +1041,18 @@ class ViralworksheetController extends Controller
                     $counter = 0;
                 }
             }
-            $title = "EDARP Overflow samples";
-            Excel::create($title, function($excel) use ($dataArray, $title) {
-                $excel->setTitle($title);
-                $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-                $excel->setDescription($title);
+            // $title = "EDARP Overflow samples";
+            // Excel::create($title, function($excel) use ($dataArray, $title) {
+            //     $excel->setTitle($title);
+            //     $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+            //     $excel->setDescription($title);
 
-                $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
-                    $sheet->fromArray($dataArray, null, 'A1', false, false);
-                });
+            //     $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+            //         $sheet->fromArray($dataArray, null, 'A1', false, false);
+            //     });
 
-            })->download('csv');
-            
+            // })->download('csv');
+            session(['toast_message' => "The worksheets have been created."]);
             return back();
         }
     }

@@ -31,8 +31,9 @@ class SampleController extends Controller
     {
         $user = auth()->user();
         $string = "1";
-        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
-
+        if($user->user_type_id == 5) 
+            $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        
         $data = Lookup::get_lookups();
 
         $samples = SampleView::with(['facility'])
@@ -43,7 +44,7 @@ class SampleController extends Controller
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->paginate(50);
-
+        
         $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
@@ -138,8 +139,9 @@ class SampleController extends Controller
             session(['toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
             session(['toast_error' => 1]);
             return back();            
-        }     
-
+        }
+        
+        
         if(!$batch){
             $facility_id = $request->input('facility_id');
             $facility = Facility::find($facility_id);
@@ -1057,12 +1059,19 @@ class SampleController extends Controller
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        // $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
-        $samples = Sample::select('samples.id')
-            ->whereRaw("samples.id like '" . $search . "%'")
+        // $samples = Sample::select('samples.id')
+        //     ->whereRaw("samples.id like '" . $search . "%'")
+        //     ->when($facility_user, function($query) use ($string){
+        //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+        //     })
+        //     ->paginate(10);
+        $samples = SampleView::select('id')
+            ->whereRaw("id like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
-                return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+                return $query->whereRaw($string);
             })
             ->paginate(10);
 

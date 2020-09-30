@@ -369,7 +369,7 @@
                                             selected
                                         @endif
 
-                                        >{{ $ip->rank }} &nbsp; {{ $ip->name }}
+                                        >{{ $ip->rank_id }} &nbsp; {{ $ip->name }}
                                         </option>
                                     @endforeach
 

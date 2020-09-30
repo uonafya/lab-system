@@ -48,13 +48,13 @@ class TaskController extends Controller
 
     public function index() 
     {
-        if ($this->pendingTasks()) {
+        if (!$this->pendingTasks()) {
             // \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }
         // return redirect('/home');
-        if (env('APP_LAB') != 23 && auth()->user()->eidvl_consumption_allowed) {
+        if ($this->eligibleForEidVlConsumptions()) {
             $pendingDeliveries = $this->getDeliveries();
             $data['deliveries'] = $pendingDeliveries;
             if (empty($pendingDeliveries)){
@@ -69,9 +69,10 @@ class TaskController extends Controller
             session(['range'=>$range, 'quarter'=>$quarter]);
             $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
             $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
+
         }
   //       $data['requisitions'] = count($this->getRequisitions());
-        if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed){
+        if ($this->eligibleForCovidConsumptions()) {
             $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
@@ -82,6 +83,8 @@ class TaskController extends Controller
         $data['prevmonth'] = $this->previousMonth;
         $data['year'] = date('Y');
         $data['prevyear'] = $this->previousYear;
+        $data['allowedEIDVLConsumption'] = $this->eligibleForEidVlConsumptions();
+        $data['allowedCovidConsumption'] = $this->eligibleForCovidConsumptions();
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }

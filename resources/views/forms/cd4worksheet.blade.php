@@ -73,6 +73,9 @@
                                    <th> Received Dt. </th>
                                    <th> Reg Dt. </th>
                                    <th> Sampl Dt. </th>
+                                   <th> (Average) CD3+CD4+ %Lymph </th>
+                                   <th> (Average) CD3+CD4+ Abs Cnt </th>
+                                   <th> Action </th>
                                    <th> Tests </th>
                                 </tr>
                             </thead>
@@ -114,6 +117,17 @@
                                     <td>
                                         @if($sample->datetested) 
                                             {{ gmdate('d-M-Y', strtotime($sample->datetested)) }} 
+                                        @endif
+                                    </td>
+                                    <td>{{ $sample->AVGCD3CD4percentLymph ?? '' }}</td>
+                                    <td>{{ $sample->AVGCD3CD4AbsCnt ?? '' }}</td>
+                                    <td>
+                                        @if($sample->repeatt == 0)
+                                            <strong><font color='#339900'> Dispatch </font></strong>
+                                        @elseif($sample->repeatt == 1)
+                                            <strong><font color='#FFD324'> Rerun </font></strong>
+                                        @elseif($sample->repeatt == 2)
+                                            <strong><font color='#ee5253'> Collect New Sample </font></strong>
                                         @endif
                                     </td>
                                     <td>{{ __('CD3/CD4') }}</td>

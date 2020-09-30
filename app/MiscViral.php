@@ -243,10 +243,10 @@ class MiscViral extends Common
         return $samples;
     }
 
-    public static function sample_result($result, $error=null)
+    public static function sample_result($result, $error=null, $units="")
     {
         $str = strtolower($result);
-        $units="";
+        // $units="";
 
         if(\Str::contains($result, ['e+'])){
             return self::exponential_result($result);
@@ -297,15 +297,14 @@ class MiscViral extends Common
             else{
                 $x = preg_replace("/[^<0-9.]/", "", $result);
                 $res = round(pow(10, $x));
-                $units="cp/mL";                 
             }           
         }
 
         else{
             $res = preg_replace("/[^<0-9]/", "", $result);
             $interpretation = $result;
-            $units="cp/mL";
         }
+        if($units == "") $units="cp/mL";
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
@@ -1062,7 +1061,7 @@ class MiscViral extends Common
     {
         ini_set('memory_limit', "-1");
         $prophylaxis = \DB::table('viralregimen')->get();
-        $justifications = \DB::table('viraljustifications')->orderBy('rank', 'asc')->where('flag', 1)->get();
+        $justifications = \DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
 
         $min_date = date('Y-m-d', strtotime('-1 week'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -1092,13 +1091,13 @@ class MiscViral extends Common
                     'artinitiationdate' => $sample->initiation_date,
                     'prophylaxis' => $sample->get_prop_name($prophylaxis, 'prophylaxis', 'code'),
                     'regimenline' => 1,
-                    'justification' => $sample->get_prop_name($justifications, 'justification', 'rank'),
+                    'justification' => $sample->get_prop_name($justifications, 'justification', 'rank_id'),
                     'receivedstatus' => '',
                     'datedispatched' => null,
                 ];
 
             $response = $client->request('post', '', [
-                'debug' => true,
+                // 'debug' => true,
                 'http_errors' => false,
                 'verify' => false,
                 'json' => $post_data,

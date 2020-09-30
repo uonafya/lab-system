@@ -11,6 +11,8 @@ use App\Lookup;
 use App\MiscViral;
 use App\User;
 
+use App\Imports\ViralInterLabSampleImport;
+
 use Excel;
 
 use App\Http\Requests\ViralsampleRequest;
@@ -134,11 +136,15 @@ class ViralsampleController extends Controller
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
             return view('forms.viralsamplesexcel', $data)->with('pageTitle', 'Add Sample');
         } else {
-            // $file = $request->excelupload->path();
-            // $path = $request->excelupload->store('public/samples/otherlab');
+            ini_set('memory_limit', '-1');
+            $file = $request->excelupload->path();
+            $path = $request->excelupload->store('public/samples/otherlab');
+            $importclass = new ViralInterLabSampleImport($request);            
+            Excel::import($importclass, $path);
+
             // $batch = null;
             // $lookups = Lookup::get_viral_lookups();
-            // // dd($lookups);
+            // dd($lookups);
             // $excelData = Excel::load($file, function($reader){
             //     $reader->toArray();
             // })->get();
@@ -149,25 +155,25 @@ class ViralsampleController extends Controller
             // $counter = 0;
             // if (!$excelsheetvalue->isEmpty()){
             //     foreach ($excelsheetvalue as $samplekey => $samplevalue) {
-            //         $counter++;
-            //         $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
-            //         // if (!isset($facility)){
-            //         //     $nofacility[] = $samplevalue;
-            //         //     continue;
-            //         // }
-            //         $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
+            //         // $counter++;
+            //         // $facility = Facility::where('facilitycode', '=', $samplevalue[5])->first();
+            //         // // if (!isset($facility)){
+            //         // //     $nofacility[] = $samplevalue;
+            //         // //     continue;
+            //         // // }
+            //         // $existing = Viralpatient::existing($facility->id, $samplevalue[3])->first();
                     
-            //         if ($existing)
-            //             $patient = $existing;
-            //         else {
-            //             $patient = new Viralpatient();
-            //             $patient->patient = $samplevalue[3];
-            //             $patient->facility_id = $facility->id;
-            //             $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
-            //             $patient->dob = $samplevalue[9];
-            //             // $patient->initiation_date = $samplevalue[14];
-            //             $patient->save();
-            //         }
+            //         // if ($existing)
+            //         //     $patient = $existing;
+            //         // else {
+            //         //     $patient = new Viralpatient();
+            //         //     $patient->patient = $samplevalue[3];
+            //         //     $patient->facility_id = $facility->id;
+            //         //     $patient->sex = $lookups['genders']->where('gender', $samplevalue[6])->first()->id;
+            //         //     $patient->dob = $samplevalue[9];
+            //         //     // $patient->initiation_date = $samplevalue[14];
+            //         //     $patient->save();
+            //         // }
                     
             //         if ($counter == 1) {
             //             $batch = new Viralbatch();
@@ -219,35 +225,35 @@ class ViralsampleController extends Controller
             //         // echo "<pre>";print_r("Close Batch {$batch}");echo "</pre>"; // Close batch
             //     }
 
-            //     $file = 'EDARP Samples uploaded to KEMRI';
+                // $file = 'EDARP Samples uploaded to KEMRI';
 
-            //     Excel::create($file, function($excel) use($rows, $file){
-            //         $excel->setTitle($file);
-            //         $excel->setCreator('Joshua Bakasa')->setCompany($file);
-            //         $excel->setDescription($file);
+                // Excel::create($file, function($excel) use($rows, $file){
+                //     $excel->setTitle($file);
+                //     $excel->setCreator('Joshua Bakasa')->setCompany($file);
+                //     $excel->setDescription($file);
 
-            //         $excel->sheet('Sheetname', function($sheet) use($rows) {
-            //             $sheet->fromArray($rows);
-            //         });
-            //     })->store('csv');
+                //     $excel->sheet('Sheetname', function($sheet) use($rows) {
+                //         $sheet->fromArray($rows);
+                //     });
+                // })->store('csv');
 
-            //     $data = [storage_path("exports/" . $file . ".csv")];
+                // $data = [storage_path("exports/" . $file . ".csv")];
 
-            //     Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
+                // Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail($data));
 
-            //     // $title = "EDARP Samples uploaded to KEMRI";
-            //     // Excel::create($title, function($excel) use ($dataArray, $title) {
-            //     //     $excel->setTitle($title);
-            //     //     $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
-            //     //     $excel->setDescription($title);
+                // $title = "EDARP Samples uploaded to KEMRI";
+                // Excel::create($title, function($excel) use ($dataArray, $title) {
+                //     $excel->setTitle($title);
+                //     $excel->setCreator(Auth()->user()->surname.' '.Auth()->user()->oname)->setCompany('WJ Gilmore, LLC');
+                //     $excel->setDescription($title);
 
-            //     //     $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
-            //     //         $sheet->fromArray($dataArray, null, 'A1', false, false);
-            //     //     });
+                //     $excel->sheet('Sheet1', function($sheet) use ($dataArray) {
+                //         $sheet->fromArray($dataArray, null, 'A1', false, false);
+                //     });
 
-            //     // })->download('csv');
+                // })->download('csv');
             // }
-            // return back();
+            return back();
         }
         
     }
@@ -1207,12 +1213,12 @@ class ViralsampleController extends Controller
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        $string = "(viralbatches.facility_id='{$user->facility_id}' OR viralbatches.user_id='{$user->id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
-        $samples = Viralsample::select('viralsamples.id')
-            ->whereRaw("viralsamples.id like '" . $search . "%'")
+        $samples = ViralsampleView::select('id')
+            ->whereRaw("id like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
-                return $query->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')->whereRaw($string);
+                return $query->whereRaw($string);
             })
             ->paginate(10);
 

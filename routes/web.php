@@ -21,6 +21,22 @@
     // return view('emergency');
 // });
 
+
+Route::get('testtracker', function(){
+	$year = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+	$month = date('m', strtotime("-1 Month", strtotime(date('Y-m-d'))));
+	$lab = \App\Lab::find(env('APP_LAB'));
+	$data = \App\Random::__getLablogsData($year, $month);
+	$path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
+	if(!is_dir(storage_path("app/lablogs/"))) mkdir(storage_path("app/lablogs/"), 0777, true);
+    $mpdf = new Mpdf(['format' => 'A4-L']);
+    $view_data = view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => false])->render();
+    $mpdf->WriteHTML($view_data);
+    $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+	// dd($data);
+	return view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => true]);
+});
+
 Route::redirect('/', '/login');
 Route::redirect('/eid', '/login');
 Route::redirect('/knh', '/login');
@@ -301,6 +317,7 @@ Route::middleware(['auth'])->group(function(){
 			
 			Route::prefix('worksheet')->name('worksheet.')->group(function(){
 				Route::get('cancel/{worksheet}', 'Cd4WorksheetController@cancel')->name('cancel');
+				Route::get('cancel_upload/{worksheet}', 'Cd4WorksheetController@cancel_upload')->name('cancel_upload');
 				Route::get('confirm/{worksheet}', 'Cd4WorksheetController@confirm_upload')->name('confirm');
 				Route::put('save/{worksheet}', 'Cd4WorksheetController@save_upload');
 				Route::post('search', 'Cd4WorksheetController@search')->name('search');
@@ -310,6 +327,9 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('print/{worksheet}', 'Cd4WorksheetController@print')->name('print');
 				Route::get('upload/{worksheet}', 'Cd4WorksheetController@upload')->name('upload');
 				Route::put('upload/{worksheet}', 'Cd4WorksheetController@upload');
+				Route::group(['middleware' => ['utype:1']], function () {
+					Route::get('reverse_upload/{worksheet}', 'Cd4WorksheetController@reverse_upload')->name('reverse_upload');
+				});
 			});
 			Route::resource('worksheet', 'Cd4WorksheetController');
 		});

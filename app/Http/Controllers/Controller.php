@@ -40,45 +40,56 @@ class Controller extends BaseController
         return $column;
     }
 
+    public function eligibleForEidVlConsumptions()
+    {
+        if (!in_array(env('APP_LAB'), [23, 25])) {
+            if (auth()->user()->eidvl_consumption_allowed)
+                return true;
+            if (auth()->user()->user_type_id == 1 && date('d') > 9)
+                return true;
+        }
+        return false;
+    }
+
+    public function eligibleForCovidConsumptions()
+    {
+        if (!in_array(env('APP_LAB'), [8])) {
+            if (auth()->user()->covid_consumption_allowed)
+                return true;
+            if (auth()->user()->user_type_id == 1 && in_array(date('l', strtotime(date('Y-m-d'))), ['Thursday', 'Friday', 'Saturday', 'Sunday']))
+                return true;
+        }
+        return false;
+    }
+
     public function pendingTasks()
     {
-        if (auth()->user()->eidvl_consumption_allowed) {
-            if (env('APP_LAB') != 23) {
-                $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
-                $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
-                
-                if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                    return false;
-                
-                if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                    return false;
-                
-                if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-                    return false;
+        if ($this->eligibleForEidVlConsumptions()) {
+            $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
+            $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
+            
+            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return true;
+            
+            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return true;
+            
+            if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return true;
 
-                if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-                    return false;
-            }
+            if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return true;
         }
 
-        $check = false;
-        if (auth()->user()->covid_consumption_allowed)
-            $check = true;
-
-        if (in_array(date('l', strtotime(date('Y-m-d'))), ['Thursday', 'Friday', 'Saturday', 'Sunday']) && auth()->user()->user_type_id == 1)
-            $check = true;
-
-        if (auth()->user()->covid_consumption_allowed) {
+        
+        if ($this->eligibleForCovidConsumptions()) {
             $time = $this->getPreviousWeek();
-            $covidsubmittedstatus = 1;
-            if (!in_array(env('APP_LAB'), [8]) && 
-                CovidConsumption::whereDate('start_of_week', $time->week_start)->get()->isEmpty() && 
-                auth()->user()->covid_consumption_allowed) {
-                return false;
+            if (CovidConsumption::whereDate('start_of_week', $time->week_start)->where('lab_id', env('APP_LAB'))->get()->isEmpty()) {
+                return true;
             }
         }
         
-        return true;
+        return false;
     }
 
     protected function getPreviousWeek()

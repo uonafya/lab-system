@@ -110,6 +110,13 @@ class UsersTableSeeder extends Seeder
 	        'email' => 'poc@gmail.com',
     	]);
 
+        $users = factory(App\User::class, 1)->create([
+	        'user_type_id' => 0,
+	        'surname' => 'Orando',
+	        'oname' => 'Walter',
+	        'email' => 'walter.orando@dataposit.co.ke',
+    	]);
+
     	if (env('APP_LAB') == 7){
 	        $users = factory(App\User::class, 1)->create([
 		        'user_type_id' => 1,

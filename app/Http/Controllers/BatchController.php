@@ -962,7 +962,8 @@ class BatchController extends Controller
     public function search(Request $request)
     {
         $user = auth()->user();
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        // $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
         $search = $request->input('search');
         $batches = Batch::whereRaw("id like '" . $search . "%'")

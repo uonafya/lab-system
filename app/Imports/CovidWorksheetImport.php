@@ -131,7 +131,6 @@ class CovidWorksheetImport implements ToCollection
                 $res = strtolower($value[1]);
                 $result = [];
 
-
                 if(Str::contains($res, ['pos'])){
                     $result['result'] = 2;
                     // $sample->result = 2;

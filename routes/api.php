@@ -26,6 +26,9 @@ $api->version('v1', function (Router $api) {
         $api->get('hello_nascop', 'RandomController@hello_nascop');
 
 
+        $api->post('vl/result', 'VlResultController@result');
+
+
         $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
             $api->get('protected', 'RandomController@protected_route');
 
@@ -85,6 +88,10 @@ $api->version('v1', function (Router $api) {
 
         $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {
             $api->post('covid/cif_samples', 'CovidController@cif_samples');
+        });
+
+        $api->group(['prefix' => 'consumption'], function (Router $api) {
+            $api->post('covid', 'CovidController@ku_consumption');
         });
                 
         $api->resource('covid', 'CovidController');
