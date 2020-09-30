@@ -264,7 +264,10 @@ class MiscDr extends Common
 				}
 				else{
 					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					else{
+						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					}
 				}
 			}
 			if(!$abs) continue;

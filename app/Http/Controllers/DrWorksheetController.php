@@ -254,6 +254,7 @@ class DrWorksheetController extends Controller
 
             foreach ($primers as $key => $primer) {
                 $data[] = [
+                    'Lab ID' => $sample->id,
                     'Sample Number' => $sample->mid,
                     'Patient CCC' => $sample->patient->patient,
                     'Primer Label' => $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $created_at,
