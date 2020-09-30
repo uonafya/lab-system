@@ -38,8 +38,7 @@ class SampleController extends Controller
 
         $samples = SampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->where(['receivedstatus' => 1]);
-                // return $query->whereNull('result')->where(['receivedstatus' => 1]);
+                return $query->whereNull('result')->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
