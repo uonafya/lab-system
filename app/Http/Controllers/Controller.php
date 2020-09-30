@@ -74,6 +74,9 @@ class Controller extends BaseController
             if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
             
+            $model = new Deliveries;
+            $deliveries = $model->getMissingDeliveries();
+            dd($deliveries);
             if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
                 return true;
 
