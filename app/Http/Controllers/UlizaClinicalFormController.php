@@ -75,7 +75,7 @@ class UlizaClinicalFormController extends Controller
         if($form->draft){
             $user = \App\User::where('email', 'like', 'joel%')->first();
             $user->facility_email = $form->facility_email;
-            $user->notify(new UlizaNotification('uliza-form/' . $form->id . '/'));
+            $user->notify(new UlizaNotification('uliza-form/' . $form->id . '/edit'));
         }
 
         return response()->json(['status' => 'ok'], 201);

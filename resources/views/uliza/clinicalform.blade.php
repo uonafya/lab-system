@@ -485,6 +485,7 @@
         	methods: {
         		update(){
         			// console.log(this.myForm);
+        			$('.form-control').removeAttr("disabled");
         			var validator = $( "#myClinicalForm" ).validate();
 					this.successful_submission = validator.form();
 					// console.log(res);
@@ -535,7 +536,7 @@
         		saveDraft(){
         			$('.form-control').attr("disabled", "disabled");
         			$('.initial_fields').removeAttr("disabled");
-        			var validator = $( ".initial_fields" ).validate();
+        			var validator = $( "#myClinicalForm" ).validate();
 					this.successful_submission = validator.form();
 
 					if(!this.successful_submission) return;
