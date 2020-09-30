@@ -287,7 +287,6 @@ class DrWorksheetController extends Controller
         if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
 
-
         $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
         if($zip->open($file) === TRUE){

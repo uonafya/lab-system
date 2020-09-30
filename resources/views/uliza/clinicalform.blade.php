@@ -46,7 +46,7 @@
 							</div>
 						</div>
 						<div class="col-md-10">
-	                        <select class="form-control" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
+	                        <select class="form-control initial_fields" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
 	                        </select>						
 						</div>
 				    </div>
@@ -59,7 +59,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 						    </div>
-						    <input aria-describedby="cccno" class="form-control" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
+						    <input aria-describedby="cccno" class="form-control initial_fields" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
 						</div>
 						<div class="col-md-5 input-group required">
 							<div class="input-group-prepend">
@@ -68,7 +68,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input class="form-control date" v-model="myForm.reporting_date" name="reporting_date" required>
+							<input class="form-control date initial_fields" v-model="myForm.reporting_date" name="reporting_date" required>
 						</div>
 				    </div>
 				  
@@ -144,7 +144,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
+							<input aria-describedby="clinician_name" class="form-control initial_fields" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -162,7 +162,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_email" class="form-control" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
+							<input aria-describedby="facility_email" class="form-control initial_fields" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -174,7 +174,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_tel" class="form-control" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
+							<input aria-describedby="facility_tel" class="form-control initial_fields" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -426,8 +426,6 @@
 		
 	</div>
 
-
-
 @endsection
 
 @section('scripts')
@@ -469,6 +467,7 @@
         			drt_testing: null,
         			mdt_discussions: null,
         			mdt_members: null, 
+        			draft: null, 
         		},
         		clinicalVisit:{
         			clinicvisitdate: null,
@@ -490,6 +489,7 @@
 					this.successful_submission = validator.form();
 					// console.log(res);
 					if(!this.successful_submission) return;
+					this.myForm.draft = 0;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
@@ -497,9 +497,9 @@
 			            }
 					});*/
         			axios.post('/uliza-form', this.myForm).then(function(response){
-        				console.log(response);
+        				// console.log(response);
         			}).catch(function(error){
-        				console.log(error);
+        				// console.log(error);
         			});
         		},
         		addVisit(){
@@ -521,7 +521,7 @@
         			console.log(index);
         			this.myForm.clinical_visits.splice(index, 1);
         		},
-        		saveDraft(){
+        		/*saveDraft(){
 					const data = JSON.stringify(this.myForm)
 					const blob = new Blob([data], {type: 'text/plain'})
 					const e = document.createEvent('MouseEvents'),
@@ -531,6 +531,21 @@
 					a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
 					e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 					a.dispatchEvent(e);        			
+        		},*/
+        		saveDraft(){
+        			$('.form-control').attr("disabled", "disabled");
+        			$('.initial_fields').removeAttr("disabled");
+        			var validator = $( ".initial_fields" ).validate();
+					this.successful_submission = validator.form();
+
+					if(!this.successful_submission) return;
+					this.myForm.draft = 1;
+
+        			axios.post('/uliza-form', this.myForm).then(function(response){
+        				// console.log(response);
+        			}).catch(function(error){
+        				// console.log(error);
+        			});
         		},
         	},
         });

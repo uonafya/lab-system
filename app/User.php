@@ -73,6 +73,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function routeNotificationForMail($notification)
+    {
+        return $this->facility_email ?? $this->email;
+    }
+
 
     public function scopeLabUser($query)
     {
