@@ -299,7 +299,7 @@ class MiscDr extends Common
 			}
 			else{
 				// if(\Str::startsWith($file, $sample->mid . $primer)){
-				if(\Str::startsWith($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				if(\Str::startsWith($file, [$sample->mid . '-', $sample->mid . '_']) && \Str::contains($file, $primer))
 				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [
