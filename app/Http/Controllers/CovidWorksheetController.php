@@ -483,8 +483,12 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/covid'); 
+        // $file = $request->upload->path();
+        // $path = $request->upload->store('public/results/covid'); 
+
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
+        $path = $request->upload->storeAs('public/results/covid', $file_name); 
 
         if($worksheet->machine_type == 0 && env('APP_LAB') == 250){
             $c = new CovidManualWorksheetImport($worksheet, $request);
