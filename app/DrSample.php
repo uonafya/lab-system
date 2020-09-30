@@ -173,6 +173,7 @@ class DrSample extends BaseModel
     // Used when sending samples to sanger
     public function getMidAttribute()
     {
+        if(env('APP_LAB') == 1) return $this->patient->patient;
         return env('DR_PREFIX') . $this->id;
     }
 
