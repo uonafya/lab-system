@@ -74,13 +74,11 @@ class Controller extends BaseController
             if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
             
-            // if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-            //     return true;
+            if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return true;
 
             if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
-                // return true;
-                dd('Consumption not submitted');
-            dd('Consumption submitted well well');
+                return true;
         }
 
         
