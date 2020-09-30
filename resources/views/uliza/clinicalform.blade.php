@@ -189,7 +189,7 @@
 					<div class="form-row mb-3">
 						@foreach($reasons as $reason)
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" v-model="myForm.primary_reason" name="primary_reason" required="required" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
+								<input class="form-check-input ml-1 requirable" v-model="myForm.primary_reason" name="primary_reason requirable" required="required" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
 								<label class="form-check-label ml-5" for="primary_reason_A{{ $reason->id }}">{{ $reason->name }}</label>
 							</div>
 						@endforeach
@@ -277,7 +277,7 @@
 							<div style='color: #ff0000; display: inline;'>*</div>
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
+							<input class="form-control requirable" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
 						</div>
 					</div>
 				  
@@ -485,7 +485,8 @@
         	methods: {
         		update(){
         			// console.log(this.myForm);
-        			$('.form-control').removeAttr("disabled");
+        			// $('.form-control').removeAttr("disabled");
+        			$('requirable').attr('required', 'required');
         			var validator = $( "#myClinicalForm" ).validate();
 					this.successful_submission = validator.form();
 					// console.log(res);
@@ -534,8 +535,8 @@
 					a.dispatchEvent(e);        			
         		},*/
         		saveDraft(){
-        			$('.form-control').attr("disabled", "disabled");
-        			$('.initial_fields').removeAttr("disabled");
+        			// $('.form-control').attr("disabled", "disabled");
+        			$('requirable').removeAttr("required");
         			var validator = $( "#myClinicalForm" ).validate();
 					this.successful_submission = validator.form();
 
