@@ -86,7 +86,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date" v-model="myForm.dob" name="dob" required>
+									<input class="form-control date initial_fields" v-model="myForm.dob" name="dob" required>
 								</div>
 								<div class="col-md-6 input-group required">
 									<div class="input-group-prepend">
@@ -95,7 +95,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date" v-model="myForm.artstart_date" name="artstart_date" required>
+									<input class="form-control date initial_fields" v-model="myForm.artstart_date" name="artstart_date" required>
 								</div>
 							</div>
 					  
