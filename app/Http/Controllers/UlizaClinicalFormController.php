@@ -27,6 +27,7 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
         })
+        ->where('draft', false)
         ->get();
         return view('uliza.tables.cases', compact('forms', 'statuses'));
     }
