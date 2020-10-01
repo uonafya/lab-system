@@ -183,7 +183,11 @@ class MiscDr extends Common
 
 				if(env('APP_LAB') == 1){
 					$patient = \App\Viralpatient::where('patient', $value->sample_name)->first();
-					$sample = $patient->dr_sample()->where('receivedstatus', 1)->first();
+					$sample = $patient->dr_sample()->first();
+					if(!$sample){
+						echo 'Cannot find ' . $value->sample_name;
+						continue;
+					}
 					$sample->exatype_id = $value->id;
 					$sample->save();
 				}
@@ -195,7 +199,7 @@ class MiscDr extends Common
 				}
 			}
 			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
-			return true;
+			return $body;
 		}
 		else{
 			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
