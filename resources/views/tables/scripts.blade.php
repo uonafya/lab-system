@@ -45,7 +45,7 @@
                 {extend: 'copy',className: 'btn-sm'},
                 {extend: 'csv',title: 'Download', className: 'btn-sm'},
                 {extend: 'pdf', title: 'Download', className: 'btn-sm'},
-                {extend: 'print',className: 'btn-sm'}
+                // {extend: 'print',className: 'btn-sm'}
             ]
         });
 
@@ -56,9 +56,10 @@
 
         // DataTable
         var table = $('.multi-filter').DataTable({
-            dom: '<"btn"B>lTfgtip',
+            // dom: '<"btn"B>lTfgtip',
             responsive: true,
-            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            // "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            
             initComplete: function () {
                 // Apply the search
                 this.api().columns().every( function () {
