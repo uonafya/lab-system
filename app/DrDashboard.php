@@ -45,7 +45,7 @@ class DrDashboard
 		$groupby = session('filter_groupby', 2);
 		if($groupby > 9){
 			if($groupby == 11) return 'Year ' . $row->year;
-			if($groupby == 12) return self::resolve_month($row->month) . ', ' . $row->year;
+			if($groupby == 12) return self::resolve_month($row->month) . ', ' . $row->year . ' ' . $row->month;
 		}
 		else{
 			return $row->name ?? '';
