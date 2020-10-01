@@ -6,23 +6,6 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
 
-use App\Common;
-
-use App\DrWorksheet;
-use App\DrBulkRegistration;
-
-use App\DrSample;
-use App\DrSampleView;
-
-use App\DrWorksheetWarning;
-use App\DrWarning;
-
-use App\DrCall;
-use App\DrCallDrug;
-
-use App\DrGenotype;
-use App\DrResidue;
-
 class MiscDr extends Common
 {
 
@@ -197,10 +180,19 @@ class MiscDr extends Common
 			$worksheet->save();
 
 			foreach ($body->data->attributes->samples as $key => $value) {
-				$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
-				$sample = DrSample::find($sample_id);
-				$sample->exatype_id = $value->id;
-				$sample->save();
+
+				if(env('APP_LAB') == 1){
+					$patient = \App\Viralpatient::where('patient', $value->sample_name)->first();
+					$sample = $patient->dr_sample()->where('receivedstatus', 1)->first();
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
+				else{
+					$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
+					$sample = DrSample::find($sample_id);
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
 			}
 			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
 			return true;

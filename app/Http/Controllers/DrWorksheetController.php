@@ -365,7 +365,6 @@ class DrWorksheetController extends Controller
     }
 
 
-
     public function approve(Request $request, DrWorksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
