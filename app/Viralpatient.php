@@ -13,6 +13,11 @@ class Viralpatient extends BaseModel
     	return $this->hasMany('App\Viralsample', 'patient_id');
     }
 
+    public function dr_sample()
+    {
+        return $this->hasMany('App\DrSample', 'patient_id');
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');

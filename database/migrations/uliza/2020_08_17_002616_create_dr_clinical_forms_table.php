@@ -30,7 +30,7 @@ class CreateDrClinicalFormsTable extends Migration
             $table->string('clinician_name');
             $table->string('facility_email');
             $table->string('facility_tel');
-            $table->tinyInteger('primary_reason');
+            $table->tinyInteger('primary_reason')->nullable();
             $table->text('clinical_eval')->nullable();
             $table->tinyInteger('no_adherance_counseling')->nullable();
             $table->tinyInteger('no_homevisits')->nullable();

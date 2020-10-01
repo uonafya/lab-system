@@ -6,23 +6,6 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
 
-use App\Common;
-
-use App\DrWorksheet;
-use App\DrBulkRegistration;
-
-use App\DrSample;
-use App\DrSampleView;
-
-use App\DrWorksheetWarning;
-use App\DrWarning;
-
-use App\DrCall;
-use App\DrCallDrug;
-
-use App\DrGenotype;
-use App\DrResidue;
-
 class MiscDr extends Common
 {
 
@@ -197,13 +180,28 @@ class MiscDr extends Common
 			$worksheet->save();
 
 			foreach ($body->data->attributes->samples as $key => $value) {
-				$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
-				$sample = DrSample::find($sample_id);
-				$sample->exatype_id = $value->id;
-				$sample->save();
+
+				if(env('APP_LAB') == 1){
+					$patient = \App\Viralpatient::where('patient', $value->sample_name)
+						->whereRaw("id IN (SELECT patient_id FROM dr_samples WHERE worksheet_id={$worksheet->id})")
+						->first();
+					$sample = $patient->dr_sample()->first();
+					if(!$sample){
+						echo 'Cannot find ' . $value->sample_name . "\n";
+						continue;
+					}
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
+				else{
+					$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
+					$sample = DrSample::find($sample_id);
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
 			}
 			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
-			return true;
+			return $body;
 		}
 		else{
 			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
@@ -264,7 +262,10 @@ class MiscDr extends Common
 				}
 				else{
 					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					else{
+						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					}
 				}
 			}
 			if(!$abs) continue;
@@ -296,7 +297,7 @@ class MiscDr extends Common
 			}
 			else{
 				// if(\Str::startsWith($file, $sample->mid . $primer)){
-				if(\Str::startsWith($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				if(\Str::startsWith($file, [$sample->mid . '-', $sample->mid . '_']) && \Str::contains($file, $primer))
 				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [

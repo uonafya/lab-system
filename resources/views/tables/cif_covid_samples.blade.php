@@ -22,7 +22,7 @@
                         <form  method="post" action="{{ url('covid_sample/cif/') }}" onsubmit="return confirm('Are you sure you want to import the selected samples?');">
                             @csrf
 
-                            <table class="table table-striped table-bordered table-hover data-table" >
+                            <table class="table table-striped table-bordered table-hover multi-filter" >
                                 <thead>
                                     <tr class="colhead">
                                         <th> # </th>
@@ -60,6 +60,22 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th> # </th>
+                                        <th> Border Point </th>
+                                        <th> CIF ID </th>
+                                        <th> Identifier </th>
+                                        <th> National ID </th>
+                                        <th> County </th>
+                                        <th> Name </th>
+                                        <th> DOB </th>
+                                        <th> Age </th>
+                                        <th> Date Collected </th>
+                                        <th> Select Sample </th>
+                                    </tr>
+                                    
+                                </tfoot>
                             </table>
 
                             <button type="submit" class="btn btn-primary">Pull Samples</button>

@@ -41,8 +41,8 @@ class NodeResultController extends BaseController
             ], 400);
         }
         $sample_id = $request->input('sample_id');
-        $datetested = $request->input('test_datetime');
-        $datetested = date('Y-m-d', strtotime($datetested));
+        $datetested_unix_timestamp = $request->input('test_datetime');
+        $datetested = date('Y-m-d', $datetested_unix_timestamp);
         if($datetested == '1970-01-01') $datetested = date('Y-m-d');
         $result = $request->input('result');
         $units = $request->input('units');
@@ -64,7 +64,7 @@ class NodeResultController extends BaseController
                     $worksheet->neg_control_interpretation = $result_array['interpretation']; 
                     $worksheet->neg_units = $result_array['units']; 
                 }else if($sample_id == "HIV_HIPOS"){
-                    $highpos_control_result = $result_array['result'];
+                    $worksheet->highpos_control_result = $result_array['result'];
                     $worksheet->highpos_control_interpretation = $result_array['interpretation'];
                     $worksheet->hpc_units = $result_array['units'];
                 }else if($sample_id == "HIV_LOPOS"){
@@ -131,6 +131,14 @@ class NodeResultController extends BaseController
         ], 404);        
     }
 
+    private function plate_already_approved()
+    {
+        return response()->json([
+          'status' => 'not ok',
+          'message' => 'Plate has already been approved',
+        ], 400);
+    }
+
     private function sample_not_found()
     {
         return response()->json([
@@ -157,10 +165,11 @@ class NodeResultController extends BaseController
 
     private function plate_control_updated($worksheet, $datetested)
     {
+        if($worksheet->datereviewed) return $this->plate_already_approved();
         $worksheet->dateuploaded = date('Y-m-d');
         $worksheet->daterun = $datetested;
         $worksheet->status_id = 2;
-        $worksheet->save();
+        $worksheet->pre_update();
 
         return response()->json([
           'status' => 'ok',
@@ -177,7 +186,7 @@ class NodeResultController extends BaseController
         $sample->fill($result_array);
         $sample->datemodified = date('Y-m-d');
         $sample->datetested = $datetested;
-        $sample->save();
+        $sample->pre_update();
 
         return response()->json([
           'status' => 'ok',

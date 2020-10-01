@@ -483,8 +483,12 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/covid'); 
+        // $file = $request->upload->path();
+        // $path = $request->upload->store('public/results/covid'); 
+
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
+        $path = $request->upload->storeAs('public/results/covid', $file_name); 
 
         if($worksheet->machine_type == 0 && env('APP_LAB') == 250){
             $c = new CovidManualWorksheetImport($worksheet, $request);
@@ -595,8 +599,8 @@ class CovidWorksheetController extends Controller
             return redirect($worksheet->route_name);                        
         }
 
-        if(env('APP_LAB') == 5 && $worksheet->reviewedby && !auth()->user()->covid_approver){
-            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+        if(in_array(env('APP_LAB'), [5, 25]) && $worksheet->reviewedby && !auth()->user()->covid_approver){
+            session(['toast_message' => "You are not permitted to approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);
         }
 

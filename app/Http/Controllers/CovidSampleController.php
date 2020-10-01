@@ -701,8 +701,13 @@ class CovidSampleController extends Controller
     public function upload_lab_samples(Request $request)
     {
         // if(env('APP_LAB') != 1) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
+        // $file = $request->upload->path();
+        // $path_one = $request->upload->store('public/site_samples/covid');
+        
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
+        $path = $request->upload->storeAs('public/site_samples/covid', $file_name); 
+
         $lab_id = auth()->user()->lab_id;
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\UlizaNotification;
 use App\UlizaClinicalForm;
 use App\UlizaClinicalVisit;
 use App\UlizaTwg;
@@ -26,6 +27,7 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
         })
+        ->where('draft', false)
         ->get();
         return view('uliza.tables.cases', compact('forms', 'statuses'));
     }
@@ -70,6 +72,13 @@ class UlizaClinicalFormController extends Controller
             // $visit->save();
             $form->visit()->save($visit);
         }
+
+        if($form->draft){
+            $user = \App\User::where('email', 'like', 'joel%')->first();
+            $user->facility_email = $form->facility_email;
+            $user->notify(new UlizaNotification('uliza-form/' . $form->id . '/edit'));
+        }
+
         return response()->json(['status' => 'ok'], 201);
     }
 

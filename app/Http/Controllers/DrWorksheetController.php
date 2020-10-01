@@ -92,10 +92,13 @@ class DrWorksheetController extends Controller
         if($c) $limit = 14;
 
         $samples = DrSampleView::whereNull('worksheet_id')
-                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
                         ->when($selected_samples, function($query) use($selected_samples){
                             return $query->whereIn('id', $selected_samples); 
+                        })
+                        ->when($extraction_worksheet_id, function($query) use ($extraction_worksheet_id){
+                            return $query->where('extraction_worksheet_id', $extraction_worksheet_id);
                         })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
@@ -251,6 +254,7 @@ class DrWorksheetController extends Controller
 
             foreach ($primers as $key => $primer) {
                 $data[] = [
+                    'Lab ID' => $sample->id,
                     'Sample Number' => $sample->mid,
                     'Patient CCC' => $sample->patient->patient,
                     'Primer Label' => $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $created_at,
@@ -282,7 +286,6 @@ class DrWorksheetController extends Controller
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
-
 
         $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
@@ -360,7 +363,6 @@ class DrWorksheetController extends Controller
         $data['worksheet'] = $worksheet;
         return view('tables.confirm_dr_results', $data);
     }
-
 
 
     public function approve(Request $request, DrWorksheet $worksheet)

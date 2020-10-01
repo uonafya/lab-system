@@ -274,7 +274,7 @@ class MiscViral extends Common
             $res= "> 10,000,000 cp/ml";
             $interpretation= $result;       
         }
-        else if(\Str::contains($str, ['not detected']))
+        else if(\Str::contains($str, ['not detected', 'target not', 'ldl', 'tnd']))
         {
             // $res="Target Not Detected";
             $res= "< LDL copies/ml";
