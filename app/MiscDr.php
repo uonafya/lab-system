@@ -185,7 +185,7 @@ class MiscDr extends Common
 					$patient = \App\Viralpatient::where('patient', $value->sample_name)->first();
 					$sample = $patient->dr_sample()->first();
 					if(!$sample){
-						echo 'Cannot find ' . $value->sample_name;
+						echo 'Cannot find ' . $value->sample_name . "\n";
 						continue;
 					}
 					$sample->exatype_id = $value->id;
