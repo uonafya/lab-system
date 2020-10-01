@@ -182,7 +182,9 @@ class MiscDr extends Common
 			foreach ($body->data->attributes->samples as $key => $value) {
 
 				if(env('APP_LAB') == 1){
-					$patient = \App\Viralpatient::where('patient', $value->sample_name)->first();
+					$patient = \App\Viralpatient::where('patient', $value->sample_name)
+						->whereRaw("id IN (SELECT patient_id FROM dr_samples WHERE worksheet_id={$worksheet->id})")
+						->first();
 					$sample = $patient->dr_sample()->first();
 					if(!$sample){
 						echo 'Cannot find ' . $value->sample_name . "\n";
