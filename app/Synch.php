@@ -1718,7 +1718,7 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$url = 'insert/covidconsumption';
-		if (env('APP_LAB') == 23) {
+		if (in_array(env('APP_LAB'), [9, 23])) {
 			$client = new Client(['base_uri' => self::$p3_base]);
 			$url = 'consumption/covid';
 		}
@@ -1730,7 +1730,7 @@ class Synch
 			
 			$response = $client->request('post', $url, [
 				'http_errors' => false,
-				'debug' => false,
+				'debug' => true,
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
