@@ -395,7 +395,7 @@ class MiscDr extends Common
 				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 
 				if(!$sample) continue;
-				if(in_array($sample->status_id, [1, 2, 3])) continue;
+				if(in_array($sample->status_id, [1])) continue;
 
 				// echo " {$sample->id} ";
 
