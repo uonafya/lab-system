@@ -1746,6 +1746,7 @@ class Synch
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
+				print_r('Error: ');print_r($body->error);
 				return false;
 			} else {
 				foreach ($body as $key => $consumption) {
