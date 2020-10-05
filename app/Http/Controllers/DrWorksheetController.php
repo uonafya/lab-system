@@ -127,6 +127,7 @@ class DrWorksheetController extends Controller
         }
 
         $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
+        if(!$ext) $ext = $samples->first()->extraction_worksheet;
         if(!$ext->sequencing){
             $ext->status_id = 3;
             $ext->save();
