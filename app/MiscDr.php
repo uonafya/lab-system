@@ -133,6 +133,7 @@ class MiscDr extends Common
 
 	public static function create_plate($worksheet)
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$files = self::get_worksheet_files($worksheet);
@@ -339,6 +340,7 @@ class MiscDr extends Common
 
 	public static function get_plate_result($worksheet)
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('GET', "sanger/plate/result/{$worksheet->plate_id}", [
