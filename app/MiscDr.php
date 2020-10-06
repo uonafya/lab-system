@@ -181,7 +181,7 @@ class MiscDr extends Common
 
 			foreach ($body->data->attributes->samples as $key => $value) {
 
-				if(env('APP_LAB') == 1){
+				if(env('APP_LAB') == 100){
 					$patient = \App\Viralpatient::where('patient', $value->sample_name)
 						->whereRaw("id IN (SELECT patient_id FROM dr_samples WHERE worksheet_id={$worksheet->id})")
 						->first();
@@ -262,7 +262,7 @@ class MiscDr extends Common
 				}
 				else{
 					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					if(env('APP_LAB') == 100) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
 					else{
 						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
 					}
