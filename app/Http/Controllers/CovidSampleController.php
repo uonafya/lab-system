@@ -695,7 +695,8 @@ class CovidSampleController extends Controller
 
     public function lab_sample_page()
     {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
+        $quarantine_sites = DB::table('quarantine_sites')->get();
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab', 'quarantine_sites', $quarantine_sites, 'pageTitle' => 'Upload Covid Samples']);
     }
 
     public function upload_lab_samples(Request $request)
@@ -712,7 +713,7 @@ class CovidSampleController extends Controller
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
         else if($lab_id == 2) $c = new KisumuCovidImport;
-        else if($lab_id == 3) $c = new AlupeCovidImport;
+        else if($lab_id == 3) $c = new AlupeCovidImport($request);
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;

@@ -127,6 +127,7 @@ class DrWorksheetController extends Controller
         }
 
         $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
+        if(!$ext) $ext = $samples->first()->extraction_worksheet;
         if(!$ext->sequencing){
             $ext->status_id = 3;
             $ext->save();
@@ -411,10 +412,10 @@ class DrWorksheetController extends Controller
         if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
         if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
 
-        $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
 
-        if($samples){
+        if($rerun){
+            $samples = DrSample::whereIn('id', $rerun)->get();
             foreach ($samples as $key => $sample){
                 $sample->create_rerun($data);
             }

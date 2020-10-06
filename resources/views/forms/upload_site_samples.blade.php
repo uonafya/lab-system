@@ -25,6 +25,25 @@
         <form method="POST" action="{{ url($url . '/upload') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
             @csrf
 
+
+        @if(in_array(env('APP_LAB'), [3]))   
+            @include('partial.select', ['model' => null, 'default_val' => null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+          <div class="form-group">
+              <label class="col-sm-4 control-label">Facility 
+                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+              </label>
+              <div class="col-sm-8">
+                <select class="form-control requirable" required name="facility_id" id="facility_id">
+                    @isset($sample)
+                        <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                    @endisset
+
+                </select>
+              </div>
+          </div>
+
+        @endif
+
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <div class="hpanel">
@@ -193,6 +212,7 @@
         @slot('js_scripts')
             <script src="{{ asset('js/jasny/jasny-bootstrap.min.js') }}"></script>
         @endslot
+        set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
     @endcomponent
 
 

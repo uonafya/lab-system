@@ -204,7 +204,7 @@ class LoginController extends Controller
             }
             else{
                 $fac = \App\Facility::find($viralbatch->facility_id);
-                session(['viral_batch' => $viralbatch, 'viral_facility_name' => $fac->name]);
+                session(['viral_batch' => $viralbatch, 'viral_facility_name' => ($fac->name ?? null)]);
                 session(['toast_message' => "The batch {$viralbatch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/viralsample/create';
             }
