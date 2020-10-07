@@ -18,6 +18,31 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
     {
         $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
+        
+        if(!property_exists($row, 'patient_name')){
+            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'identifier')){
+            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'age')){
+            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'gender')){
+            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
+            return;
+        }
+
+        if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
+
 
         $p = null;
 
