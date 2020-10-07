@@ -2,7 +2,7 @@
 	Dear Sir/Madam,
 </p>
 <p>
-	Please note that we have received your clinical summary CCC#: {{ $uliza_clinical_form->cccno ?? '' }} , Nat#: {{ $uliza_clinical_form->nat_number ?? '' }} for review.
+	Please note that we have received your clinical summary {{ $uliza_clinical_form->subject_identifier ?? '' }} for review.
 </p>
 <p>
 	We shall provide you with favorable feedback as soon as possible.

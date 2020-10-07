@@ -323,6 +323,26 @@
 							</tr>
 						</thead>
 					</table>
+
+					<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza-additional-info') }} ">
+						<input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaClinicalForm->id }}" >
+						
+						<div class="form-group row">
+							<label class="col-md-4 col-form-label">Additional Information:</label>
+							<div class="col-md-8">
+								<textarea class="form-control" name="additional_info" rows="5"></textarea>
+							</div>
+						</div>
+						<div class="card my-1 ml-2">
+							<div class="card-body p-2">
+								<div class="d-flex justify-content-end align-items-center w-100">
+									<button class="btn btn-warning btn-sm" type="submit">
+										Submit Additional Information
+									</button>
+								</div>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 			<br />

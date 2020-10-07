@@ -2,7 +2,7 @@
 	Dear Sir/Madam,
 </p>
 <p>
-	Please note that we have received your clinical summary {{ $uliza_clinical_form->subject_identifier ?? '' }} with additional information requested has been submitted for review.
+	The above clinical case summary {{ $uliza_clinical_form->subject_identifier ?? '' }} has reviewed by the technical reviewer and feedback provided.
 </p>
 <p>
 	<a href="{{ url('uliza-review/create/' . $uliza_clinical_form->id . '/edit') }}">Click here</a> to review the case.
