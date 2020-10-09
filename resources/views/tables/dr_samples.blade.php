@@ -239,6 +239,9 @@
                                         <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
+                                        <td> {{ $sample->datetested }} </td>
+                                        <td> {{ $sample->datedispatched }} </td>
+                                        <td> {{ $sample->dateemailsent }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
                                         @if(isset($sample_status) && $sample_status == 12)
