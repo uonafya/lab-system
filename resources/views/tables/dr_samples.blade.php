@@ -198,26 +198,26 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th colspan="2">#</th>
-                                    <th colspan="2">Sample Code / Patient ID</th>
-                                    <th colspan="2">NAT ID</th>
-                                    <th colspan="2">Facility</th>
-                                    <th colspan="2">Lab ID</th>
-                                    <th colspan="2">Exatype Status</th>
-                                    <th rowspan="5">Date</th>
-                                    <th colspan="2">Reason</th>
-                                    <th colspan="2">Extraction Worksheet</th>
+                                    <th rowspan="2">#</th>
+                                    <th rowspan="2">Sample Code / Patient ID</th>
+                                    <th rowspan="2">NAT ID</th>
+                                    <th rowspan="2">Facility</th>
+                                    <th rowspan="2">Lab ID</th>
+                                    <th rowspan="2">Exatype Status</th>
+                                    <th colspan="5">Date</th>
+                                    <th rowspan="2">Reason</th>
+                                    <th rowspan="2">Extraction Worksheet</th>
                                     @if(isset($sample_status) && $sample_status == 12)
-                                        <th colspan="2">VL Date Tested</th>
-                                        <th colspan="2">VL Result</th>
-                                        <th colspan="2">Edit VL Result</th>
+                                        <th rowspan="2">VL Date Tested</th>
+                                        <th rowspan="2">VL Result</th>
+                                        <th rowspan="2">Edit VL Result</th>
                                     @else
-                                        <th colspan="2">Sequencing Worksheet</th>
-                                        <th colspan="2">Has Errors</th>
-                                        <th colspan="2">Has Warnings</th>
-                                        <th colspan="2">Has Mutations</th>
-                                        <th colspan="2">Tasks</th>
-                                        <th colspan="2">Delete</th>
+                                        <th rowspan="2">Sequencing Worksheet</th>
+                                        <th rowspan="2">Has Errors</th>
+                                        <th rowspan="2">Has Warnings</th>
+                                        <th rowspan="2">Has Mutations</th>
+                                        <th rowspan="2">Tasks</th>
+                                        <th rowspan="2">Delete</th>
                                     @endif
                                 </tr>
                                 <tr>
