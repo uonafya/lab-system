@@ -91,7 +91,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'kemri_id' => $row->amref_id ?? null,
-            'age' => $row->age,
+            'age' => (int) $row->age,
             'test_type' => $row->test_type ?? 1,
             'health_status' => $row->health_status ?? null,
             'datecollected' => $datecollected,
