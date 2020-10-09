@@ -27,7 +27,7 @@ Artisan::command('clean:emails', function(){
 })->describe('Clean emails which have an issue.');
 
 Artisan::command('dr:dispatch', function(){
-    $str = \App\MiscViral::send_completed_results();
+    $str = \App\MiscDr::send_completed_results();
     $this->info($str);
 })->describe('Email results to facilities.');
 
