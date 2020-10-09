@@ -139,6 +139,12 @@ Artisan::command('transfer:delayed-samples', function(){
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
 
+Artisan::command('notify:missing-samples', function(){
+    $str = \App\Common::delayed_samples_notification('eid');
+    $str .= \App\Common::delayed_samples_notification('vl');
+    $this->info($str);
+})->describe('Notify lab of batches that have not been received despite a long duration.');
+
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
     $str .= \App\Common::reject_delayed_samples('vl');

@@ -11,6 +11,7 @@ use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
 use App\Mail\NoDataReport;
 use App\Mail\LabTracker;
+use App\Mail\DelayedBatches;
 use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
@@ -579,13 +580,40 @@ class Common
     	}
     }
 
-
-    public static function reject_delayed_samples($type)
+    public static function delayed_samples_notification($type)
     {
     	ini_set('memory_limit', "-1");
 
     	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
     	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$batch_class = self::$my_classes[$type]['batch_class'];
+
+    	if($type == 'eid'){
+    		$days = 7;
+    	}
+    	else{
+    		$days = 21;
+    	}
+    	$start_date = date('Y-m-d', strtotime('-' . $days . ' days'));
+    	$end_date = date('Y-m-d', strtotime('-' . ($days+1) . ' days'));
+
+    	$batches = $batch_class::whereBetween('created_at', [$start_date, $end_date])
+    		->with(['facility'])
+    		->whereNull('datereceived')
+    		->get();
+
+    	$mail_array = User::where('receive_notification', true)->where('user_type_id', '!=', 5)->get()->pluck('email')->toArray();
+
+    	if($batches->count()){
+    		$new_mail = new DelayedBatches($batches, $type);
+			Mail::to($mail_array)->send($new_mail);
+    	}
+    }
+
+
+    public static function reject_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
 
     	if($type == 'eid'){
     		$days = 14;
@@ -596,6 +624,7 @@ class Common
     		$rej = 17;
     	}
 
+    	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
     	$sample_class = self::$my_classes[$type]['sample_class'];
     	$sample_table = self::$my_classes[$type]['sample_table'];
 
