@@ -17,6 +17,11 @@ class UlizaClinicalForm extends BaseModel
         return $this->belongsTo('App\Facility');
     }
 
+    public function additional_info()
+    {
+        return $this->belongsTo('App\UlizaAdditionalInfo');
+    }
+
     public function view_facility()
     {
         return $this->belongsTo('App\ViewFacility', 'facility_id');

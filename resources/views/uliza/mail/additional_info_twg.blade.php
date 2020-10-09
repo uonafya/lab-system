@@ -8,7 +8,7 @@
 	Additional information is however required before the request can be reviewed.
 </p>
 <p>
-	<a href="{{ url('clinicalform/additional-info/' . $uliza_clinical_form->id) }}">Click here</a> to fill the additional information required.
+	<a href="{{ url('uliza-additional-info/' . $uliza_clinical_form->id) }}">Click here</a> to fill the additional information required.
 </p>
 <p>
 	Kind Regards, <br />

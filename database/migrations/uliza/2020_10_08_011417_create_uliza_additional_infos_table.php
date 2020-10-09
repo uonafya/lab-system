@@ -17,6 +17,7 @@ class CreateUlizaAdditionalInfosTable extends Migration
             $table->increments('id');
             $table->integer('uliza_clinical_form_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index()->nullable();
+            $table->text('requested_info')->nullable();
             $table->text('additional_info')->nullable();
             $table->timestamps();
         });

@@ -26,6 +26,11 @@ Artisan::command('clean:emails', function(){
     $this->info($str);
 })->describe('Clean emails which have an issue.');
 
+Artisan::command('dr:dispatch', function(){
+    $str = \App\MiscViral::send_completed_results();
+    $this->info($str);
+})->describe('Email results to facilities.');
+
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);

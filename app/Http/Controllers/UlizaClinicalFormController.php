@@ -7,6 +7,7 @@ use App\Mail\UlizaMail;
 use App\Notifications\UlizaNotification;
 use App\UlizaClinicalForm;
 use App\UlizaClinicalVisit;
+use App\UlizaAdditionalInfo;
 use App\UlizaTwg;
 use App\County;
 use DB;

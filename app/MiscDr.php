@@ -2,6 +2,10 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DrugResistanceResult;
+use App\Mail\DrugResistance;
+
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
@@ -91,7 +95,7 @@ class MiscDr extends Common
 		$response = $client->request('POST', 'sanger/authorisations', [
             // 'debug' => true,
             'http_errors' => false,
-            'connect_timeout' => 3.14,
+            'connect_timeout' => 15,
 			'headers' => [
 				// 'Accept' => 'application/json',
 			],
@@ -111,16 +115,9 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$body = json_decode($response->getBody());
-
-			// dd($body);
-
 			$key = $body->data->attributes->api_key ?? null;
-
 			if(!$key) dd($body);
-
 			Cache::store('file')->put('dr_api_token', $key, 60);
-
-			// echo $key;
 			return;
 		}
 		else{
@@ -770,7 +767,24 @@ class MiscDr extends Common
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}
+	}
 
+	public static function send_completed_results()
+	{
+		$drSamples = DrSample::whereNull('dateemailsent')->where(['status_id' => 1])->get();
+		foreach ($drSamples as $drSample) {
+			self::send_email($drSample);
+		}
+	}
+
+	public static function send_email($drSample)
+	{
+		$mail_array = $drSample->facility->email_array;
+		if(env('APP_LAB') == 1) $mail_array[] = 'eid-nairobi@googlegroups.com';
+		$new_mail = new DrugResistanceResult($drSample);
+		Mail::to($mail_array)->send($new_mail);
+		$drSample->dateemailsent = date('Y-m-d');
+		$drSample->save();
 	}
 
 

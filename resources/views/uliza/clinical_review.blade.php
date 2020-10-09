@@ -316,21 +316,43 @@
 					<table class="table data-table">
 						<thead>
 							<tr>
-								<th> (dd/mm/yyyy) Date </th>
-								<th> Time </th>
-								<th> Status </th>
-								<th> Actions </th>
+								<!-- <th> (dd/mm/yyyy) Date </th> -->
+								<!-- <th> Time </th> -->
+								<th> Date </th>
+								<th> Requested Info </th>
+								<th> Info </th>
+								<!-- <th> Actions </th> -->
 							</tr>
 						</thead>
+						<tbody>
+							@foreach($ulizaClinicalForm->additional_info as $additional_info)
+								<tr>
+									<td> {{ $additional_info->created_at->toFormattedDateString() }} </td>
+									<td> {{ $additional_info->requested_info }} </td>
+									<td> {{ $additional_info->additional_info }} </td>
+									<!-- <td>  </td> -->
+								</tr>
+							@endforeach
+						</tbody>
 					</table>
 
-					<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza-additional-info') }} ">
-						<input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaClinicalForm->id }}" >
+					@isset($ulizaAdditionalInfo)
+					<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza-additional-info/'.$ulizaAdditionalInfo->id) }}">
+						<!-- <input type="hidden" name="uliza_clinical_form_id" value="{{ $ulizaAdditionalInfo->id }}" > -->
+						@csrf
+						@method('PUT')
+						
+						<div class="form-group row">
+							<label class="col-md-4 col-form-label">Requested Information:</label>
+							<div class="col-md-8">
+								<textarea class="form-control" name="requested_info" rows="5" disabled>{{ $ulizaAdditionalInfo->requested_info }}</textarea>
+							</div>
+						</div>
 						
 						<div class="form-group row">
 							<label class="col-md-4 col-form-label">Additional Information:</label>
 							<div class="col-md-8">
-								<textarea class="form-control" name="additional_info" rows="5"></textarea>
+								<textarea class="form-control" name="additional_info" rows="5" required id="additional_info_field"></textarea>
 							</div>
 						</div>
 						<div class="card my-1 ml-2">
@@ -343,6 +365,7 @@
 							</div>
 						</div>
 					</form>
+					@endisset
 				</div>
 			</div>
 			<br />
@@ -565,7 +588,6 @@
 										Case-Summary (Recomendation feedback)
 									</label>
 								</div>
-
 								<div class="col-md-6">
 									<select class="custom-select" name="recommendation_id" required v-model="myForm.recommendation_id">
 										<option selected="">Choose...</option>
@@ -576,13 +598,19 @@
 								</div>
 							</div>
 
+							<div class="form-group row" v-if="myForm.recommendation_id == 1 || myForm.recommendation_id == 5">
+								<label class="col-md-4 col-form-label">Request for Info</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="requested_info"  rows="5"></textarea>
+								</div>
+							</div>
+
 							<div class="form-group row" v-if="myForm.recommendation_id == 3">
 								<div class="col-md-6">
 									<label class=" col-form-label">
 										Facility Feedback Recomendations
 									</label>
 								</div>
-
 								<div class="col-md-6">
 									<select class="custom-select" name="facility_recommendation_id" v-model="myForm.facility_recommendation_id">
 										<option selected="">Choose...</option>
@@ -630,6 +658,8 @@
 			$(".form-control").attr("readonly", true);
 			$(".custom-select").attr("readonly", true);
 			$(".form-check-input").attr("readonly", true);
+
+			$("#additional_info_field").removeAttr("readonly");
 		@endif
 
         var vm = new Vue({
@@ -637,16 +667,13 @@
         	data: {
         		successful_submission: null,
         		myForm: {
-        			recommendation_id: {{ $ulizaClinicalForm->feedback->recommendation_id ?? null }},
-        			diagnosis: {{ $ulizaClinicalForm->feedback->diagnosis ?? null }},
-        			facility_recommendation_id: {{ $ulizaClinicalForm->feedback->facility_recommendation_id ?? null }},
-        			reviewer_id: {{ $ulizaClinicalForm->reviewer_id ?? null }},
-
+        			recommendation_id: "{{ $ulizaClinicalForm->feedback->recommendation_id ?? null }}",
+        			diagnosis: "{{ $ulizaClinicalForm->feedback->diagnosis ?? null }}",
+        			facility_recommendation_id: "{{ $ulizaClinicalForm->feedback->facility_recommendation_id ?? null }}",
+        			reviewer_id: "{{ $ulizaClinicalForm->reviewer_id ?? null }}",
         		},
         	},
         });
-
-
     });
 </script>
 

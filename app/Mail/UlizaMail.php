@@ -14,17 +14,19 @@ class UlizaMail extends Mailable
     public $uliza_clinical_form;
     public $view_name;
     public $subject_title;
+    public $ulizaAdditionalInfo;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($uliza_clinical_form=null, $view_name=null, $subject_title='NASCOP')
+    public function __construct($uliza_clinical_form=null, $view_name=null, $subject_title='NASCOP', $ulizaAdditionalInfo=null)
     {
         $this->uliza_clinical_form = $uliza_clinical_form;
         $this->view_name = $view_name;
         $this->subject_title = $subject_title;
+        $this->ulizaAdditionalInfo = $ulizaAdditionalInfo;
     }
 
     /**

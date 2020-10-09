@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\UlizaTwgFeedback;
 use App\UlizaClinicalForm;
+use App\UlizaAdditionalInfo;
 use App\User;
 use DB;
 use Str;
@@ -53,7 +54,7 @@ class UlizaTwgFeedbackController extends Controller
         $ulizaTwgFeedback = $clinical_form->feedback;
         // $ulizaTwgFeedback = UlizaTwgFeedback::where($request->only(['uliza_clinical_form_id']))->first();
         if(!$ulizaTwgFeedback) $ulizaTwgFeedback = new UlizaTwgFeedback;
-        $ulizaTwgFeedback->fill($request->except(['reviewer_id']));
+        $ulizaTwgFeedback->fill($request->except(['reviewer_id', 'requested_info']));
         $ulizaTwgFeedback->user_id = auth()->user()->id;
         $ulizaTwgFeedback->save();
 
@@ -69,9 +70,22 @@ class UlizaTwgFeedbackController extends Controller
             Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $form->subject_identifier));
         }
 
-        if($ulizaTwgFeedback->recommendation_id == 1){
-            Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info', 'Clinical Summary Form Additional Information Notification ' . $form->subject_identifier));
+
+
+        if($request->input('requested_info')){
+            // Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $form->subject_identifier));
+            $ulizaAdditionalInfo = new UlizaAdditionalInfo;
+            $ulizaAdditionalInfo->requested_info = $request->input('requested_info');
+            $ulizaAdditionalInfo->save();
+
+            if($ulizaTwgFeedback->recommendation_id == 1){
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info', 'Clinical Summary Form Additional Information Notification ' . $form->subject_identifier, $ulizaAdditionalInfo));
+            }            
+            else if($ulizaTwgFeedback->recommendation_id == 5){
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'Clinical Summary Form Additional Information Notification ' . $form->subject_identifier, $ulizaAdditionalInfo));
+            }
         }
+
 
         return redirect('uliza-form');
     }
