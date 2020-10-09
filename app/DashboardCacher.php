@@ -451,6 +451,8 @@ class DashboardCacher
         return $batch_class::selectRaw("COUNT(id) AS my_count")
             ->where(['lab_id' => env('APP_LAB')])
             ->where('created_at', '<', date('Y-m-d', strtotime('-10 days')))
+            ->whereNull('datereceived')
+            ->whereNull('datedispatched')
             ->first()->my_count;
     }
 
