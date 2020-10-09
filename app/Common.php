@@ -597,8 +597,9 @@ class Common
     	$start_date = date('Y-m-d', strtotime('-' . $days . ' days'));
     	$end_date = date('Y-m-d', strtotime('-' . ($days+1) . ' days'));
 
-    	$batches = $batch_class::whereBetween('created_at', [$start_date, $end_date])
-    		->with(['facility'])
+    	$batches = $batch_class::with(['facility'])
+    		// ->whereBetween('created_at', [$start_date, $end_date])
+    		->where('created_at', '<', $start_date)
     		->whereNull('datereceived')
     		->get();
 

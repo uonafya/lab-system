@@ -30,4 +30,3 @@
 
 <br />
 
-@include('emails.lab_signature') 
