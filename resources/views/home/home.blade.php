@@ -94,6 +94,11 @@
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
 
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['unreceived_batches']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['unreceived_batches']) }}">{{ $widgets['unreceived_batches'] }}</span>
+		                    	<a href="{{ url('viralbatch/index/5') }}">Batches Not Received 10 days after entry</a>
+		                    </li>
+
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['delayed_batches']) }}">
 		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['delayed_batches']) }}">{{ $widgets['delayed_batches'] }}</span>
 		                    	<a href="{{ url('viralbatch/delayed') }}">Incomplete Tested Batches </a>
@@ -139,6 +144,12 @@
 		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['pendingSamplesOverTen']) }}">{{ $widgets['pendingSamplesOverTen'] }}</span>
 		                    	<a href="#">Samples Over 10 Days Since Receipt and not Tested</a>
 		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['unreceived_batches']) }}">
+		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['unreceived_batches']) }}">{{ $widgets['unreceived_batches'] }}</span>
+		                    	<a href="{{ url('batch/index/5') }}">Batches Not Received 10 days after entry</a>
+		                    </li>
+
 
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['delayed_batches']) }}">
 		                    	<span class="badge badge-{{ $widgets['get_badge']($widgets['delayed_batches']) }}">
