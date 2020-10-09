@@ -79,18 +79,18 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
-                                                    <div align='center'>
-                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
-                                                    </div>
-                                                @endif
-                                            </td>
-                                            <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
                                                 @elseif(in_array($sample->status_id, [2, 3]))                                                
                                                     <div align='center'>
                                                         <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
+                                                    <div align='center'>
+                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
                                                     </div>
                                                 @endif
                                             </td>

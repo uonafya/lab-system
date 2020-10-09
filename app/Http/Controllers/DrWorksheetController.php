@@ -433,7 +433,7 @@ class DrWorksheetController extends Controller
             $worksheet->save();
 
             $w = $worksheet->extraction_worksheet;
-            if(!$w->sequencing && !$w->pending_worksheet){
+            if($w && !$w->sequencing && !$w->pending_worksheet){
                 $w->status_id = 3;
                 $w->save();
             }

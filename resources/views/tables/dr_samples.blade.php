@@ -198,28 +198,34 @@
                         <table class="table table-striped table-bordered table-hover" >
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Sample Code / Patient ID</th>
-                                    <th>NAT ID</th>
-                                    <th>Facility</th>
-                                    <th>Lab ID</th>
-                                    <th>Exatype Status</th>
-                                    <th>Date Collected</th>
-                                    <th>Date Received</th>
-                                    <th>Reason</th>
-                                    <th>Extraction Worksheet</th>
+                                    <th rowspan="2">#</th>
+                                    <th rowspan="2">Sample Code / Patient ID</th>
+                                    <th rowspan="2">NAT ID</th>
+                                    <th rowspan="2">Facility</th>
+                                    <th rowspan="2">Lab ID</th>
+                                    <th rowspan="2">Exatype Status</th>
+                                    <th colspan="5">Date</th>
+                                    <th rowspan="2">Reason</th>
+                                    <th rowspan="2">Extraction Worksheet</th>
                                     @if(isset($sample_status) && $sample_status == 12)
-                                        <th>VL Date Tested</th>
-                                        <th>VL Result</th>
-                                        <th>Edit VL Result</th>
+                                        <th rowspan="2">VL Date Tested</th>
+                                        <th rowspan="2">VL Result</th>
+                                        <th rowspan="2">Edit VL Result</th>
                                     @else
-                                        <th>Sequencing Worksheet</th>
-                                        <th>Has Errors</th>
-                                        <th>Has Warnings</th>
-                                        <th>Has Mutations</th>
-                                        <th>Tasks</th>
-                                        <th>Delete</th>
+                                        <th rowspan="2">Sequencing Worksheet</th>
+                                        <th rowspan="2">Has Errors</th>
+                                        <th rowspan="2">Has Warnings</th>
+                                        <th rowspan="2">Has Mutations</th>
+                                        <th rowspan="2">Tasks</th>
+                                        <th rowspan="2">Delete</th>
                                     @endif
+                                </tr>
+                                <tr>
+                                    <th> Collected </th>
+                                    <th> Received </th>
+                                    <th> Tested </th>
+                                    <th> Dispatched </th>
+                                    <th> Email </th>
                                 </tr>
                             </thead>
                             <tbody> 
@@ -233,6 +239,9 @@
                                         <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
+                                        <td> {{ $sample->datetested }} </td>
+                                        <td> {{ $sample->datedispatched }} </td>
+                                        <td> {{ $sample->dateemailsent }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
                                         @if(isset($sample_status) && $sample_status == 12)

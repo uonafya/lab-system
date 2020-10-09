@@ -7,9 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class UlizaClinicalForm extends BaseModel
 {
 
+    public function reviewer()
+    {
+        return $this->belongsTo('App\User', 'reviewer_id');        
+    }
+
     public function facility()
     {
         return $this->belongsTo('App\Facility');
+    }
+
+    public function additional_info()
+    {
+        return $this->belongsTo('App\UlizaAdditionalInfo');
     }
 
     public function view_facility()
@@ -35,6 +45,11 @@ class UlizaClinicalForm extends BaseModel
     public function getNatNumberAttribute()
     {
         return "NAT-{$this->id}";
+    }
+
+    public function getSubjectIdentifierAttribute()
+    {
+        return 'CCC#: ' . $form->cccno . ' Nat#: ' . $form->nat_number;
     }
 
 }

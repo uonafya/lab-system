@@ -21,4 +21,9 @@ class UlizaTwg extends BaseModel
     {
         return $this->hasMany('App\User', 'twg_id');
     }
+
+    public function getEmailArrayAttribute()
+    {
+        return $this->user->pluck('email')->toArray();
+    }
 }

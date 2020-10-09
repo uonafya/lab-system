@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\UlizaTwgFeedback;
 use App\UlizaClinicalForm;
+use App\UlizaAdditionalInfo;
 use App\User;
 use DB;
 use Str;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UlizaMail;
 
 class UlizaTwgFeedbackController extends Controller
 {
@@ -46,21 +50,44 @@ class UlizaTwgFeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        $ulizaTwgFeedback = UlizaTwgFeedback::where($request->only(['uliza_clinical_form_id']))->first();
+        $clinical_form = UlizaClinicalForm::find($request->input('uliza_clinical_form_id'));
+        $ulizaTwgFeedback = $clinical_form->feedback;
+        // $ulizaTwgFeedback = UlizaTwgFeedback::where($request->only(['uliza_clinical_form_id']))->first();
         if(!$ulizaTwgFeedback) $ulizaTwgFeedback = new UlizaTwgFeedback;
-        $ulizaTwgFeedback->fill($request->except(['reviewer_id']));
+        $ulizaTwgFeedback->fill($request->except(['reviewer_id', 'requested_info']));
         $ulizaTwgFeedback->user_id = auth()->user()->id;
         $ulizaTwgFeedback->save();
 
-        $clinical_form = $ulizaTwgFeedback->clinical_form;
+        // $clinical_form = $ulizaTwgFeedback->clinical_form;
         $clinical_form->status_id = 2;
         if($ulizaTwgFeedback->recommendation_id == 3 && auth()->user()->user_type_id < 104) $clinical_form->status_id = 4;
         if(auth()->user()->user_type_id == 104) $clinical_form->status_id = 3;
         if($request->input('reviewer_id')) $clinical_form->fill($request->only(['reviewer_id']));
         $clinical_form->save();
         session(['toast_message' => 'The feedback has been saved.']);
-        return redirect('uliza-form');
 
+        if($request->input('reviewer_id')){
+            Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $form->subject_identifier));
+        }
+
+
+
+        if($request->input('requested_info')){
+            // Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $form->subject_identifier));
+            $ulizaAdditionalInfo = new UlizaAdditionalInfo;
+            $ulizaAdditionalInfo->requested_info = $request->input('requested_info');
+            $ulizaAdditionalInfo->save();
+
+            if($ulizaTwgFeedback->recommendation_id == 1){
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info', 'Clinical Summary Form Additional Information Notification ' . $form->subject_identifier, $ulizaAdditionalInfo));
+            }            
+            else if($ulizaTwgFeedback->recommendation_id == 5){
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'Clinical Summary Form Additional Information Notification ' . $form->subject_identifier, $ulizaAdditionalInfo));
+            }
+        }
+
+
+        return redirect('uliza-form');
     }
 
     /**
