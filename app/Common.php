@@ -594,12 +594,12 @@ class Common
     	else{
     		$days = 21;
     	}
-    	$start_date = date('Y-m-d', strtotime('-' . $days . ' days'));
+    	$start_date = date('Y-m-d', strtotime('-' . ($days-1) . ' days'));
     	$end_date = date('Y-m-d', strtotime('-' . ($days+1) . ' days'));
 
     	$batches = $batch_class::with(['facility'])
-    		// ->whereBetween('created_at', [$start_date, $end_date])
-    		->where('created_at', '<', $start_date)
+    		->whereBetween('created_at', [$start_date, $end_date])
+    		// ->where('created_at', '<', $start_date)
     		->whereNull('datereceived')
     		->get();
 
