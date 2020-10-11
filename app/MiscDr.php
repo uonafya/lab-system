@@ -783,7 +783,7 @@ class MiscDr extends Common
 		if(env('APP_LAB') == 1) $mail_array[] = 'eid-nairobi@googlegroups.com';
 		$new_mail = new DrugResistanceResult($drSample);
 		Mail::to($mail_array)->send($new_mail);
-		$drSample->dateemailsent = date('Y-m-d');
+		if(!$drSample->dateemailsent) $drSample->dateemailsent = date('Y-m-d');
 		$drSample->save();
 	}
 
