@@ -1,5 +1,4 @@
 <p>
-
 	Hello {{ $drSample->facility->name }},
 
 	<br />
