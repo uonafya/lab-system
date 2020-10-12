@@ -31,6 +31,7 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
         })
         ->where('draft', false)
+        ->orderBy('id', 'desc')
         ->get();
         return view('uliza.tables.cases', compact('forms', 'statuses'));
     }

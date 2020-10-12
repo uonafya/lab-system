@@ -15,6 +15,7 @@ class CreateDrClinicalFormsTable extends Migration
     {
         Schema::create('uliza_clinical_forms', function (Blueprint $table) {
             $table->increments('id');
+            $table->tinyInteger('draft')->unsigned()->nullable()->default(0);
             $table->integer('facility_id')->unsigned()->index();
             $table->integer('twg_id')->unsigned()->index()->nullable();
             $table->integer('status_id')->unsigned()->nullable()->default(1);

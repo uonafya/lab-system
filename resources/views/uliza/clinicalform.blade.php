@@ -414,7 +414,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default"  @click="saveDraft()" type="button">Save As Draft</button>
+						<button class="btn btn-default"  @click.prevent="saveDraft()" type="button">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
@@ -543,10 +543,12 @@
 					if(!this.successful_submission) return;
 					this.myForm.draft = 1;
 
+					console.log('Saving Draft');
+
         			axios.post('/uliza-form', this.myForm).then(function(response){
-        				// console.log(response);
+        				console.log(response);
         			}).catch(function(error){
-        				// console.log(error);
+        				console.log(error);
         			});
         		},
         	},
