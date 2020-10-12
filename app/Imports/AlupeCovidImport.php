@@ -53,10 +53,11 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
         }
 
         if(!$row->name || !$row->unique_identifier || !$row->sex) return;
-
+        $p = null;
 
         if(isset($row->idpassport) && strlen($row->idpassport) > 6) $p = CovidPatient::where(['national_id' => ($row->idpassport ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->facility_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'facility_id' => $this->facility_id])->first();
+        if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->quarantine_site_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'quarantine_site_id' => $this->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
