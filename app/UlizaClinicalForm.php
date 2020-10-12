@@ -19,7 +19,7 @@ class UlizaClinicalForm extends BaseModel
 
     public function additional_info()
     {
-        return $this->belongsTo('App\UlizaAdditionalInfo');
+        return $this->hasMany('App\UlizaAdditionalInfo');
     }
 
     public function view_facility()
