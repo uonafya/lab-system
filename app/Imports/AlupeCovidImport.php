@@ -30,7 +30,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
             return;
         }*/
-        if(!property_exists($row, 'patient_name')){
+        if(!property_exists($row, 'name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
@@ -51,7 +51,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->patient_name || !$row->identifier || !$row->gender) return;
+        if(!$row->name || !$row->identifier || !$row->gender) return;
 
 
         if(isset($row->idpassport) && strlen($row->idpassport) > 6) $p = CovidPatient::where(['national_id' => ($row->idpassport ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
@@ -61,10 +61,10 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->unique_identifier ?? $row->patient_name,
+            'identifier' => $row->unique_identifier ?? $row->name,
             'facility_id' => $this->facility_id ?? null,
             'quarantine_site_id' => $this->quarantine_site_id ?? null,
-            'patient_name' => $row->patient_name,
+            'patient_name' => $row->name,
             'sex' => $row->sex,
             'national_id' => $row->idpassport ?? null,
             'current_health_status' => $row->health_status ?? null,
