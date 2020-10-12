@@ -80,16 +80,16 @@ class MiscDr extends Common
 
 	public static function get_hyrax_key()
 	{
-		if(Cache::store('file')->has('dr_api_token')){}
+		if(Cache::has('dr_api_token')){}
 		else{
 			self::login();
 		}
-		return Cache::store('file')->get('dr_api_token');
+		return Cache::get('dr_api_token');
 	}
 
 	public static function login()
 	{
-		Cache::store('file')->forget('dr_api_token');
+		Cache::forget('dr_api_token');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
@@ -117,7 +117,7 @@ class MiscDr extends Common
 			$body = json_decode($response->getBody());
 			$key = $body->data->attributes->api_key ?? null;
 			if(!$key) dd($body);
-			Cache::store('file')->put('dr_api_token', $key, 60);
+			Cache::put('dr_api_token', $key, 60);
 			return;
 		}
 		else{
