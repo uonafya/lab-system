@@ -696,7 +696,7 @@ class CovidSampleController extends Controller
     public function lab_sample_page()
     {
         $quarantine_sites = DB::table('quarantine_sites')->get();
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab', 'quarantine_sites', $quarantine_sites, 'pageTitle' => 'Upload Covid Samples']);
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab', 'quarantine_sites' => $quarantine_sites, 'pageTitle' => 'Upload Covid Samples']);
     }
 
     public function upload_lab_samples(Request $request)
