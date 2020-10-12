@@ -1095,7 +1095,7 @@ class MiscViral extends Common
                     'receivedstatus' => '',
                     'datedispatched' => null,
                 ];
-                
+
             try {
                 $response = $client->request('post', '', [
                     // 'debug' => true,
@@ -1103,18 +1103,14 @@ class MiscViral extends Common
                     'http_errors' => false,
                     'verify' => false,
                     'json' => $post_data,
-                ]);                
+                ]);   
+                $body = json_decode($response->getBody());
+                if($response->getStatusCode() > 399){
+                    print_r($post_data);
+                    return null;
+                }             
             } catch (\Exception $e) {
                 
-            }
-            $body = json_decode($response->getBody());
-            // return $body;
-            // print_r($body);
-            if($response->getStatusCode() > 399){
-                // die();
-                print_r($post_data);
-                // print_r($body);
-                return null;
             }
         }
     }
