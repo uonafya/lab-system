@@ -145,13 +145,11 @@
 
                         @endif
                         <br />
-                        
+
                         @if(in_array(env('APP_LAB'), [3]))   
                             @include('partial.select', ['model' => null, 'default_val' => null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
                           <div class="form-group">
-                              <label class="col-sm-4 control-label">Facility 
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                              </label>
+                              <label class="col-sm-4 control-label">Facility</label>
                               <div class="col-sm-8">
                                 <select class="form-control requirable" name="facility_id" id="facility_id">
                                     @isset($sample)
