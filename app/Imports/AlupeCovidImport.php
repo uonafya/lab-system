@@ -46,11 +46,15 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'Sex column is not present.']);
             return;
         }
+        if(!property_exists($row, 'idpassport')){
+            session(['toast_error' => 1, 'toast_message' => 'ID/Passport column is not present.']);
+            return;
+        }
 
         if(!$row->patient_name || !$row->identifier || !$row->gender) return;
 
 
-        if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        if(isset($row->idpassport) && strlen($row->idpassport) > 6) $p = CovidPatient::where(['national_id' => ($row->idpassport ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p && $row->identifier && strlen($row->identifier) > 5 && $this->facility_id) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $this->facility_id])->first();
 
 
@@ -62,7 +66,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'quarantine_site_id' => $this->quarantine_site_id ?? null,
             'patient_name' => $row->patient_name,
             'sex' => $row->sex,
-            'national_id' => $row->national_id ?? null,
+            'national_id' => $row->idpassport ?? null,
             'current_health_status' => $row->health_status ?? null,
             'nationality' => DB::table('nationalities')->where('name', $row->justification)->first()->id ?? 1,
             'phone_no' => $row->phone_number ?? null,
