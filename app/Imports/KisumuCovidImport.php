@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use DB;
 use Str;
 use \App\Facility;
 use \App\QuarantineSite;
