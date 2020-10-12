@@ -536,14 +536,14 @@
         		},*/
         		saveDraft(){
         			// $('.form-control').attr("disabled", "disabled");
-        			$('requirable').removeAttr("required");
+        			$('.requirable').removeAttr("required");
         			var validator = $( "#myClinicalForm" ).validate();
 					this.successful_submission = validator.form();
+					console.log('Saving Draft');
 
 					if(!this.successful_submission) return;
 					this.myForm.draft = 1;
 
-					console.log('Saving Draft');
 
         			axios.post('/uliza-form', this.myForm).then(function(response){
         				console.log(response);
