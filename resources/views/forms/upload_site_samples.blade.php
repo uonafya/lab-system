@@ -32,7 +32,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [3,4,5,6]))
+                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [4,5,6]))
 
                         <div class="alert alert-warning">
                             <center>
