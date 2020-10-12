@@ -19,44 +19,33 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
         $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
-        if(!property_exists($row, 'patient_name')){
-            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
-            return;
-        }
-        if(!property_exists($row, 'identifier')){
-            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
-            return;
-        }
-        if(!property_exists($row, 'age')){
-            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
-            return;
-        }
-        if(!property_exists($row, 'gender')){
-            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
-            return;
-        }
-
-        if(!$row->patient_name || !$row->identifier || !((int) $row->age) || !$row->gender){
+        /*if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
             $rows = session('skipped_rows', []);
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);          
             return;
-        }
+        }*/
 
+        // $mfl = (int) $row->mfl_code;
 
+        /*$fac = Facility::locate($mfl)->first();
+        if(!$fac && !isset($row->quarantine_site_id)){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);   
+            return;
+        }*/
         $p = null;
 
-        if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->first();
-        if(strlen($row->identifier) > 6) $p = CovidPatient::where(['identifier' => $row->identifier])->first();
+        if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        // if(!$p && $row->identifier && strlen($row->identifier) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        // if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
-        $mfl = (int) ($row->mfl_code ?? null);
-        $fac = Facility::locate($mfl)->first();
-
 
         $p->fill([
-            'identifier' => $row->identifier ?? $row->national_id ?? $row->patient_name,
+            'identifier' => $row->identifier ?? $row->patient_name,
             'facility_id' => $fac->id ?? null,
             'quarantine_site_id' => $row->quarantine_site_id ?? null,
             'patient_name' => $row->patient_name,
@@ -86,8 +75,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'patient_id' => $p->id,
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
-            'kemri_id' => $row->amref_id ?? null,
-            'age' => (int) $row->age,
+            'age' => $row->age,
             'test_type' => $row->test_type ?? 1,
             'health_status' => $row->health_status ?? null,
             'datecollected' => $datecollected,
@@ -95,7 +83,6 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'receivedstatus' => 1,
             'sample_type' => 1,
         ]);
-        if(isset($row->repeat) && $row->repeat) $sample->test_type = 2;
         $sample->pre_update();
 
     }

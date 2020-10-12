@@ -1096,20 +1096,21 @@ class MiscViral extends Common
                     'datedispatched' => null,
                 ];
 
-            $response = $client->request('post', '', [
-                // 'debug' => true,
-                'http_errors' => false,
-                'verify' => false,
-                'json' => $post_data,
-            ]);
-            $body = json_decode($response->getBody());
-            // return $body;
-            // print_r($body);
-            if($response->getStatusCode() > 399){
-                // die();
-                print_r($post_data);
-                // print_r($body);
-                return null;
+            try {
+                $response = $client->request('post', '', [
+                    // 'debug' => true,
+                    'timeout' => 3,
+                    'http_errors' => false,
+                    'verify' => false,
+                    'json' => $post_data,
+                ]);   
+                $body = json_decode($response->getBody());
+                if($response->getStatusCode() > 399){
+                    print_r($post_data);
+                    return null;
+                }             
+            } catch (\Exception $e) {
+                
             }
         }
     }

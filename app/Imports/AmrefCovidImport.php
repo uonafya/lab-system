@@ -36,7 +36,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
+        if(!$row->patient_name || !$row->identifier || !((int) $row->age) || !$row->gender){
             $rows = session('skipped_rows', []);
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);          
@@ -53,10 +53,6 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
         if(!$p) $p = new CovidPatient;
         $mfl = (int) ($row->mfl_code ?? null);
         $fac = Facility::locate($mfl)->first();
-
-        if( !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){        
-            // return;
-        }
 
 
         $p->fill([
@@ -91,7 +87,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'kemri_id' => $row->amref_id ?? null,
-            'age' => $row->age,
+            'age' => (int) $row->age,
             'test_type' => $row->test_type ?? 1,
             'health_status' => $row->health_status ?? null,
             'datecollected' => $datecollected,
