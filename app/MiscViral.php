@@ -1095,13 +1095,18 @@ class MiscViral extends Common
                     'receivedstatus' => '',
                     'datedispatched' => null,
                 ];
-
-            $response = $client->request('post', '', [
-                // 'debug' => true,
-                'http_errors' => false,
-                'verify' => false,
-                'json' => $post_data,
-            ]);
+                
+            try {
+                $response = $client->request('post', '', [
+                    // 'debug' => true,
+                    'timeout' => 3,
+                    'http_errors' => false,
+                    'verify' => false,
+                    'json' => $post_data,
+                ]);                
+            } catch (\Exception $e) {
+                
+            }
             $body = json_decode($response->getBody());
             // return $body;
             // print_r($body);
