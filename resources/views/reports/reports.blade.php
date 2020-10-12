@@ -277,6 +277,7 @@
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>
+                                <label> <input type="radio" name="types" value="cns" required> CNS </label>
                                 @if(Auth::user()->user_type_id == 5)
                                 <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
                                 @else

@@ -148,12 +148,26 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">Alli Quoted By</label>
+                                <div class="col-sm-8"><select class="form-control" name="alliquotedby" id="alliquotedby">
+
+                                    <option value=""> Select One </option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->alliquotedby) selected @endif>
+                                         {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">Sorted By</label>
                                 <div class="col-sm-8"><select class="form-control" required name="sortedby" id="sortedby">
 
                                     <option value=""> Select One </option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->sortedby) selected @endif>
                                          {{ $user->full_name }}
                                         </option>
                                     @endforeach
@@ -167,7 +181,7 @@
                                     
                                     <option value=""> Select One </option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->runby) selected @endif>
                                          {{ $user->full_name }}
                                         </option>
                                     @endforeach
