@@ -414,7 +414,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default"  @click.prevent="saveDraft()" type="button">Save As Draft</button>
+						<button class="btn btn-default"  @click="saveDraft()">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
