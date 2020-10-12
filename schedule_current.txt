@@ -10,7 +10,7 @@ labexec="kubectl exec -it lab-app-app-deployment --container app -n lab-app -- p
 0 9 * * 1 $labexec send:weekly-backlog 2>&1
 
 0 14 * * * $labexec dispatch:results 2>&1
-0 9 * * * $labexec dispatch:critical 2>&1
+0 8 * * * $labexec dispatch:critical 2>&1
 
 10 14 * * * $labexec send:sms 2>&1
 

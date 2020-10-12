@@ -79,13 +79,6 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
-                                                    <div align='center'>
-                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
-                                                    </div>
-                                                @endif
-                                            </td>
-                                            <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
                                                 @elseif(in_array($sample->status_id, [2, 3]))                                                
@@ -94,8 +87,16 @@
                                                     </div>
                                                 @endif
                                             </td>
+                                            <td>
+                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
+                                                    <div align='center'>
+                                                        <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td> {{ $sample->patient }} </td>
                                             <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
+                                            <!-- <td> {!! $dr_sample_statuses->first()->output ?? '' !!} </td> -->
                                             <td> {{ $sample->facilityname }} </td>
                                             <td> {{ $sample->control_type }} </td>
                                             <td> {{ $sample->my_boolean_format('has_errors') }} </td>

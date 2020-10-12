@@ -3,7 +3,12 @@
 
 		set_select_patient("sidebar_covidpatient_search", "{{ url('/covid_patient/search') }}", 2, "Search for Covid-19 patient", true);
 		set_select_patient("sidebar_covidpatient_nat_id_search", "{{ url('/covid_patient/nat_id') }}", 2, "Search for Covid-19 Nat-ID", true);
-		set_select_patient("sidebar_covid_kemri_id_search", "{{ url('/covid_sample/kem_id') }}", 2, "Search for KEMRI ID", true);
+
+        @if(in_array(env('APP_LAB'), [1]))
+			set_select_patient("sidebar_covid_kemri_id_search", "{{ url('/covid_sample/kem_id') }}", 2, "Search for KEMRI ID", true);
+		@elseif(in_array(env('APP_LAB'), [25]))
+			set_select_patient("sidebar_covid_kemri_id_search", "{{ url('/covid_sample/kem_id') }}", 2, "Search for AMREF ID", true);
+		@endif
 		set_select("sidebar_covidlabID_search", "{{ url('/covid_sample/search') }}", 1, "Search by Covid-19 Lab ID");
 		set_select("sidebar_covid_worksheet_search", "{{ url('/covid_worksheet/search') }}", 1, "Search for Covid-19 worksheet", true);
 		

@@ -127,6 +127,7 @@ class DrWorksheetController extends Controller
         }
 
         $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
+        if(!$ext) $ext = $samples->first()->extraction_worksheet;
         if(!$ext->sequencing){
             $ext->status_id = 3;
             $ext->save();
@@ -254,6 +255,7 @@ class DrWorksheetController extends Controller
 
             foreach ($primers as $key => $primer) {
                 $data[] = [
+                    'Lab ID' => $sample->id,
                     'Sample Number' => $sample->mid,
                     'Patient CCC' => $sample->patient->patient,
                     'Primer Label' => $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $created_at,
@@ -285,7 +287,6 @@ class DrWorksheetController extends Controller
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
-
 
         $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
@@ -365,7 +366,6 @@ class DrWorksheetController extends Controller
     }
 
 
-
     public function approve(Request $request, DrWorksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
@@ -412,10 +412,10 @@ class DrWorksheetController extends Controller
         if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
         if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
 
-        $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
 
-        if($samples){
+        if($rerun){
+            $samples = DrSample::whereIn('id', $rerun)->get();
             foreach ($samples as $key => $sample){
                 $sample->create_rerun($data);
             }
@@ -433,7 +433,7 @@ class DrWorksheetController extends Controller
             $worksheet->save();
 
             $w = $worksheet->extraction_worksheet;
-            if(!$w->sequencing && !$w->pending_worksheet){
+            if($w && !$w->sequencing && !$w->pending_worksheet){
                 $w->status_id = 3;
                 $w->save();
             }

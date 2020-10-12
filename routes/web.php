@@ -65,6 +65,7 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 
 Route::resource('uliza-form', 'UlizaClinicalFormController');
 Route::post('uliza/login', 'UlizaUserController@login');
+Route::resource('uliza-additional-info', 'UlizaAdditionalInfoController');
 
 Route::middleware(['auth'])->group(function(){
 

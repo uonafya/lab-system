@@ -26,6 +26,11 @@ Artisan::command('clean:emails', function(){
     $this->info($str);
 })->describe('Clean emails which have an issue.');
 
+Artisan::command('dr:dispatch', function(){
+    $str = \App\MiscDr::send_completed_results();
+    $this->info($str);
+})->describe('Email results to facilities.');
+
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
     $this->info($str);
@@ -133,6 +138,12 @@ Artisan::command('transfer:delayed-samples', function(){
     $str .= \App\Common::transfer_delayed_samples('vl', false);
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
+
+Artisan::command('notify:missing-samples', function(){
+    $str = \App\Common::delayed_samples_notification('eid');
+    $str .= \App\Common::delayed_samples_notification('vl');
+    $this->info($str);
+})->describe('Notify lab of batches that have not been received despite a long duration.');
 
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');

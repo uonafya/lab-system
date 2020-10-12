@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UlizaMail;
+use App\Notifications\UlizaNotification;
 use App\UlizaClinicalForm;
 use App\UlizaClinicalVisit;
+use App\UlizaAdditionalInfo;
 use App\UlizaTwg;
 use App\County;
 use DB;
@@ -26,6 +30,7 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
         })
+        ->where('draft', false)
         ->get();
         return view('uliza.tables.cases', compact('forms', 'statuses'));
     }
@@ -70,6 +75,20 @@ class UlizaClinicalFormController extends Controller
             // $visit->save();
             $form->visit()->save($visit);
         }
+
+        $case_identifier = 'CCC#: ' . $form->cccno . ' Nat#: ' . $form->nat_number;
+
+        if($form->draft){
+            Mail::to([$form->facility_email])->send(new UlizaMail($form, 'draft_mail', 'Draft Clinical Summary Form ' . $form->subject_identifier));
+            // $user = \App\User::where('email', 'like', 'joel%')->first();
+            // $user->facility_email = $form->facility_email;
+            // $user->notify(new UlizaNotification('uliza-form/' . $form->id . '/edit'));
+        }else{
+            Mail::to([$form->facility_email])->send(new UlizaMail($form, 'received_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
+
+            Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
+        }
+
         return response()->json(['status' => 'ok'], 201);
     }
 

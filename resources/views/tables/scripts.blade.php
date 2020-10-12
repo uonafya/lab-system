@@ -45,9 +45,37 @@
                 {extend: 'copy',className: 'btn-sm'},
                 {extend: 'csv',title: 'Download', className: 'btn-sm'},
                 {extend: 'pdf', title: 'Download', className: 'btn-sm'},
-                {extend: 'print',className: 'btn-sm'}
+                // {extend: 'print',className: 'btn-sm'}
             ]
         });
+
+        $('.multi-filter tfoot th').each( function () {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+        } );
+
+        // DataTable
+        var table = $('.multi-filter').DataTable({
+            // dom: '<"btn"B>lTfgtip',
+            responsive: true,
+            // "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            
+            initComplete: function () {
+                // Apply the search
+                this.api().columns().every( function () {
+                    var that = this;
+     
+                    $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                        if ( that.search() !== this.value ) {
+                            that
+                                .search( this.value )
+                                .draw();
+                        }
+                    } );
+                } );
+            }
+        });
+
 
         var msg;
         var dynamicErrorMsg = function () { return msg; }
