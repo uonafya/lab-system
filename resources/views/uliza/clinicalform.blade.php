@@ -543,10 +543,12 @@
 					if(!this.successful_submission) return;
 					this.myForm.draft = 1;
 
+					console.log('Saving Draft');
+
         			axios.post('/uliza-form', this.myForm).then(function(response){
-        				// console.log(response);
+        				console.log(response);
         			}).catch(function(error){
-        				// console.log(error);
+        				console.log(error);
         			});
         		},
         	},
