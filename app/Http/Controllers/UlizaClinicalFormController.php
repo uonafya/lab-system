@@ -77,6 +77,8 @@ class UlizaClinicalFormController extends Controller
             $form->visit()->save($visit);
         }*/
 
+        Log::debug($form->toJson());
+
 
         if($form->draft){
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'draft_mail', 'Draft Clinical Summary Form ' . $form->subject_identifier));
@@ -86,7 +88,7 @@ class UlizaClinicalFormController extends Controller
         }else{
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'received_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
 
-            Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
+            if($twg) Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
         }
 
         return response()->json(['status' => 'ok'], 201);
