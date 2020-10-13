@@ -110,10 +110,11 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function edit(UlizaClinicalForm $ulizaClinicalForm)
+    public function edit($id)
     {
         $reasons = DB::table('uliza_reasons')->get();
         $regimens = DB::table('viralregimen')->get();
+        $ulizaClinicalForm = UlizaClinicalForm::find($id);
         return view('uliza.clinicalform', compact('reasons', 'regimens', 'ulizaClinicalForm'));      
     }
 
