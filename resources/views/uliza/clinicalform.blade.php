@@ -486,9 +486,10 @@
         	mounted (){
         		@if(isset($ulizaClinicalForm))
         			var ulizaClinicalForm = {!! json_encode($ulizaClinicalForm) !!};
+        			var tempVm = this;
         			console.log(ulizaClinicalForm);
         			Object.keys(this.myForm).forEach(function(key, index){
-        				this.myForm[key] = ulizaClinicalForm[key];
+        				tempVm.myForm[key] = ulizaClinicalForm[key];
         			});
         		@endif
         	},
