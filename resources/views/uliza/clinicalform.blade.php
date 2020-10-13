@@ -251,7 +251,7 @@
 													<td>
 														<div class="btn-group" role="group">
 															<button class="btn btn-sm btn-warning">Edit</button>
-															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click="delVisit(clinical_visit_index)">Del</button>
+															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click.prevent="delVisit(clinical_visit_index)">Del</button>
 															
 														</div> 
 													</td>
@@ -414,7 +414,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default"  @click="saveDraft()">Save As Draft</button>
+						<button class="btn btn-default"  @click.prevent="saveDraft()">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
