@@ -49,7 +49,7 @@ class UlizaClinicalForm extends BaseModel
 
     public function getSubjectIdentifierAttribute()
     {
-        return 'CCC#: ' . $form->cccno . ' Nat#: ' . $form->nat_number;
+        return 'CCC#: ' . $this->cccno . ' Nat#: ' . $this->nat_number;
     }
 
 }

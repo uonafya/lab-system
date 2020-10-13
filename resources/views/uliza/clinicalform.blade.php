@@ -401,11 +401,11 @@
 						</div>
 					</div>
 
-					<div v-if="successful_submission" class="row alert alert-success">
+					<div v-if="successful_validation" class="row alert alert-success">
 						You have successfully submitted your request.
 					</div>
 
-					<div v-if="successful_submission === false" class="row alert alert-warning">
+					<div v-if="successful_validation === false" class="row alert alert-warning">
 						You have validation errors.
 					</div>
 				  
@@ -480,7 +480,7 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
-        		successful_submission: null,
+        		successful_validation: null,
         	},
         	methods: {
         		update(){
@@ -488,9 +488,9 @@
         			// $('.form-control').removeAttr("disabled");
         			$('requirable').attr('required', 'required');
         			var validator = $( "#myClinicalForm" ).validate();
-					this.successful_submission = validator.form();
+					this.successful_validation = validator.form();
 					// console.log(res);
-					if(!this.successful_submission) return;
+					if(!this.successful_validation) return;
 					this.myForm.draft = 0;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
@@ -538,10 +538,10 @@
         			// $('.form-control').attr("disabled", "disabled");
         			$('.requirable').removeAttr("required");
         			var validator = $( "#myClinicalForm" ).validate();
-					this.successful_submission = validator.form();
+					this.successful_validation = validator.form();
 					console.log('Saving Draft');
 
-					if(!this.successful_submission) return;
+					if(!this.successful_validation) return;
 					this.myForm.draft = 1;
 
 
