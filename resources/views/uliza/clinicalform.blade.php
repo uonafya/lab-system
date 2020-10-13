@@ -619,6 +619,7 @@
         @isset($ulizaClinicalForm)
 	        $("#facility_id").val({{ $ulizaClinicalForm->facility_id }}).change();
 	    @endisset
+	    
 	});
 </script>
 @endsection
