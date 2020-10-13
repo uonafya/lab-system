@@ -67,7 +67,7 @@ class UlizaTwgFeedbackController extends Controller
         session(['toast_message' => 'The feedback has been saved.']);
 
         if($request->input('reviewer_id')){
-            Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $clinical_form->subject_identifier));
+            Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'case_referral', 'NASCOP ' . $clinical_form->subject_identifier));
         }
 
         if($request->input('requested_info')){
@@ -83,7 +83,7 @@ class UlizaTwgFeedbackController extends Controller
                 Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'Clinical Summary Form Additional Information Notification ' . $clinical_form->subject_identifier, $ulizaAdditionalInfo));
             }
         }
-        
+
         return redirect('uliza-form');
     }
 
