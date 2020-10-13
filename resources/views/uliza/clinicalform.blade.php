@@ -47,6 +47,9 @@
 						</div>
 						<div class="col-md-10">
 	                        <select class="form-control initial_fields" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
+	                        	@isset($ulizaClinicalForm)
+	                        		<option value="{{ $ulizaClinicalForm->facility_id }}" selected>{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }} </option>
+	                        	@endisset
 	                        </select>						
 						</div>
 				    </div>
