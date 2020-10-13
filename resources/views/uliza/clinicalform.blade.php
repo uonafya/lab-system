@@ -48,7 +48,9 @@
 						<div class="col-md-10">
 	                        <select class="form-control initial_fields" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
 	                        	@isset($ulizaClinicalForm)
-	                        		<option value="{{ $ulizaClinicalForm->facility_id }}" selected>{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }} </option>
+	                        		<option value="{{ $ulizaClinicalForm->facility_id }}" selected>
+	                        			{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }} 
+	                        		</option>
 	                        	@endisset
 	                        </select>						
 						</div>
@@ -487,13 +489,13 @@
         		successful_validation: null,
         	},
         	mounted (){
-        		@if(isset($ulizaClinicalForm))
+        		@isset($ulizaClinicalForm)
         			var ulizaClinicalForm = {!! $ulizaClinicalForm->toJson() !!};
         			var tempVm = this;
         			Object.keys(this.myForm).forEach(function(key, index){
         				tempVm.myForm[key] = ulizaClinicalForm[key];
         			});
-        		@endif
+        		@endisset
         	},
         	methods: {
         		update(){
@@ -614,6 +616,9 @@
             vm.clinicalVisit['clinicvisitdate'] = val;
         }); 
 
+        @isset($ulizaClinicalForm)
+	        $("#facility_id").val({{ $$ulizaClinicalForm->facility_id }}).change();
+	    @endisset
 	});
 </script>
 @endsection
