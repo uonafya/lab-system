@@ -125,8 +125,9 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UlizaClinicalForm $ulizaClinicalForm)
+    public function update(Request $request, $id)
     {
+        $form = UlizaClinicalForm::find($id);
         $form->fill($request->except('clinical_visits'));
         $form->save();
         return response()->json(['status' => 'ok'], 201);
