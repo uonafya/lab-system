@@ -485,7 +485,7 @@
         	},
         	mounted (){
         		@if(isset($ulizaClinicalForm))
-        			var ulizaClinicalForm = {!! json_encode($ulizaClinicalForm) !!};
+        			var ulizaClinicalForm = {!! $ulizaClinicalForm->toJson() !!};
         			var tempVm = this;
         			console.log(ulizaClinicalForm);
         			Object.keys(this.myForm).forEach(function(key, index){
