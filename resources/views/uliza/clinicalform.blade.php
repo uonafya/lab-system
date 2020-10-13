@@ -487,9 +487,6 @@
         		@if(isset($ulizaClinicalForm))
         			var ulizaClinicalForm = {!! $ulizaClinicalForm->toJson() !!};
         			var tempVm = this;
-        			console.log({!! $ulizaClinicalForm->toJson() !!});
-        			console.log({{ $ulizaClinicalForm->toJson() }});
-        			console.log(ulizaClinicalForm);
         			Object.keys(this.myForm).forEach(function(key, index){
         				tempVm.myForm[key] = ulizaClinicalForm[key];
         			});
