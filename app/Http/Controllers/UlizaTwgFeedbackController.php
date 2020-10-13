@@ -58,6 +58,8 @@ class UlizaTwgFeedbackController extends Controller
         $ulizaTwgFeedback->user_id = auth()->user()->id;
         $ulizaTwgFeedback->save();
 
+        $twg = $clinical_form->twg;
+
         // $clinical_form = $ulizaTwgFeedback->clinical_form;
         $clinical_form->status_id = 2;
         if($ulizaTwgFeedback->recommendation_id == 3 && auth()->user()->user_type_id < 104) $clinical_form->status_id = 4;
@@ -81,7 +83,22 @@ class UlizaTwgFeedbackController extends Controller
                 Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info', 'Clinical Summary Form Additional Information Notification ' . $clinical_form->subject_identifier, $ulizaAdditionalInfo));
             }            
             else if($ulizaTwgFeedback->recommendation_id == 5){
-                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'Clinical Summary Form Additional Information Notification ' . $clinical_form->subject_identifier, $ulizaAdditionalInfo));
+                Mail::to($twg->email_array)->send(new UlizaMail($clinical_form, 'additional_info_twg', 'Clinical Summary Form Additional Information Notification ' . $clinical_form->subject_identifier, $ulizaAdditionalInfo));
+            }
+        }
+
+        // Technical reviewer has given recommendations
+        if($ulizaTwgFeedback->recommendation_id == 6){
+            Mail::to($twg->email_array)->send(new UlizaMail($clinical_form, 'technical_feedback_provided', $clinical_form->subject_identifier));
+        }
+
+        // Feedback is given to the facility
+        if($ulizaTwgFeedback->recommendation_id == 3){
+            if($ulizaTwgFeedback->facility_recommendation_id == 4){
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'DRT Approved by NASCOP ' . $clinical_form->subject_identifier));
+            }
+            else{
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'feedback_facility', 'NASCOP Feedback For ' . $clinical_form->subject_identifier));
             }
         }
 
