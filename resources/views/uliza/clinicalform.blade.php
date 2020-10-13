@@ -439,6 +439,7 @@
         	el: "#my-vue-instance",
         	data: {
         		myForm: {
+        			id: null,
         			facility_id: null,
         			cccno: null,
         			reporting_date: null,
@@ -481,6 +482,14 @@
         			new_oi: null,        			
         		},
         		successful_validation: null,
+        	},
+        	mounted (){
+        		@if(isset($ulizaClinicalForm))
+        			var ulizaClinicalForm = {!! json_encode($ulizaClinicalForm) !!};
+        			Object.keys(this.myForm).forEach(function(key, index){
+        				this.myForm[key] = ulizaClinicalForm[key];
+        			});
+        		@endif
         	},
         	methods: {
         		update(){

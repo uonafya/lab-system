@@ -55,8 +55,10 @@ class UlizaClinicalFormController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $form = new UlizaClinicalForm;
+    {        
+        $form = null;
+        if($request->input('id')) $form = UlizaClinicalForm::find($request->input('id'));
+        if(!$form) $form = new UlizaClinicalForm;
         $form->fill($request->except('clinical_visits'));
         $f = $form->view_facility;
         $county = County::find($f->county_id);
