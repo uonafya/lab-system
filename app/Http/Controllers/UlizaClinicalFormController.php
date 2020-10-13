@@ -62,10 +62,10 @@ class UlizaClinicalFormController extends Controller
         $county = County::find($f->county_id);
         $twg = UlizaTwg::where('default_twg', 1)->first();
         $form->twg_id = $county->twg_id ?? $twg->id ?? null;
-        // $form->save();
+        $form->save();
 
         $visits = $request->input('clinical_visits');
-/*
+
         foreach ($visits as $key => $value) {            
             $visit = new UlizaClinicalVisit;
             if(is_array($value)) $visit->fill($value);
@@ -75,7 +75,7 @@ class UlizaClinicalFormController extends Controller
             // $visit->uliza_clinical_form_id = $form->id;
             // $visit->save();
             $form->visit()->save($visit);
-        }*/
+        }
 
         \Log::debug($form->toJson());
 
