@@ -1718,7 +1718,7 @@ class Synch
 	{
 		$client = new Client(['base_uri' => self::$base]);
 		$url = 'insert/covidconsumption';
-		if (env('APP_LAB') == 23) {
+		if (in_array(env('APP_LAB'), [9, 23])) {
 			$client = new Client(['base_uri' => self::$p3_base]);
 			$url = 'consumption/covid';
 		}
@@ -1746,6 +1746,7 @@ class Synch
 			if (isset($body->error)) {
 				$subject = "COVID allocation synch failed";
 				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
+				print_r('Error: ');print_r($body->error);
 				return false;
 			} else {
 				foreach ($body as $key => $consumption) {
