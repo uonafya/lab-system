@@ -77,9 +77,6 @@ class UlizaClinicalFormController extends Controller
             $form->visit()->save($visit);
         }
 
-        \Log::debug($form->toJson());
-
-
         if($form->draft){
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'draft_mail', 'Draft Clinical Summary Form ' . $form->subject_identifier));
             // $user = \App\User::where('email', 'like', 'joel%')->first();
