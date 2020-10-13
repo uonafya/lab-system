@@ -74,6 +74,7 @@ class UlizaTwgFeedbackController extends Controller
             // Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'additional_info', 'NASCOP ' . $form->subject_identifier));
             $ulizaAdditionalInfo = new UlizaAdditionalInfo;
             $ulizaAdditionalInfo->requested_info = $request->input('requested_info');
+            $ulizaAdditionalInfo->uliza_clinical_form_id = $clinical_form->id;
             $ulizaAdditionalInfo->save();
 
             if($ulizaTwgFeedback->recommendation_id == 1){

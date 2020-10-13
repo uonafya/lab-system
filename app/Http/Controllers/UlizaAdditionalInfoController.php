@@ -50,9 +50,10 @@ class UlizaAdditionalInfoController extends Controller
      * @param  \App\UlizaAdditionalInfo  $ulizaAdditionalInfo
      * @return \Illuminate\Http\Response
      */
-    public function show(UlizaAdditionalInfo $ulizaAdditionalInfo)
+    public function show($id)
     {
         $view = true;
+        $ulizaAdditionalInfo = UlizaAdditionalInfo::findOrFail($id);
         $ulizaClinicalForm = $ulizaAdditionalInfo->clinical_form;
         $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
         $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
