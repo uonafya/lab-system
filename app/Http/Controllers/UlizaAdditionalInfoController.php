@@ -53,6 +53,7 @@ class UlizaAdditionalInfoController extends Controller
     public function show(UlizaAdditionalInfo $ulizaAdditionalInfo)
     {
         $view = true;
+        $ulizaClinicalForm = $ulizaAdditionalInfo->clinical_form;
         $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
         $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
         $feedbacks = DB::table('uliza_facility_feedbacks')->orderBy('name', 'ASC')->get();
