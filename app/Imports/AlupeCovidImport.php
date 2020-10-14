@@ -25,6 +25,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
         /*if(!property_exists($row, 'mfl_code')){
@@ -52,7 +53,12 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->name || !$row->unique_identifier || !$row->sex) return;
+        if(!$row->name || !$row->unique_identifier || !$row->sex){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
         $p = null;
 
         if(isset($row->idpassport) && strlen($row->idpassport) > 6) $p = CovidPatient::where(['national_id' => ($row->idpassport ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();

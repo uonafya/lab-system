@@ -95,7 +95,7 @@ class UlizaTwgFeedbackController extends Controller
         // Feedback is given to the facility
         if($ulizaTwgFeedback->recommendation_id == 3){
             if($ulizaTwgFeedback->facility_recommendation_id == 4){
-                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'additional_info_twg', 'DRT Approved by NASCOP ' . $clinical_form->subject_identifier));
+                Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'drt_approved', 'DRT Approved by NASCOP ' . $clinical_form->subject_identifier));
             }
             else{
                 Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'feedback_facility', 'NASCOP Feedback For ' . $clinical_form->subject_identifier));

@@ -56,7 +56,7 @@ class MiscDr extends Common
     {
     	$c = self::$call_array;
     	// susceptible
-    	if($score < 10) return $c['S'];
+    	if($score <= 10) return $c['S'];
     	else if($score < 15) return $c['PL'];
     	else if($score < 30) return $c['L'];
     	else if($score < 60) return $c['I'];
