@@ -149,8 +149,8 @@ class UlizaPage extends Model
             ['id' => 1, 'name' => '2nd line Approved'],
             ['id' => 2, 'name' => '3rd line Recommended'],
             ['id' => 3, 'name' => 'Continue Current Regimen'],
-            ['id' => 4, 'name' => 'DST Recommended'],
-            ['id' => 5, 'name' => 'Enhance adherence and repeat viral load after 3/12 of good adherence, if detectable, send for a DST'],
+            ['id' => 4, 'name' => 'DRT Recommended'],
+            ['id' => 5, 'name' => 'Enhance adherence and repeat viral load after 3/12 of good adherence, if detectable, send for a DRT'],
             ['id' => 6, 'name' => 'Repeat viral load'],
             ['id' => 7, 'name' => 'Substitute ART drugs'],
         ]);

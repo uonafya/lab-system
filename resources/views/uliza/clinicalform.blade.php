@@ -47,6 +47,11 @@
 						</div>
 						<div class="col-md-10">
 	                        <select class="form-control initial_fields" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
+	                        	@isset($ulizaClinicalForm)
+	                        		<option value="{{ $ulizaClinicalForm->facility_id }}" selected>
+	                        			{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }} 
+	                        		</option>
+	                        	@endisset
 	                        </select>						
 						</div>
 				    </div>
@@ -251,7 +256,7 @@
 													<td>
 														<div class="btn-group" role="group">
 															<button class="btn btn-sm btn-warning">Edit</button>
-															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click="delVisit(clinical_visit_index)">Del</button>
+															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click.prevent="delVisit(clinical_visit_index)">Del</button>
 															
 														</div> 
 													</td>
@@ -401,11 +406,11 @@
 						</div>
 					</div>
 
-					<div v-if="successful_submission" class="row alert alert-success">
+					<div v-if="successful_validation" class="row alert alert-success">
 						You have successfully submitted your request.
 					</div>
 
-					<div v-if="successful_submission === false" class="row alert alert-warning">
+					<div v-if="successful_validation === false" class="row alert alert-warning">
 						You have validation errors.
 					</div>
 				  
@@ -414,7 +419,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default"  @click="saveDraft()">Save As Draft</button>
+						<button class="btn btn-default" type="button"  @click.prevent="saveDraft()">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
@@ -439,6 +444,7 @@
         	el: "#my-vue-instance",
         	data: {
         		myForm: {
+        			id: null,
         			facility_id: null,
         			cccno: null,
         			reporting_date: null,
@@ -480,7 +486,16 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
-        		successful_submission: null,
+        		successful_validation: null,
+        	},
+        	mounted (){
+        		@isset($ulizaClinicalForm)
+        			var ulizaClinicalForm = {!! $ulizaClinicalForm->toJson() !!};
+        			var tempVm = this;
+        			Object.keys(this.myForm).forEach(function(key, index){
+        				tempVm.myForm[key] = ulizaClinicalForm[key];
+        			});
+        		@endisset
         	},
         	methods: {
         		update(){
@@ -488,9 +503,9 @@
         			// $('.form-control').removeAttr("disabled");
         			$('requirable').attr('required', 'required');
         			var validator = $( "#myClinicalForm" ).validate();
-					this.successful_submission = validator.form();
+					this.successful_validation = validator.form();
 					// console.log(res);
-					if(!this.successful_submission) return;
+					if(!this.successful_validation) return;
 					this.myForm.draft = 0;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
@@ -536,14 +551,14 @@
         		},*/
         		saveDraft(){
         			// $('.form-control').attr("disabled", "disabled");
-        			$('requirable').removeAttr("required");
+        			$('.requirable').removeAttr("required");
         			var validator = $( "#myClinicalForm" ).validate();
-					this.successful_submission = validator.form();
+					this.successful_validation = validator.form();
+					console.log('Saving Draft');
 
-					if(!this.successful_submission) return;
+					if(!this.successful_validation) return;
 					this.myForm.draft = 1;
 
-					console.log('Saving Draft');
 
         			axios.post('/uliza-form', this.myForm).then(function(response){
         				console.log(response);
@@ -601,6 +616,10 @@
             vm.clinicalVisit['clinicvisitdate'] = val;
         }); 
 
+        @isset($ulizaClinicalForm)
+	        $("#facility_id").val({{ $ulizaClinicalForm->facility_id }}).change();
+	    @endisset
+	    
 	});
 </script>
 @endsection

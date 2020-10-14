@@ -55,8 +55,10 @@ class UlizaClinicalFormController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $form = new UlizaClinicalForm;
+    {        
+        $form = null;
+        if($request->input('id')) $form = UlizaClinicalForm::find($request->input('id'));
+        if(!$form) $form = new UlizaClinicalForm;
         $form->fill($request->except('clinical_visits'));
         $f = $form->view_facility;
         $county = County::find($f->county_id);
@@ -77,8 +79,6 @@ class UlizaClinicalFormController extends Controller
             $form->visit()->save($visit);
         }
 
-        $case_identifier = 'CCC#: ' . $form->cccno . ' Nat#: ' . $form->nat_number;
-
         if($form->draft){
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'draft_mail', 'Draft Clinical Summary Form ' . $form->subject_identifier));
             // $user = \App\User::where('email', 'like', 'joel%')->first();
@@ -87,10 +87,10 @@ class UlizaClinicalFormController extends Controller
         }else{
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'received_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
 
-            Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
+            if($twg) Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
         }
 
-        return response()->json(['status' => 'ok'], 201);
+        return response()->json(['status' => 'ok', 'form' => $form], 201);
     }
 
     /**
@@ -110,10 +110,11 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function edit(UlizaClinicalForm $ulizaClinicalForm)
+    public function edit($id)
     {
         $reasons = DB::table('uliza_reasons')->get();
         $regimens = DB::table('viralregimen')->get();
+        $ulizaClinicalForm = UlizaClinicalForm::find($id);
         return view('uliza.clinicalform', compact('reasons', 'regimens', 'ulizaClinicalForm'));      
     }
 
@@ -124,8 +125,9 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UlizaClinicalForm $ulizaClinicalForm)
+    public function update(Request $request, $id)
     {
+        $form = UlizaClinicalForm::find($id);
         $form->fill($request->except('clinical_visits'));
         $form->save();
         return response()->json(['status' => 'ok'], 201);
