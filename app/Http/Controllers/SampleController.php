@@ -43,9 +43,10 @@ class SampleController extends Controller
             ->whereRaw($string)
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
-            ->paginate(50);
+            ->get();
+            // ->paginate(50);
         
-        $samples->setPath(url()->current());
+        // $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = '';
         return view('tables.poc_samples', $data)->with('pageTitle', 'Eid POC Samples');
