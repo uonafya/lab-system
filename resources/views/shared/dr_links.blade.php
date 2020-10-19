@@ -64,12 +64,16 @@
 
 @elseif($worksheet->status_id == 6)
 
-<a href="{{ url('dr_worksheet/approve/' . $worksheet->id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
-	Approve Worksheet Results
-</a> | 
-<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
-	Print
-</a>
+	<a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
+ 		Retrieve Results
+ 	</a> |
+
+	<a href="{{ url('dr_worksheet/approve/' . $worksheet->id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
+		Approve Worksheet Results
+	</a> | 
+	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
+		Print
+	</a>
 
 @else
 @endif
