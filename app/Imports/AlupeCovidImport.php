@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use DB;
 use Str;
 use \App\Facility;
 use \App\QuarantineSite;
@@ -24,13 +25,14 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
         /*if(!property_exists($row, 'mfl_code')){
             session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
             return;
         }*/
-        if(!property_exists($row, 'patient_name')){
+        if(!property_exists($row, 'name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
@@ -46,29 +48,39 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'Sex column is not present.']);
             return;
         }
+        if(!property_exists($row, 'idpassport')){
+            session(['toast_error' => 1, 'toast_message' => 'ID/Passport column is not present.']);
+            return;
+        }
 
-        if(!$row->patient_name || !$row->identifier || !$row->gender) return;
+        if(!$row->name || !$row->unique_identifier || !$row->sex){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
+        $p = null;
 
-
-        if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $row->identifier && strlen($row->identifier) > 5 && $this->facility_id) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $this->facility_id])->first();
+        if(isset($row->idpassport) && strlen($row->idpassport) > 6) $p = CovidPatient::where(['national_id' => ($row->idpassport ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->facility_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'facility_id' => $this->facility_id])->first();
+        if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->quarantine_site_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'quarantine_site_id' => $this->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
 
         $p->fill([
-            'identifier' => $row->unique_identifier ?? $row->patient_name,
+            'identifier' => $row->unique_identifier ?? $row->name,
             'facility_id' => $this->facility_id ?? null,
             'quarantine_site_id' => $this->quarantine_site_id ?? null,
-            'patient_name' => $row->patient_name,
+            'patient_name' => $row->name,
             'sex' => $row->sex,
-            'national_id' => $row->national_id ?? null,
+            'national_id' => $row->idpassport ?? null,
             'current_health_status' => $row->health_status ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->justification)->first()->id ?? 1,
-            'phone_no' => $row->phone_number ?? null,
+            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
-            'residence' => $row->area_of_residence ?? null,  
+            'residence' => $row->area_of_residence ?? $row->area ?? null,  
             'occupation' => $row->occupation ?? null,    
             'justification' => DB::table('covid_justifications')->where('name', $row->justification)->first()->id ?? 3,             
         ]);

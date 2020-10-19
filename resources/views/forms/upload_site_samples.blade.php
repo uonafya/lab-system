@@ -32,7 +32,7 @@
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [3,4,5,6]))
+                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [4,5,6]))
 
                         <div class="alert alert-warning">
                             <center>
@@ -58,7 +58,27 @@
                                 &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
                                 &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
                                 &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
                                 Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
+                                Symptoms (A comma separated list of all symptom codes)
+                                &nbsp;&nbsp;&nbsp; 1 => Fever / Chills  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Shortness of Breath  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Muscular Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => General Weakness  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Diarrhoea  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Chest Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Cough  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Nausea / vomiting  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Abdominal Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Sore Throat  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Headache  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Joint Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Runny Nose  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Irritability / Confusion  <br />
+
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
@@ -145,13 +165,11 @@
 
                         @endif
                         <br />
-                        
+
                         @if(in_array(env('APP_LAB'), [3]))   
                             @include('partial.select', ['model' => null, 'default_val' => null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
                           <div class="form-group">
-                              <label class="col-sm-4 control-label">Facility 
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                              </label>
+                              <label class="col-sm-4 control-label">Facility</label>
                               <div class="col-sm-8">
                                 <select class="form-control requirable" name="facility_id" id="facility_id">
                                     @isset($sample)
