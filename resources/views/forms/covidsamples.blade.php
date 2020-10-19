@@ -150,7 +150,11 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'identifier', 'default_val' => $sample->patient->identifier ?? null, 'required' => true, 'label' => 'Patient Identifier'])
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID / Passport Number (If any)'])
+                        @if(env('APP_LAB') == 2)
+                            @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID / Passport Number (Enter No Data if absent)', 'required' => true])
+                        @else
+                            @include('partial.input', ['model' => $m, 'prop' => 'national_id', 'default_val' => $sample->patient->national_id ?? null, 'label' => 'National ID / Passport Number (If any)'])
+                        @endif
 
                         @include('partial.select', ['model' => $m, 'required' => true, 'default_val' => $sample->patient->county_id ?? null, 'prop' => 'county_id', 'label' => 'County', 'items' => $countys])
 
@@ -162,7 +166,11 @@
 
                         </div>
 
-                        @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number', 'facility_required' => true])
+                        @if(env('APP_LAB') == 2)
+                            @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number', 'required' => true])
+                        @else
+                            @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number', 'facility_required' => true])
+                        @endif
 
 
                         @include('partial.date', ['model' => $m, 'prop' => 'dob', 'label' => 'Date of Birth', 'default_val' => $sample->patient->dob ?? null, 'class' => 'date-dob'])
