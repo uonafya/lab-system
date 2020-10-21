@@ -171,6 +171,7 @@
 		$(div_name).select2({
 			minimumInputLength: minimum_length,
 			placeholder: placeholder,
+			allowClear: true,
 			ajax: {
 				delay	: 100,
 				type	: "POST",
