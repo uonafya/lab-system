@@ -963,7 +963,7 @@ class CovidSampleController extends Controller
 
 
         $patient = null;
-        if($national_id) $patient = CovidPatient::where('national_id', $national_id)->first();
+        if($national_id && !Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])) $patient = CovidPatient::where('national_id', $national_id)->first();
         if(!$patient && !$identifier) return ['message' => null];
         if(!$patient && $facility_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
@@ -983,7 +983,6 @@ class CovidSampleController extends Controller
             $sql = substr($sql, 0, -4);
             $patient = CovidPatient::whereRaw($sql)->first();
         }
-
 
         if($patient){
             $patient->most_recent();
