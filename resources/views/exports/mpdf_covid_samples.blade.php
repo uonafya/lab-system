@@ -331,7 +331,7 @@ p.breakhere {page-break-before: always}
 							<img src="{{ $sample->worksheet->runner->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
-				</tr>				
+				</tr>			
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -342,7 +342,30 @@ p.breakhere {page-break-before: always}
 							<img src="{{ $sample->final_approver->user_signature ?? $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
-				</tr>				
+				</tr>
+
+				@elseif(env('APP_LAB') == 6)			
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Tested By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->worksheet->uploader->full_name ?? '' }} </strong> 
+						</center>					
+					</td>
+				</tr>
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<strong>Signature: </strong>
+							&nbsp;&nbsp;
+						</center>					
+					</td>
+				</tr>	
 				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
