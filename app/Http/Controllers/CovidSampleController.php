@@ -984,7 +984,6 @@ class CovidSampleController extends Controller
             $patient = CovidPatient::whereRaw($sql)->first();
         }
 
-
         if($patient){
             $patient->most_recent();
             if($patient->most_recent){
