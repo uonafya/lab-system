@@ -100,12 +100,13 @@ class UlizaClinicalForm extends BaseModel
         $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
         $feedbacks = DB::table('uliza_facility_feedbacks')->orderBy('name', 'ASC')->get();
         $regimens = DB::table('viralregimen')->get();
+        $completed = true;
         $ulizaClinicalForm = $this;
 
 
         $mpdf = new Mpdf();
         $ulizaClinicalForm = $this;
-        $view_data = view('uliza.exports.clinical_form', compact('reasons', 'recommendations', 'feedbacks', 'regimens', 'ulizaClinicalForm'))->render();
+        $view_data = view('uliza.exports.clinical_form', compact('reasons', 'recommendations', 'feedbacks', 'regimens', 'completed', 'ulizaClinicalForm'))->render();
         $mpdf->WriteHTML($view_data);
 
         if($download) return $mpdf->Output($file_name, \Mpdf\Output\Destination::DOWNLOAD);
