@@ -620,6 +620,7 @@ class CovidSampleController extends Controller
             $patient = new CovidPatient;
             $patient->fill($request->only($data['patient']));
         }
+        if(!$request->input('facility_id')) $patient->facility_id = $request->input('facility_id');
         $patient->current_health_status = $request->input('health_status');
         $patient->pre_update();
 
