@@ -3,6 +3,7 @@
 namespace App;
 
 use DB;
+use Str;
 
 class CovidPatient extends BaseModel
 {
@@ -81,4 +82,33 @@ class CovidPatient extends BaseModel
                 ->first();
         $this->most_recent = $sample;
     }
+
+
+    public function scopeExisting($query, $data)
+    {
+        extract($data);
+        if(isset($national_id)){
+            if($national_id && strlen($national_id) > 5 && !Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])){
+                return $query->where(['national_id' => $national_id]);
+            }
+        }
+        else if(isset($identifier)){
+            if(isset($facility_id)){
+                $query->where(['facility_id' => $facility_id])->whereNotNull('facility_id');
+            }
+            else if(isset($quarantine_site_id)){
+                $query->where(['quarantine_site_id' => $quarantine_site_id])->whereNotNull('quarantine_site_id');
+            }
+            else{
+                return $query->where('id', '<', 0);
+            }
+
+
+            if($identifier && strlen($identifier) > 5){
+                return $query->where(['identifier' => $identifier]);
+            }            
+        }
+        return $query->where('id', '<', 0);
+    }
+
 }

@@ -13,7 +13,9 @@
 
 	<div class="col-md-12" id="my-vue-instance">
 		<div class="card border-secondary mb-4">
-			<img class="rounded mx-auto d-block img-responsive mt-1" height="161" src="{{ public_path('uliza_nascop/logo.jpg') }}" width="160">
+			<div class="text-center">
+				<img class="rounded mx-auto d-block img-responsive mt-1"  height="161" width="160" src="{{ public_path('uliza_nascop/logo.jpg') }}">
+			</div>
 			<div class="card-body text-secondary">
 				<h5 class="card-title text-center">MINISTRY OF HEALTH</h5>
 				<h5 class="card-subtitle mb-2 text-muted text-center">NATIONAL AIDS AND STI CONTROL PROGRAMME</h5>
