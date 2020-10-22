@@ -102,8 +102,7 @@ class UlizaClinicalFormController extends Controller
     public function show($id)
     {
         // $ulizaClinicalForm->entry_pdf(null, true);
-        $ulizaClinicalForm = UlizaClinicalForm::find($id);
-        // \App\UlizaPage::entry_pdf($ulizaClinicalForm, null, true);
+        $ulizaClinicalForm = UlizaClinicalForm::findOrFail($id);
         $ulizaClinicalForm->entry_pdf(null, true);
 
         // $reasons = DB::table('uliza_reasons')->where('public', 1)->get();
