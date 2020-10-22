@@ -27,7 +27,7 @@
 							</div>
 						</div>
 						<div class="col-md-10">
-							<input type="text" name="" value="{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }}">
+							<input type="text" name="" value="{{ $ulizaClinicalForm->view_facility->facilitycode ?? '' }} - {{ $ulizaClinicalForm->view_facility->name ?? '' }}">
 						</div>
 				    </div>
 				  
@@ -75,7 +75,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date initial_fields" v-model="myForm.artstart_date" name="artstart_date" required>
+									<input class="form-control " v-model="myForm.artstart_date" name="artstart_date" required value="{{ $ulizaClinicalForm->artstart_date ?? '' }}">
 								</div>
 							</div>
 					  
@@ -87,11 +87,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<select class="custom-select" v-model="myForm.gender" id="gender" name="gender" required="required">
-										<option selected="">Choose...</option>
-										<option value="Male">Male</option>
-										<option value="Female">Female</option>
-									</select>
+									<input class="form-control " name="gender" required value="{{ $ulizaClinicalForm->gender ?? '' }}">
 								</div>
 						
 								<div class="col-md-4 input-group required">
@@ -101,7 +97,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input aria-describedby="curr_weight" v-model="myForm.curr_weight" class="form-control" maxlength="3" name="curr_weight"  type="number">
+									<input aria-describedby="curr_weight" v-model="myForm.curr_weight" class="form-control" maxlength="3" name="curr_weight"  type="number" value="{{ $ulizaClinicalForm->curr_weight ?? '' }}">
 								</div>
 								<div class="col-md-4 input-group required">
 									<div class="input-group-prepend">
@@ -110,7 +106,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input aria-describedby="height" class="form-control" v-model="myForm.height" maxlength="3" name="height" required="required" type="number">
+									<input aria-describedby="height" class="form-control" v-model="myForm.height" maxlength="3" name="height" required="required" type="number" value="{{ $ulizaClinicalForm->height ?? '' }}">
 								</div>
 							</div>
 						</div>
@@ -124,7 +120,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control initial_fields" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
+							<input aria-describedby="clinician_name" class="form-control initial_fields" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text"  value="{{ $ulizaClinicalForm->clinician_name ?? '' }}">
 						</div>
 					</div>
 				  
@@ -142,7 +138,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_email" class="form-control initial_fields" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
+							<input aria-describedby="facility_email" class="form-control initial_fields" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text" value="{{ $ulizaClinicalForm->facility_email ?? '' }}">
 						</div>
 					</div>
 				  
@@ -154,7 +150,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_tel" class="form-control initial_fields" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
+							<input aria-describedby="facility_tel" class="form-control initial_fields" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}">
 						</div>
 					</div>
 				  
@@ -167,12 +163,7 @@
 					</div>
 
 					<div class="form-row mb-3">
-						@foreach($reasons as $reason)
-							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1 requirable" v-model="myForm.primary_reason" name="primary_reason requirable" required="required" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
-								<label class="form-check-label ml-5" for="primary_reason_A{{ $reason->id }}">{{ $reason->name }}</label>
-							</div>
-						@endforeach
+						{{ $ulizaClinicalForm->get_prop_name($reasons, 'primary_reason') }}
 					</div>
 				  
 					<div class="form-group row">
