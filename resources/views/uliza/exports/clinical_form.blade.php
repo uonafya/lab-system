@@ -253,7 +253,7 @@
 							<div style='color: #ff0000; display: inline;'>*</div>
 						</label>
 						<div class="col-md-8">
-							<input class="form-control requirable" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
+							<input class="form-control requirable" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number" value="{{ $ulizaClinicalForm->clinical_eval }}">
 						</div>
 					</div>
 				  
@@ -263,7 +263,7 @@
 							Number of home visits conducted in last 3-6 months, and findings:
 						</label>
 						<div class="col-md-8">
-						  <input class="form-control" v-model="myForm.no_homevisits" name="no_homevisits" type="number">
+						  <input class="form-control" value="{{ $ulizaClinicalForm->no_homevisits }}">
 						</div>
 					</div>
 				  
@@ -272,7 +272,7 @@
 							Support structures (e.g. treatment buddy, support group attendance, caregivers) in place for this patient?
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.support_structures" name="support_structures" rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->support_structures }}</textarea>
 						</div>
 					</div>
 				  
@@ -281,14 +281,14 @@
 							Evidence of adherence concerns (e.g. missed appointments, pill counts?):
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.adherence_concerns" name="adherence_concerns" rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->adherence_concerns }}</textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Number of DOTS done in last 3-6 months:</label>
 						<div class="col-md-8">
-							<input class="form-control" v-model="myForm.no_dotsdone" name="no_dotsdone"  type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_dotsdone }}">
 						</div>
 					</div>
 				  
@@ -297,7 +297,7 @@
 							Likely root cause/s of poor adherence, for this patient (e.g. stigma, disclosure, side effects, alcohol or other drugs, mental health issues, caregiver changes, religious beliefs, inadequate preparation, etc):
 						</label>
 						<div class="col-md-8">
-						  <textarea class="form-control" v-model="myForm.likely_rootcauses" name="likely_rootcauses"  rows="4"></textarea>
+						  <textarea class="form-control" rows="4">{{ $ulizaClinicalForm->likely_rootcauses }}</textarea>
 						</div>
 					</div>
 				  
@@ -310,28 +310,28 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Inadequate dosing/dose adjustments (particularly for children)::</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.inadequate_dosing" name="inadequate_dosing"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->inadequate_dosing }}</textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-drug interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.drug_interactions" name="drug_interactions"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->drug_interactions }}</textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Drug-food interactions:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.food_interactions" name="food_interactions"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->food_interactions }}</textarea>
 						</div>
 					</div>
 				  
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">• Impaired absorption (e.g. chronic severe diarrhea):</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.impaired_absorption" name="impaired_absorption"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->impaired_absorption }}</textarea>
 						</div>
 					</div>
 				  
@@ -344,7 +344,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">Comment on treatment interruptions, if any:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.treatment_interruptions" name="treatment_interruptions"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->treatment_interruptions }}</textarea>
 						</div>
 					</div>
 				  
@@ -353,7 +353,7 @@
 							Has Drug Resistance/Sensitivity Testing been done for this patient? If yes, state date done and attach the detailed results.
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.drt_testing" name="drt_testing"  rows="4"></textarea>
+							<textarea class="form-control" rows="4">{{ $ulizaClinicalForm->drt_testing }}</textarea>
 						</div>
 					</div>
 				  
@@ -364,7 +364,7 @@
 							(indicate how treatment failure was established and confirmed, proposed regimen and dosage, current source of drugs if patient already on 3rd line). If yes, state date done and attach the detailed results:
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.mdt_discussions" name="mdt_discussions"  rows="6"></textarea>
+							<textarea class="form-control" rows="6">{{ $ulizaClinicalForm->mdt_discussions }}</textarea>
 						</div>
 					</div>
 				  
@@ -373,24 +373,8 @@
 							MDT members who participated in the case discussion (names and titles)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.mdt_members" maxlength="255" name="mdt_members"  rows="6"></textarea>
+							<textarea class="form-control" rows="6">{{ $ulizaClinicalForm->mdt_members }}</textarea>
 						</div>
-					</div>
-
-					<div v-if="successful_validation" class="row alert alert-success">
-						You have successfully submitted your request.
-					</div>
-
-					<div v-if="successful_validation === false" class="row alert alert-warning">
-						You have validation errors.
-					</div>
-				  
-					<div class="mb-3 float-right">
-						<button class="btn btn-warning" type="submit" >Submit</button>
-					</div>
-				  
-					<div class="mb-3 float-centre">
-						<button class="btn btn-default" type="button"  @click.prevent="saveDraft()">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
