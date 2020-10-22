@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
+    <link rel="stylesheet" href="{{ public_path('vendor/bootstrap/dist/css/bootstrap.css') }}" />	
 </head>
 
 
@@ -398,7 +398,7 @@
 	</div>
 </body>
 
-<script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ public_path('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ public_path('vendor/jquery/dist/jquery.min.js') }}"></script>
 
 </html>
