@@ -103,7 +103,8 @@ class UlizaClinicalFormController extends Controller
     {
         // $ulizaClinicalForm->entry_pdf(null, true);
         $ulizaClinicalForm = UlizaClinicalForm::find($id);
-        \App\UlizaPage::entry_pdf($ulizaClinicalForm, null, true);
+        // \App\UlizaPage::entry_pdf($ulizaClinicalForm, null, true);
+        $ulizaClinicalForm->entry_pdf(null, true);
 
         // $reasons = DB::table('uliza_reasons')->where('public', 1)->get();
         // $regimens = DB::table('viralregimen')->get();
