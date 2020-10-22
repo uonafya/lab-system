@@ -101,7 +101,7 @@ class UlizaClinicalFormController extends Controller
      */
     public function show(UlizaClinicalForm $ulizaClinicalForm)
     {
-        //
+        $ulizaClinicalForm->entry_pdf(null, true);
     }
 
     /**

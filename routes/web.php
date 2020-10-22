@@ -63,6 +63,9 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 	Route::get('clinical-review', 'UlizaController@clinical_review');
 });
 
+Route::prefix('uliza-form')->name('uliza-form.')->group(function(){
+
+});
 Route::resource('uliza-form', 'UlizaClinicalFormController');
 Route::post('uliza/login', 'UlizaUserController@login');
 Route::resource('uliza-additional-info', 'UlizaAdditionalInfoController');
