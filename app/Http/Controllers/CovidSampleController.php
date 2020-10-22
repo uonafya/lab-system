@@ -966,14 +966,19 @@ class CovidSampleController extends Controller
 
 
         $patient = null;
-        if($national_id && !Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])) $patient = CovidPatient::where('national_id', $national_id)->first();
+        $patient = CovidPatient::existing($request->only(['national_id']))->first();
+        if(!$patient) $patient = CovidPatient::existing($request->only(['identifier', 'facility_id']))->first();
+        if(!$patient) $patient = CovidPatient::existing($request->only(['identifier', 'quarantine_site_id']))->first();
+
+        
+        /*if($national_id && !Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])) $patient = CovidPatient::where('national_id', $national_id)->first();
         if(!$patient && !$identifier) return ['message' => null];
         if(!$patient && $facility_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
         }
         if(!$patient && $quarantine_site_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
-        }
+        }*/
 
         if(!$patient && $patient_name){
             $sql = '';
