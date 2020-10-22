@@ -159,7 +159,7 @@ class UlizaPage extends Model
     }
 
 
-    public function entry_pdf($ulizaClinicalForm, $file_path=null, $download=false)
+    public static function entry_pdf($ulizaClinicalForm, $file_path=null, $download=false)
     {
         if(!$file_path) $file_path = $ulizaClinicalForm->entry_path;
 

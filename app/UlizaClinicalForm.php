@@ -76,9 +76,9 @@ class UlizaClinicalForm extends BaseModel
         $view_data = view('uliza.exports.clinical_form', compact('reasons', 'regimens', 'ulizaClinicalForm'))->render();
         $mpdf->WriteHTML($view_data);
 
-        if($download) return $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::DOWNLOAD);
+        if($download) return $mpdf->Output($file_name, \Mpdf\Output\Destination::DOWNLOAD);
         else{
-            $mpdf->Output($this->individual_path, \Mpdf\Output\Destination::FILE);
+            $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
         }
     }
 
