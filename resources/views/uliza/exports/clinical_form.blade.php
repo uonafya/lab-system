@@ -30,9 +30,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="col-md-10">
-							<input type="text" name="" value="{{ $ulizaClinicalForm->view_facility->facilitycode ?? '' }} - {{ $ulizaClinicalForm->view_facility->name ?? '' }}">
-						</div>
+						<input type="text" class="form-control" value="{{ $ulizaClinicalForm->view_facility->facilitycode ?? '' }} - {{ $ulizaClinicalForm->view_facility->name ?? '' }}">
 				    </div>
 				  
 					<div class="form-row mb-3">
@@ -43,7 +41,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 						    </div>
-						    <input aria-describedby="cccno" class="form-control initial_fields" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text" value="{{ $ulizaClinicalForm->cccno ?? '' }}">
+						    <input class="form-control" type="text" value="{{ $ulizaClinicalForm->cccno }}">
 						</div>
 						<div class="col-md-5 input-group required">
 							<div class="input-group-prepend">
@@ -52,7 +50,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input class="form-control date initial_fields" v-model="myForm.reporting_date" name="reporting_date" required value="{{ $ulizaClinicalForm->reporting_date ?? '' }}">
+							<input class="form-control" required value="{{ $ulizaClinicalForm->reporting_date }}">
 						</div>
 				    </div>
 				  
@@ -70,7 +68,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date initial_fields" v-model="myForm.dob" name="dob" required value="{{ $ulizaClinicalForm->dob ?? '' }}">
+									<input class="form-control date initial_fields" v-model="myForm.dob" name="dob" required value="{{ $ulizaClinicalForm->dob }}">
 								</div>
 								<div class="col-md-6 input-group required">
 									<div class="input-group-prepend">
@@ -79,7 +77,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control " v-model="myForm.artstart_date" name="artstart_date" required value="{{ $ulizaClinicalForm->artstart_date ?? '' }}">
+									<input class="form-control" value="{{ $ulizaClinicalForm->artstart_date }}">
 								</div>
 							</div>
 					  
@@ -91,7 +89,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control " name="gender" required value="{{ $ulizaClinicalForm->gender ?? '' }}">
+									<input class="form-control" value="{{ $ulizaClinicalForm->gender }}">
 								</div>
 						
 								<div class="col-md-4 input-group required">
@@ -101,7 +99,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input aria-describedby="curr_weight" v-model="myForm.curr_weight" class="form-control" maxlength="3" name="curr_weight"  type="number" value="{{ $ulizaClinicalForm->curr_weight ?? '' }}">
+									<input class="form-control" type="number" value="{{ $ulizaClinicalForm->curr_weight }}">
 								</div>
 								<div class="col-md-4 input-group required">
 									<div class="input-group-prepend">
@@ -110,7 +108,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input aria-describedby="height" class="form-control" v-model="myForm.height" maxlength="3" name="height" required="required" type="number" value="{{ $ulizaClinicalForm->height ?? '' }}">
+									<input class="form-control" value="{{ $ulizaClinicalForm->height }}">
 								</div>
 							</div>
 						</div>
@@ -124,7 +122,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control initial_fields" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text"  value="{{ $ulizaClinicalForm->clinician_name ?? '' }}">
+							<input class="form-control" value="{{ $ulizaClinicalForm->clinician_name }}">
 						</div>
 					</div>
 				  
@@ -142,7 +140,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_email" class="form-control initial_fields" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text" value="{{ $ulizaClinicalForm->facility_email ?? '' }}">
+							<input class="form-control" value="{{ $ulizaClinicalForm->facility_email }}">
 						</div>
 					</div>
 				  
@@ -154,20 +152,21 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_tel" class="form-control initial_fields" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text" value="{{ $ulizaClinicalForm->facility_tel ?? '' }}">
+							<input class="form-control" value="{{ $ulizaClinicalForm->facility_tel }}">
 						</div>
 					</div>
 				  
 				  
 					<div class="form-row mb-3 required">
-						<label class="col-md-12">
-							What is the primary reason for this consultation:
-							<div style='color: #ff0000; display: inline;'>*</div>
-						</label>
-					</div>
-
-					<div class="form-row mb-3">
-						{{ $ulizaClinicalForm->get_prop_name($reasons, 'primary_reason') }}
+						<div class="col-md-12 input-group required">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="facility_tel">
+									Primary reason for this consultation:
+									<div style='color: #ff0000; display: inline;'>*</div>
+								</span>
+							</div>
+							<input class="form-control" value="{{ $ulizaClinicalForm->get_prop_name($reasons, 'primary_reason') }}">
+						</div>
 					</div>
 				  
 					<div class="form-group row">
@@ -175,7 +174,7 @@
 							Clinical Evaluation: history, physical, diagnostics, working diagnosis:(excluding the information in the table below)
 						</label>
 						<div class="col-md-8">
-							<textarea class="form-control" v-model="myForm.clinical_eval" name="clinical_eval" rows="3"></textarea>
+							<textarea class="form-control" rows="3">{{ $ulizaClinicalForm->clinical_eval }}</textarea>
 						</div>
 					</div>
 				  
@@ -212,25 +211,27 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr v-for="(clinical_visit, clinical_visit_index) in myForm.clinical_visits">
-													<td> @{{ clinical_visit_index+1 }} </td>
-													<td> @{{ clinical_visit.clinicvisitdate }} </td>
-													<td> @{{ clinical_visit.cd4 }} </td>
-													<td> @{{ clinical_visit.hb }} </td>
-													<td> @{{ clinical_visit.crclegfr }} </td>
-													<td> @{{ clinical_visit.viral_load }} </td>
-													<td> @{{ clinical_visit.weight_bmi }} </td>
-													<td> @{{ clinical_visit.arv_regimen }} </td>
-													<td> @{{ clinical_visit.reason_switch }} </td>
-													<td> @{{ clinical_visit.new_oi }} </td>
-													<td>
-														<div class="btn-group" role="group">
-															<button class="btn btn-sm btn-warning">Edit</button>
-															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click.prevent="delVisit(clinical_visit_index)">Del</button>
-															
-														</div> 
-													</td>
-												</tr>
+												@foreach($ulizaClinicalForm->visit as $visit)
+													<tr>
+														<td> {{ $loop->index+1 }} </td>
+														<td> {{ $visit->clinicvisitdate }} </td>
+														<td> {{ $visit->cd4 }} </td>
+														<td> {{ $visit->hb }} </td>
+														<td> {{ $visit->crclegfr }} </td>
+														<td> {{ $visit->viral_load }} </td>
+														<td> {{ $visit->weight_bmi }} </td>
+														<td> {{ $visit->arv_regimen }} </td>
+														<td> {{ $visit->reason_switch }} </td>
+														<td> {{ $visit->new_oi }} </td>
+														<td>
+															<div class="btn-group" role="group">
+																<button class="btn btn-sm btn-warning">Edit</button>
+																<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click.prevent="delVisit(clinical_visit_index)">Del</button>
+																
+															</div> 
+														</td>
+													</tr>
+												@endforeach
 											</tbody>
 										</table>
 									</div>
