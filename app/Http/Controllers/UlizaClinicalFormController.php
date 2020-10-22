@@ -99,9 +99,10 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function show(UlizaClinicalForm $ulizaClinicalForm)
+    public function show($id)
     {
         // $ulizaClinicalForm->entry_pdf(null, true);
+        $ulizaClinicalForm = UlizaClinicalForm::find($id);
         \App\UlizaPage::entry_pdf($ulizaClinicalForm, null, true);
     }
 
