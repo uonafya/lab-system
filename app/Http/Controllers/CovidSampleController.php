@@ -490,7 +490,7 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(auth()->user()->lab_id != 1){
+        if(!in_array(auth()->user()->lab_id, [1,4]){
             /*$national_id = $request->input('national_id');
             if(!$patient && $national_id && strlen($national_id) > 5 && !\Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])){
                 $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();

@@ -62,9 +62,9 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         }
         $p = null;
 
-        if(!$p) $p = CovidPatient::existing(['national_id' => $row->national_id])->first();
-        if(!$p && $fac) $p = CovidPatient::existing(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
-        if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::existing(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+        // if(!$p) $p = CovidPatient::existing(['national_id' => $row->national_id])->first();
+        // if(!$p && $fac) $p = CovidPatient::existing(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        // if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::existing(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
         // if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         // if(!$p && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
