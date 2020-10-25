@@ -54,17 +54,17 @@
 				<a class="p-2" href="/ulizaplatform/dashboard">DashBoard</a>
 				@if(auth()->user()->uliza_admin)
 					<!-- <div class="dropdown show"> -->
-						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" data-target="#twgDropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
 
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuLink" id="twgDropdown">
 							<a class="dropdown-item" href="/uliza-twg">View TWGs</a>
 							<a class="dropdown-item" href="/uliza-twg/create">Create TWGs</a>
 						</div>
 					<!-- </div> -->
 					<!-- <div class="dropdown show"> -->
-						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+						<a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="dropdown" data-target="#userDropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
 
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuLinkTwo">
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuLinkTwo" id="userDropdown">
 							<a class="dropdown-item" href="/uliza-user">View Users</a>
 							<a class="dropdown-item" href="/uliza-user/create">Create Users</a>
 						</div>
