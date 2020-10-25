@@ -102,6 +102,7 @@ class UlizaClinicalForm extends BaseModel
         $regimens = DB::table('viralregimen')->get();
         $completed = true;
         $ulizaClinicalForm = $this;
+        unset($ulizaClinicalForm->feedback);
 
 
         $mpdf = new Mpdf();
