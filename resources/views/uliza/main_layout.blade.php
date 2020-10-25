@@ -55,20 +55,20 @@
 				@if(auth()->user()->uliza_admin)
 					<!-- <div class="dropdown show"> -->
 						<a class="btn btn-outline-primary " href="#" role="button" id="dropdownMenuLink" data-toggle="collapse" data-target="#twgDropdown" aria-haspopup="true" aria-expanded="false"> TWGs </a>
+					<!-- </div> -->
+					<!-- <div class="dropdown show"> -->
+						<a class="btn btn-outline-primary " href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="collapse" data-target="#userDropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+					<!-- </div> -->
 
 						<div class="collapse" aria-labelledby="dropdownMenuLink" id="twgDropdown">
 							<a class="collapse-item" href="/uliza-twg">View TWGs</a>
 							<a class="collapse-item" href="/uliza-twg/create">Create TWGs</a>
 						</div>
-					<!-- </div> -->
-					<!-- <div class="dropdown show"> -->
-						<a class="btn btn-outline-primary " href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="collapse" data-target="#userDropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
 
 						<div class="collapse" aria-labelledby="dropdownMenuLinkTwo" id="userDropdown">
 							<a class="collapse-item" href="/uliza-user">View Users</a>
 							<a class="collapse-item" href="/uliza-user/create">Create Users</a>
 						</div>
-					<!-- </div> -->
 
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
