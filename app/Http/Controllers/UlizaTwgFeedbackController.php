@@ -30,8 +30,9 @@ class UlizaTwgFeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(UlizaClinicalForm $ulizaClinicalForm)
+    public function create($id)
     {
+        $ulizaClinicalForm = UlizaClinicalForm::findOrFail($id);
         $view = true;
         if(Str::contains(url()->current(), ['create'])) $view = false;
         $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
