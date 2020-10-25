@@ -105,7 +105,6 @@ class UlizaClinicalForm extends BaseModel
 
 
         $mpdf = new Mpdf();
-        $ulizaClinicalForm = $this;
         $view_data = view('uliza.exports.clinical_form', compact('reasons', 'recommendations', 'feedbacks', 'regimens', 'completed', 'ulizaClinicalForm'))->render();
         $mpdf->WriteHTML($view_data);
 
