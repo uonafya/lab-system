@@ -102,7 +102,6 @@ class UlizaTwgFeedbackController extends Controller
                 Mail::to([$clinical_form->facility_email])->send(new UlizaMail($clinical_form, 'feedback_facility', 'NASCOP Feedback For ' . $clinical_form->subject_identifier));
             }
         }
-
         return redirect('uliza-form');
     }
 
