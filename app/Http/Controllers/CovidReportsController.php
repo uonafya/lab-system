@@ -188,7 +188,7 @@ class CovidReportsController extends Controller
 			$sample->get_prop_name($lookups['health_statuses'], 'health_status'),
 			$sample->phone_no ?? '',
 			$sample->countyname ?? $sample->county,
-			$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
+			$sample->sub_county ?? $sample->subcountyname ?? $sample->subcounty ?? '',
 
 			$travelled,
 			$history,

@@ -453,6 +453,8 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+
+
     public static function to_ampath()
     {
         $path = public_path('afya_transitioned_sites.csv');
@@ -3663,9 +3665,12 @@ class Random
             $s = Viralsample::find($data[0]);
             if(!$s) continue;
 
-            if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
-            else if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
+            // if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
+            if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
             else if(\Str::startsWith($data[3], 'B')) $s->pmtct = 2;
+            else{
+                $s->pmtct = 2;
+            }
             $s->pre_update();
         }
     }

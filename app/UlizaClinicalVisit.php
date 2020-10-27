@@ -12,4 +12,5 @@ class UlizaClinicalVisit extends BaseModel
     {
         return $this->belongsTo('App\UlizaClinicalForm');
     }
+
 }
