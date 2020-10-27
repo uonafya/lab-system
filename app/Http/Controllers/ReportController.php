@@ -204,8 +204,9 @@ class ReportController extends Controller
                     $batch->pre_update();
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);
-            } else 
+            } else {
                 $this->__getExcel($data, $dateString, $request);
+            }
         }else if($request->input('types') == 'worksheet_report'){
             if($request->input('period') == 'range') $year = date('Y', strtotime($request->input('toDate')));
             else{
@@ -456,6 +457,7 @@ class ReportController extends Controller
             else if ($request->input('testtype') == 'EID')
                 $testtype = 'EID';
         }
+        dd($testtype);
 
         $title = '';
     	if ($testtype == 'Viralload') {
@@ -564,7 +566,7 @@ class ReportController extends Controller
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
-        dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
+        // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
     }
 
