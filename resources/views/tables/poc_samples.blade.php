@@ -85,7 +85,7 @@
 
                             </tbody>
                         </table>
-                        {{ $samples->links() }}
+                        {{-- $samples->links() --}}
                     </div>
                 </div>
             </div>

@@ -45,8 +45,8 @@ class Controller extends BaseController
         if (!in_array(env('APP_LAB'), [23, 25])) {
             if (auth()->user()->eidvl_consumption_allowed)
                 return true;
-            if (auth()->user()->user_type_id == 1 && date('d') > 9)
-                return true;
+            // if (auth()->user()->user_type_id == 1 && date('d') > 9)
+            //     return true;
         }
         return false;
     }
@@ -70,11 +70,12 @@ class Controller extends BaseController
             
             if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
-            
+
             if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
             
-            if (Deliveries::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+            $model = new Deliveries;
+            if (!collect($model->getMissingDeliveries())->isEmpty())  
                 return true;
 
             if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
