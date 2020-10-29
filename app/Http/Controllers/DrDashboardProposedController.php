@@ -69,23 +69,23 @@ class DrDashboardProposedController extends DrDashboardBaseController
 
 		$data['categories'][0] = 'Total Requests';
 		$data["outcomes"][0]["data"][0]['y'] = (int) 100;
-		$data["outcomes"][0]["data"][0]['z'] = $total_requests->total;
+		$data["outcomes"][0]["data"][0]['z'] = ' (' . number_format($total_requests->total) . ')';
 
-		$data['categories'][1] = 'Total Requests';
+		$data['categories'][1] = 'Total Accepted';
 		$data["outcomes"][0]["data"][1]['y'] = DrDashboard::get_percentage($total_accepted->total, $total_requests->total);
-		$data["outcomes"][0]["data"][1]['z'] = $total_accepted->total;
+		$data["outcomes"][0]["data"][1]['z'] = ' (' . number_format($total_accepted->total) . ')';
 
 		$data['categories'][2] = 'Accepted Using VL Criteria';
 		$data["outcomes"][0]["data"][2]['y'] = DrDashboard::get_percentage($total_accepted->total, $total_requests->total);
-		$data["outcomes"][0]["data"][2]['z'] = $total_accepted->total;
+		$data["outcomes"][0]["data"][2]['z'] = ' (' . number_format($total_accepted->total) . ')';
 
 		$data['categories'][3] = 'Passed Gel Documentation';
 		$data["outcomes"][0]["data"][3]['y'] = DrDashboard::get_percentage($total_passed_gel->total, $total_requests->total);
-		$data["outcomes"][0]["data"][3]['z'] = $total_passed_gel->total;
+		$data["outcomes"][0]["data"][3]['z'] = ' (' . number_format($total_passed_gel->total) . ')';
 
 		$data['categories'][4] = 'Successfully Genotyped';
 		$data["outcomes"][0]["data"][4]['y'] = DrDashboard::get_percentage($total_genotyped->total, $total_requests->total);
-		$data["outcomes"][0]["data"][4]['z'] = $total_genotyped->total;
+		$data["outcomes"][0]["data"][4]['z'] = ' (' . number_format($total_genotyped->total) . ')';
 
 		return view('charts.bar_graph', $data);
 	}
