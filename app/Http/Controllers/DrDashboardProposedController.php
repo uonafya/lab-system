@@ -51,7 +51,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 			->selectRaw("COUNT(dr_samples.id) AS total")
 			->whereRaw($divisions_query)
             ->whereRaw($date_query)
-			->where(['repeatt' => 0, 'receivedstatus' => 1, 'passed_get_documentation' => 1])
+			->where(['repeatt' => 0, 'receivedstatus' => 1, 'passed_gel_documentation' => 1])
 			->first();
 
 		$total_genotyped = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
@@ -59,7 +59,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 			->selectRaw("COUNT(dr_samples.id) AS total")
 			->whereRaw($divisions_query)
             ->whereRaw($date_query)
-			->where(['repeatt' => 0, 'receivedstatus' => 1, 'passed_get_documentation' => 1, 'status_id' => 3])
+			->where(['repeatt' => 0, 'receivedstatus' => 1, 'passed_gel_documentation' => 1, 'status_id' => 3])
 			->first();
 
 		// dd($rows);
