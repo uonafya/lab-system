@@ -85,7 +85,7 @@
                         <center> Cascade </center>
                     </div>
                     <div class="panel-body no-padding">
-                        <div id="cascade"></div>
+                        <div id="waterfall"></div>
                     </div>
                 </div>
             </div>
@@ -106,11 +106,9 @@
 
     function reload_page()
     {
-        $("#cascade").html("<center><div class='loader'></div></center>");
-        $("#rejected").html("<center><div class='loader'></div></center>");
+        $("#waterfall").html("<center><div class='loader'></div></center>");
 
-        $("#cascade").load("{{ url('dr_waterfall/cascade') }}");
-        $("#rejected").load("{{ url('dr_testing/rejected') }}");
+        $("#waterfall").load("{{ url('dr_waterfall/waterfall') }}");
     }
 
     $().ready(function(){
