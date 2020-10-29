@@ -87,7 +87,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 		$data["outcomes"][0]["data"][4]['y'] = DrDashboard::get_percentage($total_genotyped->total, $total_requests->total);
 		$data["outcomes"][0]["data"][4]['z'] = ' (' . number_format($total_genotyped->total) . ')';
 
-		return view('charts.bar_graph', $data);
+		return view('charts.line_graph', $data);
 	}
 
 }
