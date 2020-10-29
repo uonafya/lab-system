@@ -211,7 +211,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
 
-			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
+			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('worksheet/{covidSample}/{worksheet_id?}', 'CovidSampleController@change_worksheet');
 			});
 			
