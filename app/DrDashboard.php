@@ -83,6 +83,12 @@ class DrDashboard
 		if(session('filter_drug_class')) $query .= " AND drug_class_id" . self::set_division_query(session('filter_drug_class'));
 		if(session('filter_drug')) $query .= " AND short_name_id" . self::set_division_query(session('filter_drug'));
 
+		if(session('filter_twg')){
+			$twg = UlizaTwg::find(session('filter_twg'));
+			$counties = $twg->county()->get()->pluck('id')->toArray();
+			if($counties) $query .= " AND county_id" . self::set_division_query($counties);
+		}
+
 		return $query;
 	}
 

@@ -3711,7 +3711,6 @@ class Random
         }
     }
 
-
     
     public static function knh_samples()
     {

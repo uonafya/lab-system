@@ -407,6 +407,11 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('/', 'DrDashboardTestingController@index');
 			Route::get('testing', 'DrDashboardTestingController@testing');
 			Route::get('rejected', 'DrDashboardTestingController@rejected');
+		});				
+
+		Route::prefix('dr_waterfall')->name('dr_waterfall.')->group(function () {
+			Route::get('/', 'DrDashboardProposedController@index');
+			Route::get('waterfall', 'DrDashboardProposedController@waterfall');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
