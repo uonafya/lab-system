@@ -210,6 +210,10 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('jitenge', 'CovidSampleController@jitenge_samples');
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
+
+			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
+				Route::get('worksheet/{covidSample}/{worksheet_id?}', 'CovidSampleController@change_worksheet');
+			});
 			
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
