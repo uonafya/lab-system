@@ -50,7 +50,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
 
 
-        if((!$row->mfl && !isset($row->quarantine_site_id)) || !$row->identifier || !is_numeric($row->age) || !$row->gender){
+        if((!$row->mfl && !isset($row->quarantine_site_id)) || !$row->identifier ){
             $rows = session('skipped_rows', []);
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);          
