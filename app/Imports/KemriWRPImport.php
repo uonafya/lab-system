@@ -20,6 +20,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
         $column = 'quarantine_site_id';
         if($row->facility_name > 1000) $column = 'facility_id';
