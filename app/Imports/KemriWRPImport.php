@@ -47,6 +47,15 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
             $j = 3;
         }
 
+
+
+        if((!$row->mfl && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->full_name || !is_numeric($row->age) || !$row->gender){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
+
         $p->fill([
             'identifier' => $row->identifier,
             'facility_id' => $fac->id ?? null,
