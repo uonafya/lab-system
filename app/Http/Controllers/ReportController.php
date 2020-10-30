@@ -508,7 +508,7 @@ class ReportController extends Controller
                     ->leftJoin('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
                     ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
     	}
-
+        
         $model = self::__getBelongingTo($request, $model, $dateString);
 
     	if ($request->input('specificDate')) {
@@ -565,11 +565,11 @@ class ReportController extends Controller
             else
                 $model = $model->whereRaw("(($table.facility_id = {$facility_id}) OR ($table.lab_id = {$facility_id}) OR ($table.user_id = {$user_id}))");
         } else {
-            $model = $model->where("$table.lab_id", '=', env('APP_LAB'))
+            $model = $model->where("$table.lab_id", '=', env('APP_LAB'));
         }
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
-        dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
+        // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
         return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
     }
 
