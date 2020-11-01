@@ -94,7 +94,7 @@
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="alert alert-success">
-                        <center> Cascade </center>
+                        <center> Number of Requests </center>
                     </div>
                     <div class="panel-body no-padding">
                         <div id="requests_table"></div>
