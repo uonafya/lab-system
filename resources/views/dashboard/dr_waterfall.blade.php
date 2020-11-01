@@ -90,6 +90,18 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Cascade </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="requests_table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -107,8 +119,10 @@
     function reload_page()
     {
         $("#waterfall").html("<center><div class='loader'></div></center>");
+        $("#requests_table").html("<center><div class='loader'></div></center>");
 
         $("#waterfall").load("{{ url('dr_waterfall/waterfall') }}");
+        $("#requests_table").load("{{ url('dr_waterfall/requests_table') }}");
     }
 
     $().ready(function(){

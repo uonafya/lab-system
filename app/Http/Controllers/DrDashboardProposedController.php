@@ -11,6 +11,7 @@ use App\DrCall;
 use App\DrCallDrug;
 
 use DB;
+use Str;
 
 class DrDashboardProposedController extends DrDashboardBaseController
 {
@@ -89,5 +90,39 @@ class DrDashboardProposedController extends DrDashboardBaseController
 
 		return view('charts.line_graph', $data);
 	}
+
+
+	public function requests_table()
+	{
+        $date_query = DrDashboard::date_query('created_at');
+    	$divisions_query = DrDashboard::divisions_query();
+
+    	$facility = false;
+    	if(session('filter_county')) $facility = true;
+
+		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
+			->selectRaw("COUNT(dr_samples.id) AS total")
+			->when(true, function($query) use ($facility){
+				if($facility){
+					return $query->addSelect('view_facilitys.name', 'facilitycode')
+						->groupBy('county_id');
+				}
+				else{
+					return $query->addSelect('county')
+						->groupBy('county_id');
+				}
+			})
+			->whereRaw($divisions_query)
+            ->whereRaw($date_query)
+			->where(['repeatt' => 0])
+			->get();
+
+		$div = Str::random(15);
+
+		return view('charts.table_requests', compact('div', 'rows', 'facility'));
+	}
+
+
 
 }

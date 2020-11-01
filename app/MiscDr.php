@@ -809,4 +809,19 @@ class MiscDr extends Common
 			}
 		}
 	}
+
+
+	public static function create_mutations()
+	{
+		$dr_calls = DrCall::get();
+
+		foreach ($dr_calls as $key => $dr_call) {
+			if(!$dr_call->mutations) continue;
+
+			foreach ($dr_call->mutations as $key => $mutation) {
+				$dr_mutation = DrMutation::firstOrCreate(['drug_class_id' => $dr_call->drug_class_id, 'mutation' => $mutation]);
+				DrSampleMutation::firstOrCreate(['sample_id' => $dr_call->sample_id, 'mutation_id' => $dr_mutation->id]);
+			}
+		}
+	}
 }

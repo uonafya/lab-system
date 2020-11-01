@@ -412,6 +412,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::prefix('dr_waterfall')->name('dr_waterfall.')->group(function () {
 			Route::get('/', 'DrDashboardProposedController@index');
 			Route::get('waterfall', 'DrDashboardProposedController@waterfall');
+			Route::get('requests_table', 'DrDashboardProposedController@requests_table');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
