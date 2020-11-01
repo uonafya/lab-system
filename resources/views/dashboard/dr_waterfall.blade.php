@@ -114,6 +114,9 @@
 <script src="{{ asset('vendor/highcharts/modules/series-label.js' )}}"></script>
 <script src="{{ asset('vendor/highcharts/modules/exporting.js' )}}"></script>
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.21/b-1.6.3/b-html5-1.6.3/datatables.min.css"/> 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.21/b-1.6.3/b-html5-1.6.3/datatables.min.js"></script>
+
 <script type="text/javascript">
 
     function reload_page()
