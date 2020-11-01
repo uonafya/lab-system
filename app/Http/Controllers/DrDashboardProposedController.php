@@ -116,6 +116,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 			->whereRaw($divisions_query)
             ->whereRaw($date_query)
 			->where(['repeatt' => 0])
+			->orderBy('total', 'desc')
 			->get();
 
 		$div = Str::random(15);
