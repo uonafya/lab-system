@@ -37,6 +37,7 @@ class HCMPCovidAllocations extends Model
 				'headers' => [
 					'Accept' => 'application/json',
 					'apitoken' => env('HCMP_TOKEN'),
+					'Content-Type' => 'application/json',
 				],
 				'json' => [
 					'type' => 'automated'
