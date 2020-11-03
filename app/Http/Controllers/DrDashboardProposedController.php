@@ -106,7 +106,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 			->when(true, function($query) use ($facility){
 				if($facility){
 					return $query->addSelect('view_facilitys.name', 'facilitycode')
-						->groupBy('county_id');
+						->groupBy('view_facilitys.id');
 				}
 				else{
 					return $query->addSelect('county')
