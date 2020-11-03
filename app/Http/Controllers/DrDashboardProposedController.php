@@ -127,7 +127,7 @@ class DrDashboardProposedController extends DrDashboardBaseController
 	public function gender()
 	{
     	$divisions_query = DrDashboard::divisions_query();
-        $date_query = DrDashboard::date_query('created_at');
+        $date_query = DrDashboard::date_query('dr_samples.created_at');
 
 		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
 			->join('viralpatients', 'viralpatients.id', '=', 'dr_samples.patient_id')
@@ -161,9 +161,6 @@ class DrDashboardProposedController extends DrDashboardBaseController
 	{
 		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
 			->selectRaw("age_category, COUNT(dr_samples.id) AS samples")
-			->when($current_only, function($query){
-				return $query->where('current_drug', true);
-			})
 			->whereRaw(DrDashboard::date_query())
 			->whereRaw(DrDashboard::divisions_query())
 			->groupBy('age_category')
