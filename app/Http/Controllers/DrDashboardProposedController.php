@@ -124,6 +124,60 @@ class DrDashboardProposedController extends DrDashboardBaseController
 		return view('charts.table_requests', compact('div', 'rows', 'facility'));
 	}
 
+	public function gender()
+	{
+    	$divisions_query = DrDashboard::divisions_query();
+        $date_query = DrDashboard::date_query('created_at');
+
+		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->join('viralpatients', 'viralpatients.id', '=', 'dr_samples.patient_id')
+			->leftJoin('dr_projects', 'dr_projects.id', '=', 'dr_samples.project')
+			->selectRaw("sex, COUNT(dr_samples.id) AS total")
+			->whereRaw($divisions_query)
+            ->whereRaw($date_query)
+			->where(['repeatt' => 0])
+			->groupBy('sex')
+			->get();
+
+		$data['div'] = Str::random(15);
+
+		$data['outcomes']['name'] = "Tests";
+		$data['outcomes']['colorByPoint'] = true;
+
+
+		$data['outcomes']['data'][0]['name'] = "Male";
+		$data['outcomes']['data'][1]['name'] = "Female";
+
+		$data['outcomes']['data'][0]['y'] = (int) ($rows->where('sex', 1)->first()->total ?? 0);
+		$data['outcomes']['data'][1]['y'] = (int) ($rows->where('sex', 2)->first()->total ?? 0);
+
+		return view('charts.pie_chart', $data);
+
+	}
+
+
+	// Charts
+	public function age()
+	{
+		$rows = DrSample::join('view_facilitys', 'view_facilitys.id', '=', 'dr_samples.facility_id')
+			->selectRaw("age_category, COUNT(dr_samples.id) AS samples")
+			->when($current_only, function($query){
+				return $query->where('current_drug', true);
+			})
+			->whereRaw(DrDashboard::date_query())
+			->whereRaw(DrDashboard::divisions_query())
+			->groupBy('age_category')
+			->get();
+
+		$age_categories = DB::table('apidb.agecategory')->where(['subID' => 1])->orderBy('ID', 'asc')->get();
+
+		foreach ($age_categories as $key => $age_category) {
+			$data['categories'][$key] = $age_category->name;
+			$data["outcomes"][0]["data"][$key] = (int) ($rows->where('age_category', $age_category->ID)->first()->samples ?? 0);
+		}
+
+		return view('charts.bar_graph', $data);
+	}
 
 
 }

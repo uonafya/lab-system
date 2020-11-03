@@ -810,6 +810,17 @@ class MiscDr extends Common
 		}
 	}
 
+	public static function set_fields()
+	{
+		$misc = new MiscViral;
+		$samples = DrSample::whereNull('age_category')->get();
+
+		foreach ($samples as $key => $sample) {
+			$sample->age_category = $misc->set_age_cat($sample->age);
+			$sample->save();
+		}
+	}
+
 
 	public static function create_mutations()
 	{

@@ -91,6 +91,28 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-lg-6">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Age </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="age"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center> Gender </center>
+                    </div>
+                    <div class="panel-body no-padding">
+                        <div id="gender"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-lg-12">
                 <div class="hpanel">
                     <div class="alert alert-success">
@@ -122,9 +144,13 @@
     function reload_page()
     {
         $("#waterfall").html("<center><div class='loader'></div></center>");
+        $("#age").html("<center><div class='loader'></div></center>");
+        $("#gender").html("<center><div class='loader'></div></center>");
         $("#requests_table").html("<center><div class='loader'></div></center>");
 
         $("#waterfall").load("{{ url('dr_waterfall/waterfall') }}");
+        $("#age").load("{{ url('dr_waterfall/age') }}");
+        $("#gender").load("{{ url('dr_waterfall/gender') }}");
         $("#requests_table").load("{{ url('dr_waterfall/requests_table') }}");
     }
 
