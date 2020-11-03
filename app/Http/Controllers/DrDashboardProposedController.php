@@ -168,6 +168,8 @@ class DrDashboardProposedController extends DrDashboardBaseController
 
 		$age_categories = DB::table('apidb.agecategory')->where(['subID' => 1])->orderBy('ID', 'asc')->get();
 
+		$data = DrDashboard::bars(['Total Requests'], 'column', ["#00ff00"]);
+
 		foreach ($age_categories as $key => $age_category) {
 			$data['categories'][$key] = $age_category->name;
 			$data["outcomes"][0]["data"][$key] = (int) ($rows->where('age_category', $age_category->ID)->first()->samples ?? 0);
