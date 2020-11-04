@@ -55,6 +55,8 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
         $mfl = (int) ($row->mfl_code ?? null);
         $fac = Facility::locate($mfl)->first();
 
+        $date_symptoms = ($row->date_symptoms ?? null) ? date('Y-m-d', strtotime($row->date_symptoms)) : date('Y-m-d');
+        if($date_symptoms == '1970-01-01') $date_symptoms = null;
 
         $p->fill([
             'identifier' => $row->identifier ?? $row->national_id ?? $row->patient_name,
@@ -70,7 +72,8 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'subcounty' => $row->subcounty ?? null,  
             'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
-            'justification' => $row->justification ?? 3,             
+            'justification' => $row->justification ?? 3,  
+            'date_symptoms' => $date_symptoms,           
         ]);
         $p->save();
 
@@ -87,7 +90,6 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'patient_id' => $p->id,
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
-            'kemri_id' => $row->amref_id ?? null,
             'age' => (int) $row->age,
             'test_type' => $row->test_type ?? 1,
             'health_status' => $row->health_status ?? null,
@@ -97,6 +99,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'sample_type' => 1,
         ]);
         if(isset($row->repeat) && $row->repeat) $sample->test_type = 2;
+        if(isset($row->symptoms) && strlen($row->symptoms) > 1) $sample->symptoms = explode(',', $row->symptoms);
         $sample->pre_update();
 
     }

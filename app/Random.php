@@ -453,6 +453,8 @@ class Random
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
 
+
+
     public static function to_ampath()
     {
         $path = public_path('afya_transitioned_sites.csv');
@@ -3663,13 +3665,53 @@ class Random
             $s = Viralsample::find($data[0]);
             if(!$s) continue;
 
-            if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
-            else if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
+            // if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
+            if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
             else if(\Str::startsWith($data[3], 'B')) $s->pmtct = 2;
+            else{
+                $s->pmtct = 2;
+            }
             $s->pre_update();
         }
     }
 
+
+    public static function wrp_covid_correction()
+    {
+        $file = public_path('original_wrp_samples.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Lab ID') continue;
+            $s = CovidSampleView::find($data[0]);
+            if(!$s) continue;
+
+            if($s->patient_name != $data[3]){
+                $patient = CovidPatient::find($s->patient_id);
+                $count = $patient->sample()->where(['repeatt' => 0])->count();
+                if($count > 1){
+                    $patient = $patient->replicate(['national_patient_id', 'synched', 'datesynced']);                    
+                }
+                $patient->fill([
+                    'patient_name' => $data[3],
+                    'identifier' => $data[1],
+                    'phone_no' => $data[4],
+                    'county' => $data[5],
+                    'subcounty' => $data[6],
+                    'sex' => $data[8],
+                ]);
+                $patient->pre_update();
+
+                $sample = CovidSample::find($s->id);
+                $sample->fill([
+                    'patient_id' => $patient->id,
+                    'age' => $data[7],
+                ]);
+            }
+        }
+    }
+
+    
     public static function knh_samples()
     {
         // ALTER TABLE `covid_samples` ADD `justification` tinyint(4) NULL AFTER `test_type`;

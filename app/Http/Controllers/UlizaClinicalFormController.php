@@ -85,6 +85,7 @@ class UlizaClinicalFormController extends Controller
             // $user->facility_email = $form->facility_email;
             // $user->notify(new UlizaNotification('uliza-form/' . $form->id . '/edit'));
         }else{
+            
             Mail::to([$form->facility_email])->send(new UlizaMail($form, 'received_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
 
             if($twg) Mail::to($twg->email_array)->send(new UlizaMail($form, 'new_clinical_form', 'Clinical Summary Form Notification ' . $form->subject_identifier));
@@ -99,9 +100,15 @@ class UlizaClinicalFormController extends Controller
      * @param  \App\UlizaClinicalForm  $ulizaClinicalForm
      * @return \Illuminate\Http\Response
      */
-    public function show(UlizaClinicalForm $ulizaClinicalForm)
+    public function show($id)
     {
-        //
+        // $ulizaClinicalForm->entry_pdf(null, true);
+        $ulizaClinicalForm = UlizaClinicalForm::findOrFail($id);
+        $ulizaClinicalForm->entry_pdf(null, true);
+
+        // $reasons = DB::table('uliza_reasons')->where('public', 1)->get();
+        // $regimens = DB::table('viralregimen')->get();
+        // return view('uliza.exports.clinical_form', compact('reasons', 'regimens', 'ulizaClinicalForm'));
     }
 
     /**

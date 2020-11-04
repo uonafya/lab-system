@@ -39,6 +39,10 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
             return;
         }
+        if(!property_exists($row, 'national_id')){
+            session(['toast_error' => 1, 'toast_message' => 'National ID column is not present.']);
+            return;
+        }
 
         if((!$row->mfl_code && !isset($row->quarantine_site_id)) || !$row->patient_name || !$row->identifier || !is_numeric($row->age) || !$row->gender){
             $rows = session('skipped_rows', []);
@@ -58,9 +62,13 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         }
         $p = null;
 
-        if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
-        if(!$p && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
-        if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+        // if(!$p) $p = CovidPatient::existing(['national_id' => $row->national_id])->first();
+        // if(!$p && $fac) $p = CovidPatient::existing(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        // if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::existing(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+
+        // if($row->national_id) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
+        // if(!$p && $fac) $p = CovidPatient::where(['identifier' => $row->identifier, 'facility_id' => $fac->id])->first();
+        // if(!$p && isset($row->quarantine_site_id)) $p = CovidPatient::where(['identifier' => $row->identifier, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
