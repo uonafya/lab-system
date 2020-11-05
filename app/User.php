@@ -126,7 +126,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getIsNotLabUserAttribute()
     {
-        if(in_array($this->user_type_id, [5,10])) return true;
+        if(in_array($this->user_type_id, [5,10,11])) return true;
         return false;
     }
 
