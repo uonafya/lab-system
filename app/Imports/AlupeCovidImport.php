@@ -82,7 +82,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'subcounty' => $row->subcounty ?? null,  
             'residence' => $row->area_of_residence ?? $row->area ?? null,  
             'occupation' => $row->occupation ?? null,    
-            'justification' => DB::table('covid_justifications')->where('name', $row->justification)->first()->id ?? 3,             
+            'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
         ]);
         $p->save();
 
