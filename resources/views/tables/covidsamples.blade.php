@@ -392,7 +392,13 @@
                                             @endif
                                         </td>
 
-                                        <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
+                                        <td> 
+                                            @if(!$sample->datedispatched && auth()->user()->is_not_lab_user)
+
+                                            @else
+                                                {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}
+                                            @endif
+                                        </td>
 
                                         <td>
                                             {!! $sample->edit_link !!}  |

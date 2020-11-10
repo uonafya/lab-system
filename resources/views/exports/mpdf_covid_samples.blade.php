@@ -344,7 +344,7 @@ p.breakhere {page-break-before: always}
 					</td>
 				</tr>
 
-				@elseif(env('APP_LAB') == 6)			
+				@elseif(env('APP_LAB') == 600)			
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -402,7 +402,7 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
-			@if(env('APP_LAB') == 6)
+			@if(env('APP_LAB') == 600)
 
 				<tr>
 					<td colspan="5" class="style4 style1 comment">

@@ -894,6 +894,27 @@ class CovidSampleController extends Controller
         return back();
     }
 
+    public function change_worksheet(CovidSample $covidSample, $worksheet_id=null)
+    {
+        if($covidSample->datedispatched){
+            session(['toast_error' => 1, 'toast_message' => 'The sample has already been dispatched']);
+            return back();            
+        }
+        $test = true;
+        if($worksheet_id){
+            $covid_worksheet = \App\CovidWorksheet::findOrFail($worksheet_id);
+            if($covid_worksheet->status_id != 1){
+                session(['toast_error' => 1, 'toast_message' => 'The Worksheet is not in process']);
+                return back();
+            }
+        }
+        $covidSample->worksheet_id = $worksheet_id;
+        $covidSample->save();
+        session(['toast_message' => 'The change has been effected']);
+        return back();
+
+    }
+
 
     public function cities(Request $request)
     {

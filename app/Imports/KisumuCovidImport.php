@@ -56,7 +56,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
         $fac = Facility::locate($mfl)->first();
 
         $date_symptoms = ($row->date_symptoms ?? null) ? date('Y-m-d', strtotime($row->date_symptoms)) : date('Y-m-d');
-        if($date_symptoms == '1970-01-01') $datereceived = null;
+        if($date_symptoms == '1970-01-01') $date_symptoms = null;
 
         $p->fill([
             'identifier' => $row->identifier ?? $row->national_id ?? $row->patient_name,
