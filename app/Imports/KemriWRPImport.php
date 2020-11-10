@@ -81,7 +81,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
-        $datetested = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_tested)) : date('Y-m-d');
+        $datetested = ($row->date_tested ?? null) ? date('Y-m-d', strtotime($row->date_tested)) : date('Y-m-d');
 
         if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
         if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');

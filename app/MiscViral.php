@@ -246,6 +246,7 @@ class MiscViral extends Common
     public static function sample_result($result, $error=null, $units="")
     {
         $str = strtolower($result);
+        $repeatt = 0;
         // $units="";
 
         if(\Str::contains($result, ['e+'])){
@@ -255,7 +256,8 @@ class MiscViral extends Common
         else if($str == 'failed' || $str == 'invalid' || $str == '' || \Str::contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
-            $interpretation = $error ?? $result;       
+            $interpretation = $error ?? $result; 
+            $repeatt = 1;      
         }
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
@@ -306,7 +308,7 @@ class MiscViral extends Common
         }
         if($units == "") $units="cp/mL";
 
-        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units, 'repeatt' => $repeatt];
     }
 
     public static function correct_logs()
@@ -338,10 +340,12 @@ class MiscViral extends Common
 
     public static function exponential_result($result)
     {
-        $units="";              
+        $units="";    
+        $repeatt = 0;          
         if($result == 'Invalid'){
             $res= "Failed";
             $interpretation="Invalid";
+            $repeatt = 1;
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
             $res= "< LDL copies/ml";
@@ -358,10 +362,11 @@ class MiscViral extends Common
         }
         else{
             $res= "Failed";
-            $interpretation = $result;                
+            $interpretation = $result; 
+            $repeatt = 1;               
         }
 
-        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units, 'repeatt' => $repeatt];
     }
 
     public static function correct_exponential($worksheet_id)
