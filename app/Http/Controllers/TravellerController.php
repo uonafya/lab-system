@@ -38,7 +38,8 @@ class TravellerController extends Controller
     public function store(Request $request)
     {
         $travel_import = new TravellerImport;
-        Excel::import($travel_import);
+        $path = $request->upload->storeAs('public/site_samples/traveller', $file_name); 
+        Excel::import($travel_import, $path);
     }
 
     /**
