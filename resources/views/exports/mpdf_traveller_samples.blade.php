@@ -100,7 +100,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2" class="style4 style1 comment"><strong>National ID/PP No </strong></td>
-				<td colspan="2"  ><span class="style5"> {{ $sample->idpassport }} </span></td>
+				<td colspan="2"  ><span class="style5"> {{ $sample->id_passport }} </span></td>
 				<td class="style4 style1 comment" colspan="2" ><strong> Phone Number </strong></td>
 				<td colspan="1" class="comment"> <span class="style5"> {{ $sample->phone_no }} </span> </td>
 			</tr>
