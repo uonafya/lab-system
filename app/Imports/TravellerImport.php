@@ -5,6 +5,10 @@ namespace App\Imports;
 use Str;
 use \App\Traveller;
 
+use Maatwebsite\Excel\Row;
+use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+
 class TravellerImport implements OnEachRow, WithHeadingRow
 {
 
