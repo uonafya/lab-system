@@ -58,7 +58,7 @@ class TravellerController extends Controller
     public function show(Traveller $traveller)
     {
         $results = DB::table('results')->get();
-        return view('exports.mpdf_traveller_samples', ['sample' => $traveller]);
+        return view('exports.mpdf_traveller_samples', ['samples' => [$traveller]]);
     }
 
     /**
