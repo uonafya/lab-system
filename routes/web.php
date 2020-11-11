@@ -237,6 +237,8 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
 
+		Route::resource('traveller', 'TravellerController');
+
 		Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
 			
 			Route::post('search/', 'CovidPatientController@search')->name('search');
