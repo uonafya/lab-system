@@ -61,9 +61,9 @@ class MiscViral extends Common
 	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        Viralsample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
 		// Default value for repeatt is 0
 
@@ -308,7 +308,7 @@ class MiscViral extends Common
         }
         if($units == "") $units="cp/mL";
 
-        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units, 'repeatt' => $repeatt];
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
     public static function correct_logs()
@@ -366,7 +366,7 @@ class MiscViral extends Common
             $repeatt = 1;               
         }
 
-        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units, 'repeatt' => $repeatt];
+        return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
     }
 
     public static function correct_exponential($worksheet_id)
