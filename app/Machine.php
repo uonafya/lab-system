@@ -37,6 +37,11 @@ class Machine extends Model
         return $this->hasMany(CovidWorksheet::class, 'machine_type', 'id');
     }
 
+    public function mapping()
+    {
+        return $this->hasMany(LabEquipment::class, 'type', 'id');
+    }
+
     public function missingDeliveries($year, $month)
     {
         $data = [];

@@ -38,11 +38,17 @@
                         </div>
 
                         <div class="form-group" style="/*display: none;" id="platformDiv">
-                            <label class="col-sm-4 control-label"><center>Select Platform <small style="color:red;">Select multiple</small></center></label>
-                            <div class="col-sm-8">
+                            <label class="col-sm-4 control-label">
+                                <center> 
+                                    Platforms Available
+                                    <br>
+                                    <small style="color:red;">These are the platforms found in your system automatically selected. Please proceed </small>
+                                </center>
+                            </label>
+                            <div class="col-sm-7">
                                 <select class="form-control input-sm" required name="machine[]" id="machine" multiple="true">
                                 @foreach($machines as $machine)
-                                    <option value="{{ $machine->id }}">{{ $machine->machine }}</option>
+                                    <option value="{{ $machine->id }}" selected="true">{{ $machine->machine }}</option>
                                 @endforeach
                                 </select>
                             </div>

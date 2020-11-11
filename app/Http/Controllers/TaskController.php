@@ -285,6 +285,7 @@ class TaskController extends Controller
 
     public function consumption (Request $request, $guide=null)
     {
+        dd("This is the die");
         if ($guide != null) {
             return redirect('http://lab-2.test.nascop.org/download/consumption');
         }
@@ -410,7 +411,7 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
+        dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 
