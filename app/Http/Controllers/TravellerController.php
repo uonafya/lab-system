@@ -46,6 +46,7 @@ class TravellerController extends Controller
         $travel_import = new TravellerImport;
         Excel::import($travel_import, $path);
         if(session('toast_error')) return back();
+        session(['toast_message' => 'The upload has been made.']);
         return redirect('/traveller'); 
     }
 
@@ -58,7 +59,7 @@ class TravellerController extends Controller
     public function show(Traveller $traveller)
     {
         $results = DB::table('results')->get();
-        return view('exports.mpdf_traveller_samples', ['samples' => [$traveller]]);
+        return view('exports.mpdf_traveller_samples', ['samples' => [$traveller], 'print' => true]);
     }
 
     /**
@@ -69,7 +70,8 @@ class TravellerController extends Controller
      */
     public function edit(Traveller $traveller)
     {
-        //
+        $results = DB::table('results')->get();
+        return view('forms.traveller', compact('traveller', 'results'));
     }
 
     /**
@@ -81,7 +83,10 @@ class TravellerController extends Controller
      */
     public function update(Request $request, Traveller $traveller)
     {
-        //
+        $traveller->fill($request->all());
+        $traveller->save();
+        session(['toast_message' => 'The update has been made.']);
+        return redirect('traveller');
     }
 
     /**
@@ -92,6 +97,8 @@ class TravellerController extends Controller
      */
     public function destroy(Traveller $traveller)
     {
-        //
+        $traveller->delete();
+        session(['toast_message' => 'The deletion has been made.']);
+        return redirect('traveller');
     }
 }
