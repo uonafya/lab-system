@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traveller;
+use DB'
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TravellerImport;
 use Illuminate\Http\Request;
@@ -16,7 +17,9 @@ class TravellerController extends Controller
      */
     public function index()
     {
-        //
+        $results = DB::table('results')->get();
+        $samples = Traveller::orderBy('id', 'desc')->paginate();
+        return view('tables.travellers', compact('samples', 'results'));
     }
 
     /**
@@ -52,7 +55,8 @@ class TravellerController extends Controller
      */
     public function show(Traveller $traveller)
     {
-        //
+        $results = DB::table('results')->get();
+        return view('exports.mpdf_traveller_samples', ['sample' => $traveller]);
     }
 
     /**

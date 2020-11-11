@@ -35,12 +35,19 @@
                                 The file must be a csv or excel file. <br />
                                 The first row serves as the column header and is necessary for a successful upload. The columns must be named as below, spaces included. <br />
 
-                                Phone Number<br />
-                                National ID<br />
-                                Occupation<br />
-                                County<br />
-                                Subcounty<br />
-                                Residence<br />
+                                NAME (3 NAMES)<br />
+                                GEN <br />
+                                AGE(in Years) <br />
+                                STATUS <br />
+                                ID/PASSPORT <br />
+                                MOBILE NO <br />
+                                CITIZENSHIP <br />
+                                COUNTY <br />
+                                ESTATE <br />
+                                PCR Result <br />
+                                IgM Test result <br />
+                                IgG/IgM Result <br />
+                                 <br />
                                 Date Collected<br />
                                 Date Received<br />
                                 Date Tested<br />
