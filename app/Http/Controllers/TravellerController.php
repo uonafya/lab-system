@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traveller;
-use DB'
+use DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TravellerImport;
 use Illuminate\Http\Request;
