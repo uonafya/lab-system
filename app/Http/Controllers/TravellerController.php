@@ -45,6 +45,8 @@ class TravellerController extends Controller
         $path = $request->upload->storeAs('public/site_samples/traveller', $file_name); 
         $travel_import = new TravellerImport;
         Excel::import($travel_import, $path);
+        if(session('toast_error')) return back();
+        return redirect('/traveller'); 
     }
 
     /**
