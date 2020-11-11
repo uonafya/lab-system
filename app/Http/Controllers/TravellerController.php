@@ -36,9 +36,11 @@ class TravellerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $travel_import = new TravellerImport;
+    {        
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
         $path = $request->upload->storeAs('public/site_samples/traveller', $file_name); 
+        $travel_import = new TravellerImport;
         Excel::import($travel_import, $path);
     }
 
