@@ -34,6 +34,27 @@ class DrSampleView extends ViewModel
         return $full_link;
     }
 
+    
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\DrSample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
 
     // mid being my id
     // Used when sending samples to sanger

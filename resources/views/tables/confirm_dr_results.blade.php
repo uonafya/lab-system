@@ -81,14 +81,16 @@
                                             <td>
                                                 @if($sample->has_rerun)
                                                     Has Rerun
-                                                @elseif(in_array($sample->status_id, [2, 3]))                                                
+                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->collect_new_sample) 
                                                     <div align='center'>
                                                         <input name='rerun[]' type='checkbox' class='checks_rerun' value='{{ $sample->id }}' />
                                                     </div>
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)                                                
+                                                @if($sample->collect_new_sample)
+                                                    Dispatched as CNS
+                                                @elseif(in_array($sample->status_id, [2, 3]) && !$sample->has_rerun)
                                                     <div align='center'>
                                                         <input name='cns[]' type='checkbox' class='checks_cns' value='{{ $sample->id }}' />
                                                     </div>
