@@ -21,7 +21,7 @@ class CovidWorksheetImport implements ToCollection
         $worksheet->fill($request->except(['_token', 'upload']));
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
-        $this->daterun = $request->input('daterun');
+        $this->daterun = $request->input('daterun', date("Y-m-d"));
 	}
 
     /**
@@ -33,7 +33,7 @@ class CovidWorksheetImport implements ToCollection
     	$cancelled = $this->cancelled;
 
 
-        $today = $datemodified = $datetested = date("Y-m-d");
+        $today = $datemodified = $datetested = $this->daterun;
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = $wrong_worksheet = [];
@@ -184,7 +184,7 @@ class CovidWorksheetImport implements ToCollection
         $worksheet->pos_control_interpretation = $positive_control['interpretation'] ?? null;
         $worksheet->pos_control_result = $positive_control['result'] ?? null;
         $worksheet->daterun = $datetested;
-        $worksheet->uploadedby = auth()->user()->id;
+        $worksheet->uploadedby = auth()->user()->id ?? null;
         $worksheet->save();
 
         session(['toast_message' => "The worksheet has been updated with the results."]);
