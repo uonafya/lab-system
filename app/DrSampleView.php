@@ -9,6 +9,17 @@ class DrSampleView extends ViewModel
 	protected $table = 'dr_samples_view';
 	
 
+    // Parent sample
+    public function parent()
+    {
+        return $this->belongsTo('App\DrSampleView', 'parentid');
+    }
+
+    // Child samples
+    public function child()
+    {
+        return $this->hasMany('App\DrSampleView', 'parentid');
+    }
 
     /**
      * Get the patient's gender
