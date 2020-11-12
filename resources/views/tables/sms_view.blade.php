@@ -45,7 +45,7 @@
             'processing' : true,
             'serverSide' : true,
             'ajax' : {
-                'url' : "{{ url('traveller/filter/') }}",
+                'url' : "{{ url('datatable/sms_log/' . $type) }}",
                 'type' : 'POST'
             },
             'columns' : [
