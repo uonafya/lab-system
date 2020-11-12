@@ -37,13 +37,14 @@ class HCMPCovidAllocations extends Model
 				'headers' => [
 					'Accept' => 'application/json',
 					'apitoken' => env('HCMP_TOKEN'),
+					'Content-Type' => 'application/json',
 				],
 				'json' => [
 					'type' => 'automated'
 				],
 			]);
 			$body = json_decode($response->getBody());
-			print_r($body);
+			
 			$empty = [];
 			foreach ($body->data as $key => $item) {
 				$data_existing = ['material_number' => $item->material_number, 'allocation_date' => $item->allocation_date, 'allocation_type' => $item->allocation_type, 'lab_id' => $item->lab_id];

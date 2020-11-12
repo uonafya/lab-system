@@ -45,6 +45,7 @@ class CovidConsumptionController extends Controller
                         ]);
         } else {
             $allocations = $this->checkCovidAllocations($time->week_end);
+            // dd($allocations);
             if(!$allocations->isEmpty()) {
                 return view('tasks.covid.allocation', ['allocations' => $allocations]);
             }
@@ -225,24 +226,32 @@ class CovidConsumptionController extends Controller
 
     private function checkCovidAllocations($end_of_week)
     {
-        $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
+        // $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
 
         // Check there is an allocation made that has been received in the previous week
-        $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
-                            ->whereDate('allocation_date', $allocation_date)
-                            ->where('responded', 'NO')
+        $allowable_min_date = date('Y-m-d', strtotime(env("ALLOCATION_BACKDATE"), strtotime($end_of_week)));
+        $allowable_date_range = [$allowable_min_date, date('Y-m-d', strtotime($end_of_week))];
+        // dd($allowable_date_range);
+        $allocations = HCMPCovidAllocations::/*with('kit.machine')->*/where('received', 'NO')
+                            ->whereBetween('allocation_date', $allowable_date_range)
+                            ->whereIn('responded', ['NO', 'POSTPONED'])
+                            // ->where('date_responded', '<', $end_of_week)
                             ->get();
-        if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
-            $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
-                            ->whereDate('allocation_date', $allocation_date)
-                            ->where('responded', 'POSTPONED')
-                            ->where('date_responded', '<', $end_of_week)
-                            ->get();
-        }
+        // echo "<pre>";print_r($allocations->toArray());
+        // die();
+        // if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
+        //     $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
+        //                     ->whereDate('allocation_date', $allocation_date)
+        //                     ->where('responded', 'POSTPONED')
+        //                     ->where('date_responded', '<', $end_of_week)
+        //                     ->get();
+        // }
         
         $newallocation = [];
-        foreach ($allocations as $key => $allocation) 
+        foreach ($allocations as $key => $allocation) {
             $newallocation[$allocation->kit->machine ?? ''][] = $allocation;
+            $newallocation[$allocation->kit->machine ?? '']['date'] = $allocation->allocation_date;
+        }
         
         return collect($newallocation);
     }
