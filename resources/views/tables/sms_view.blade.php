@@ -34,7 +34,6 @@
     </div>
 </div>
 
-
 @endsection
 
 @section('scripts') 
@@ -46,7 +45,7 @@
             'processing' : true,
             'serverSide' : true,
             'ajax' : {
-                'url' : "{{ url('datatable/sms_log/' . $type) }}",
+                'url' : "{{ url('traveller/filter/') }}",
                 'type' : 'POST'
             },
             'columns' : [
