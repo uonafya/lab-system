@@ -13,7 +13,7 @@
                         <table class="table table-striped table-bordered table-hover" id="mytable">
                             <thead>
                                 <tr class="colhead">
-                                    <th rowspan="2">Lab ID</th>
+                                    <!-- <th rowspan="2">Lab ID</th> -->
                                     <th rowspan="2">Patient Name</th>
                                     <th rowspan="2">National ID/PP</th>
                                     <th rowspan="2">Sex</th>
