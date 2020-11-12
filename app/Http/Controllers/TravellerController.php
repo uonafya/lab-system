@@ -70,7 +70,6 @@ class TravellerController extends Controller
                 }
             }
             $d['action'] = $row->edit_link . "<a href='/traveller/{$row->id}'> Result </a> ";
-            if($param == 'eid') $d['result'] = $results[$row->result] ?? '';
             $data[] = $d;
         }
 
