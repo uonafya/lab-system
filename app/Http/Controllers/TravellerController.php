@@ -69,7 +69,7 @@ class TravellerController extends Controller
                     }
                 }
             }
-            $d['action'] = $row->edit_link . "<a href='/traveller/{$row->id}'> Result </a> ";
+            $d['action'] = $row->edit_link . "| <br /> <a href='/traveller/{$row->id}'> Result </a> ";
             $data[] = $d;
         }
 
