@@ -17,7 +17,7 @@ class TravellerController extends Controller
         ['db' => 'id', 'dt' => 'DT_RowId' ],
         ['db' => 'patient_name', 'dt' => 0 ],
         ['db' => 'id_passport', 'dt' => 1 ],
-        ['db' => 'gender', 'dt' => 2 ],
+        ['db' => 'sex', 'dt' => 2 ],
         ['db' => 'age', 'dt' => 3 ],
         ['db' => 'datecollected', 'dt' => 4 ],
         ['db' => 'datereceived', 'dt' => 5, ],
@@ -60,7 +60,11 @@ class TravellerController extends Controller
                     if(Str::contains($key, 'result')){
                         $col = $key . '_name';
                         $d[$key] = $row->$col;
-                    }else{
+                    }
+                    else if($key == 'sex'){
+                        $d[$key] = $row->gender;
+                    }
+                    else{
                         $d[$key] = $value;
                     }
                 }

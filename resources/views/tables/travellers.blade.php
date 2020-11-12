@@ -58,7 +58,7 @@
             'columns' : [
                 { 'data' : 'patient_name' },
                 { 'data' : 'id_passport' },
-                { 'data' : 'gender' },
+                { 'data' : 'sex' },
                 { 'data' : 'age' },
                 { 'data' : 'datecollected' },
                 { 'data' : 'datereceived' },
