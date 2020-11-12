@@ -69,8 +69,7 @@
                 { 'data' : 'igg_igm_result', 'orderable' : false, 'searchable' : false },
                 { 'data' : 'action', 'orderable' : false, 'searchable' : false},
             ],
-            'order' : [[8, 'desc']]
-
+            'order' : [[6, 'desc']]
         } );
 
     @endcomponent
