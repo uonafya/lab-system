@@ -44,6 +44,7 @@
                                         <th>NAT ID</th>
                                         <th>Facility</th>
                                         <th>Lab ID</th>
+                                        <th>Original Lab ID</th>
                                         <th>Run</th>
                                         <th>Date Received</th>
                                         <th>Reason</th>
@@ -64,6 +65,7 @@
                                             <td> {{ $dr_sample->nat ?? '' }} </td>
                                             <td> {{ $dr_sample->facilityname ?? '' }} </td>
                                             <td> {{ $dr_sample->id }} </td>
+                                            <td> {{ $dr_sample->parentid }} </td>
                                             <td> {{ $dr_sample->run }} </td>
                                             <td> {{ $dr_sample->my_date_format('datereceived') }} </td>
                                             <td> {{ $drug_resistance_reasons->where('id', $dr_sample->dr_reason_id)->first()->name ?? '' }} </td>
