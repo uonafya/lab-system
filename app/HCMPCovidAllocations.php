@@ -68,7 +68,7 @@ class HCMPCovidAllocations extends Model
 					}
 				}
 			}
-			print_r($empty);
+			CovidAllocation::fillAllocations();
 			return true;
     	} catch (Exception $e) {
     		echo "Error{";print_r($e);echo "}";
