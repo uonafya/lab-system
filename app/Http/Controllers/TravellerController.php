@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class TravellerController extends Controller
 {
 
-    public $patient_sms_columns = [
+    /*public $patient_sms_columns = [
         ['db' => 'id', 'dt' => 'DT_RowId' ],
         ['db' => 'patient_name', 'dt' => 0 ],
         ['db' => 'id_passport', 'dt' => 1 ],
@@ -26,9 +26,9 @@ class TravellerController extends Controller
         ['db' => 'result', 'dt' => 8, ],
         ['db' => 'igm_result', 'dt' => 9, ],
         ['db' => 'igg_igm_result', 'dt' => 10, ],
-    ];
+    ];*/
 
-    /*public $patient_sms_columns = [
+    public $patient_sms_columns = [
         ['db' => 'id', 'dt' => 0 ],
         ['db' => 'patient_name', 'dt' => 1 ],
         ['db' => 'id_passport', 'dt' => 2 ],
@@ -41,7 +41,7 @@ class TravellerController extends Controller
         ['db' => 'result', 'dt' => 9, ],
         ['db' => 'igm_result', 'dt' => 10, ],
         ['db' => 'igg_igm_result', 'dt' => 11, ],
-    ];*/
+    ];
 
     public function filter(Request $request)
     {
@@ -70,7 +70,7 @@ class TravellerController extends Controller
             foreach ($row->toArray() as $key => $value) {
                 if($key == 'id'){
                     $d['DT_RowId'] = 'row_' . $value; 
-                    // $d['id'] = $value;
+                    $d['id'] = $value;
                 }
                 else{
                     if(Str::contains($key, 'result')){

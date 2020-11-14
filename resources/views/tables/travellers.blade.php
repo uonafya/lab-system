@@ -56,7 +56,7 @@
                 'type' : 'POST'
             },
             'columns' : [
-                { 'data' : 'DT_RowId' },
+                { 'data' : 'id' },
                 { 'data' : 'patient_name' },
                 { 'data' : 'id_passport' },
                 { 'data' : 'sex' },
