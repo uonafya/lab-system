@@ -18,8 +18,9 @@
                                     <th rowspan="2">National ID/PP</th>
                                     <th rowspan="2">Sex</th>
                                     <th rowspan="2">Age</th>
-                                    <th colspan="4">Date</th>
-                                    <th colspan="3">Results</th>                                    
+                                    <th colspan="4"><span style="text-align: center;"> Date </span></th>
+                                    <th colspan="3"><span style="text-align: center;"> Results </span></th>
+                                    <!-- <th colspan="3">Results</th>                                     -->
                                     <th rowspan="2">Task</th>
                                 </tr>
                                 <tr>
