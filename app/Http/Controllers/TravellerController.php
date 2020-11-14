@@ -28,6 +28,21 @@ class TravellerController extends Controller
         ['db' => 'igg_igm_result', 'dt' => 10, ],
     ];
 
+    /*public $patient_sms_columns = [
+        ['db' => 'id', 'dt' => 0 ],
+        ['db' => 'patient_name', 'dt' => 1 ],
+        ['db' => 'id_passport', 'dt' => 2 ],
+        ['db' => 'sex', 'dt' => 3 ],
+        ['db' => 'age', 'dt' => 4 ],
+        ['db' => 'datecollected', 'dt' => 5 ],
+        ['db' => 'datereceived', 'dt' => 6, ],
+        ['db' => 'datetested', 'dt' => 7, ],
+        ['db' => 'datedispatched', 'dt' => 8, ],
+        ['db' => 'result', 'dt' => 9, ],
+        ['db' => 'igm_result', 'dt' => 10, ],
+        ['db' => 'igg_igm_result', 'dt' => 11, ],
+    ];*/
+
     public function filter(Request $request)
     {
         $draw = $request->input('draw');
@@ -55,7 +70,7 @@ class TravellerController extends Controller
             foreach ($row->toArray() as $key => $value) {
                 if($key == 'id'){
                     $d['DT_RowId'] = 'row_' . $value; 
-                    $d['id'] = $value;
+                    // $d['id'] = $value;
                 }
                 else{
                     if(Str::contains($key, 'result')){
