@@ -55,6 +55,7 @@ class TravellerController extends Controller
             foreach ($row->toArray() as $key => $value) {
                 if($key == 'id'){
                     $d['DT_RowId'] = 'row_' . $value; 
+                    $d['id'] = $value;
                 }
                 else{
                     if(Str::contains($key, 'result')){
