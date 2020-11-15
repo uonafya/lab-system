@@ -18,6 +18,7 @@ class CreateCovidAllocationsTable extends Migration
             $table->date('allocation_date');
             $table->string('allocation_type');
             $table->integer('lab_id');
+            $table->integer('machine_id')->nullable();
             $table->text('comments')->nullable();
             $table->enum('received', ['YES', 'NO'])->default('NO');
             $table->enum('responded', ['YES', 'NO', 'POSTPONED'])->default('NO');
