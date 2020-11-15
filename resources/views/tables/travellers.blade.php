@@ -1,5 +1,6 @@
 @extends('layouts.master')
     @component('/tables/css')
+    <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     @endcomponent
 @section('content')
 <div class="content">
@@ -78,6 +79,18 @@
 @section('scripts') 
 
     @component('/tables/scripts')
+        @slot('js_scripts')
+            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
+        @endslot
+        
+            $(".date").datepicker({
+                startView: 0,
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                autoclose: true,
+                format: "yyyy-mm-dd"
+            });
 
         var dt = $('#mytable').DataTable( {
             'responsive' : true,
