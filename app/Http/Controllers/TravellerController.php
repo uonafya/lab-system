@@ -205,7 +205,7 @@ class TravellerController extends Controller
         $date_start = $request->input('from_date');
         $date_end = $request->input('to_date');
         $samples = Traveller::
-            ->when($date_start, function($query) use ($date_column, $date_start, $date_end){
+            when($date_start, function($query) use ($date_column, $date_start, $date_end){
                 if($date_end)
                 {
                     return $query->whereDate($date_column, '>=', $date_start)
