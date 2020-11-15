@@ -239,6 +239,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('traveller')->name('traveller.')->group(function () {			
 			Route::post('filter/', 'TravellerController@filter')->name('filter');
+			Route::post('print_multiple/', 'TravellerController@print_multiple')->name('print_multiple');
 		});
 		Route::resource('traveller', 'TravellerController');
 

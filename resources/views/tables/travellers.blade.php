@@ -1,10 +1,41 @@
 @extends('layouts.master')
-
     @component('/tables/css')
     @endcomponent
-
 @section('content')
 <div class="content">
+
+
+        <form action="{{ url('traveller/print_multiple') }}" class="my_form" method="POST" >
+            @csrf
+
+            <div class="row">
+                <!-- <div class="col-md-9">  -->
+                    <!-- <div class="form-group"> -->
+
+                        <label class="col-sm-1 control-label">From:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="from_date" name="from_date" class="form-control">
+                            </div>
+                        </div> 
+
+                        <label class="col-sm-1 control-label">To:</label>
+                        <div class="col-sm-4">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="to_date" name="to_date" class="form-control">
+                            </div>
+                        </div> 
+
+                        <div class="col-sm-2">                
+                            <button class="btn btn-primary" id="date_range" name="submit_type" value="date_range" type='submit'>Print</button>  
+                        </div>                         
+                    <!-- </div>  -->
+                <!-- </div> -->
+            </div>
+        </form>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
