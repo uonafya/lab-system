@@ -79,7 +79,7 @@ class MiscCovid extends Common
     public static function save_repeat($sample_id, $do_default=true)
     {
         $original = CovidSample::find($sample_id);
-        if($original->run == 3 && $do_default){
+        if($original->run == 3 && $do_default && !in_array(env('APP_LAB'), [25])){
             $original->repeatt=0;
             $original->save();
             return false;
