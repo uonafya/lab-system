@@ -77,10 +77,16 @@ class ViralsampleController extends Controller
 
     public function potential_dr()
     {
-        $data['samples'] = ViralsampleView::whereNotNull('datedispatched')
+        $data = Lookup::get_viral_lookups();
+        $data['samples'] = ViralsampleView::selectRaw('viralsamples_view.*')
+            ->join('view_facilitys', 'viralsamples_view.facility_id', '=', 'view_facilitys.id')
+            ->whereNotNull('datedispatched')
             ->where(['repeatt' => 0, 'run' => 1, 'lab_id' => auth()->user()->lab_id])
             ->whereRaw("patient_id NOT IN (SELECT DISTINCT patient_id FROM dr_samples)")
-            ->where('result', '>', 5000)
+            ->where(function($query){
+                return $query->where('result', '>', 5000)
+                    ->orWhere(\DB::raw("(county_id IN (16,18) AND justification=2)"));
+            })
             ->orderBy('datecollected', 'desc')
             ->paginate(20);
         $data['samples']->setPath(url()->current());
