@@ -22,6 +22,7 @@ class CovidWorksheetImport implements ToCollection
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
         $this->daterun = $request->input('daterun', date("Y-m-d"));
+        if(!$this->daterun) $this->daterun = date("Y-m-d");
 	}
 
     /**
