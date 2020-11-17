@@ -444,7 +444,7 @@
                             @if($current_sample->worksheet_id)
                                 <a href="{{ url('covid_sample/worksheet/' . $current_sample->id) }}"> 
                                     <button class="btn btn-warning">
-                                        Remove Sample {{ $current_sample->id }} from {{ $current_sample->worksheet_id }} 
+                                        Remove Sample {{ $current_sample->id }} from worksheet {{ $current_sample->worksheet_id }} 
                                     </button>
                                 </a>
                                 <br />
@@ -454,7 +454,7 @@
                             @foreach($worksheets as $worksheet)
                                 <a href="{{ url('covid_sample/worksheet/' . $current_sample->id . '/' . $worksheet->id) }}"> 
                                     <button class="btn btn-info">
-                                        Add Sample {{ $current_sample->id }} to {{ $worksheet->id }} 
+                                        Add Sample {{ $current_sample->id }} to worksheet {{ $worksheet->id }} 
                                     </button>
                                 </a>
                                 <br />
