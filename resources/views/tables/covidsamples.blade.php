@@ -453,9 +453,10 @@
                             @foreach($worksheets as $worksheet)
                                 <a href="{{ url('covid_sample/worksheet/' . $current_sample->id . '/' . $worksheet->id) }}"> 
                                     <button class="btn btn-info">
-                                        Add Sample {{ $current_sample->id }} to {{ $current_sample->worksheet_id }} 
+                                        Add Sample {{ $current_sample->id }} to {{ $worksheet->id }} 
                                     </button>
                                 </a>
+                                <br />
 
                             @endforeach
 
