@@ -564,7 +564,7 @@ class CovidSampleController extends Controller
                 return $query->where('quarantine_site_id', $user->facility_id);
             })          
             ->orderBy('run', 'desc')
-            ->paginate();
+            ->get();
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
