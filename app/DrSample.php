@@ -174,6 +174,7 @@ class DrSample extends BaseModel
     public function getMidAttribute()
     {
         if(env('APP_LAB') == 100) return $this->patient->patient;
+        if(env('APP_LAB') == 1 && $this->run > 1) return env('DR_PREFIX') . $this->parentid;
         return env('DR_PREFIX') . $this->id;
     }
 
