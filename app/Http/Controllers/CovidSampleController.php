@@ -902,8 +902,8 @@ class CovidSampleController extends Controller
 
     public function change_worksheet(CovidSample $covidSample, $worksheet_id=null)
     {
-        if($covidSample->datedispatched || $covidSample->repeatt == 1){
-            session(['toast_error' => 1, 'toast_message' => 'The sample has already been dispatched']);
+        if($covidSample->datedispatched || $covidSample->datetested || $covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'The sample has already been tested']);
             return back();            
         }
         $test = true;
