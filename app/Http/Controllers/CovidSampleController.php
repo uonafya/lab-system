@@ -570,8 +570,8 @@ class CovidSampleController extends Controller
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
         $data['results'] = DB::table('results')->get();
-        $sample = $samples->where(['repeatt' => 0])->first();
-        if($sample->receivedstatus == 1 && !$sample->datedispatched){
+        $sample = $samples->where('repeatt', 0)->first();
+        if($sample && $sample->receivedstatus == 1 && !$sample->datedispatched){
             $data['current_sample'] = $sample;
             $data['worksheets'] = CovidWorksheet::where(['status_id' => 1])->get();
         }
