@@ -440,6 +440,27 @@
                         </form>
                         @endif
 
+                        @if(isset($current_sample) && in_array(env('APP_LAB'), [4]))
+                            @if($current_sample->worksheet_id)
+                                <a href="{{ url('covid_sample/worksheet/' . $current_sample->id) }}"> 
+                                    <button class="btn btn-warning">
+                                        Remove Sample {{ $current_sample->id }} from {{ $current_sample->worksheet_id }} 
+                                    </button>
+                                </a>
+                                <br />
+                            @endif
+
+                            @foreach($worksheets as $worksheet)
+                                <a href="{{ url('covid_sample/worksheet/' . $current_sample->id . '/' . $worksheet->id) }}"> 
+                                    <button class="btn btn-info">
+                                        Add Sample {{ $current_sample->id }} to {{ $current_sample->worksheet_id }} 
+                                    </button>
+                                </a>
+
+                            @endforeach
+
+                        @endif
+
                     </div>
 
                     @isset($quarantine_sites)
