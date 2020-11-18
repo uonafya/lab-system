@@ -49,7 +49,7 @@ class ViralworksheetImport implements ToCollection
                         ->orderBy('viralsamples.id', 'asc')
                         ->get();
 
-            $scanned_samples_array = $samples->pluck('id')->toArray();
+            $scanned_samples_array = $scanned_samples->pluck('id')->toArray();
 
             // The Actual Samples
             $sample_array = \App\ViralsampleView::select('id')->where('worksheet_id', 27677)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
@@ -62,7 +62,7 @@ class ViralworksheetImport implements ToCollection
                         ->orderBy('viralsamples.id', 'asc')
                         ->get();
 
-            $actual_samples_array = $samples->pluck('id')->toArray();
+            $actual_samples_array = $actual_samples->pluck('id')->toArray();
 
             foreach ($collection as $key => $value) 
             {
