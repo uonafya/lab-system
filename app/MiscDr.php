@@ -192,8 +192,14 @@ class MiscDr extends Common
 					$sample->save();
 				}
 				else{
-					$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
+					$sample_id = \Str::after($value->sample_name, env('DR_PREFIX', ''));
 					$sample = DrSample::find($sample_id);
+					if($sample->worksheet->id != $worksheet->id){
+						if(env('APP_LAB') != 1) continue;
+						$sample = DrSample::where(['worksheet_id' => $worksheet->id, 'parentid' => \Str::after($value->sample_name, env('DR_PREFIX', ''))])->first();
+						if(!$sample) continue;
+					}
+
 					$sample->exatype_id = $value->id;
 					$sample->save();
 				}
@@ -260,7 +266,7 @@ class MiscDr extends Common
 				}
 				else{
 					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					if(env('APP_LAB') == 100) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
 					else{
 						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
 					}

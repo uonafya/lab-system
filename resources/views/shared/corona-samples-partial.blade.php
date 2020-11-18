@@ -7,6 +7,11 @@
 					<th>Select (to enter worksheet)</th>
 				@endif
 				<th>Lab ID</th>
+				@if(env('APP_LAB') == 1)
+					<th>KEMRI ID</th>
+				@elseif(env('APP_LAB') == 25)
+					<th>AMREF ID</th>
+				@endif
 				<th>Type</th>
 				<th>Patient</th>
 				<th>Facility</th>
@@ -32,6 +37,9 @@
                         </td>
 					@endif
 					<td> {{ $sample->id }} </td>
+					@if(in_array(env('APP_LAB'), [1,25]))
+						<td> {{ $sample->kemri_id }} </td>
+					@endif
 					<td>
 						@if($sample->route_name == 'covid_sample')
 							Covid-19

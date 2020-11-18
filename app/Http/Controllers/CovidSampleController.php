@@ -6,6 +6,7 @@ use App\CovidPatient;
 use App\CovidSample;
 use App\CovidSampleView;
 use App\CovidTravel;
+use App\CovidWorksheet;
 use App\City;
 use App\Facility;
 use App\Lookup;
@@ -563,12 +564,17 @@ class CovidSampleController extends Controller
                 return $query->where('quarantine_site_id', $user->facility_id);
             })          
             ->orderBy('run', 'desc')
-            ->paginate();
+            ->get();
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
         $data['results'] = DB::table('results')->get();
+        $sample = $samples->where('repeatt', 0)->first();
+        if($sample && $sample->receivedstatus == 1 && !$sample->datedispatched){
+            $data['current_sample'] = $sample;
+            $data['worksheets'] = CovidWorksheet::where(['status_id' => 1])->get();
+        }
         return view('tables.covidsamples', $data);
     }
 
@@ -896,13 +902,13 @@ class CovidSampleController extends Controller
 
     public function change_worksheet(CovidSample $covidSample, $worksheet_id=null)
     {
-        if($covidSample->datedispatched){
-            session(['toast_error' => 1, 'toast_message' => 'The sample has already been dispatched']);
+        if($covidSample->datedispatched || $covidSample->datetested || $covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'The sample has already been tested']);
             return back();            
         }
         $test = true;
         if($worksheet_id){
-            $covid_worksheet = \App\CovidWorksheet::findOrFail($worksheet_id);
+            $covid_worksheet = CovidWorksheet::findOrFail($worksheet_id);
             if($covid_worksheet->status_id != 1){
                 session(['toast_error' => 1, 'toast_message' => 'The Worksheet is not in process']);
                 return back();

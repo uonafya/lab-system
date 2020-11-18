@@ -20,7 +20,7 @@ class WorksheetImport implements ToCollection
         $worksheet->fill($request->except(['_token', 'upload']));
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
-        $this->daterun = $request->input('daterun');
+        $this->daterun = $request->input('daterun', date('Y-m-d'));
 	}
 
     /**
@@ -30,7 +30,7 @@ class WorksheetImport implements ToCollection
     {
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
-        $today = $datetested = date("Y-m-d");
+        $today = $datetested = $this->daterun;
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = [];
