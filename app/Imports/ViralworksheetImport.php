@@ -96,7 +96,7 @@ class ViralworksheetImport implements ToCollection
 
 
                 $sample_id = (int) $sample_id;
-                $actual_key = array_search($sample_id, $scanned_samples);
+                $actual_key = array_search($sample_id, $scanned_samples_array);
                 if(!$actual_key) continue;
 
 
