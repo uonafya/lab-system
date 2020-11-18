@@ -37,8 +37,82 @@ class ViralworksheetImport implements ToCollection
         $my = new MiscViral;
         $sample_array = $doubles = [];
 
+        if(env('APP_LAB') == 2 && $worksheet->id == 27677){
+            // The Scanned Samples
+            $sample_array = \App\ViralsampleView::select('id')->where('worksheet_id', 27691)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        
+            $scanned_samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->select('viralsamples.*', 'viralbatches.facility_id')
+                        ->whereIn('viralsamples.id', $sample_array)
+                        ->orderBy('run', 'desc')
+                        ->orderBy('facility_id')->orderBy('batch_id', 'asc')
+                        ->orderBy('viralsamples.id', 'asc')
+                        ->get();
+
+            $scanned_samples_array = $samples->pluck('id')->toArray();
+
+            // The Actual Samples
+            $sample_array = \App\ViralsampleView::select('id')->where('worksheet_id', 27677)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        
+            $actual_samples = Viralsample::join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')
+                        ->select('viralsamples.*', 'viralbatches.facility_id')
+                        ->whereIn('viralsamples.id', $sample_array)
+                        ->orderBy('run', 'desc')
+                        ->orderBy('facility_id')->orderBy('batch_id', 'asc')
+                        ->orderBy('viralsamples.id', 'asc')
+                        ->get();
+
+            $actual_samples_array = $samples->pluck('id')->toArray();
+
+            foreach ($collection as $key => $value) 
+            {
+                if(!isset($value[1])) break;
+                $sample_id = $value[1];
+                $interpretation = $value[6];
+                $result_array = MiscViral::sample_result($interpretation);
+
+                // MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+
+                if(!is_numeric($sample_id)){
+                    $control = $value[4];
+                    if($control == 'HxV H (+) C'){
+                        $hpc = $result_array['result'];
+                        $hpc_int = $result_array['interpretation'];
+                        $hpc_units = $result_array['units'];                        
+                    }
+                    else if($control == 'HxV L (+) C'){
+                        $lpc = $result_array['result'];
+                        $lpc_int = $result_array['interpretation'];
+                        $lpc_units = $result_array['units'];
+                    }
+                    else if($control == '(-) C'){
+                        $nc = $result_array['result'];
+                        $nc_int = $result_array['interpretation']; 
+                        $nc_units = $result_array['units']; 
+                    }
+                }
+
+                $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
+
+
+                $sample_id = (int) $sample_id;
+                $actual_key = array_search($sample_id, $scanned_samples);
+                if(!$actual_key) continue;
+
+
+                $sample = Viralsample::find($actual_samples_array[$actual_key]);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                $sample->save();
+            }
+
+        }
+
         // Abbott
-        if($worksheet->machine_type == 2)
+        else if($worksheet->machine_type == 2)
         {
             $date_tested = $this->daterun;
             $datetested = MiscViral::worksheet_date($date_tested, $worksheet->created_at);            
