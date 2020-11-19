@@ -813,7 +813,7 @@ class CovidSampleController extends Controller
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
         ini_set("pcre.backtrack_limit", "500000000");
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($covidSample->patient->patient_name . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
         // $data['print'] = true;
         // return view('exports.mpdf_covid_samples', $data);

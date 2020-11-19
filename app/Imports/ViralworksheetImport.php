@@ -94,11 +94,9 @@ class ViralworksheetImport implements ToCollection
 
                 $data_array = array_merge(['datemodified' => $today, 'datetested' => $today], $result_array);
 
-
                 $sample_id = (int) $sample_id;
                 $actual_key = array_search($sample_id, $scanned_samples_array);
-                if(!$actual_key) continue;
-
+                if($actual_key === false) continue;
 
                 $sample = Viralsample::find($actual_samples_array[$actual_key]);
                 if(!$sample) continue;
