@@ -3,7 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Api\V1\Requests\BlankRequest;
+use App\Api\V1\Requests\ApiRequest;
 
 
 use App\CovidModels\CovidWorksheet;
@@ -16,13 +16,13 @@ use DB;
 class NatCovidSampleController extends Controller
 {
   
-    public function index(BlankRequest $request)
+    public function index(ApiRequest $request)
     {
 
     }
 
     
-    public function store(BlankRequest $request)
+    public function store(ApiRequest $request)
     {
         $s =  json_decode($request->input('sample'));
         $p = $s->patient;
@@ -132,7 +132,7 @@ class NatCovidSampleController extends Controller
      * @param  \App\Facility  $facility
      * @return \Illuminate\Http\Response
      */
-    public function update(BlankRequest $request, $id=null)
+    public function update(ApiRequest $request, $id=null)
     {
         $s = $request->input('sample');
         $sample = CovidSample::findOrFail($s->id);
@@ -161,7 +161,7 @@ class NatCovidSampleController extends Controller
         return $samples;
     }
 
-    public function cif(BlankRequest $request){
+    public function cif(ApiRequest $request){
         CovidSample::where(['synched' => 0])->whereIn('lab_id', [11, 101])->whereNull('original_sample_id')->whereNull('receivedstatus')->whereIn('lab_id', $request->input('samples'))->update(['lab_id' => $request->input('lab_id')]);
 
         return response()->json([
@@ -170,19 +170,19 @@ class NatCovidSampleController extends Controller
     }
 
 
-    public function update_samples(BlankRequest $request){
+    public function update_samples(ApiRequest $request){
         return $this->update_dash($request, CovidSample::class, 'samples', 'national_sample_id', 'original_sample_id');
     }
 
-    public function update_patients(BlankRequest $request){
+    public function update_patients(ApiRequest $request){
         return $this->update_dash($request, CovidPatient::class, 'patients', 'national_patient_id', 'original_patient_id');
     }
 
-    public function update_worksheets(BlankRequest $request){
+    public function update_worksheets(ApiRequest $request){
         return $this->update_dash($request, CovidWorksheet::class, 'worksheets', 'national_worksheet_id', 'original_worksheet_id');
     }
 
-    public function update_dash(BlankRequest $request, $update_class, $input, $nat_column, $original_column)
+    public function update_dash(ApiRequest $request, $update_class, $input, $nat_column, $original_column)
     {
         $models_array = [];
         $errors_array = [];
@@ -244,20 +244,20 @@ class NatCovidSampleController extends Controller
         ], 201);        
     }
 
-    public function delete_patients(BlankRequest $request){
+    public function delete_patients(ApiRequest $request){
         return $this->delete_dash($request, CovidPatient::class, 'patients', 'national_patient_id', 'original_patient_id');
     }
 
 
-    public function delete_samples(BlankRequest $request){
+    public function delete_samples(ApiRequest $request){
         return $this->delete_dash($request, CovidSample::class, 'samples', 'national_sample_id', 'original_sample_id');
     }
 
-    public function delete_worksheets(BlankRequest $request){
+    public function delete_worksheets(ApiRequest $request){
         return $this->delete_dash($request, CovidWorksheet::class, 'worksheets', 'national_worksheet_id', 'original_worksheet_id');
     }
 
-    public function delete_dash(BlankRequest $request, $update_class, $input, $nat_column, $original_column)
+    public function delete_dash(ApiRequest $request, $update_class, $input, $nat_column, $original_column)
     {
         $models_array = [];
         $models = json_decode($request->input($input));
