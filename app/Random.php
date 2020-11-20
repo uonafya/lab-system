@@ -3758,7 +3758,9 @@ class Random
             }*/
             $datecollected = date('Y-m-d', strtotime($data[7]));
 
-            $sample = CovidSampleView::where(['datecollected' => $datecollected, 'national_id' => $national_id, 'repeatt' => 0])->first();
+            $sample = CovidSampleView::where(['national_id' => $national_id, 'repeatt' => 0])
+                ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                ->first();
 
             if(!$sample){
                 $data[8] = 'Sample Not Found';
