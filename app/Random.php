@@ -3750,6 +3750,7 @@ class Random
                 continue;
             }
             $national_id = rtrim($data[4]);
+            $identifier = rtrim($data[1]);
             /*$p = CovidPatient::where('national_id', $national_id)->first();
             if(!$p){
                 $data[8] = 'Patient Not Found';
@@ -3763,6 +3764,12 @@ class Random
                 ->first();
 
             if(!$sample){
+                $sample = CovidSampleView::where(['identifier' => $national_id, 'repeatt' => 0])
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+            if(!$sample){
                 $data[8] = 'Sample Not Found';
                 $rows[] = $data;
                 continue;
@@ -3771,7 +3778,7 @@ class Random
             $rows[] = $data;
         }
         $file = 'busia-study';
-        Common::csv_download($rows, $file, true, true);
+        Common::csv_download($rows, $file, false, true);
         Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
     }
 
