@@ -3764,7 +3764,7 @@ class Random
                 ->first();
 
             if(!$sample){
-                $sample = CovidSampleView::where(['identifier' => $national_id, 'repeatt' => 0])
+                $sample = CovidSampleView::where(['identifier' => $identifier, 'repeatt' => 0])
                     ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
                     ->first();
             }
