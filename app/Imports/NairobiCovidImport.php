@@ -10,6 +10,7 @@ use \App\CovidSample;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use DB;
 
 class NairobiCovidImport implements OnEachRow, WithHeadingRow
 {
