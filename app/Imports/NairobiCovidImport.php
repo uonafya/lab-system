@@ -65,7 +65,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             'patient_name' => $row->name,
             'sex' => $row->sex,
             'national_id' => $row->national_id ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'nationality' => DB::table('nationalities')->where('name', ($row->nationality ?? ''))->first()->id ?? 1,
             'phone_no' => $row->telephone_number ?? null,
             'county' => $row->county_of_residence ?? null,
             'subcounty' => $row->sub_county ?? null,  
