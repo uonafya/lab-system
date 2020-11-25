@@ -21,6 +21,12 @@ class DrSampleView extends ViewModel
         return $this->hasMany('App\DrSampleView', 'parentid');
     }
 
+    public function getVlSampleAttribute()
+    {
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        return $sample;
+    }
+
     /**
      * Get the patient's gender
      *

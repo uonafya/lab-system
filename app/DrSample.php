@@ -305,7 +305,8 @@ class DrSample extends BaseModel
 
     public function create_vl_sample()
     {
-        if($this->passed_gel_documentation != 0) return false;
+        // if($this->passed_gel_documentation != 0) return false;
+        if(env('APP_LAB') != 7) return false;
         $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
         if($sample) return false;
 

@@ -207,7 +207,8 @@
                                     <th colspan="5">Date</th>
                                     <th rowspan="2">Reason</th>
                                     <th rowspan="2">Extraction Worksheet</th>
-                                    @if(isset($sample_status) && $sample_status == 12)
+                                    <!-- isset($sample_status) && $sample_status == 12 -->
+                                    @if(env('APP_LAB') == 7)
                                         <th rowspan="2">VL Date Tested</th>
                                         <th rowspan="2">VL Result</th>
                                         <th rowspan="2">Edit VL Result</th>
@@ -244,7 +245,7 @@
                                         <td> {{ $sample->dateemailsent }} </td>
                                         <td> {{ $drug_resistance_reasons->where('id', $sample->dr_reason_id)->first()->name ?? '' }} </td>
                                         <td> {!! $sample->get_link('extraction_worksheet_id') !!} </td>
-                                        @if(isset($sample_status) && $sample_status == 12)
+                                        @if(env('APP_LAB') == 7)
                                             <td> {{ $sample->vl_sample->datetested ?? '' }} </td>
                                             <td> {{ $sample->vl_sample->result ?? '' }} </td>
                                             <td> <a href="{{ url('dr_sample/vl_results/' . $sample->id ) }}"> Edit VL Results </a> </td>
