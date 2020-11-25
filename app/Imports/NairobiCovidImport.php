@@ -17,6 +17,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
         if(!property_exists($row, 'name')){
