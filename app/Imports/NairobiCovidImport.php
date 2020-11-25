@@ -36,7 +36,12 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) return;
+        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) {            
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
 
         $mfl = (int) ($row->mfl_code ?? 0);
         if(!$row->patient_id) return;
