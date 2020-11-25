@@ -52,7 +52,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p && $row->patient_id && strlen($row->patient_id) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->patient_id, 'facility_id' => $fac->id])->first();
-        if(!$p && $row->patient_id && strlen($row->patient_id) > 5) $p = CovidPatient::where(['identifier' => $row->patient_id, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+        if(!$p && $row->patient_id && strlen($row->patient_id && isset($row->quarantine_site_id)) > 5) $p = CovidPatient::where(['identifier' => $row->patient_id, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
@@ -60,7 +60,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
         $p->fill([
             'identifier' => $row->patient_id ?? $row->name,
             'facility_id' => $fac->id ?? null,
-            'quarantine_site_id' => $row->quarantine_site_id ?? null,
+            'quarantine_site_id' => $row->quarantine_site_id ?? 40,
             'patient_name' => $row->name,
             'sex' => $row->sex,
             'national_id' => $row->national_id ?? null,
