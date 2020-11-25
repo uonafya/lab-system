@@ -597,7 +597,7 @@ class CovidSampleController extends Controller
             return back();
         }
 
-        if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id){
+        if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_allowed){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
             return back();
         }
