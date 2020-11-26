@@ -75,26 +75,24 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
 
         if(!$p) $p = new CovidPatient;
 
-        if(auth()->user()->user_type_id) {
 
-            $p->fill([
-                'identifier' => $row->unique_identifier ?? $row->name,
-                'facility_id' => $this->facility_id ?? null,
-                'quarantine_site_id' => $this->quarantine_site_id ?? null,
-                'patient_name' => $row->name ?? $row->patient_name,
-                'sex' => $row->sex,
-                'national_id' => $row->idpassport ?? $row->national_id ?? null,
-                'current_health_status' => $row->health_status ?? null,
-                'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
-                'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
-                'county' => $row->county ?? null,
-                'subcounty' => $row->subcounty ?? null,  
-                'residence' => $row->area_of_residence ?? $row->area ?? null,  
-                'occupation' => $row->occupation ?? null,    
-                'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
-            ]);
-            $p->pre_update();
-        }
+        $p->fill([
+            'identifier' => $row->unique_identifier ?? $row->name,
+            'facility_id' => $this->facility_id ?? null,
+            'quarantine_site_id' => $this->quarantine_site_id ?? null,
+            'patient_name' => $row->name ?? $row->patient_name,
+            'sex' => $row->sex,
+            'national_id' => $row->idpassport ?? $row->national_id ?? null,
+            'current_health_status' => $row->health_status ?? null,
+            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
+            'county' => $row->county ?? null,
+            'subcounty' => $row->subcounty ?? null,  
+            'residence' => $row->area_of_residence ?? $row->area ?? null,  
+            'occupation' => $row->occupation ?? null,    
+            'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
+        ]);
+        $p->pre_update();
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
