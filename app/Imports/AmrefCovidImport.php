@@ -65,6 +65,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'current_health_status' => $row->health_status ?? null,
             'nationality' => $row->nationality ?? 1,
             'phone_no' => $row->phone_number ?? null,
+            'email_address' => $row->email_address ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
             'residence' => $row->residence ?? null,  

@@ -174,6 +174,7 @@ class DrSample extends BaseModel
     public function getMidAttribute()
     {
         if(env('APP_LAB') == 100) return $this->patient->patient;
+        if(env('APP_LAB') == 1 && $this->run > 1) return env('DR_PREFIX') . $this->parentid;
         return env('DR_PREFIX') . $this->id;
     }
 
@@ -304,7 +305,8 @@ class DrSample extends BaseModel
 
     public function create_vl_sample()
     {
-        if($this->passed_gel_documentation != 0) return false;
+        // if($this->passed_gel_documentation != 0) return false;
+        if(env('APP_LAB') != 7) return false;
         $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
         if($sample) return false;
 

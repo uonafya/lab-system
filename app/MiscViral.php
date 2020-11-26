@@ -61,9 +61,9 @@ class MiscViral extends Common
 	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        Viralsample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
 		// Default value for repeatt is 0
 
@@ -246,6 +246,7 @@ class MiscViral extends Common
     public static function sample_result($result, $error=null, $units="")
     {
         $str = strtolower($result);
+        $repeatt = 0;
         // $units="";
 
         if(\Str::contains($result, ['e+'])){
@@ -255,7 +256,8 @@ class MiscViral extends Common
         else if($str == 'failed' || $str == 'invalid' || $str == '' || \Str::contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
-            $interpretation = $error ?? $result;       
+            $interpretation = $error ?? $result; 
+            $repeatt = 1;      
         }
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
@@ -338,10 +340,12 @@ class MiscViral extends Common
 
     public static function exponential_result($result)
     {
-        $units="";              
+        $units="";    
+        $repeatt = 0;          
         if($result == 'Invalid'){
             $res= "Failed";
             $interpretation="Invalid";
+            $repeatt = 1;
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
             $res= "< LDL copies/ml";
@@ -358,7 +362,8 @@ class MiscViral extends Common
         }
         else{
             $res= "Failed";
-            $interpretation = $result;                
+            $interpretation = $result; 
+            $repeatt = 1;               
         }
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];

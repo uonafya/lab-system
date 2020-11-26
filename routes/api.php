@@ -37,6 +37,18 @@ $api->version('v1', function (Router $api) {
             });
 
 
+            $api->resource('nat_covid_sample', 'NatCovidSampleController');
+            
+            // $api->resource('quarantine_site', 'QuarantineSiteController');
+
+            $api->group(['prefix' => 'update'], function(Router $api) {
+
+                $api->post('covid_samples', 'NatCovidSampleController@update_samples');
+                $api->post('covid_patients', 'NatCovidSampleController@update_patients');
+
+            });
+
+
             $api->post('email', 'RandomController@email');
             $api->post('attachment', 'RandomController@attachment');
             $api->resource('facility', 'FacilityController');

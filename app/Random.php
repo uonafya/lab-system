@@ -3736,6 +3736,63 @@ class Random
         }
     }
 
+    
+
+    public static function busia_study()
+    {
+        $file = public_path('busia.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'study_id'){
+                $rows[] = $data;
+                continue;
+            }
+            $national_id = rtrim($data[4]);
+            $identifier = rtrim($data[1]);
+            $phone_no = rtrim($data[5]);
+            /*$p = CovidPatient::where('national_id', $national_id)->first();
+            if(!$p){
+                $data[8] = 'Patient Not Found';
+                $rows[] = $data;
+                continue;
+            }*/
+            $datecollected = date('Y-m-d', strtotime($data[7]));
+
+            $sample = CovidSampleView::where(['repeatt' => 0])
+                ->where('national_id', 'like', "%{$national_id}%")
+                ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                ->first();
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('identifier', 'like', "%{$identifier}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('phone_no', 'like', "%{$phone_no}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+
+            if(!$sample){
+                $data[8] = 'Sample Not Found';
+                $rows[] = $data;
+                continue;
+            }
+            $data[8] = $sample->result_name;
+            $rows[] = $data;
+        }
+        $file = 'busia-study';
+        Common::csv_download($rows, $file, false, true);
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
     public static function old_id_column()
     {
         DB::statement('ALTER TABLE samples ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
