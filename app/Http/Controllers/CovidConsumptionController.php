@@ -53,6 +53,7 @@ class CovidConsumptionController extends Controller
             }
             
             $allocations = $this->getWeekCovidAllocations($time->week_start,$time->week_end);
+            // dd($allocations);
             $kits = $kits->groupby('machine');
             return view('tasks.covid.consumption',
                         [
@@ -255,6 +256,7 @@ class CovidConsumptionController extends Controller
                             ->whereIn('responded', ['NO', 'POSTPONED'])
                             // ->where('date_responded', '<', $end_of_week)
                             ->get();
+
         // echo "<pre>";print_r($allocations->toArray());
         // die();
         // if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
@@ -267,12 +269,10 @@ class CovidConsumptionController extends Controller
         
         $newallocation = [];
         foreach ($allocations as $key => $allocation) {
-            $date_responded = strtotime($allocation->date_responded);
-            $end_week = strtotime($end_of_week);
             if ($allocation->responded == 'POSTPONED') {
-                if ($end_of_week > $date_responded)
+                if ($end_of_week > $allocation->date_responded) {
                     $newallocation[] = $allocation;
-                
+                }
             } else {
                 $newallocation[] = $allocation;
             }

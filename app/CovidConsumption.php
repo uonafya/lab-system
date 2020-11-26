@@ -76,7 +76,7 @@ class CovidConsumption extends BaseModel
                 else
                     return $query->where('lab_id', '=', env('APP_LAB'));
             })->first();
-
+        
         if (null !== $firsttestdate->datetested) { // Tests exists, get the weeks that need to be reported on
             $date = $firsttestdate->datetested;
             $lastweeek = $this->getPreviousWeek();
