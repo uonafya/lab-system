@@ -65,26 +65,36 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
         if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->facility_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'facility_id' => $this->facility_id])->first();
         if(!$p && $row->unique_identifier && strlen($row->unique_identifier) > 5 && $this->quarantine_site_id) $p = CovidPatient::where(['identifier' => $row->unique_identifier, 'quarantine_site_id' => $this->quarantine_site_id])->first();
 
+        /*if(!auth()->user()->user_type_id){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;            
+        }*/
+
 
         if(!$p) $p = new CovidPatient;
 
-        $p->fill([
-            'identifier' => $row->unique_identifier ?? $row->name,
-            'facility_id' => $this->facility_id ?? null,
-            'quarantine_site_id' => $this->quarantine_site_id ?? null,
-            'patient_name' => $row->name,
-            'sex' => $row->sex,
-            'national_id' => $row->idpassport ?? $row->national_id ?? null,
-            'current_health_status' => $row->health_status ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
-            'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
-            'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,  
-            'residence' => $row->area_of_residence ?? $row->area ?? null,  
-            'occupation' => $row->occupation ?? null,    
-            'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
-        ]);
-        $p->pre_update();
+        if(auth()->user()->user_type_id) {
+
+            $p->fill([
+                'identifier' => $row->unique_identifier ?? $row->name,
+                'facility_id' => $this->facility_id ?? null,
+                'quarantine_site_id' => $this->quarantine_site_id ?? null,
+                'patient_name' => $row->name,
+                'sex' => $row->sex,
+                'national_id' => $row->idpassport ?? $row->national_id ?? null,
+                'current_health_status' => $row->health_status ?? null,
+                'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+                'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
+                'county' => $row->county ?? null,
+                'subcounty' => $row->subcounty ?? null,  
+                'residence' => $row->area_of_residence ?? $row->area ?? null,  
+                'occupation' => $row->occupation ?? null,    
+                'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
+            ]);
+            $p->pre_update();
+        }
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
@@ -112,7 +122,16 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'receivedstatus' => 1,
             'sample_type' => 1,
         ]);
-        $sample->pre_update();
+        if(auth()->user()->user_type_id) $sample->pre_update();
+        else{            
+            $rows = session('skipped_rows', []);
+            $row_array['CASE_ID'] = $p->identifier;
+            $row_array['SAMPLE_NUMBER'] = $s->id;
+            $row_array['NATIONAL_ID'] = $p->national_id;
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
 
     }
 }
