@@ -592,6 +592,8 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+
+
         if($covidSample->receivedstatus && ($user->facility_user || $user->quarantine_site)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been received at the lab.']);
             return back();
@@ -601,6 +603,11 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
             return back();
         }*/
+
+        if(in_array(env('APP_LAB'), [1]) && ($covidSample->worksheet_id || $covidSample->run > 1) && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has entered a worksheet."]);
+            return back();
+        }
 
         if(in_array(env('APP_LAB'), [5, 3, 4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
