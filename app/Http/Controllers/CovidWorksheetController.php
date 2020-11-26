@@ -384,7 +384,7 @@ class CovidWorksheetController extends Controller
     public function labels(CovidWorksheet $worksheet)
     {
         $samples = $worksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
-        return view('worksheets.labels', ['samples' => $samples, 'i' => 2]);
+        return view('worksheets.labels', ['samples' => $samples, 'i' => 3]);
     }
 
     public function print(CovidWorksheet $worksheet)
