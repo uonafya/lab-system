@@ -84,7 +84,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'occupation' => $row->occupation ?? null,    
             'justification' => DB::table('covid_justifications')->where('name', ($row->justification ?? 'none'))->first()->id ?? 3,             
         ]);
-        $p->save();
+        $p->pre_update();
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
