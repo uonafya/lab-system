@@ -32,7 +32,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'MFL Code column is not present.']);
             return;
         }*/
-        if(!property_exists($row, 'name')){
+        if(!property_exists($row, 'name') && !property_exists($row, 'patient_name')){
             session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
             return;
         }
@@ -81,7 +81,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
                 'identifier' => $row->unique_identifier ?? $row->name,
                 'facility_id' => $this->facility_id ?? null,
                 'quarantine_site_id' => $this->quarantine_site_id ?? null,
-                'patient_name' => $row->name,
+                'patient_name' => $row->name ?? $row->patient_name,
                 'sex' => $row->sex,
                 'national_id' => $row->idpassport ?? $row->national_id ?? null,
                 'current_health_status' => $row->health_status ?? null,
@@ -126,7 +126,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
         else{            
             $rows = session('skipped_rows', []);
             $row_array['CASE_ID'] = $p->identifier;
-            $row_array['SAMPLE_NUMBER'] = $s->id;
+            $row_array['SAMPLE_NUMBER'] = $sample->id;
             $row_array['NATIONAL_ID'] = $p->national_id;
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);          
