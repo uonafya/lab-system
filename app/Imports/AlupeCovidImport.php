@@ -48,7 +48,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             session(['toast_error' => 1, 'toast_message' => 'Sex column is not present.']);
             return;
         }
-        if(!property_exists($row, 'idpassport')){
+        if(!property_exists($row, 'idpassport') && !property_exists($row, 'national_id')){
             session(['toast_error' => 1, 'toast_message' => 'ID/Passport column is not present.']);
             return;
         }
