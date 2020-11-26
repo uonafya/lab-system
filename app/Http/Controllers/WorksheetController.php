@@ -207,8 +207,16 @@ class WorksheetController extends Controller
 
     public function labels(Worksheet $worksheet)
     {
-        $samples = SampleView::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
-        return view('worksheets.labels', ['samples' => $samples]);
+        $samples = SampleView::where('worksheet_id', $worksheet->id)
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    })
+                    ->orderBy('samples_view.id', 'asc')
+                    ->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples, 'i' => 2]);
     }
 
     public function find(Worksheet $worksheet)
