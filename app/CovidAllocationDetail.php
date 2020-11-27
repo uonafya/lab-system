@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CovidAllocationDetail extends BaseModel
 {
+    public function kit()
+    {
+        return $this->belongsTo(CovidKit::class, 'material_number', 'material_no');
+    }
+    
     public function scopeExisting($query, $data)
     {
         return $query->where([
