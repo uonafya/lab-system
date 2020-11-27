@@ -94,7 +94,7 @@ class CovidConsumption extends BaseModel
             if ($this->getdata($week->week_start))
                 $data[] = $this->getPreviousWeek();
         }
-
+        
         return $data;
 
         // $lastweeek = $this->getPreviousWeek();
@@ -153,6 +153,32 @@ class CovidConsumption extends BaseModel
             $consumption->tests = json_encode($tests);
             $consumption->save();
             $tests = [];
+        }
+        return true;
+    }
+
+    public static function fillerData()
+    {
+        $model = new CovidConsumption;
+        $weeks = $model->getMissingConsumptions();
+        $today = date('Y-m-d');
+        $current_week  = date('W', strtotime($today));
+        $backdate = $current_week - 3;
+        foreach ($weeks as $key => $week) {
+            if ($week->week < $backdate) {
+                CovidConsumption::create([
+                    'start_of_week' => $week->week_start,
+                    'end_of_week' => $week->week_end,
+                    'week' => $week->week,
+                    'lab_id' => env('APP_LAB'),
+                    'tests' => json_encode([
+                                ['C8800' => 0],
+                                ['Abbott' => 0],
+                            ]),
+                    'synced' => 1,
+                    'datesynced' => date('Y-m-d'),
+                ]);
+            }
         }
         return true;
     }

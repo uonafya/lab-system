@@ -155,7 +155,6 @@ class CovidConsumptionController extends Controller
         if (!$request->has(['received', 'response'])) {
             session(['toast_error' => true, 'toast_message' => 'Bad request. The posted details are incomplete']);
         }
-        // dd($request->all());
 
         foreach ($request->input('datereceived') as $key => $datereceived) {
             if ($request->input('response') == 'YES' && !isset($datereceived)) {
@@ -163,6 +162,57 @@ class CovidConsumptionController extends Controller
                 return back();
             }
             $allocations = CovidAllocation::whereDate('allocation_date', date('Y-m-d', strtotime($key)))->get();
+            $already_submitted_consumption = CovidConsumption::where('start_of_week', '<', $datereceived)
+                                                            ->where('end_of_week', '>', $datereceived)
+                                                            ->get();
+            if (!$already_submitted_consumption->isEmpty()) {
+                if ($request->has('consumption_confirmation')) {
+                    $consumption = $already_submitted_consumption->first();
+                    $details = $consumption->details;
+                    foreach ($request->input('received') as $key => $value) {
+                        $allocation_detail = CovidAllocationDetail::find($key);
+                        $detail = $details->where('kit_id', $allocation_detail->kit->id);
+                        if (!$detail->isEmpty()) {
+                            $detail = $detail->first();
+                            $orig_received = $detail->received;
+                            $orig_end = $detail->ending;
+                            $new_received = $value ?? 0;
+                            $new_end = (($orig_end - $orig_received) + $new_received);
+                            if ($new_end < 0)
+                                $new_end = 0;
+                            $detail->received = $new_received;
+                            $detail->ending = $new_end;
+                            $detail->save();
+                        }
+                    }
+                } else {
+                    $user = auth()->user();
+                    $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
+                                            if ($user->user_type_id == 12)
+                                                return $query->where('type', '<>', 'Kit');
+                                            else
+                                                return $query->where('type', '<>', 'Manual');
+                                        })->orderBy('machine', 'desc')->get();
+                    if ($user->user_type_id == 12)
+                        $kits = $kits->groupby('type')->sortKeysDesc();
+                    else
+                        $kits = $kits->groupby('machine');
+                    session(['toast_message' => 'A Consumption report was already submitted for the week of this allocation. Check below the changes that will be effected.']);
+
+                    $detail_kits = [];
+                    foreach ($request->input('received') as $key => $value) {
+                        $detail = CovidAllocationDetail::find($key);
+                        $detail_kits[$detail->kit->id] = $value;
+                    }
+                    
+                    return view('tasks.covid.allocationconfirmation',  [
+                                        'covidkits' => $kits,
+                                        'consumption' => $already_submitted_consumption->first(),
+                                        'allocation' => $request->except('_token'),
+                                        'detail_kits' => $detail_kits,
+                                    ]); 
+                }                
+            }
             
             foreach ($allocations as $key => $allocation) {
                 $allocation->received = $request->input('response');
