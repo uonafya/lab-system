@@ -565,6 +565,7 @@ class CovidSampleController extends Controller
             })          
             ->orderBy('run', 'desc')
             ->get();
+            
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();

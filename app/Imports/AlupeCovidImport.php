@@ -114,7 +114,6 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
         $test_type = strtolower($test_type);
 
 
-
         $sample->fill([
             'patient_id' => $p->id,
             'lab_id' => env('APP_LAB'),
@@ -128,7 +127,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'sample_type' => 1,
         ]);
         $sample->pre_update();
-        
+
         /*if(auth()->user()->user_type_id) $sample->pre_update();
         else{            
             $rows = session('skipped_rows', []);
