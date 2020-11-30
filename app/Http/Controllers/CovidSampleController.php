@@ -819,7 +819,11 @@ class CovidSampleController extends Controller
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
-        ini_set("pcre.backtrack_limit", "500000000");
+        // ini_set("pcre.backtrack_limit", "500000000");
+        if(env('APP_LAB') == 25){
+            $mpdf->SetWatermarkText('AMREF');
+            $mpdf->showWatermarkText = true;
+        }
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($covidSample->patient->patient_name . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
