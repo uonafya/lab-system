@@ -1119,6 +1119,7 @@ class MiscViral extends Common
                 }else{
                     $s = Viralsample::find($sample->id);
                     $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    $s->edarp_error = $body;
                     $s->save();
 
                 }          
