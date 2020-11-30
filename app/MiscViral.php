@@ -1111,9 +1111,17 @@ class MiscViral extends Common
                 ]);   
                 $body = json_decode($response->getBody());
                 if($response->getStatusCode() > 399){
-                    print_r($post_data);
-                    return null;
-                }             
+                    $s = Viralsample::find($sample->id);
+                    $s->edarp_error = $body;
+                    $s->save();
+                    // print_r($post_data);
+                    // return null;
+                }else{
+                    $s = Viralsample::find($sample->id);
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    $s->save();
+
+                }          
             } catch (\Exception $e) {
                 
             }

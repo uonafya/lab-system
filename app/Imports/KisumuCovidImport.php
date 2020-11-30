@@ -66,7 +66,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
             'current_health_status' => $row->health_status ?? null,
-            'nationality' => $row->nationality ?? 1,
+            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
