@@ -1077,6 +1077,7 @@ class MiscViral extends Common
                     return $query->where('created_at', '>', $min_date);
                 })
                 ->whereNull('receivedstatus')
+                ->whereNull('time_sent_to_edarp')
                 ->get();
 
         $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
@@ -1111,9 +1112,25 @@ class MiscViral extends Common
                 ]);   
                 $body = json_decode($response->getBody());
                 if($response->getStatusCode() > 399){
-                    print_r($post_data);
-                    return null;
-                }             
+                    $s = Viralsample::find($sample->id);
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+                    // print_r($post_data);
+                    // return null;
+                }
+                else if(isset($body[0]->status_code) && in_array($body[0]->status_code, [300])){
+                    $s = Viralsample::find($sample->id);
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    // $s->edarp_error = $body;
+                    $s->save();
+                }
+                else{
+                    $s = Viralsample::find($sample->id);
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+
+                }          
             } catch (\Exception $e) {
                 
             }

@@ -2068,6 +2068,7 @@ class Random
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
 							})->whereNull('dateemailsent')->get();
+        
         $eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
 							->when($month, function($query) use ($month){
 								return $query->whereMonth('datetested', $month);
