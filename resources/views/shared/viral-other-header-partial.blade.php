@@ -90,9 +90,9 @@
 		<td><strong>Spek Kit No</strong> </td>
 		<td>{{ $worksheet->spekkit_no }}</td>
 		<td><strong>Updated By</strong></td>
-		<td>{{ $worksheet->uploader->full_name ?? ''  }}</td>
-		<td></td>
-		<td></td>
+		<td>{{ $worksheet->uploader->full_name ?? '' }}</td>
+		<td>Alli Quoted By</td>
+		<td>{{ $worksheet->quoter->full_name ?? '' }}</td>
 	</tr>
 
 

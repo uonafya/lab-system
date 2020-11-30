@@ -6,6 +6,7 @@ use App\CovidPatient;
 use App\CovidSample;
 use App\CovidSampleView;
 use App\CovidTravel;
+use App\CovidWorksheet;
 use App\City;
 use App\Facility;
 use App\Lookup;
@@ -223,7 +224,7 @@ class CovidSampleController extends Controller
                 'Patient Name' => $sample->patient_name,
                 'Phone Number' => $sample->phone_no,
                 'County' => $sample->countyname ?? $sample->county,
-                'Subcounty' => $sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
+                'Subcounty' => $sample->sub_county ?? $sample->subcountyname ?? $sample->subcounty ?? '',
                 'Age' => $sample->age,
                 'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
                 'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
@@ -490,10 +491,15 @@ class CovidSampleController extends Controller
 
         $patient = null;
 
-        if(auth()->user()->lab_id != 1){
-            if(!$patient && $request->only('national_id')) $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
-            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'facility_id'))->whereNotNull('facility_id')->first();
-            if(!$patient) $patient = CovidPatient::where($request->only('identifier', 'quarantine_site_id'))->whereNotNull('quarantine_site_id')->first();
+        if(!in_array(auth()->user()->lab_id, [1,4])){
+            /*$national_id = $request->input('national_id');
+            if(!$patient && $national_id && strlen($national_id) > 5 && !\Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])){
+                $patient = CovidPatient::where($request->only('national_id'))->whereNotNull('national_id')->first();
+            }*/
+
+            if(!$patient && $request->input('national_id')) $patient = CovidPatient::existing($request->only('national_id'))->first();
+            if(!$patient) $patient = CovidPatient::existing($request->only('identifier', 'facility_id'))->first();
+            if(!$patient) $patient = CovidPatient::existing($request->only('identifier', 'quarantine_site_id'))->first();
         }
         if(!$patient) $patient = new CovidPatient;
         $patient->fill($request->only($data['patient']));
@@ -558,12 +564,18 @@ class CovidSampleController extends Controller
                 return $query->where('quarantine_site_id', $user->facility_id);
             })          
             ->orderBy('run', 'desc')
-            ->paginate();
+            ->get();
+            
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
         $data = array_merge($p, compact('samples', 'myurl', 'myurl2', 'type'));
         $data['results'] = DB::table('results')->get();
+        $sample = $samples->where('repeatt', 0)->first();
+        if($sample && $sample->receivedstatus == 1 && !$sample->datedispatched){
+            $data['current_sample'] = $sample;
+            $data['worksheets'] = CovidWorksheet::where(['status_id' => 1])->get();
+        }
         return view('tables.covidsamples', $data);
     }
 
@@ -581,13 +593,20 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+
+
         if($covidSample->receivedstatus && ($user->facility_user || $user->quarantine_site)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been received at the lab.']);
             return back();
         }
 
-        if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id){
+        /*if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
+            return back();
+        }*/
+
+        if(in_array(env('APP_LAB'), [1]) && ($covidSample->worksheet_id || $covidSample->run > 1) && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has entered a worksheet."]);
             return back();
         }
 
@@ -617,6 +636,7 @@ class CovidSampleController extends Controller
             $patient = new CovidPatient;
             $patient->fill($request->only($data['patient']));
         }
+        if(!$request->input('facility_id')) $patient->facility_id = $request->input('facility_id');
         $patient->current_health_status = $request->input('health_status');
         $patient->pre_update();
 
@@ -695,19 +715,25 @@ class CovidSampleController extends Controller
 
     public function lab_sample_page()
     {
-        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab'])->with('pageTitle', 'Upload Covid Samples');
+        $quarantine_sites = DB::table('quarantine_sites')->get();
+        return view('forms.upload_site_samples', ['url' => 'covid_sample/lab', 'quarantine_sites' => $quarantine_sites, 'pageTitle' => 'Upload Covid Samples']);
     }
 
     public function upload_lab_samples(Request $request)
     {
         // if(env('APP_LAB') != 1) abort(403);
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/site_samples/covid');
+        // $file = $request->upload->path();
+        // $path_one = $request->upload->store('public/site_samples/covid');
+        
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
+        $path = $request->upload->storeAs('public/site_samples/covid', $file_name); 
+
         $lab_id = auth()->user()->lab_id;
         $c = null;
         if($lab_id == 1) $c = new NairobiCovidImport;
         else if($lab_id == 2) $c = new KisumuCovidImport;
-        else if($lab_id == 3) $c = new AlupeCovidImport;
+        else if($lab_id == 3) $c = new AlupeCovidImport($request);
         else if($lab_id == 4) $c = new WRPCovidImport;
         else if($lab_id == 5) $c = new AmpathCovidImport;
         else if($lab_id == 9) $c = new KNHCovidImport;
@@ -793,9 +819,13 @@ class CovidSampleController extends Controller
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
-        ini_set("pcre.backtrack_limit", "500000000");
+        // ini_set("pcre.backtrack_limit", "500000000");
+        if(env('APP_LAB') == 25){
+            $mpdf->SetWatermarkText('AMREF');
+            $mpdf->showWatermarkText = true;
+        }
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($covidSample->patient->patient_name . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
         // $data['print'] = true;
         // return view('exports.mpdf_covid_samples', $data);
@@ -882,6 +912,27 @@ class CovidSampleController extends Controller
         return back();
     }
 
+    public function change_worksheet(CovidSample $covidSample, $worksheet_id=null)
+    {
+        if($covidSample->datedispatched || $covidSample->datetested || $covidSample->repeatt == 1){
+            session(['toast_error' => 1, 'toast_message' => 'The sample has already been tested']);
+            return back();            
+        }
+        $test = true;
+        if($worksheet_id){
+            $covid_worksheet = CovidWorksheet::findOrFail($worksheet_id);
+            if($covid_worksheet->status_id != 1){
+                session(['toast_error' => 1, 'toast_message' => 'The Worksheet is not in process']);
+                return back();
+            }
+        }
+        $covidSample->worksheet_id = $worksheet_id;
+        $covidSample->save();
+        session(['toast_message' => 'The change has been effected']);
+        return back();
+
+    }
+
 
     public function cities(Request $request)
     {
@@ -954,14 +1005,19 @@ class CovidSampleController extends Controller
 
 
         $patient = null;
-        if($national_id) $patient = CovidPatient::where('national_id', $national_id)->first();
+        $patient = CovidPatient::existing($request->only(['national_id']))->first();
+        if(!$patient) $patient = CovidPatient::existing($request->only(['identifier', 'facility_id']))->first();
+        if(!$patient) $patient = CovidPatient::existing($request->only(['identifier', 'quarantine_site_id']))->first();
+
+        
+        /*if($national_id && !Str::contains($national_id, ['No', 'no', 'NO', 'NA', 'N/A'])) $patient = CovidPatient::where('national_id', $national_id)->first();
         if(!$patient && !$identifier) return ['message' => null];
         if(!$patient && $facility_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'facility_id' => $facility_id])->first();
         }
         if(!$patient && $quarantine_site_id){
             $patient = CovidPatient::where(['identifier' => $identifier, 'quarantine_site_id' => $quarantine_site_id])->first();
-        }
+        }*/
 
         if(!$patient && $patient_name){
             $sql = '';
@@ -974,7 +1030,6 @@ class CovidSampleController extends Controller
             $sql = substr($sql, 0, -4);
             $patient = CovidPatient::whereRaw($sql)->first();
         }
-
 
         if($patient){
             $patient->most_recent();

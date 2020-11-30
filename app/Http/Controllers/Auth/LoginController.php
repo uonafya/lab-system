@@ -126,11 +126,13 @@ class LoginController extends Controller
 
         if($user->user_type_id == 7) return "/sample/list_poc";
         if($user->user_type_id == 8) return "/viralsample/nhrl";
-        if(in_array($user->user_type_id, [11, 12, 13, 14, 15]) ){
+        if(in_array($user->user_type_id, [11, 12, 13, 14, 15, 16]) ){
             session(['testingSystem' => 'Covid']);
+            if($user->user_type_id == 16) return "/covid_sample";
             return "/covid_sample/create";
         }
-        if($user->other_lab) return "/covid_sample";
+       
+            
 
         if($facility || $user->user_type_id == 5){
             $fac = \App\Facility::find($user->facility_id);
@@ -202,7 +204,7 @@ class LoginController extends Controller
             }
             else{
                 $fac = \App\Facility::find($viralbatch->facility_id);
-                session(['viral_batch' => $viralbatch, 'viral_facility_name' => $fac->name]);
+                session(['viral_batch' => $viralbatch, 'viral_facility_name' => ($fac->name ?? null)]);
                 session(['toast_message' => "The batch {$viralbatch->id} is still awaiting release. You can add more samples or release it."]);
                 return '/viralsample/create';
             }

@@ -24,9 +24,11 @@
                                     <th>#</th>
                                     <th>Sample Code / Patient ID</th>
                                     <th>Facility</th>
+                                    <th>Justification</th>
                                     <th>Date Collected</th>
                                     <th>Date Received</th>
                                     <th>Date Tested</th>
+                                    <th>Worksheet</th>
                                     <th>Result</th>
                                     <th>Patient History</th>
                                     <th>Create DR Sample</th>
@@ -38,9 +40,11 @@
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $sample->patient ?? '' }} </td>
                                         <td> {{ $sample->facilityname ?? '' }} </td>
+                                        <td> {{ $sample->get_prop_name($justifications, 'justification') }} </td>
                                         <td> {{ $sample->datecollected }} </td>
                                         <td> {{ $sample->datereceived }} </td>
                                         <td> {{ $sample->datetested }} </td>
+                                        <td> {{ $sample->worksheet_id }} </td>
                                         <td> {{ $sample->result }} </td>
                                         <td>
                                             <a href="{{ url('viralpatient/' . $sample->patient_id) }}" target="_blank">

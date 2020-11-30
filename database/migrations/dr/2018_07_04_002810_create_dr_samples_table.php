@@ -41,6 +41,8 @@ class CreateDrSamplesTable extends Migration
             $table->tinyInteger('amount_unit')->unsigned()->nullable();
             $table->smallInteger('sample_amount')->unsigned()->nullable();
             $table->tinyInteger('age')->unsigned()->nullable();
+            $table->tinyInteger('age_category')->unsigned()->default(0)->nullable();
+            
             // Multiple
             $table->string('clinical_indications', 50)->nullable(); 
 

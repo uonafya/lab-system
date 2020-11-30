@@ -46,7 +46,12 @@
 							</div>
 						</div>
 						<div class="col-md-10">
-	                        <select class="form-control" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
+	                        <select class="form-control initial_fields" v-model="myForm.facility_id" required name="facility_id" id="facility_id">
+	                        	@isset($ulizaClinicalForm)
+	                        		<option value="{{ $ulizaClinicalForm->facility_id }}" selected>
+	                        			{{ $ulizaClinicalForm->view_facility->facilitycode }} - {{ $ulizaClinicalForm->view_facility->name }} 
+	                        		</option>
+	                        	@endisset
 	                        </select>						
 						</div>
 				    </div>
@@ -59,7 +64,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 						    </div>
-						    <input aria-describedby="cccno" class="form-control" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
+						    <input aria-describedby="cccno" class="form-control initial_fields" v-model="myForm.cccno" maxlength="10" minlength="10" name="cccno" required type="text">
 						</div>
 						<div class="col-md-5 input-group required">
 							<div class="input-group-prepend">
@@ -68,7 +73,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input class="form-control date" v-model="myForm.reporting_date" name="reporting_date" required>
+							<input class="form-control date initial_fields" v-model="myForm.reporting_date" name="reporting_date" required>
 						</div>
 				    </div>
 				  
@@ -86,7 +91,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date" v-model="myForm.dob" name="dob" required>
+									<input class="form-control date initial_fields" v-model="myForm.dob" name="dob" required>
 								</div>
 								<div class="col-md-6 input-group required">
 									<div class="input-group-prepend">
@@ -95,7 +100,7 @@
 											<div style='color: #ff0000; display: inline;'>*</div>
 										</span>
 									</div>
-									<input class="form-control date" v-model="myForm.artstart_date" name="artstart_date" required>
+									<input class="form-control date initial_fields" v-model="myForm.artstart_date" name="artstart_date" required>
 								</div>
 							</div>
 					  
@@ -144,7 +149,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="clinician_name" class="form-control" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
+							<input aria-describedby="clinician_name" class="form-control initial_fields" v-model="myForm.clinician_name" maxlength="75" name="clinician_name" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -162,7 +167,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_email" class="form-control" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
+							<input aria-describedby="facility_email" class="form-control initial_fields" v-model="myForm.facility_email" maxlength="75" name="facility_email" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -174,7 +179,7 @@
 									<div style='color: #ff0000; display: inline;'>*</div>
 								</span>
 							</div>
-							<input aria-describedby="facility_tel" class="form-control" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
+							<input aria-describedby="facility_tel" class="form-control initial_fields" v-model="myForm.facility_tel" maxlength="45" name="facility_tel" required="required" type="text">
 						</div>
 					</div>
 				  
@@ -189,7 +194,7 @@
 					<div class="form-row mb-3">
 						@foreach($reasons as $reason)
 							<div class="form-group col-md-4">
-								<input class="form-check-input ml-1" v-model="myForm.primary_reason" name="primary_reason" required="required" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
+								<input class="form-check-input ml-1 requirable" v-model="myForm.primary_reason" name="primary_reason requirable" required="required" type="radio" id="primary_reason_A{{ $reason->id }}" value="{{ $reason->id }}">
 								<label class="form-check-label ml-5" for="primary_reason_A{{ $reason->id }}">{{ $reason->name }}</label>
 							</div>
 						@endforeach
@@ -251,7 +256,7 @@
 													<td>
 														<div class="btn-group" role="group">
 															<button class="btn btn-sm btn-warning">Edit</button>
-															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click="delVisit(clinical_visit_index)">Del</button>
+															<button class="btn btn-sm btn-danger" data-placement="top" data-toggle="tooltip" title="Delete selected record" @click.prevent="delVisit(clinical_visit_index)">Del</button>
 															
 														</div> 
 													</td>
@@ -277,7 +282,7 @@
 							<div style='color: #ff0000; display: inline;'>*</div>
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
+							<input class="form-control requirable" v-model="myForm.no_adherance_counseling" name="no_adherance_counseling" required="required" type="number">
 						</div>
 					</div>
 				  
@@ -401,11 +406,11 @@
 						</div>
 					</div>
 
-					<div v-if="successful_submission" class="row alert alert-success">
+					<div v-if="successful_validation" class="row alert alert-success">
 						You have successfully submitted your request.
 					</div>
 
-					<div v-if="successful_submission === false" class="row alert alert-warning">
+					<div v-if="successful_validation === false" class="row alert alert-warning">
 						You have validation errors.
 					</div>
 				  
@@ -414,7 +419,7 @@
 					</div>
 				  
 					<div class="mb-3 float-centre">
-						<button class="btn btn-default"  @click="saveDraft()" type="button">Save As Draft</button>
+						<button class="btn btn-default" type="button"  @click.prevent="saveDraft()">Save As Draft</button>
 					</div>
 				  
 					<div class="mb-3 float-centre"></div>
@@ -425,8 +430,6 @@
 		@include('uliza.clinical_visit')
 		
 	</div>
-
-
 
 @endsection
 
@@ -441,6 +444,7 @@
         	el: "#my-vue-instance",
         	data: {
         		myForm: {
+        			id: null,
         			facility_id: null,
         			cccno: null,
         			reporting_date: null,
@@ -469,6 +473,7 @@
         			drt_testing: null,
         			mdt_discussions: null,
         			mdt_members: null, 
+        			draft: null, 
         		},
         		clinicalVisit:{
         			clinicvisitdate: null,
@@ -481,15 +486,27 @@
         			reason_switch: null,
         			new_oi: null,        			
         		},
-        		successful_submission: null,
+        		successful_validation: null,
+        	},
+        	mounted (){
+        		@isset($ulizaClinicalForm)
+        			var ulizaClinicalForm = {!! $ulizaClinicalForm->toJson() !!};
+        			var tempVm = this;
+        			Object.keys(this.myForm).forEach(function(key, index){
+        				tempVm.myForm[key] = ulizaClinicalForm[key];
+        			});
+        		@endisset
         	},
         	methods: {
         		update(){
         			// console.log(this.myForm);
+        			// $('.form-control').removeAttr("disabled");
+        			$('requirable').attr('required', 'required');
         			var validator = $( "#myClinicalForm" ).validate();
-					this.successful_submission = validator.form();
+					this.successful_validation = validator.form();
 					// console.log(res);
-					if(!this.successful_submission) return;
+					if(!this.successful_validation) return;
+					this.myForm.draft = 0;
         			/*$("#myClinicalForm").validate({
 			            errorPlacement: function (error, element)
 			            {
@@ -497,9 +514,9 @@
 			            }
 					});*/
         			axios.post('/uliza-form', this.myForm).then(function(response){
-        				console.log(response);
+        				// console.log(response);
         			}).catch(function(error){
-        				console.log(error);
+        				// console.log(error);
         			});
         		},
         		addVisit(){
@@ -521,7 +538,7 @@
         			console.log(index);
         			this.myForm.clinical_visits.splice(index, 1);
         		},
-        		saveDraft(){
+        		/*saveDraft(){
 					const data = JSON.stringify(this.myForm)
 					const blob = new Blob([data], {type: 'text/plain'})
 					const e = document.createEvent('MouseEvents'),
@@ -531,6 +548,23 @@
 					a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
 					e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 					a.dispatchEvent(e);        			
+        		},*/
+        		saveDraft(){
+        			// $('.form-control').attr("disabled", "disabled");
+        			$('.requirable').removeAttr("required");
+        			var validator = $( "#myClinicalForm" ).validate();
+					this.successful_validation = validator.form();
+					console.log('Saving Draft');
+
+					if(!this.successful_validation) return;
+					this.myForm.draft = 1;
+
+
+        			axios.post('/uliza-form', this.myForm).then(function(response){
+        				console.log(response);
+        			}).catch(function(error){
+        				console.log(error);
+        			});
         		},
         	},
         });
@@ -582,6 +616,10 @@
             vm.clinicalVisit['clinicvisitdate'] = val;
         }); 
 
+        @isset($ulizaClinicalForm)
+	        $("#facility_id").val({{ $ulizaClinicalForm->facility_id }}).change();
+	    @endisset
+	    
 	});
 </script>
 @endsection

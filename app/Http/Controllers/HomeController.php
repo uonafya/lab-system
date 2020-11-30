@@ -334,8 +334,8 @@ class HomeController extends Controller
         foreach ($periods as $periodkey => $periodvalue) {
             $testingSystem = 'eid';
             if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
-            if (session('testingSystem') == 'DR') $testingSystem = 'dr';
-            if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
+            else if (session('testingSystem') == 'DR') $testingSystem = 'dr';
+            else if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
 
             $lab_id = auth()->user()->lab_id;
 

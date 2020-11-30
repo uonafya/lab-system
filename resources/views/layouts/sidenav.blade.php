@@ -166,7 +166,7 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
-                @if(!in_array(env('APP_LAB'), [6, 8, 9]))
+                @if(!in_array(env('APP_LAB'), [6, 8]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
@@ -197,7 +197,7 @@
                 @endif
             
             @elseif (session('testingSystem') == 'Covid')
-                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18,16,25]))
+                @if(in_array(auth()->user()->lab_id, [1,2,3,4,5,6,9,18,16,25]))
                     <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
                     <hr />               
                 @endif
@@ -217,6 +217,10 @@
                     <li>
                         <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
                     </li>
+                    <hr />
+                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
+                    <hr />
+                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
                     <hr />
                 @endif
             @elseif (session('testingSystem') == 'DR')

@@ -335,24 +335,34 @@ class CovidWorksheetController extends Controller
         //     return back();            
         // }
 
-        $worksheet->load(['sample.patient']);
+        // $worksheet->load(['sample.patient']);
 
         $data = [];
-        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Run', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender',];
+        if(in_array(env('APP_LAB'), [1,25])) $data[] = ['Lab ID', 'Result', 'Run', 'Kemri ID', 'Identifier', 'Patient Name', 'Age', 'Gender', 'County', 'Subcounty'];
         else{
             $data[] = ['Lab ID', 'Result', 'Run', 'Identifier', 'Patient Name', 'Age', 'Gender',];            
         }
         $data[] = ['Negative Control'];
         $data[] = ['Positive Control'];
 
-        foreach ($worksheet->sample as $sample) {
+        /*foreach ($worksheet->sample as $sample) {
             if(in_array(env('APP_LAB'), [1,25])){
                 $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->kemri_id, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
             else{
                 $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->patient->identifier, $sample->patient->patient_name, $sample->age, $sample->patient->gender];
             }
+        }*/
+
+        foreach ($worksheet->sample_view as $sample) {
+            if(in_array(env('APP_LAB'), [1,25])){
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->kemri_id, $sample->patient->identifier, $sample->patient_name, $sample->age, $sample->gender, ($sample->countyname ?? $sample->county), ($sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty)];
+            }
+            else{
+                $data[] = [$sample->id, $sample->run, $sample->result_name, $sample->patient->identifier, $sample->patient_name, $sample->age, $sample->gender];
+            }
         }
+
         return \App\MiscCovid::csv_download($data, 'worksheet_' . $worksheet->id, false);
     }
     
@@ -373,8 +383,8 @@ class CovidWorksheetController extends Controller
 
     public function labels(CovidWorksheet $worksheet)
     {
-        $samples = $worksheet->sample;
-        return view('worksheets.labels', ['samples' => $samples]);
+        $samples = $worksheet->sample()->orderBy('run', 'desc')->orderBy('id', 'asc')->get();
+        return view('worksheets.labels', ['samples' => $samples, 'i' => 3]);
     }
 
     public function print(CovidWorksheet $worksheet)
@@ -483,8 +493,12 @@ class CovidWorksheetController extends Controller
             return back();
         }
 
-        $file = $request->upload->path();
-        $path = $request->upload->store('public/results/covid'); 
+        // $file = $request->upload->path();
+        // $path = $request->upload->store('public/results/covid'); 
+
+        $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
+        $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
+        $path = $request->upload->storeAs('public/results/covid', $file_name); 
 
         if($worksheet->machine_type == 0 && env('APP_LAB') == 250){
             $c = new CovidManualWorksheetImport($worksheet, $request);
@@ -595,8 +609,8 @@ class CovidWorksheetController extends Controller
             return redirect($worksheet->route_name);                        
         }
 
-        if(env('APP_LAB') == 5 && $worksheet->reviewedby && !auth()->user()->covid_approver){
-            session(['toast_message' => "You are not permitted approve the results.", 'toast_error' => 1]);
+        if(in_array(env('APP_LAB'), [5, 25]) && $worksheet->reviewedby && !auth()->user()->covid_approver){
+            session(['toast_message' => "You are not permitted to approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);
         }
 

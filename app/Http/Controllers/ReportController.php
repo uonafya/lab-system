@@ -539,6 +539,12 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'positives') {
             $model = $model->where("$table.result", "=", 2);
             $report .= 'positive outcomes';
+        } else if ($request->input('types') == 'cns') {
+            if($testtype == 'Viralload') $model = $model->where("$table.result", "=", "Collect New Sample");
+            else{
+                $model = $model->where("$table.result", "=", 5);
+            }
+            $report .= 'collect new sample';
         } else if ($request->input('types') == 'poc') {
             $model = $model->where("$table.site_entry", '=', 2);
             $report .= 'poc tests';

@@ -2,26 +2,13 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DrugResistanceResult;
+use App\Mail\DrugResistance;
+
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
-
-use App\Common;
-
-use App\DrWorksheet;
-use App\DrBulkRegistration;
-
-use App\DrSample;
-use App\DrSampleView;
-
-use App\DrWorksheetWarning;
-use App\DrWarning;
-
-use App\DrCall;
-use App\DrCallDrug;
-
-use App\DrGenotype;
-use App\DrResidue;
 
 class MiscDr extends Common
 {
@@ -69,7 +56,7 @@ class MiscDr extends Common
     {
     	$c = self::$call_array;
     	// susceptible
-    	if($score < 10) return $c['S'];
+    	if($score <= 10) return $c['S'];
     	else if($score < 15) return $c['PL'];
     	else if($score < 30) return $c['L'];
     	else if($score < 60) return $c['I'];
@@ -93,22 +80,22 @@ class MiscDr extends Common
 
 	public static function get_hyrax_key()
 	{
-		if(Cache::store('file')->has('dr_api_token')){}
+		if(Cache::has('dr_api_token')){}
 		else{
 			self::login();
 		}
-		return Cache::store('file')->get('dr_api_token');
+		return Cache::get('dr_api_token');
 	}
 
 	public static function login()
 	{
-		Cache::store('file')->forget('dr_api_token');
+		Cache::forget('dr_api_token');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('POST', 'sanger/authorisations', [
             // 'debug' => true,
             'http_errors' => false,
-            'connect_timeout' => 3.14,
+            'connect_timeout' => 15,
 			'headers' => [
 				// 'Accept' => 'application/json',
 			],
@@ -128,16 +115,9 @@ class MiscDr extends Common
 		if($response->getStatusCode() < 400)
 		{
 			$body = json_decode($response->getBody());
-
-			// dd($body);
-
 			$key = $body->data->attributes->api_key ?? null;
-
 			if(!$key) dd($body);
-
-			Cache::store('file')->put('dr_api_token', $key, 60);
-
-			// echo $key;
+			Cache::put('dr_api_token', $key, 60);
 			return;
 		}
 		else{
@@ -150,6 +130,7 @@ class MiscDr extends Common
 
 	public static function create_plate($worksheet)
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$files = self::get_worksheet_files($worksheet);
@@ -197,13 +178,34 @@ class MiscDr extends Common
 			$worksheet->save();
 
 			foreach ($body->data->attributes->samples as $key => $value) {
-				$sample_id = str_after($value->sample_name, env('DR_PREFIX', ''));
-				$sample = DrSample::find($sample_id);
-				$sample->exatype_id = $value->id;
-				$sample->save();
+
+				if(env('APP_LAB') == 100){
+					$patient = \App\Viralpatient::where('patient', $value->sample_name)
+						->whereRaw("id IN (SELECT patient_id FROM dr_samples WHERE worksheet_id={$worksheet->id})")
+						->first();
+					$sample = $patient->dr_sample()->first();
+					if(!$sample){
+						echo 'Cannot find ' . $value->sample_name . "\n";
+						continue;
+					}
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
+				else{
+					$sample_id = \Str::after($value->sample_name, env('DR_PREFIX', ''));
+					$sample = DrSample::find($sample_id);
+					if($sample->worksheet->id != $worksheet->id){
+						if(env('APP_LAB') != 1) continue;
+						$sample = DrSample::where(['worksheet_id' => $worksheet->id, 'parentid' => \Str::after($value->sample_name, env('DR_PREFIX', ''))])->first();
+						if(!$sample) continue;
+					}
+
+					$sample->exatype_id = $value->id;
+					$sample->save();
+				}
 			}
 			session(['toast_message' => 'The worksheet has been successfully created at Exatype.']);
-			return true;
+			return $body;
 		}
 		else{
 			session(['toast_error' => 1, 'toast_message' => 'Something went wrong. Status code ' . $response->getStatusCode()]);
@@ -264,7 +266,10 @@ class MiscDr extends Common
 				}
 				else{
 					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+					else{
+						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+					}
 				}
 			}
 			if(!$abs) continue;
@@ -296,7 +301,7 @@ class MiscDr extends Common
 			}
 			else{
 				// if(\Str::startsWith($file, $sample->mid . $primer)){
-				if(\Str::startsWith($file, $sample->mid . '-') && \Str::contains($file, $primer))
+				if(\Str::startsWith($file, [$sample->mid . '-', $sample->mid . '_']) && \Str::contains($file, $primer))
 				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
 				{
 					$a = [
@@ -338,6 +343,7 @@ class MiscDr extends Common
 
 	public static function get_plate_result($worksheet)
 	{
+		ini_set('memory_limit', '-1');
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$response = $client->request('GET', "sanger/plate/result/{$worksheet->plate_id}", [
@@ -394,7 +400,7 @@ class MiscDr extends Common
 				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 
 				if(!$sample) continue;
-				if(in_array($sample->status_id, [1, 2, 3])) continue;
+				if(in_array($sample->status_id, [1])) continue;
 
 				// echo " {$sample->id} ";
 
@@ -606,10 +612,20 @@ class MiscDr extends Common
 		->limit($limit)
 		->get();
 
-		if($samples->count() == $limit || in_array(env('APP_LAB'), [7]) ){
-			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
+		$valid_samples = [];
+
+		if(env('APP_LAB') == 7){
+			foreach ($samples as $key => $sample) {
+		        $vl_sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->first();
+		        if($vl_sample && is_numeric($vl_sample->result) && $vl_sample->result > 500) $valid_samples[] = $samples;
+			}
+			return ['samples' => $valid_samples, 'create' => true];
 		}
-		return ['samples' => $samples, 'create' => false];
+
+		/*if($samples->count() == $limit || in_array(env('APP_LAB'), [7]) ){
+			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
+		}*/
+		return ['samples' => $samples, 'create' => true];
 	}
 
 	// public static function get_worksheet_samples($extraction_worksheet_id)
@@ -767,7 +783,24 @@ class MiscDr extends Common
 		foreach ($worksheets as $key => $worksheet) {
 			self::get_plate_result($worksheet);
 		}
+	}
 
+	public static function send_completed_results()
+	{
+		$drSamples = DrSample::whereNull('dateemailsent')->where(['status_id' => 1])->get();
+		foreach ($drSamples as $drSample) {
+			self::send_email($drSample);
+		}
+	}
+
+	public static function send_email($drSample)
+	{
+		$mail_array = $drSample->facility->email_array;
+		if(env('APP_LAB') == 1) $mail_array[] = 'eid-nairobi@googlegroups.com';
+		$new_mail = new DrugResistanceResult($drSample);
+		Mail::to($mail_array)->send($new_mail);
+		if(!$drSample->dateemailsent) $drSample->dateemailsent = date('Y-m-d');
+		$drSample->save();
 	}
 
 
@@ -789,6 +822,32 @@ class MiscDr extends Common
 						$call_drug->save();						
 					}
 				}
+			}
+		}
+	}
+
+	public static function set_fields()
+	{
+		$misc = new MiscViral;
+		$samples = DrSample::whereNull('age_category')->get();
+
+		foreach ($samples as $key => $sample) {
+			$sample->age_category = $misc->set_age_cat($sample->age);
+			$sample->save();
+		}
+	}
+
+
+	public static function create_mutations()
+	{
+		$dr_calls = DrCall::get();
+
+		foreach ($dr_calls as $key => $dr_call) {
+			if(!$dr_call->mutations) continue;
+
+			foreach ($dr_call->mutations as $key => $mutation) {
+				$dr_mutation = DrMutation::firstOrCreate(['drug_class_id' => $dr_call->drug_class_id, 'mutation' => $mutation]);
+				DrSampleMutation::firstOrCreate(['sample_id' => $dr_call->sample_id, 'mutation_id' => $dr_mutation->id]);
 			}
 		}
 	}

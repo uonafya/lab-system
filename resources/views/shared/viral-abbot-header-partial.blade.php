@@ -63,8 +63,6 @@
 		<td> {{ $worksheet->my_date_format('controlexpirydate') }} </td>
 		<td> {{ $worksheet->my_date_format('calibratorexpirydate') }} </td>
 		<td> {{ $worksheet->my_date_format('amplificationexpirydate') }} </td>
-
-
 	</tr>
 	<tr class="even">
 		<td><strong>Sorted By	</strong>    </td>
@@ -73,8 +71,8 @@
 		<td> {{ $worksheet->bulker->full_name ?? '' }} </td>
 		<td><strong>Run By	</strong>    </td>
 		<td> {{ $worksheet->runner->full_name ?? '' }}</td>
-		<td></td>
-		<td></td>
+		<td>Alli Quoted By</td>
+		<td>{{ $worksheet->quoter->full_name ?? '' }}</td>
 	</tr>
 	<tr class="even">
 		<td><strong>Updated By	</strong>    </td>

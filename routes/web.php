@@ -63,8 +63,12 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 	Route::get('clinical-review', 'UlizaController@clinical_review');
 });
 
+Route::prefix('uliza-form')->name('uliza-form.')->group(function(){
+
+});
 Route::resource('uliza-form', 'UlizaClinicalFormController');
 Route::post('uliza/login', 'UlizaUserController@login');
+Route::resource('uliza-additional-info', 'UlizaAdditionalInfoController');
 
 Route::middleware(['auth'])->group(function(){
 
@@ -206,6 +210,10 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('jitenge', 'CovidSampleController@jitenge_samples');
 				Route::post('cif', 'CovidSampleController@set_cif_samples');
 			});
+
+			Route::group(['middleware' => ['only_utype:1']], function () {
+				Route::get('worksheet/{covidSample}/{worksheet_id?}', 'CovidSampleController@change_worksheet');
+			});
 			
 			Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 				Route::post('receive_multiple', 'CovidSampleController@receive_multiple');
@@ -228,6 +236,12 @@ Route::middleware(['auth'])->group(function(){
 			Route::post('cif_patient/', 'CovidSampleController@cif_patient')->name('cif_patient');
 		});
 		Route::resource('covid_sample', 'CovidSampleController');
+
+		Route::prefix('traveller')->name('traveller.')->group(function () {			
+			Route::post('filter/', 'TravellerController@filter')->name('filter');
+			Route::post('print_multiple/', 'TravellerController@print_multiple')->name('print_multiple');
+		});
+		Route::resource('traveller', 'TravellerController');
 
 		Route::prefix('covid_patient')->name('covid_patient.')->group(function () {
 			
@@ -399,6 +413,14 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('/', 'DrDashboardTestingController@index');
 			Route::get('testing', 'DrDashboardTestingController@testing');
 			Route::get('rejected', 'DrDashboardTestingController@rejected');
+		});				
+
+		Route::prefix('dr_waterfall')->name('dr_waterfall.')->group(function () {
+			Route::get('/', 'DrDashboardProposedController@index');
+			Route::get('waterfall', 'DrDashboardProposedController@waterfall');
+			Route::get('gender', 'DrDashboardProposedController@gender');
+			Route::get('age', 'DrDashboardProposedController@age');
+			Route::get('requests_table', 'DrDashboardProposedController@requests_table');
 		});			
 
 		Route::post('dr_report', 'DrReportController@reports');
@@ -470,6 +492,7 @@ Route::middleware(['auth'])->group(function(){
 
 				// Download bulk template
 				Route::get('download/{worksheet}', 'DrWorksheetController@download')->name('download');
+				Route::get('abfiles/{worksheet}', 'DrWorksheetController@abfiles')->name('abfiles');
 
 			});
 			Route::resource('dr_worksheet', 'DrWorksheetController');

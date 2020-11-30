@@ -392,7 +392,13 @@
                                             @endif
                                         </td>
 
-                                        <td> {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}</td>
+                                        <td> 
+                                            @if(!$sample->datedispatched && auth()->user()->is_not_lab_user)
+
+                                            @else
+                                                {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}
+                                            @endif
+                                        </td>
 
                                         <td>
                                             {!! $sample->edit_link !!}  |
@@ -432,6 +438,30 @@
                         @if(isset($type) && $type == 3)
                         <button type="submit" class="btn btn-primary">Transfer to Other Lab</button>
                         </form>
+                        @endif
+
+                        @if(isset($current_sample) && in_array(env('APP_LAB'), [4]))
+                            @if($current_sample->worksheet_id)
+                                <a href="{{ url('covid_sample/worksheet/' . $current_sample->id) }}"> 
+                                    <button class="btn btn-warning">
+                                        Remove Sample {{ $current_sample->id }} from worksheet {{ $current_sample->worksheet_id }} 
+                                    </button>
+                                </a>
+                                <br />
+                                <br />
+                            @endif
+
+                            @foreach($worksheets as $worksheet)
+                                <a href="{{ url('covid_sample/worksheet/' . $current_sample->id . '/' . $worksheet->id) }}"> 
+                                    <button class="btn btn-info">
+                                        Add Sample {{ $current_sample->id }} to worksheet {{ $worksheet->id }} 
+                                    </button>
+                                </a>
+                                <br />
+                                <br />
+
+                            @endforeach
+
                         @endif
 
                     </div>

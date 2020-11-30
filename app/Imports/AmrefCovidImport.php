@@ -19,6 +19,31 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
         $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
+        if(!property_exists($row, 'patient_name')){
+            session(['toast_error' => 1, 'toast_message' => 'Patient Name column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'identifier')){
+            session(['toast_error' => 1, 'toast_message' => 'Identifier column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'age')){
+            session(['toast_error' => 1, 'toast_message' => 'Age column is not present.']);
+            return;
+        }
+        if(!property_exists($row, 'gender')){
+            session(['toast_error' => 1, 'toast_message' => 'Gender column is not present.']);
+            return;
+        }
+
+        if(!$row->patient_name || !$row->identifier || !((int) $row->age) || !$row->gender){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
+
+
         $p = null;
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->first();
@@ -26,8 +51,9 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
 
 
         if(!$p) $p = new CovidPatient;
-        $mfl = (int) $row->mfl_code ?? null;
+        $mfl = (int) ($row->mfl_code ?? null);
         $fac = Facility::locate($mfl)->first();
+
 
         $p->fill([
             'identifier' => $row->identifier ?? $row->national_id ?? $row->patient_name,
@@ -39,6 +65,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'current_health_status' => $row->health_status ?? null,
             'nationality' => $row->nationality ?? 1,
             'phone_no' => $row->phone_number ?? null,
+            'email_address' => $row->email_address ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
             'residence' => $row->residence ?? null,  
@@ -61,7 +88,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'lab_id' => env('APP_LAB'),
             'site_entry' => 0,
             'kemri_id' => $row->amref_id ?? null,
-            'age' => $row->age,
+            'age' => (int) $row->age,
             'test_type' => $row->test_type ?? 1,
             'health_status' => $row->health_status ?? null,
             'datecollected' => $datecollected,

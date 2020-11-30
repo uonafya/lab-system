@@ -76,10 +76,10 @@ class MiscCovid extends Common
     }
 
 
-    public static function save_repeat($sample_id)
+    public static function save_repeat($sample_id, $do_default=true)
     {
         $original = CovidSample::find($sample_id);
-        if($original->run == 5){
+        if($original->run == 3 && $do_default && !in_array(env('APP_LAB'), [25])){
             $original->repeatt=0;
             $original->save();
             return false;
@@ -185,6 +185,32 @@ class MiscCovid extends Common
 
         foreach ($facilities as $key => $facility) {
             self::send_results(null, $facility->facility_id);
+        }
+
+        if(env('APP_LAB') == 25){
+            $lab = Lab::find(env('APP_LAB'));
+            $cc_array = explode(',', $lab->cc_emails);
+            $bcc_array = $lab->bcc_emails ? explode(',', $lab->bcc_emails) : [];
+
+            $samples = CovidSampleView::where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
+                ->where(['repeatt' => 0])
+                ->whereNull('date_email_sent')
+                ->whereNotNull('datedispatched')
+                ->whereNotNull('national_sample_id')
+                ->whereNotNull('email_address')
+                ->get();
+
+            foreach ($samples as $key => $s) {
+                if(!filter_var($s->email_address, FILTER_VALIDATE_EMAIL)) continue;
+
+                $sample = CovidSample::find($s->id);
+                Mail::to($s->email_address)->cc($cc_array)->bcc($bcc_array)->send(new CovidDispatch([$sample]));
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
+
+            
+
         }
     }
 

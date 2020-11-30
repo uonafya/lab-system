@@ -71,6 +71,7 @@ class DashboardCacher
     {
         if (env('APP_LAB') == 7) self::nhrl_cacher();
         else{
+            if (env('APP_LAB') == 1) self::nhrl_cacher();
         	self::cacher();
         }
 
@@ -101,6 +102,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('vl_overduetesting'),
                 'overduedispatched' => Cache::get('vl_overduedispatched'),
                 'delayed_batches' => Cache::get('vl_delayed_batches'),
+                'unreceived_batches' => Cache::get('vl_unreceived_batches'),
                 'sample_manifest' => Cache::get('vl_pending_sample_manifest'),
                 'prefix' => 'viral',
         	]);
@@ -117,6 +119,7 @@ class DashboardCacher
                 'overduetesting' => Cache::get('eid_overduetesting'),
                 'overduedispatched' => Cache::get('eid_overduedispatched'),
                 'delayed_batches' => Cache::get('eid_delayed_batches'),
+                'unreceived_batches' => Cache::get('eid_unreceived_batches'),
                 'sample_manifest' => Cache::get('eid_pending_sample_manifest'),
                 'prefix' => '',
             ]);
@@ -436,6 +439,23 @@ class DashboardCacher
         return $delayed->count();
     }
 
+    public static function unreceived_batches($pre = null)
+    {
+        if($pre){
+            $batch_class = \App\Viralbatch::class;
+        }
+        else{
+            $batch_class = \App\Batch::class;
+        }
+
+        return $batch_class::selectRaw("COUNT(id) AS my_count")
+            ->where(['lab_id' => env('APP_LAB')])
+            ->where('created_at', '<', date('Y-m-d', strtotime('-10 days')))
+            ->whereNull('datereceived')
+            ->whereNull('datedispatched')
+            ->first()->my_count;
+    }
+
     public static function pending_sample_manifest($pre = null) {
         if ($pre)
             $batch_class = Viralbatch::class;
@@ -523,6 +543,7 @@ class DashboardCacher
         $overduetesting = self::overdue('testing');
         $overduedispatched = self::overdue('dispatched');
         $delayed_batches = self::delayed_batches('viral');
+        $unreceived_batches = self::unreceived_batches('viral');
         $pending_sample_manifest = self::pending_sample_manifest('viral');
 
         $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
@@ -536,6 +557,7 @@ class DashboardCacher
         $overduetesting2 = self::overdue('testing','Eid');
         $overduedispatched2 = self::overdue('dispatched','Eid');
         $delayed_batches2 = self::delayed_batches();
+        $unreceived_batches2 = self::unreceived_batches();
         $pending_sample_manifest2 = self::pending_sample_manifest();
 
         if(env('APP_LAB') == 5){
@@ -559,6 +581,7 @@ class DashboardCacher
         Cache::put('vl_overduetesting', $overduetesting, $minutes);
         Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
         Cache::put('vl_delayed_batches', $delayed_batches, $minutes);
+        Cache::put('vl_unreceived_batches', $unreceived_batches, $minutes);
         Cache::put('vl_pending_sample_manifest', $pending_sample_manifest, $minutes);
         // EID cache 
         Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
@@ -572,6 +595,7 @@ class DashboardCacher
         Cache::put('eid_overduetesting', $overduetesting2, $minutes);
         Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
         Cache::put('eid_delayed_batches', $delayed_batches2, $minutes);
+        Cache::put('eid_unreceived_batches', $unreceived_batches2, $minutes);
         Cache::put('eid_pending_sample_manifest', $pending_sample_manifest2, $minutes);
         //CD4 Cache
         if(env('APP_LAB') == 5){

@@ -25,6 +25,7 @@ class Misc extends Common
 		foreach ($samples as $sample) {
             if(!$sample->result){
                 $sample->result = 3;
+                $sample->repeatt = 1;
                 $sample->save();
             }
             $a = true;

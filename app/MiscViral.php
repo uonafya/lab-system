@@ -61,9 +61,9 @@ class MiscViral extends Common
 	public static function requeue($worksheet_id, $daterun)
 	{
         $samples_array = ViralsampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
-        Viralsample::where('worksheet_id', $worksheet_id)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        Viralsample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        $samples = Viralsample::whereIn('id', $samples_array)->get();
 
 		// Default value for repeatt is 0
 
@@ -246,6 +246,7 @@ class MiscViral extends Common
     public static function sample_result($result, $error=null, $units="")
     {
         $str = strtolower($result);
+        $repeatt = 0;
         // $units="";
 
         if(\Str::contains($result, ['e+'])){
@@ -255,7 +256,8 @@ class MiscViral extends Common
         else if($str == 'failed' || $str == 'invalid' || $str == '' || \Str::contains($str, ['error']) || strlen($error) > 10)
         {
             $res= "Failed";
-            $interpretation = $error ?? $result;       
+            $interpretation = $error ?? $result; 
+            $repeatt = 1;      
         }
 
         // if($result == 'Not Detected' || $result == 'Target Not Detected' || $result == 'Not detected' || $result == '<40 Copies / mL' || $result == '< 40Copies / mL ' || $result == '< 40 Copies/ mL')
@@ -274,7 +276,7 @@ class MiscViral extends Common
             $res= "> 10,000,000 cp/ml";
             $interpretation= $result;       
         }
-        else if(\Str::contains($str, ['not detected']))
+        else if(\Str::contains($str, ['not detected', 'target not', 'ldl', 'tnd']))
         {
             // $res="Target Not Detected";
             $res= "< LDL copies/ml";
@@ -338,10 +340,12 @@ class MiscViral extends Common
 
     public static function exponential_result($result)
     {
-        $units="";              
+        $units="";    
+        $repeatt = 0;          
         if($result == 'Invalid'){
             $res= "Failed";
             $interpretation="Invalid";
+            $repeatt = 1;
         }
         else if($result == '< Titer min' || $result == 'Target Not Detected'){
             $res= "< LDL copies/ml";
@@ -358,7 +362,8 @@ class MiscViral extends Common
         }
         else{
             $res= "Failed";
-            $interpretation = $result;                
+            $interpretation = $result; 
+            $repeatt = 1;               
         }
 
         return ['result' => $res, 'interpretation' => $interpretation, 'units' => $units];
@@ -1072,6 +1077,7 @@ class MiscViral extends Common
                     return $query->where('created_at', '>', $min_date);
                 })
                 ->whereNull('receivedstatus')
+                ->whereNull('time_sent_to_edarp')
                 ->get();
 
         $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
@@ -1096,20 +1102,37 @@ class MiscViral extends Common
                     'datedispatched' => null,
                 ];
 
-            $response = $client->request('post', '', [
-                // 'debug' => true,
-                'http_errors' => false,
-                'verify' => false,
-                'json' => $post_data,
-            ]);
-            $body = json_decode($response->getBody());
-            // return $body;
-            // print_r($body);
-            if($response->getStatusCode() > 399){
-                // die();
-                print_r($post_data);
-                // print_r($body);
-                return null;
+            try {
+                $response = $client->request('post', '', [
+                    // 'debug' => true,
+                    'timeout' => 3,
+                    'http_errors' => false,
+                    'verify' => false,
+                    'json' => $post_data,
+                ]);   
+                $body = json_decode($response->getBody());
+                if($response->getStatusCode() > 399){
+                    $s = Viralsample::find($sample->id);
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+                    // print_r($post_data);
+                    // return null;
+                }
+                else if(isset($body[0]->status_code) && in_array($body[0]->status_code, [300])){
+                    $s = Viralsample::find($sample->id);
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    // $s->edarp_error = $body;
+                    $s->save();
+                }
+                else{
+                    $s = Viralsample::find($sample->id);
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+
+                }          
+            } catch (\Exception $e) {
+                
             }
         }
     }

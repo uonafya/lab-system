@@ -148,12 +148,26 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">Alli Quoted By</label>
+                                <div class="col-sm-8"><select class="form-control" name="alliquotedby" id="alliquotedby">
+
+                                    <option value=""> Select One </option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->alliquotedby) selected @endif>
+                                         {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">Sorted By</label>
                                 <div class="col-sm-8"><select class="form-control" required name="sortedby" id="sortedby">
 
                                     <option value=""> Select One </option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->sortedby) selected @endif>
                                          {{ $user->full_name }}
                                         </option>
                                     @endforeach
@@ -167,7 +181,7 @@
                                     
                                     <option value=""> Select One </option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">
+                                        <option value="{{ $user->id }}" @if($user->id == $worksheet->runby) selected @endif>
                                          {{ $user->full_name }}
                                         </option>
                                     @endforeach
@@ -200,17 +214,17 @@
 
                             <div class="hr-line-dashed"></div>
 
-                            @if($worksheet->machine_type == 2)
-
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Date of Testing (if not set, the default is today)</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input type="text" id="daterun" class="form-control" name="daterun">
-                                        </div>
-                                    </div>                            
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date of Testing (if not set, the default is today)</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" id="daterun" class="form-control" name="daterun">
+                                    </div>
                                 </div>
+                            </div>
+
+                            @if($worksheet->machine_type == 2)
 
                                 <p>The file must be an excel file eg {{ $worksheet->id }}.xlsx </p>
 
