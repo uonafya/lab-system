@@ -1118,12 +1118,12 @@ class MiscViral extends Common
                     // print_r($post_data);
                     // return null;
                 }
-                /*else if(isset($body[0]->status_code) && $body[0]->status_code == 300){
+                else if(isset($body[0]->status_code) && in_array($body[0]->status_code, [300])){
                     $s = Viralsample::find($sample->id);
                     $s->time_sent_to_edarp = date('Y-m-d H:i:s');
-                    $s->edarp_error = $body;
+                    // $s->edarp_error = $body;
                     $s->save();
-                }*/
+                }
                 else{
                     $s = Viralsample::find($sample->id);
                     $s->time_sent_to_edarp = date('Y-m-d H:i:s');
