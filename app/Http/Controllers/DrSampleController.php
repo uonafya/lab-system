@@ -223,6 +223,7 @@ class DrSampleController extends Controller
         }
         // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
+        $drSample->create_vl_sample();
 
         session(['toast_message' => 'The sample has been created.']);
         return back();

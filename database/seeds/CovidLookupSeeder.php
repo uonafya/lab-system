@@ -68,6 +68,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 13, 'name' => 'Ethiopian'],
 			['id' => 14, 'name' => 'Sudanese'],
 			['id' => 15, 'name' => 'Burundian'],
+			['id' => 16, 'name' => 'Chinese'],
 		]);
 
 		// return;

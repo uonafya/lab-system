@@ -101,14 +101,15 @@
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
                                 Quarantine Site ID <br />
-                                Patient ID<br />
+                                Patient ID (This is the identifier. If it is blank, the system will fill the identifier with the patient's name)<br />
                                 Name<br />
                                 Sex<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
-                                Justification<br />
-                                Telehone Number<br />
                                 National ID<br />
+                                Justification<br />
+                                Nationality<br />
+                                Telehone Number<br />
                                 Occupation<br />
                                 County of Residence<br />
                                 Sub-county<br />

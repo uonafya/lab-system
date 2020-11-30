@@ -10,12 +10,14 @@ use \App\CovidSample;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use DB;
 
 class NairobiCovidImport implements OnEachRow, WithHeadingRow
 {
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
 
         if(!property_exists($row, 'name')){
@@ -35,7 +37,12 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) return;
+        if(!$row->name || !$row->patient_id || (!$row->age && $row->age != 0) || !$row->sex) {            
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
 
         $mfl = (int) ($row->mfl_code ?? 0);
         if(!$row->patient_id) return;
@@ -46,7 +53,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
 
         if(isset($row->national_id) && strlen($row->national_id) > 6) $p = CovidPatient::where(['national_id' => ($row->national_id ?? null)])->whereNotNull('national_id')->where('national_id', '!=', 'No Data')->first();
         if(!$p && $row->patient_id && strlen($row->patient_id) > 5 && $fac) $p = CovidPatient::where(['identifier' => $row->patient_id, 'facility_id' => $fac->id])->first();
-        if(!$p && $row->patient_id && strlen($row->patient_id) > 5) $p = CovidPatient::where(['identifier' => $row->patient_id, 'quarantine_site_id' => $row->quarantine_site_id])->first();
+        if(!$p && $row->patient_id && strlen($row->patient_id && isset($row->quarantine_site_id)) > 5) $p = CovidPatient::where(['identifier' => $row->patient_id, 'quarantine_site_id' => $row->quarantine_site_id])->first();
 
 
         if(!$p) $p = new CovidPatient;
@@ -54,11 +61,11 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
         $p->fill([
             'identifier' => $row->patient_id ?? $row->name,
             'facility_id' => $fac->id ?? null,
-            'quarantine_site_id' => $row->quarantine_site_id ?? null,
+            'quarantine_site_id' => $row->quarantine_site_id ?? 40,
             'patient_name' => $row->name,
             'sex' => $row->sex,
             'national_id' => $row->national_id ?? null,
-            'nationality' => 1,
+            'nationality' => DB::table('nationalities')->where('name', ($row->nationality ?? ''))->first()->id ?? 1,
             'phone_no' => $row->telephone_number ?? null,
             'county' => $row->county_of_residence ?? null,
             'subcounty' => $row->sub_county ?? null,  

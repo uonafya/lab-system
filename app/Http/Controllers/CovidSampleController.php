@@ -565,6 +565,7 @@ class CovidSampleController extends Controller
             })          
             ->orderBy('run', 'desc')
             ->get();
+            
         $myurl = url('/covid_sample/index/' . $type);
         $myurl2 = url('/covid_sample/index/');        
         $p = Lookup::get_partners();
@@ -592,13 +593,20 @@ class CovidSampleController extends Controller
         $user = auth()->user();
         if(($user->facility_user && $covidSample->patient->facility_id != $user->facility_id) || ($user->quarantine_site && $covidSample->patient->quarantine_site_id != $user->facility_id)) abort(403);
 
+
+
         if($covidSample->receivedstatus && ($user->facility_user || $user->quarantine_site)){
             session(['toast_error' => 1, 'toast_message' => 'You cannot edit the sample after it has been received at the lab.']);
             return back();
         }
 
-        if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id){
+        /*if(in_array(env('APP_LAB'), [4]) && $covidSample->datedispatched && auth()->user()->user_type_id && !auth()->user()->covid_approver){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has been dispatched."]);
+            return back();
+        }*/
+
+        if(in_array(env('APP_LAB'), [1]) && ($covidSample->worksheet_id || $covidSample->run > 1) && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+            session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has entered a worksheet."]);
             return back();
         }
 
@@ -811,9 +819,13 @@ class CovidSampleController extends Controller
         $data = Lookup::covid_form();
         $data['samples'] = [$covidSample];
         $view_data = view('exports.mpdf_covid_samples', $data)->render();
-        ini_set("pcre.backtrack_limit", "500000000");
+        // ini_set("pcre.backtrack_limit", "500000000");
+        if(env('APP_LAB') == 25){
+            $mpdf->SetWatermarkText('AMREF');
+            $mpdf->showWatermarkText = true;
+        }
         $mpdf->WriteHTML($view_data);
-        $mpdf->Output('results.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output($covidSample->patient->patient_name . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
 
         // $data['print'] = true;
         // return view('exports.mpdf_covid_samples', $data);

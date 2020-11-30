@@ -2068,6 +2068,7 @@ class Random
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
 							})->whereNull('dateemailsent')->get();
+        
         $eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
 							->when($month, function($query) use ($month){
 								return $query->whereMonth('datetested', $month);
@@ -3750,6 +3751,8 @@ class Random
                 continue;
             }
             $national_id = rtrim($data[4]);
+            $identifier = rtrim($data[1]);
+            $phone_no = rtrim($data[5]);
             /*$p = CovidPatient::where('national_id', $national_id)->first();
             if(!$p){
                 $data[8] = 'Patient Not Found';
@@ -3758,7 +3761,25 @@ class Random
             }*/
             $datecollected = date('Y-m-d', strtotime($data[7]));
 
-            $sample = CovidSampleView::where(['datecollected' => $datecollected, 'national_id' => $national_id, 'repeatt' => 0])->first();
+            $sample = CovidSampleView::where(['repeatt' => 0])
+                ->where('national_id', 'like', "%{$national_id}%")
+                ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                ->first();
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('identifier', 'like', "%{$identifier}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('phone_no', 'like', "%{$phone_no}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
 
             if(!$sample){
                 $data[8] = 'Sample Not Found';
@@ -3769,7 +3790,7 @@ class Random
             $rows[] = $data;
         }
         $file = 'busia-study';
-        Common::csv_download($rows, $file, true, true);
+        Common::csv_download($rows, $file, false, true);
         Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
     }
 

@@ -166,7 +166,7 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
-                @if(!in_array(env('APP_LAB'), [6, 8, 9]))
+                @if(!in_array(env('APP_LAB'), [6, 8]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
