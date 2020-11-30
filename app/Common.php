@@ -1263,7 +1263,7 @@ class Common
     public static function resend_lab_tracker()
     {
 		$start_date = '2020-09-01';
-		$end_date = '2020-12-01';
+		$end_date = '2020-11-01';
 		while (strtotime($start_date) <= strtotime($end_date)) {
 			self::send_lab_tracker(date('Y', strtotime($start_date)), date('m', strtotime($start_date)));
 			$start_date = date('Y-m-d', strtotime('+1 month', strtotime($start_date)));
