@@ -954,7 +954,7 @@ class Common
 
 	        try {				
 				$comm = new LabTracker($data);
-				Mail::to($mailinglist)->cc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])->send($comm);
+				Mail::to($mailinglist)->cc(['bakasajoshua09@gmail.com'])->send($comm);
 	        	LabPerformanceTracker::resetemail();
 	        	LabEquipmentTracker::resetemail();
 	        	return true;
