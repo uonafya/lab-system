@@ -902,70 +902,28 @@ class Common
     public static function send_lab_tracker($year, $previousMonth) {
     	echo "==> Pulling the data \n";
     	$data = Random::__getLablogsData($year, $previousMonth);
+
     	if ($data) {
     		echo "==> Getting mailing list\n";
-    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com'];
-	        $mainRecepient = ['bakasajoshua09@gmail.com'];
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'bakasajoshua09@gmail.com'];
+	        
 	        if(env('APP_ENV') == 'production') {
 	        	// $mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
 	    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
 	        }
-	        
-	        if(!$mainRecepient) 
-	        	return null;
 
-	        try {
-	        	ini_set("memory_limit", "-1");
-	        	echo "==> Creating Attachment file. \n";
-	        	// $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
-		        // if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
-		        // if(file_exists($path)) unlink($path);
-		        
-		        // $mpdf = new Mpdf();
-		        $lab = \App\Lab::find(env('APP_LAB'));
-		        // $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
-		        // $view_data = view('exports.mpdf_labtracker', $pageData)->render();
-		        // $mpdf->WriteHTML($view_data);
-		        // $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
-		        // $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
-
-	        	echo "==> Finding storage path\n";
-	        	$path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
-	        	if(!is_dir(storage_path("app/lablogs/"))) mkdir(storage_path("app/lablogs/"), 0777, true);
-	        	echo "==> Creating attachment \n";
-		        $mpdf = new Mpdf([
-							    'mode' => 'utf-8',
-							    'format' => 'A4-L',
-							    'orientation' => 'L'
-							]);
-		        $view_data = view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => false])->render();
-		        $mpdf->WriteHTML($view_data);
-		        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
-		        echo "==> Finished creating attachment file. \n";
-	        	echo "==> Sending Email \n";
-	        	// Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail);
-	        	// dd($mailinglist);
-	        	// Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
-	        	// ->send(new LabTracker($data));
-	        	// $allemails = array_merge($mainRecepient, $mailinglist);
-	        	// echo "==> Updating recipients last received emials \n";
-	        	// MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-	        	// echo "==> Updating records last received emials \n";
-	        	// foreach ($data->performance as $key => $performance) {
-	        	// 	// $performance->dateemailsent = date('Y-m-d');
-	        	// 	$performance->save();
-	        	// }
-	        	// foreach ($data->equipments as $key => $equipment) {
-	        	// 	// $equipment->dateemailsent = date('Y-m-d');
-	        	// 	$equipment->save();
-	        	// }
-	        	echo "==> Lab tracker notifications complete \n";
+	        try {				
+				$comm = new LabTracker($data);
+				Mail::to($mailinglist)->cc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])->send($comm);
+	        	LabPerformanceTracker::resetemail();
+	        	LabEquipmentTracker::resetemail();
 	        	return true;
-	        } catch (Exception $exception) {
-	        	\Log::error($exception);
-	        	print_r($exception);
-	        	return false;
-	        }
+			} catch (Exception $e) {
+				print_r($e->getMessage());
+				return false;
+			}
+
+	        // 
     	}
     	echo "==> No pending lab tracker notification found \n";
     	return false;
