@@ -26,14 +26,15 @@ class LabPerformanceTracker extends BaseModel
         return $query->where(['year' => $year, 'month' => $month, 'testtype' => $testtype, 'sampletype' => $sampletype]);
     }
 
-    public static function resetemail()
+    public static function resetemail($restrict = false)
     {
         $today = date('Y-m-d');
         $threemonthsago = date('Y-m-d', strtotime("-3 Months", strtotime($today)));
         
         $performances = LabPerformanceTracker::whereNull('dateemailsent')
-                        ->whereDate('datesubmitted', '<', $threemonthsago)
-                        ->get();
+                        ->when($restrict, function($query) use ($threemonthsago){
+                            return $query->whereDate('datesubmitted', '<', $threemonthsago);
+                        })->get();
         echo "==> Records found {$performances->count()}";
         foreach ($performances as $key => $performance) {
             $performance->dateemailsent = $performance->datesubmitted;
