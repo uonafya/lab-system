@@ -1155,7 +1155,7 @@ class Synch
 					'Authorization' => 'Bearer ' . $token,
 				],
 	            'http_errors' => false,
-				// 'verify' => false,
+				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),
