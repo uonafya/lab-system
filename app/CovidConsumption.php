@@ -182,4 +182,26 @@ class CovidConsumption extends BaseModel
         }
         return true;
     }
+
+    public function amendSuccessors()
+    {
+        $week = $this->start_of_week;
+        $current_consummption = $this;
+        $successors = CovidConsumption::where('start_of_week', '>', $week)
+                            ->orderBy('start_of_week', 'asc')->get();
+        foreach ($successors as $key => $successor) {
+            foreach ($successor->details as $key => $detail) {
+                $predessesor = $detail->predessesor();
+                $current_ending = $detail->ending;
+                $predessesor_ending = $predessesor->ending ?? 0;
+                $replaced = $detail->begining_balance;
+                $ending = (($current_ending - $replaced) + $predessesor_ending);
+                
+                $detail->begining_balance = $predessesor_ending;
+                $detail->ending = ($ending);
+                $detail->save();
+            }
+        }
+        return true;
+    }
 }

@@ -165,25 +165,29 @@ class CovidConsumptionController extends Controller
             $already_submitted_consumption = CovidConsumption::where('start_of_week', '<', $datereceived)
                                                             ->where('end_of_week', '>', $datereceived)
                                                             ->get();
+
             if (!$already_submitted_consumption->isEmpty()) {
                 if ($request->has('consumption_confirmation')) {
                     $consumption = $already_submitted_consumption->first();
-                    $details = $consumption->details;
-                    foreach ($request->input('received') as $key => $value) {
-                        $allocation_detail = CovidAllocationDetail::find($key);
-                        $detail = $details->where('kit_id', $allocation_detail->kit->id);
-                        if (!$detail->isEmpty()) {
-                            $detail = $detail->first();
-                            $orig_received = $detail->received;
-                            $orig_end = $detail->ending;
-                            $new_received = $value ?? 0;
-                            $new_end = (($orig_end - $orig_received) + $new_received);
-                            if ($new_end < 0)
-                                $new_end = 0;
-                            $detail->received = $new_received;
-                            $detail->ending = $new_end;
-                            $detail->save();
+                    if ($request->input('amend')) {
+                        $details = $consumption->details;
+                        foreach ($request->input('received') as $key => $value) {
+                            $allocation_detail = CovidAllocationDetail::find($key);
+                            $detail = $details->where('kit_id', $allocation_detail->kit->id);
+                            if (!$detail->isEmpty()) {
+                                $detail = $detail->first();
+                                $orig_received = $detail->received;
+                                $orig_end = $detail->ending;
+                                $new_received = $value ?? 0;
+                                $new_end = (($orig_end - $orig_received) + $new_received);
+                                if ($new_end < 0)
+                                    $new_end = 0;
+                                $detail->received = $new_received;
+                                $detail->ending = $new_end;
+                                $detail->save();
+                            }
                         }
+                        $consumption->amendSuccessors();
                     }
                 } else {
                     $user = auth()->user();
