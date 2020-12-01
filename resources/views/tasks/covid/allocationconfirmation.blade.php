@@ -113,7 +113,8 @@
                         <input type="hidden" name="consumption_confirmation" value="true">
                         <div>
                             <center>
-                            <button class="btn btn-success btn-lg" type="submit">Proceed to submit allocation</button>
+                            <button class="btn btn-warning btn-lg" type="submit" name="amend" value="true"> Amend to the new version(s) </button>
+                            <button class="btn btn-primary btn-lg" type="submit" name="keep" value="true"> Keep the original version(s) </button>
                             </center>
                         </div>
                     </form>
