@@ -44,7 +44,7 @@ class HCMPCovidAllocations extends Model
 				],
 			]);
 			$body = json_decode($response->getBody());
-			
+			print_r($body);
 			$empty = [];
 			if (null !== $body->data) {				
 				foreach ($body->data as $key => $item) {
