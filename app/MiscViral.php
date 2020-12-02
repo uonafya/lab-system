@@ -1113,7 +1113,10 @@ class MiscViral extends Common
                     'json' => $post_data,
                 ]);   
                 $body = json_decode($response->getBody());
-                if($response->getStatusCode() > 399){
+                $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                $s->edarp_error = $body[0] ?? $body;
+                $s->save();
+                /*if($response->getStatusCode() > 399){
                     $s->edarp_error = $body[0] ?? $body;
                     $s->save();
                     // print_r($post_data);
@@ -1129,7 +1132,7 @@ class MiscViral extends Common
                     $s->edarp_error = $body[0] ?? $body;
                     $s->save();
 
-                }          
+                } */         
             } catch (\Exception $e) {
                 
             }
