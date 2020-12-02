@@ -1077,13 +1077,13 @@ class MiscViral extends Common
                     return $query->where('created_at', '>', $min_date);
                 })
                 ->whereNull('receivedstatus')
-                // ->whereNull('time_sent_to_edarp')
+                ->whereNull('time_sent_to_edarp')
                 ->get();
 
         $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
         foreach ($samples as $sample) {
             $s = Viralsample::find($sample->id);
-            if($s->time_sent_to_edarp) continue;
+            // if($s->time_sent_to_edarp) continue;
 
             $post_data = [
                     'lab' => "10",
