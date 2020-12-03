@@ -77,6 +77,7 @@ class HCMPCovidAllocations extends Model
 			return true;
     	} catch (Exception $e) {
     		echo "Error{";print_r($e);echo "}";
+    		
     		return false;
     	}
     }

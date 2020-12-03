@@ -2062,12 +2062,14 @@ class Random
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
-	public static function __getLablogsData($year, $month = null) {
+	public static function __getLablogsData($year, $month = null, $check_email_sent = true) {
 		
 		$performance = LabPerformanceTracker::where('year', $year)
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
-							})->whereNull('dateemailsent')->get();
+							})->when($check_email_sent, function($query) {
+                                return $query->whereNull('dateemailsent');  
+                            })->get();
         
         $eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
 							->when($month, function($query) use ($month){
@@ -2098,7 +2100,9 @@ class Random
 		$equipment = LabEquipmentTracker::where('year', $year)
 							->when($month, function($query) use ($month){
 								return $query->where('month', $month);
-							})->whereNull('dateemailsent')->get();
+							})->when($check_email_sent, function($query) {
+                                return $query->whereNull('dateemailsent');  
+                            })->get();
         if ($performance->isEmpty() && $equipment->isEmpty())
             return false;
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
