@@ -939,24 +939,22 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker($year, $previousMonth) {
+    public static function send_lab_tracker($year, $previousMonth, $check_email_sent = true) {
     	echo "==> Pulling the data \n";
-    	$data = Random::__getLablogsData($year, $previousMonth);
+    	$data = Random::__getLablogsData($year, $previousMonth, $check_email_sent);
 
     	if ($data) {
     		echo "==> Getting mailing list\n";
-    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'bakasajoshua09@gmail.com'];
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com']; // For testing
 	        
-	        if(env('APP_ENV') == 'production') {
-	        	// $mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
-	    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
-	        }
+	        if(env('APP_ENV') == 'production') 
+	        	$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
 
 	        try {				
 				$comm = new LabTracker($data);
 				Mail::to($mailinglist)->cc(['bakasajoshua09@gmail.com'])->send($comm);
-	        	LabPerformanceTracker::resetemail();
-	        	LabEquipmentTracker::resetemail();
+	        	LabPerformanceTracker::resetemail($year, $previousMonth);
+	        	LabEquipmentTracker::resetemail($year, $previousMonth);
 	        	return true;
 			} catch (Exception $e) {
 				print_r($e->getMessage());

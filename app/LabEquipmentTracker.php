@@ -29,15 +29,18 @@ class LabEquipmentTracker extends BaseModel
         return $query->where(['year' => $year, 'month' => $month, 'equipment_id' => $equipment_id]);
     }
 
-    public static function resetemail($restrict = false)
+    public static function resetemail($year, $month, $restrict = false)
     {
         $today = date('Y-m-d');
         $threemonthsago = date('Y-m-d', strtotime("-3 Months", strtotime($today)));
         
-        $performances = LabEquipmentTracker::whereNull('dateemailsent')
-                        ->when($restrict, function($query) use ($threemonthsago){
-                            return $query->whereDate('datesubmitted', '<', $threemonthsago);
-                        })->get();
+        $performances = LabEquipmentTracker::where('year', $year)
+                            ->when($month, function($query) use($month){
+                                return $query->where('month', $month);
+                            })->whereNull('dateemailsent')
+                            ->when($restrict, function($query) use ($threemonthsago){
+                                return $query->whereDate('datesubmitted', '<', $threemonthsago);
+                            })->get();
         echo "==> Records found {$performances->count()}";
         foreach ($performances as $key => $performance) {
             $performance->dateemailsent = $performance->datesubmitted;
