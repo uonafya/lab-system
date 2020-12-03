@@ -945,10 +945,10 @@ class Common
 
     	if ($data) {
     		echo "==> Getting mailing list\n";
-    		$mailinglist = [/*'joelkith@gmail.com', 'tngugi@gmail.com', */'baksajoshua09@gmail.com'];
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com']; // For testing
 	        
 	        if(env('APP_ENV') == 'production') 
-	        	$com = 0;// $mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
+	        	$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
 
 	        try {				
 				$comm = new LabTracker($data);
