@@ -1119,12 +1119,12 @@ class Synch
 			if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
 			$sample->set_tat();
-			$sample->save();
+			$sample->pre_update();
 
 			foreach ($sample->child as $key => $child) {
 				$child->datedispatched = $child->datedispatched ?? $today;
 				$child->set_tat();
-				$child->save();
+				$child->pre_update();
 			}
 		}
 
