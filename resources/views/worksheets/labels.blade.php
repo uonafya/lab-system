@@ -52,12 +52,7 @@
 
 			@else
 				<div class="row" align="center">
-					@if(in_array(env('APP_LAB'), [5]))								
-						<span style="font-size: 12px;">
-							Date Ordered: {{ $sample->datecollected }} <br />
-							Patient ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
-						</span>
-					@elseif(in_array(env('APP_LAB'), [2,9]))								
+					@if(in_array(env('APP_LAB'), [2,5,9]))								
 						<span style="font-size: 12px;">
 							P ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
 						</span>
