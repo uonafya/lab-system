@@ -8,6 +8,7 @@ use App\Lookup;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use Mpdf\Mpdf;
 
 class Random
 {
@@ -3791,6 +3792,38 @@ class Random
         $file = 'busia-study';
         Common::csv_download($rows, $file, false, true);
         Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
+    public static function bungoma_samples()
+    {
+        $file = public_path('bungoma_dec.csv');
+        $handle = fopen($file, "r");
+        $identifiers = $national_ids = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[3] == 'NAME') continue;
+
+            if($data[2]) $identifiers[] = $data[2];
+            if($data[5]) $national_ids[] = $data[5];
+        }
+
+        $samples_list = CovidSampleView::where(function($query) use($identifiers, $national_ids) {
+            return $query->whereIn('national_id', $national_ids)->orWhereIn('identifier', $identifiers);
+        })->where(['repeatt' => 0])->where('datetested', '>', '2020-12-01')->get();
+
+        $samples = CovidSample::whereIn('id', $samples_list->pluck('id')->toArray())->get();
+        $path = storage_path('app/batches/covid/bungoma_samples.pdf');
+
+        $mpdf = new Mpdf();
+        $data = Lookup::covid_form();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "500000000");
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([$path]));
+
     }
 
     public static function old_id_column()
