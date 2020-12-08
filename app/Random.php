@@ -3862,7 +3862,8 @@ class Random
         }
         $file = 'knh-switch';
         Common::csv_download($rows, $file, false, true);
-        Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+        // Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
     }
 
     public static function old_id_column()
