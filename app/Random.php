@@ -3844,6 +3844,10 @@ class Random
             if(!$patient){
                 $patient = Viralpatient::where(['patient' => $data[1]])->first();
                 if(!$patient) $patient = Viralpatient::where(['patient' => $data[2]])->first();
+                if(!$patient){
+                    $data[4] = 'Patient Not Found';
+                    continue;
+                }
                 $patient->patient = $data[3];
                 // $patient->pre_update();
             }
