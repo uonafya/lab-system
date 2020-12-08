@@ -3826,6 +3826,44 @@ class Random
 
     }
 
+
+    public static function knh_switch_list()
+    {
+        $file = public_path('knh_switch_list.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Index'){
+                $rows[] = $data;
+                continue;
+            }
+
+            $patient = Viralpatient::where(['patient' => $data[3]])->first();
+
+            if(!$patient){
+                $patient = Viralpatient::where(['patient' => $data[1]])->first();
+                $patient->patient = $data[3];
+                // $patient->pre_update();
+            }
+
+            $data[4] = $patient->id;
+
+            $other_patients = Viralpatient::whereIn('patient', [$data[1], $data[2]])->get();
+
+            $data[5] = json_encode($other_patients->pluck('id')->toArray());
+            $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray());
+
+            foreach ($other_samples as $key => $other_sample) {
+                $other_sample->patient_id = $patient->id;
+                // $other_sample->pre_update();
+            }
+        }
+        $file = 'knh-switch';
+        Common::csv_download($rows, $file, false, true);
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
     public static function old_id_column()
     {
         DB::statement('ALTER TABLE samples ADD COLUMN `old_id` INT(10) DEFAULT NULL after `id`;');
