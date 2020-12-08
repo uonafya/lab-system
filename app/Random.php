@@ -3843,6 +3843,7 @@ class Random
 
             if(!$patient){
                 $patient = Viralpatient::where(['patient' => $data[1]])->first();
+                if(!$patient) $patient = Viralpatient::where(['patient' => $data[2]])->first();
                 $patient->patient = $data[3];
                 // $patient->pre_update();
             }
