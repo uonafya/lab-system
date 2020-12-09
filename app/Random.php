@@ -3829,6 +3829,7 @@ class Random
 
     public static function knh_switch_list()
     {
+        ini_set('memory_limit', '-1');
         $file = public_path('knh_switch_list.csv');
         $handle = fopen($file, "r");
         $rows = [];
@@ -3863,6 +3864,8 @@ class Random
                 $other_sample->patient_id = $patient->id;
                 // $other_sample->pre_update();
             }
+
+            if(($data[0] % 20) == 0) echo "At row {$data[0]} \n";
         }
         $file = 'knh-switch';
         Common::csv_download($rows, $file, false, true);
