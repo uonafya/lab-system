@@ -168,6 +168,8 @@ class WorksheetImport implements ToCollection
         $worksheet->uploadedby = auth()->user()->id;
         $worksheet->save();
 
+        session(compact('doubles'));
+
         Misc::requeue($worksheet->id, $worksheet->daterun);
         session(['toast_message' => "The worksheet has been updated with the results."]);
     }
