@@ -3865,6 +3865,8 @@ class Random
                 // $other_sample->pre_update();
             }
 
+            $rows[] = $data;
+
             if(($data[0] % 20) == 0) echo "At row {$data[0]} \n";
         }
         $file = 'knh-switch';
