@@ -56,7 +56,7 @@ class ConsumptionController extends Controller
     	$machines = new Machine;
         $display_machine = [];
         foreach ($machines->missingConsumptions($period->year, $period->month) as $key => $db_machine) {
-            if(!$db_machine->mapping->where('lab', env('APP_LAB')->isEmpty())) {
+            if(!$db_machine->mapping->where('lab', env('APP_LAB'))->isEmpty()) {
                 $display_machine[] = $db_machine;
             }
         }
