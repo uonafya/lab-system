@@ -21,6 +21,10 @@ Artisan::command('mysql8', function () {
     \App\AlterRegimen::mysql8_update();
 })->describe('Mysql 8 update');
 
+Artisan::command('knh:switch', function () {
+    \App\Random::knh_switch_list();
+})->describe('KNH switch list');
+
 Artisan::command('clean:emails', function(){
     $str = \App\Synch::clean_emails();
     $this->info($str);
