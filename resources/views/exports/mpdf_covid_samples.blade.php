@@ -418,7 +418,7 @@ p.breakhere {page-break-before: always}
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
 		                <b> Attestation Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(100)->generate($sample->national_sample_id) !!}
+		                {!! QrCode::size(100)->generate('National ID / Passport - ' . $sample->patient->national_id . ', Name - ' . $sample->patient->patient_name . ', Result - ' . $sample->result_name . ' Attestation Number - ' . $sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
