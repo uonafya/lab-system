@@ -91,6 +91,7 @@ $api->version('v1', function (Router $api) {
             // $api->post('crag_complete', 'CragController@complete_result');
 
             $api->group(['middleware' => 'api.throttle', 'limit' => \App\Common::api_limit(), 'expires' => 1], function(Router $api) {
+                $api->get('function', 'FunctionController@data_functions');
                 $api->post('function', 'FunctionController@data_functions');
                 $api->post('function/eid', 'FunctionController@data_functions');
                 $api->post('function/vl', 'FunctionController@data_functions');
