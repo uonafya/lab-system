@@ -918,6 +918,12 @@ class CovidSampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The sample has already been tested']);
             return back();            
         }
+
+        if(in_array(env('APP_LAB'), [1, 4]) && auth()->user()->user_type_id && !auth()->user()->covid_approver ){
+            session(['toast_error' => 1, 'toast_message' => 'You do not have the rights to change the worksheet of a sample']);
+            return back(); 
+        }
+
         $test = true;
         if($worksheet_id){
             $covid_worksheet = CovidWorksheet::findOrFail($worksheet_id);

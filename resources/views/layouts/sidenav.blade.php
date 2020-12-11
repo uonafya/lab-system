@@ -45,7 +45,7 @@
                         <li><a href="{{ url('batch') }}">View</a></li>
                     </ul>
                 </li> -->
-                @if(in_array(env('APP_LAB'), [1, 8, 9]))
+                @if(in_array(env('APP_LAB'), [1, 2, 8, 9]))
                     <li><a href="{{ url('sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
@@ -115,7 +115,7 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                @if(in_array(env('APP_LAB'), [1, 8, 9]))
+                @if(in_array(env('APP_LAB'), [1, 2, 8, 9]))
                     <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif

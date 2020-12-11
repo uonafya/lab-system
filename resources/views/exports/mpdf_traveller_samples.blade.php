@@ -194,6 +194,17 @@ p.breakhere {page-break-before: always}
 					{{ $sample->my_date_format('datedispatched') }}
 				</td>
 			</tr>
+		
+			@if($sample->result == 1)
+				<tr>
+					<td colspan="5" class="style4 style1 comment">
+		                {!! QrCode::size(100)->generate('National ID / Passport - ' . $sample->id_passport . ', Result - ' . $sample->result_name) !!} 
+					</td>
+					<td colspan="2" class="style4 style1 comment">
+					</td>
+	            </tr>
+			@endif
+		
 
 		</table>
 

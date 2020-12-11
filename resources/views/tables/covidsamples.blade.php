@@ -440,7 +440,7 @@
                         </form>
                         @endif
 
-                        @if(isset($current_sample) && in_array(env('APP_LAB'), [4]))
+                        @if(isset($current_sample) && in_array(env('APP_LAB'), [1, 4]))
                             @if($current_sample->worksheet_id)
                                 <a href="{{ url('covid_sample/worksheet/' . $current_sample->id) }}"> 
                                     <button class="btn btn-warning">

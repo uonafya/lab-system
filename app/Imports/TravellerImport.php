@@ -55,6 +55,8 @@ class TravellerImport implements OnEachRow, WithHeadingRow
             return;
         }
 
+        if(!$row->name_3_names) return;
+
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
