@@ -3855,7 +3855,10 @@ class Random
 
             $data[4] = $patient->id;
 
-            $other_patients = Viralpatient::whereIn('patient', [$data[1], $data[2]])->get();
+            $other_patients_array = [$data[1]];
+            if($data[2]) $other_patients_array[] = [$data[2]];
+
+            $other_patients = Viralpatient::whereIn('patient', $other_patients_array)->get();
 
             $data[5] = json_encode($other_patients->pluck('id')->toArray());
             $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray());
