@@ -417,8 +417,8 @@ p.breakhere {page-break-before: always}
 			@if($sample->national_sample_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-		                <b> Attestation Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(100)->generate('National ID / Passport - ' . $sample->patient->national_id . ', Name - ' . $sample->patient->patient_name . ', Result - ' . $sample->result_name . ' Attestation Number - ' . $sample->national_sample_id) !!}
+		                <b> Attestation Certificate Number (Scan with any QR Code Scanner to Verify): </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+		                {!! QrCode::size(100)->generate('National ID / Passport - ' . $sample->patient->national_id . ', Name - ' . $sample->patient->patient_name . ', Result - ' . $sample->result_name . ', Attestation Number - ' . $sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>
