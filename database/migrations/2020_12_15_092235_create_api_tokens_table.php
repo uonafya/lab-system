@@ -17,6 +17,7 @@ class CreateApiTokensTable extends Migration
             $table->increments('id');
             $table->string('organisation');
             $table->string('token');
+            $table->integer('results_per_page')->default(50);
             $table->timestamps();
             $table->softDeletes();
         });
