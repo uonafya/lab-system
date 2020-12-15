@@ -3844,13 +3844,13 @@ class Random
 
             if(!$patient){
                 $patient = Viralpatient::where(['patient' => $data[1]])->first();
-                if(!$patient) $patient = Viralpatient::where(['patient' => $data[2]])->first();
+                if(!$patient && $data[2]) $patient = Viralpatient::where(['patient' => $data[2]])->first();
                 if(!$patient){
                     $data[4] = 'Patient Not Found';
                     continue;
                 }
                 $patient->patient = $data[3];
-                // $patient->pre_update();
+                $patient->pre_update();
             }
 
             $data[4] = $patient->id;
@@ -3865,12 +3865,12 @@ class Random
 
             foreach ($other_samples as $key => $other_sample) {
                 $other_sample->patient_id = $patient->id;
-                // $other_sample->pre_update();
+                $other_sample->pre_update();
             }
 
             $rows[] = $data;
 
-            if(($data[0] % 20) == 0) echo "At row {$data[0]} \n";
+            if(($data[0] % 20) == 0) echo "At row {$data[0]} at ".date('Y-m-d H:i:s')." \n";
         }
         $file = 'knh-switch';
         Common::csv_download($rows, $file, false, true);
