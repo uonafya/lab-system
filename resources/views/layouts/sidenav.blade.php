@@ -169,7 +169,7 @@
                 @if(!in_array(env('APP_LAB'), [6, 8]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
-                    <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
+                    <li><a href="{{ url('viralworksheet/set_sampletype/4/0/94') }}">Create Pantha Worksheet(100 - 3-ctrl 3-cal)</a></li>
                     <hr />
                 @endif
                 <!-- <li>
