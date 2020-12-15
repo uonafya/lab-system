@@ -11,7 +11,6 @@ class ApiToken extends Model
 
     protected $guarded = ['id'];
 
-
     public static function createToken(){
     	$t = new ApiToken;
     	$t->fill(['organisation' => 'Ampath POC', 'token' => env('API_KEY')]);
