@@ -49,6 +49,8 @@ class CovidSampleController extends Controller
         // 2 - dispatched
         // 3 - from cif
         // 4 - pending testing
+        // 11 - pending approval for email
+        // 12 - approved for email
         $user = auth()->user();
         $date_column = "covid_sample_view.created_at";
         if($type == 2) $date_column = "covid_sample_view.datedispatched";
@@ -76,6 +78,8 @@ class CovidSampleController extends Controller
                 else if($type == 2) return $query->whereNotNull('datedispatched');
                 else if($type == 3) return $query->whereNull('datereceived')->where('u.email', 'joelkith@gmail.com');
                 else if($type == 4) return $query->whereNull('datetested')->where(['receivedstatus' => 1, 'repeatt' => 0]);
+                else if($type == 11) return $query->whereNotNull('datedispatched')->whereNull('dateapproved2');
+                else if($type == 12) return $query->whereNotNull('dateapproved2');
             })
             ->when(($type == 2), function($query) use ($date_column){
                 return $query->orderBy($date_column, 'desc');
@@ -147,6 +151,7 @@ class CovidSampleController extends Controller
     public function download_excel($request)
     {
         ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "720");
         $user = auth()->user();
         // dd($request->all());
         extract($request->all());
@@ -385,6 +390,7 @@ class CovidSampleController extends Controller
     public function multiple_results($request)
     {
         ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "720");
         $user = auth()->user();
 
         extract($request->all());
@@ -878,6 +884,22 @@ class CovidSampleController extends Controller
             $sample->save();
         }
         session(['toast_message' => 'The samples have been marked as received.']);
+        return back();
+    }
+
+    public function approve_for_email(Request $request)
+    {
+        $ids = $request->input('sample_ids');
+        if(!$ids){       
+            session(['toast_message' => "Select the samples you intend to receive.", 'toast_error' => 1]);
+            return back();            
+        }
+        $samples = CovidSample::whereIn('id', $ids)->get();
+        foreach ($samples as $key => $sample) {
+            $sample->dateapproved2 = date('Y-m-d');
+            $sample->save();
+        }
+        session(['toast_message' => 'The samples have been approved to go out as emails.']);
         return back();
     }
 

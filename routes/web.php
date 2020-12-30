@@ -201,6 +201,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'CovidSampleController@index');
 			Route::post('index', 'CovidSampleController@sample_search');
 
+			Route::post('approve_for_email', 'CovidSampleController@approve_for_email');
 			Route::post('print_multiple', 'CovidSampleController@print_multiple');
 			Route::get('result/{covidSample}', 'CovidSampleController@result');
 			Route::get('print/{covidSample}', 'CovidSampleController@print_result');

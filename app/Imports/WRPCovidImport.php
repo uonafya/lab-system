@@ -82,7 +82,7 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'national_id' => $row->national_id ?? null,
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
-            'subcounty' => $row->subcounty ?? null,   
+            'subcounty' => $row->subcounty ?? $row->sub_county ?? null,   
             'occupation' => $row->occupation ?? null,  
             'justification' => $row->justification ?? 3,       
         ]);

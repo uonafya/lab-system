@@ -35,6 +35,7 @@ class Synch
 	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
+	public static $covid_inaccessible = [5,25];
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -248,7 +249,7 @@ class Synch
 	{
 		Cache::store('file')->forget('covid_api_token');
 		$client = new Client(['base_uri' => self::$cov_base]);
-		if(in_array(env('APP_LAB'), [25])) $client = new Client(['base_uri' => self::$p3_base]);
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
@@ -531,8 +532,8 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid' && !in_array(env('APP_LAB'), [25])) $client = new Client(['base_uri' => self::$cov_base]);
-		if($type == 'covid' && in_array(env('APP_LAB'), [25])) $client = new Client(['base_uri' => self::$p3_base]);
+		if($type == 'covid' && !in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -648,7 +649,7 @@ class Synch
 	public static function synch_deletes($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		$updates = self::$update_arrays[$type];
@@ -1100,7 +1101,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		if(in_array(env('APP_LAB'), [25])) $client = new Client(['base_uri' => self::$p3_base]);
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1131,7 +1132,7 @@ class Synch
 		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(60)->get();
 
 		$post_path = 'covid_sample';
-		if(in_array(env('APP_LAB'), [25])) $post_path = 'nat_covid_sample';
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $post_path = 'nat_covid_sample';
 
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;

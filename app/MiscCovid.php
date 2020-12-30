@@ -208,9 +208,30 @@ class MiscCovid extends Common
                 $sample->date_email_sent = date('Y-m-d');
                 $sample->save();
             }
+        }
 
-            
+        if(env('APP_LAB') == 23){
+            $lab = Lab::find(env('APP_LAB'));
+            $cc_array = $lab->cc_emails ? explode(',', $lab->cc_emails) : [];
+            $bcc_array = $lab->bcc_emails ? explode(',', $lab->bcc_emails) : [];
 
+            $samples = CovidSampleView::where('datedispatched', '>', date('Y-m-d', strtotime('-2 days')))
+                ->where(['repeatt' => 0])
+                ->whereNull('date_email_sent')
+                ->whereNotNull('datedispatched')
+                ->whereNotNull('dateapproved2')
+                ->whereNotNull('national_sample_id')
+                ->whereNotNull('email_address')
+                ->get();
+
+            foreach ($samples as $key => $s) {
+                if(!filter_var($s->email_address, FILTER_VALIDATE_EMAIL)) continue;
+
+                $sample = CovidSample::find($s->id);
+                Mail::to($s->email_address)->cc($cc_array)->bcc($bcc_array)->send(new CovidDispatch([$sample]));
+                $sample->date_email_sent = date('Y-m-d');
+                $sample->save();
+            }
         }
     }
 

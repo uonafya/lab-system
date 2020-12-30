@@ -27,6 +27,9 @@ class CovidReportsController extends Controller
 
 	public function generate(Request $request)
 	{
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "720");
+        
 		// Get the dates
 		$date = Carbon::parse($request->input('date_filter'))->format('Y-m-d');
 		$date_to = $request->input('date_filter_to');
