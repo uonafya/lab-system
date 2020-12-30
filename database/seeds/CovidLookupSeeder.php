@@ -41,6 +41,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 13, 'name' => 'Travel to Country/County with presumed widespread COVID-19'],
 			['id' => 14, 'name' => 'Meets case definition'],
 			['id' => 15, 'name' => 'Acute severe respiratory illness'],
+			['id' => 16, 'name' => 'Air Travel'],
 		]);
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");

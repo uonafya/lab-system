@@ -23,8 +23,6 @@
         <form method="POST" action="{{ url('traveller') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
             @csrf
 
-
-
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <div class="hpanel">

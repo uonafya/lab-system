@@ -86,17 +86,15 @@
                         <li class="">
                             <a href="{{ url('covid_sample/jitenge') }}">Jitenge Samples</a>
                         </li>
-                        @if(env('APP_LAB') == 1)
-                            <li class="dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Traveller's Corner <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class=""><a class="dropdown-item" href="{{ url('traveller') }}">Samples</a></li>
-                                    <li class=""><a class="dropdown-item" href="{{ url('traveller/create') }}">Upload</a></li>
-                                </ul>
-                            </li>
-                        @endif
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Traveller's Corner <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class=""><a class="dropdown-item" href="{{ url('traveller') }}">Samples</a></li>
+                                <li class=""><a class="dropdown-item" href="{{ url('traveller/create') }}">Upload</a></li>
+                            </ul>
+                        </li>
                         <li class="">
                             <a href="{{ url('covid_worksheet') }}">Worksheets</a>
                         </li>
