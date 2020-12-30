@@ -730,6 +730,7 @@ class CovidSampleController extends Controller
         // if(env('APP_LAB') != 1) abort(403);
         // $file = $request->upload->path();
         // $path_one = $request->upload->store('public/site_samples/covid');
+        ini_set('memory_limit', -1);
         
         $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
         $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
