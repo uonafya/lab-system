@@ -62,6 +62,7 @@
                                 &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
                                 &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
                                 &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
                                 Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
                                 Symptoms (A comma separated list of all symptom codes)
                                 &nbsp;&nbsp;&nbsp; 1 => Fever / Chills  <br />
@@ -107,7 +108,23 @@
                                 Age<br />
                                 <b> Optional Columns </b> <br />
                                 National ID<br />
-                                Justification<br />
+                                Justification (default is 3 for surveillance)<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
                                 Nationality<br />
                                 Telehone Number<br />
                                 Occupation<br />
@@ -134,6 +151,23 @@
                                 Gender<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
+                                Justification (default is 3 for surveillance)<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
                                 Phone Number<br />
                                 Type of Case &nbsp; <i> (Whether it's initial or repeat. Defaults to Initial) </i> <br />
                                 National ID<br />
