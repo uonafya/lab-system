@@ -18,21 +18,11 @@ class Covid
 	{
 		$samples = Traveller::whereIn('result', [1,2])
 						// ->where(['datedispatched' => date('Y-m-d', strtotime('-1 day')), 'sent_to_nphl' => 0])
-						->where(['sent_to_nphl' => 0, 'repeatt' => 0])
+						->where(['sent_to_nphl' => 0, ])
 						->where('datedispatched', '>', date('Y-m-d', strtotime('-6 days')))
 						// ->where('datedispatched', '>=', '2020-10-01')
 						->limit(30)
 						->get();
-
-		$a = ['nationalities', 'covid_sample_types', 'covid_symptoms'];
-		$lookups = [];
-		foreach ($a as $value) {
-			$lookups[$value] = DB::table($value)->get();
-		}
-
-		foreach ($lookups['covid_symptoms'] as $key => $value) {
-			$symptoms_array[$value->id] = $value->name;
-		}
 
 		$client = new Client(['base_uri' => env('NPHL_URL')]);
 
@@ -105,18 +95,16 @@ class Covid
 			// dd($body);
 			if($response->getStatusCode() < 400){
 				if($body->status == 'SUCCESS'){
-					$s = CovidSample::find($sample->id);
-					$s->sent_to_nphl = 1;
-					$s->time_sent_to_nphl = date('Y-m-d H:i:s');
-					$s->save();
+					$sample->sent_to_nphl = 1;
+					$sample->time_sent_to_nphl = date('Y-m-d H:i:s');
+					$sample->save();
 					echo 'Status code ' . $response->getStatusCode() . "\n";
 				}
 				if($body->status == 'ERROR'){
-					$s = CovidSample::find($sample->id);
-					if($s->time_sent_to_nphl) continue;
-					$s->sent_to_nphl = 2;
-					if(\Str::contains($body->message, ['SAMPLE_NUMBER'])) $s->sent_to_nphl = 1;
-					$s->save();
+					if($sample->time_sent_to_nphl) continue;
+					$sample->sent_to_nphl = 2;
+					if(\Str::contains($body->message, ['SAMPLE_NUMBER'])) $sample->sent_to_nphl = 1;
+					$sample->save();
 					print_r($body);
 					continue;
 				}
