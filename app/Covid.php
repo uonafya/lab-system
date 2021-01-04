@@ -112,7 +112,6 @@ class Covid
 			}else{
 				dd($body);
 			}
-			dd($body);
 		}
 	}
 
