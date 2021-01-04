@@ -17,6 +17,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('nphl', function () {
+    \App\Covid::synch_to_nphl();
+})->describe('Synch to NPHL');
+
 Artisan::command('mysql8', function () {
     \App\AlterRegimen::mysql8_update();
 })->describe('Mysql 8 update');
