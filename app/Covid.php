@@ -16,12 +16,11 @@ class Covid
 
 	public static function synch_to_nphl()
 	{
-		$samples = CovidSampleView::whereIn('result', [1,2])
+		$samples = Traveller::whereIn('result', [1,2])
 						// ->where(['datedispatched' => date('Y-m-d', strtotime('-1 day')), 'sent_to_nphl' => 0])
 						->where(['sent_to_nphl' => 0, 'repeatt' => 0])
 						->where('datedispatched', '>', date('Y-m-d', strtotime('-6 days')))
 						// ->where('datedispatched', '>=', '2020-10-01')
-						->with(['lab'])
 						->limit(30)
 						->get();
 
@@ -40,25 +39,9 @@ class Covid
 		foreach ($samples as $key => $sample) {
 			$travelled = 'No';
 			$history = '';
-			if (!$sample->patient->travel->isEmpty()){
-				$travelled = 'Yes';
-				foreach ($sample->patient->travel as $key => $travel) {
-					if(!$travel->town) continue;
-					if($key > 1) break;
-					$history .= $travel->town->name . ', ' . $travel->town->country . ';';
-				}
-			}
 
 			$has_symptoms = 'No';
 			$symptoms = '';
-			if($sample->date_symptoms){
-				$has_symptoms = 'Yes';
-				if($sample->symptoms && is_array($sample->symptoms)){
-					foreach ($sample->symptoms as $value) {
-						$symptoms .= ($symptoms_array[$value] ?? null) . ';';
-					}
-				}
-			}
 
 			$post_data = [
 				'USERNAME' => env('NPHL_USERNAME'),
