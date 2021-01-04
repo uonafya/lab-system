@@ -454,6 +454,11 @@
                                 <li>
                                     <a href="{{ url('user') }}">Users</a>
                                 </li>
+                                @if(env('APP_LAB') == 1)
+                                    <li>
+                                        <a href="{{ url('covid_sample') }}">Covid</a>
+                                    </li>
+                                @endif
                                 <li>
                                     <a href="{{ url('facility') }}">Facilities</a>
                                 </li>

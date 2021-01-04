@@ -566,7 +566,7 @@
             <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />
         @endif
-        @if(Auth::user()->user_type_id != 2)
+        @if(Auth::user()->user_type_id != 2 || env('APP_LAB') == 1)
             @if(in_array(Auth::user()->user_type_id, [5,10]))
                 @if(env('APP_LAB') == 7)
                     <!-- DR Searches -->
@@ -593,7 +593,7 @@
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
-                @if(session('testingSystem') == 'Viralload')
+                @if(session('testingSystem') == 'Viralload' && auth()->user()->user_type_id != 2)
                     <li><a href="https://eiddash.nascop.org/download/vl_req">Download VL Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
@@ -603,7 +603,7 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_viral_order_no_search"></select></a></li>
                     @endif
-                @elseif(session('testingSystem') == 'EID')
+                @elseif(session('testingSystem') == 'EID' && auth()->user()->user_type_id != 2)
                     <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
@@ -613,7 +613,7 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
                     @endif
-                @elseif(session('testingSystem') == 'Covid')
+                @elseif(session('testingSystem') == 'Covid' || auth()->user()->user_type_id == 2)
                     <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>
