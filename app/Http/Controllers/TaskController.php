@@ -286,7 +286,6 @@ class TaskController extends Controller
 
     public function consumption (Request $request, $guide=null)
     {
-        dd("This is the die");
         if ($guide != null) {
             return redirect('http://lab-2.test.nascop.org/download/consumption');
         }
