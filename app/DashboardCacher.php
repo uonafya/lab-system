@@ -124,7 +124,7 @@ class DashboardCacher
                 'prefix' => '',
             ]);
         } else if (session('testingSystem') == 'Covid') {
-            self::cache_covid();
+            // self::cache_covid();
             return array_merge($data, [
                 'covid_pending_receipt' => Cache::get('covid_pending_receipt'),
                 'covid_pending_testing' => Cache::get('covid_pending_testing'),
@@ -528,82 +528,110 @@ class DashboardCacher
 
     public static function cacher()
     {
-    	if(Cache::has('vl_pendingSamples')) return true;
-
+        // Cache is now in seconds
     	$minutes = (5*60);
 
-		$pendingSamples = self::pendingSamplesAwaitingTesting();
-        $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
-		$batchesForApproval = self::siteBatchesAwaitingApproval();
-        $batchesNotReceived = self::batchesMarkedNotReceived();
-		$batchesForDispatch = self::batchCompleteAwaitingDispatch();
-		$samplesForRepeat = self::samplesAwaitingRepeat();
-		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
-        $resultsForUpdate = self::resultsAwaitingpdate();
-        $overduetesting = self::overdue('testing');
-        $overduedispatched = self::overdue('dispatched');
-        $delayed_batches = self::delayed_batches('viral');
-        $unreceived_batches = self::unreceived_batches('viral');
-        $pending_sample_manifest = self::pending_sample_manifest('viral');
+        if (session('testingSystem') == 'Viralload'){
 
-        $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
-        $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
-        $batchesForApproval2 = self::siteBatchesAwaitingApproval('Eid');
-        $batchesNotReceived2 = self::batchesMarkedNotReceived('Eid');
-        $batchesForDispatch2 = self::batchCompleteAwaitingDispatch('Eid');
-        $samplesForRepeat2 = self::samplesAwaitingRepeat('Eid');
-        $rejectedForDispatch2 = self::rejectedSamplesAwaitingDispatch('Eid');
-        $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
-        $overduetesting2 = self::overdue('testing','Eid');
-        $overduedispatched2 = self::overdue('dispatched','Eid');
-        $delayed_batches2 = self::delayed_batches();
-        $unreceived_batches2 = self::unreceived_batches();
-        $pending_sample_manifest2 = self::pending_sample_manifest();
+            if(Cache::has('vl_pendingSamples')) return true;
 
-        if(env('APP_LAB') == 5){
+    		$pendingSamples = self::pendingSamplesAwaitingTesting();
+            $pendingSamplesOverTen = self::pendingSamplesAwaitingTesting(true);
+    		$batchesForApproval = self::siteBatchesAwaitingApproval();
+            $batchesNotReceived = self::batchesMarkedNotReceived();
+    		$batchesForDispatch = self::batchCompleteAwaitingDispatch();
+    		$samplesForRepeat = self::samplesAwaitingRepeat();
+    		$rejectedForDispatch = self::rejectedSamplesAwaitingDispatch();
+            $resultsForUpdate = self::resultsAwaitingpdate();
+            $overduetesting = self::overdue('testing');
+            $overduedispatched = self::overdue('dispatched');
+            $delayed_batches = self::delayed_batches('viral');
+            $unreceived_batches = self::unreceived_batches('viral');
+            $pending_sample_manifest = self::pending_sample_manifest('viral');
+
+            Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
+            Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
+            Cache::put('vl_batchesForApproval', $batchesForApproval, $minutes);
+            Cache::put('vl_batchesNotReceived', $batchesNotReceived, $minutes);
+            Cache::put('vl_batchesForDispatch', $batchesForDispatch, $minutes);
+            Cache::put('vl_samplesForRepeat', $samplesForRepeat, $minutes);
+            Cache::put('vl_rejectedForDispatch', $rejectedForDispatch, $minutes);
+            Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
+            Cache::put('vl_overduetesting', $overduetesting, $minutes);
+            Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
+            Cache::put('vl_delayed_batches', $delayed_batches, $minutes);
+            Cache::put('vl_unreceived_batches', $unreceived_batches, $minutes);
+            Cache::put('vl_pending_sample_manifest', $pending_sample_manifest, $minutes);
+
+        }
+        else if (session('testingSystem') == 'EID'){
+
+            if(Cache::has('eid_pendingSamples')) return true;
+
+            $pendingSamples2 = self::pendingSamplesAwaitingTesting(false, 'Eid');
+            $pendingSamplesOverTen2 = self::pendingSamplesAwaitingTesting(true, 'Eid');
+            $batchesForApproval2 = self::siteBatchesAwaitingApproval('Eid');
+            $batchesNotReceived2 = self::batchesMarkedNotReceived('Eid');
+            $batchesForDispatch2 = self::batchCompleteAwaitingDispatch('Eid');
+            $samplesForRepeat2 = self::samplesAwaitingRepeat('Eid');
+            $rejectedForDispatch2 = self::rejectedSamplesAwaitingDispatch('Eid');
+            $resultsForUpdate2 = self::resultsAwaitingpdate('Eid');
+            $overduetesting2 = self::overdue('testing','Eid');
+            $overduedispatched2 = self::overdue('dispatched','Eid');
+            $delayed_batches2 = self::delayed_batches();
+            $unreceived_batches2 = self::unreceived_batches();
+            $pending_sample_manifest2 = self::pending_sample_manifest();
+
+            // EID cache 
+            Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
+            Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
+            Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
+            Cache::put('eid_batchesNotReceived', $batchesNotReceived2, $minutes);
+            Cache::put('eid_batchesForDispatch', $batchesForDispatch2, $minutes);
+            Cache::put('eid_samplesForRepeat', $samplesForRepeat2, $minutes);
+            Cache::put('eid_rejectedForDispatch', $rejectedForDispatch2, $minutes);
+            Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
+            Cache::put('eid_overduetesting', $overduetesting2, $minutes);
+            Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
+            Cache::put('eid_delayed_batches', $delayed_batches2, $minutes);
+            Cache::put('eid_unreceived_batches', $unreceived_batches2, $minutes);
+            Cache::put('eid_pending_sample_manifest', $pending_sample_manifest2, $minutes);
+
+        }
+        else if(env('APP_LAB') == 5 && session('testingSystem') == 'CD4'){
+            if(Cache::has('CD4samplesInQueue')) return true;
+
             $CD4samplesInQueue = self::CD4pendingSamplesAwaitingTesting();
             $CD4resultsForUpdate = self::resultsAwaitingpdate('CD4');
             $CD4resultsForDispatch = self::cd4samplesAwaitingDispatch();
             $CD4worksheetFor2ndApproval = self::cd4worksheetFor2ndApproval();
-        }
 
-        // $rejectedAllocations = self::rejectedAllocations();
-        
-        // if(env('APP_LAB') != 7) $rejectedAllocations = self::rejectedAllocations();
-        Cache::put('vl_pendingSamples', $pendingSamples, $minutes);
-        Cache::put('vl_pendingSamplesOverTen', $pendingSamplesOverTen, $minutes);
-        Cache::put('vl_batchesForApproval', $batchesForApproval, $minutes);
-        Cache::put('vl_batchesNotReceived', $batchesNotReceived, $minutes);
-        Cache::put('vl_batchesForDispatch', $batchesForDispatch, $minutes);
-        Cache::put('vl_samplesForRepeat', $samplesForRepeat, $minutes);
-        Cache::put('vl_rejectedForDispatch', $rejectedForDispatch, $minutes);
-        Cache::put('vl_resultsForUpdate', $resultsForUpdate, $minutes);
-        Cache::put('vl_overduetesting', $overduetesting, $minutes);
-        Cache::put('vl_overduedispatched', $overduedispatched, $minutes);
-        Cache::put('vl_delayed_batches', $delayed_batches, $minutes);
-        Cache::put('vl_unreceived_batches', $unreceived_batches, $minutes);
-        Cache::put('vl_pending_sample_manifest', $pending_sample_manifest, $minutes);
-        // EID cache 
-        Cache::put('eid_pendingSamples', $pendingSamples2, $minutes);
-        Cache::put('eid_pendingSamplesOverTen', $pendingSamplesOverTen2, $minutes);
-        Cache::put('eid_batchesForApproval', $batchesForApproval2, $minutes);
-        Cache::put('eid_batchesNotReceived', $batchesNotReceived2, $minutes);
-        Cache::put('eid_batchesForDispatch', $batchesForDispatch2, $minutes);
-        Cache::put('eid_samplesForRepeat', $samplesForRepeat2, $minutes);
-        Cache::put('eid_rejectedForDispatch', $rejectedForDispatch2, $minutes);
-        Cache::put('eid_resultsForUpdate', $resultsForUpdate2, $minutes);
-        Cache::put('eid_overduetesting', $overduetesting2, $minutes);
-        Cache::put('eid_overduedispatched', $overduedispatched2, $minutes);
-        Cache::put('eid_delayed_batches', $delayed_batches2, $minutes);
-        Cache::put('eid_unreceived_batches', $unreceived_batches2, $minutes);
-        Cache::put('eid_pending_sample_manifest', $pending_sample_manifest2, $minutes);
-        //CD4 Cache
-        if(env('APP_LAB') == 5){
             Cache::put('CD4samplesInQueue', $CD4samplesInQueue, $minutes);
             Cache::put('CD4resultsForUpdate', $CD4resultsForUpdate, $minutes);
             Cache::put('CD4resultsForDispatch', $CD4resultsForDispatch, $minutes);
             Cache::put('CD4worksheetFor2ndApproval', $CD4worksheetFor2ndApproval, $minutes);
         }
+        else if(session('testingSystem') == 'Covid'){
+            if(Cache::has('covid_pending_receipt')) return true;
+
+            $pending_receipt = CovidSample::selectRaw('count(id) AS my_count')
+                ->where(['lab_id' => env('APP_LAB')])
+                ->whereNull('datereceived')->whereNull('datedispatched')->first()->my_count;
+            $pending_testing = CovidSample::selectRaw('count(id) AS my_count')
+                ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'repeatt' => 0])
+                ->where('datereceived', '>', date('Y-m-d', strtotime('-2 months')))
+                ->whereNull('datetested')->whereNull('datedispatched')->whereNull('worksheet_id')->first()->my_count;
+            $worksheets = self::resultsAwaitingpdate('Covid');
+
+            Cache::put('covid_pending_receipt', $pending_receipt, $minutes);
+            Cache::put('covid_pending_testing', $pending_testing, $minutes);
+            Cache::put('covid_pending_results_update', $worksheets, $minutes);
+        }
+
+        // $rejectedAllocations = self::rejectedAllocations();
+        
+        // if(env('APP_LAB') != 7) $rejectedAllocations = self::rejectedAllocations();
+
         // Neutral Cache
         // if(env('APP_LAB') != 7) Cache::put('rejectedAllocations', $rejectedAllocations, $minutes);
     }
@@ -653,6 +681,10 @@ class DashboardCacher
         Cache::forget('eid_overduetesting');
         Cache::forget('eid_overduedispatched');
         Cache::forget('eid_delayed_batches');
+
+        Cache::forget('covid_pending_receipt');
+        Cache::forget('covid_pending_testing');
+        Cache::forget('covid_pending_results_update');
     }
 
 
