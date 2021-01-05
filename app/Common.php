@@ -942,7 +942,7 @@ class Common
     public static function send_lab_tracker($year, $previousMonth, $check_email_sent = true) {
     	echo "==> Pulling the data \n";
     	$data = Random::__getLablogsData($year, $previousMonth, $check_email_sent);
-    	dd($data);
+    	// dd($data);
     	if ($data) {
     		echo "==> Getting mailing list\n";
     		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com']; // For testing
