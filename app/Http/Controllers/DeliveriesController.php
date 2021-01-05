@@ -14,6 +14,7 @@ class DeliveriesController extends Controller
 {
     public function addKitDeliveries(Request $request, $platform = null)
     {
+        dd('This is something to see why Nairobi is not working');
         if ($platform) {
             $testtype = TestType::find($request->input('type'));
             $kit = Kits::find($request->input('kit'));
@@ -51,7 +52,7 @@ class DeliveriesController extends Controller
     	}    	
 
     	$machines = new Machine;
-    
+
     	$data = [
                 'machines' => $machines->missingDeliveries($period->year, $period->month),
                 'period' => $period
