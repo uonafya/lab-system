@@ -51,6 +51,7 @@ class DeliveriesController extends Controller
     	}    	
 
     	$machines = new Machine;
+        dd($machines->missingDeliveries($period->year, $period->month));
     	$data = [
                 'machines' => $machines->missingDeliveries($period->year, $period->month),
                 'period' => $period
