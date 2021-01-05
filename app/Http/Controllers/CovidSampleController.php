@@ -611,7 +611,7 @@ class CovidSampleController extends Controller
             return back();
         }*/
 
-        if(in_array(env('APP_LAB'), [1]) && ($covidSample->worksheet_id || $covidSample->run > 1) && auth()->user()->user_type_id && !auth()->user()->covid_approver){
+        if(in_array(auth()->user()->lab_id, [1]) && ($covidSample->worksheet_id || $covidSample->run > 1) && auth()->user()->user_type_id && !auth()->user()->is_admin){
             session(['toast_error' => 1, 'toast_message' => "You don't have permission to edit the sample after it has entered a worksheet."]);
             return back();
         }
@@ -730,6 +730,7 @@ class CovidSampleController extends Controller
         // if(env('APP_LAB') != 1) abort(403);
         // $file = $request->upload->path();
         // $path_one = $request->upload->store('public/site_samples/covid');
+        ini_set('memory_limit', -1);
         
         $filename_array = explode('.', $request->file('upload')->getClientOriginalName());
         $file_name =  \Str::random(40) . '.' . array_pop($filename_array);
