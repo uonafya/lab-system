@@ -82,6 +82,7 @@
                         <th> Sex </th>
                         <th> DOB </th>
                         <th> Date Collected </th>
+                        <th> Date Created </th>
                         <th> Edarp Response Message </th>
                     </tr>
                 </thead>
@@ -94,6 +95,7 @@
                             <td> {{ substr($sample->gender, 0, 1) }} </td>
                             <td> {{ $sample->my_date_format('dob') }} </td>
                             <td> {{ $sample->my_date_format('datecollected') }} </td>
+                            <td> {{ $sample->created_at->toFormattedDateString() }} </td>
                             <td> {{ $sample->edarp_error }} </td>
                         </tr>
                     @endforeach

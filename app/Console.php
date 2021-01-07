@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Mail;
 use Mpdf\Mpdf;
 use DB;
 
-use App\Mail\EdarpValidation;
+use App\Mail\EdarpMachakosFailed;
+use App\Mail\EdarpMachakosDelayed;
 
 class Console
 {
@@ -340,7 +341,7 @@ class Console
                 ->where('edarp_error', 'like', '%400%')
                 ->get();
 
-        $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "kouma@mgic.umaryland.edu", "EKirui@mgic.umaryland.edu", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
+        $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
 
         if(!$samples->count()) return;
 
@@ -355,6 +356,41 @@ class Console
         $mail_array = ['joel.kithinji@dataposit.co.ke'];
 
         Mail::to($mail_array)->send(new EdarpMachakosFailed($file_path));
+	}
+
+	public static function send_edarp_delayed()
+	{
+        $min_date = date('Y-m-d', strtotime('-5 weeks'));
+        $max_date = date('Y-m-d', strtotime('-2 weeks'));
+
+        $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->select('viralsamples_view.*')
+                ->where(['repeatt' => 0, 'county_id' => 17])                
+                /*->when(true, function($query) use($batch_id, $min_date){
+                    if($batch_id) return $query->where('batch_id', $batch_id);
+                    return $query->where('created_at', '>', $min_date);
+                })*/
+                ->whereBetween('created_at', [$min_date, $max_date])
+                ->whereNotNull('time_sent_to_edarp')
+                ->whereNull('result')
+                ->get();
+
+        $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
+
+        if(!$samples->count()) return;
+
+        $file_path = storage_path('app/batches/vl/delayed_machakos-samples.pdf');
+
+        $mpdf = new Mpdf();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_edarp_not_sent', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
+
+        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+
+        Mail::to($mail_array)->send(new EdarpMachakosDelayed($file_path));
+
 	}
 
 }

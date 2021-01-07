@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EdarpMachakosFailed extends Mailable
+class EdarpMachakosDelayed extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -507,6 +507,11 @@ Artisan::command('edarp:machakos-failed', function(){
     $this->info($str);
 })->describe('Email Edarp about failed samples.');
 
+Artisan::command('edarp:machakos-delayed', function(){
+    $str = \App\Console::send_edarp_delayed();
+    $this->info($str);
+})->describe('Email Edarp about failed samples.');
+
 Artisan::command('check:maryland', function(){
     $str = \App\Random::getElvis();
     $this->info($str);
