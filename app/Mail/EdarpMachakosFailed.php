@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+use Mpdf\Mpdf;
+
+class EdarpMachakosFailed extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $file_path;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct($file_path)
+    {
+        $this->file_path = $file_path;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        $this->attach($this->file_path);
+        return $this->subject($str)->view('emails.mpdf_edarp_not_sent');
+    }
+}

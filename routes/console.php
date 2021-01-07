@@ -498,9 +498,14 @@ Artisan::command('edarp:delete', function(){
 //Quick fix add EDARP samples to KEMRI
 
 Artisan::command('edarp:machakos  {batch_id?}', function($batch_id=null){
-    $str = \App\MiscViral::machakos_edarp($batch_id);
+    $str = \App\Console::machakos_edarp($batch_id);
     $this->info($str);
-})->describe('Move Machakos samples');
+})->describe('Send Machakos Samples to Edarp');
+
+Artisan::command('edarp:machakos-failed', function(){
+    $str = \App\Console::send_failed_edarp_samples();
+    $this->info($str);
+})->describe('Email Edarp about failed samples.');
 
 Artisan::command('check:maryland', function(){
     $str = \App\Random::getElvis();

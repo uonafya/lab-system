@@ -18,7 +18,7 @@
     <!-- Vendor styles -->
     <link rel="stylesheet" href="{{ public_path('vendor/fontawesome/css/font-awesome.css') }}" />
     <link rel="stylesheet" href="{{ public_path('vendor/animate.css/animate.css') }}" />
-    <link rel="stylesheet" href="{{ public_path('vendor/bootstrap/dist/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ public_path('vendor/bootstrap/dist/css/bootstrap.css') }}" /> 
 
     <style type="text/css">
         body.light-skin #menu {
@@ -59,7 +59,7 @@
 
         <div class="row">
 
-            <table class="table" border="0" style="border: 0px; width: 100%;">
+            <table class="table table-bordered table-striped" border="0" style="border: 0px; width: 100%;">
                 <tr>
                     <td align="center">
                         <img src="{{ public_path('img/naslogo.jpg') }}" alt="NASCOP">
@@ -77,17 +77,12 @@
                 <thead>
                     <tr>
                         <th> No </th>
-                        @if($type == 'eid')
-                            <th> HEI Number </th>
-                        @else
-                            <th> CCC Number </th>
-                        @endif
+                        <th> CCC Number </th>
                         <th> Batch </th>
+                        <th> Sex </th>
+                        <th> DOB </th>
                         <th> Date Collected </th>
-                        <th> Date Received </th>
-                        <th> Date Tested </th>
-                        <th> Date Dispatched </th>
-                        <th> Result </th>
+                        <th> Edarp Response Message </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,28 +91,15 @@
                             <td> {{ $key+1 }} </td>
                             <td> {{ $sample->patient }} </td>
                             <td> {{ $sample->batch_id }} </td>
+                            <td> {{ substr($sample->gender, 0, 1) }} </td>
+                            <td> {{ $sample->my_date_format('dob') }} </td>
                             <td> {{ $sample->my_date_format('datecollected') }} </td>
-                            <td> {{ $sample->my_date_format('datereceived') }} </td>
-                            <td> {{ $sample->my_date_format('datetested') }} </td>
-                            <td> {{ $sample->my_date_format('datedispatched') }} </td>
-                            <td> {{ $sample->result_name ?? $sample->result }} </td>
+                            <td> {{ $sample->edarp_error }} </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>            
         </div>
-
-        <br />
-        <br />
-
-        <table style="display: inline-block;">
-            <th><b>LAB CONTACTS </b> </td>
-            <tr><td>{{ $lab->name }} </td></tr>
-            <tr><td>{{ $lab->lablocation }} </td></tr>
-            <tr><td>{{ $lab->labtel1 }} </td></tr>
-            <tr><td>{{ $lab->labtel2 }} </td></tr>
-            <tr><td>{{ $lab->email }} </td></tr>
-        </table>
                 
         <br />
         <br />
