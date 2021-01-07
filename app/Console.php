@@ -361,7 +361,7 @@ class Console
 	public static function send_edarp_delayed()
 	{
         $min_date = date('Y-m-d', strtotime('-5 weeks'));
-        $max_date = date('Y-m-d', strtotime('-2 weeks'));
+        $max_date = date('Y-m-d', strtotime('-1 weeks'));
 
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
