@@ -77,6 +77,8 @@
                 <thead>
                     <tr>
                         <th> No </th>
+                        <th> MFL Code </th>
+                        <th> Facility </th>
                         <th> CCC Number </th>
                         <th> Batch </th>
                         <th> Sex </th>
@@ -90,6 +92,8 @@
                     @foreach($samples as $key => $sample)
                         <tr>
                             <td> {{ $key+1 }} </td>
+                            <td> {{ $sample->facilitycode }} </td>
+                            <td> {{ $sample->facilityname }} </td>
                             <td> {{ $sample->patient }} </td>
                             <td> {{ $sample->batch_id }} </td>
                             <td> {{ substr($sample->gender, 0, 1) }} </td>
