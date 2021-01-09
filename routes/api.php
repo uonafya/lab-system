@@ -25,6 +25,7 @@ $api->version('v1', function (Router $api) {
         $api->get('hello', 'RandomController@hello');
         $api->get('hello_nascop', 'RandomController@hello_nascop');
 
+        $api->get('covid/allocation_details/{allocation_date}', 'AllocationController@allocation_details');
 
         $api->post('node/result', 'NodeResultController@result');
 

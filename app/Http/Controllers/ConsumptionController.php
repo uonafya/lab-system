@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Consumption;
 use App\ConsumptionDetail;
 use App\Kits;
+use App\LabEquipment;
 use App\Machine;
 use App\TestType;
 use App\User;
@@ -53,8 +54,18 @@ class ConsumptionController extends Controller
     	}
 
     	$machines = new Machine;
+        $display_machine = [];
+        if (null !== $period->year) {
+            foreach ($machines->missingConsumptions($period->year, $period->month) as $key => $db_machine) {
+                if(!$db_machine->mapping->where('lab', env('APP_LAB'))->isEmpty()) {
+                    $display_machine[] = $db_machine;
+                }
+            }
+        }
+        
+        // dd(LabEquipment::where('lab', env('APP_LAB'))->get());
     	$data = [
-                'machines' => $machines->missingConsumptions($period->year, $period->month),
+                'machines' => $display_machine,
                 'period' => $period
             ];
             

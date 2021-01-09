@@ -37,10 +37,15 @@ class Machine extends Model
         return $this->hasMany(CovidWorksheet::class, 'machine_type', 'id');
     }
 
+    public function mapping()
+    {
+        return $this->hasMany(LabEquipment::class, 'type', 'id');
+    }
+
     public function missingDeliveries($year, $month)
     {
         $data = [];
-        foreach ($this->get() as $key => $machine) {
+        foreach ($this->whereNotIn('id', [0])->get() as $key => $machine) {
             if ($machine->deliveries->where('year', $year, 'month', $month)->isEmpty())
                 $data[] = $machine;
         }

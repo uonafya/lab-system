@@ -5,8 +5,10 @@ namespace App\Api\V1\Controllers;
 use App\Allocation;
 use App\AllocationDetail;
 use App\AllocationDetailsBreakdown;
+use App\CovidAllocation;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\ApiRequest;
+use App\Api\V1\Requests\BlankRequest;
 
 class AllocationController extends Controller
 {
@@ -128,6 +130,12 @@ class AllocationController extends Controller
     public function destroy(Sample $sample)
     {
         //
+    }
+
+    public function allocation_details($allocation_date)
+    {
+        $allocations = CovidAllocation::with('platform')->where('allocation_date', $allocation_date)->get();
+        return view('tasks.covid.allocationdetails', ['allocations' => $allocations])->render();
     }
 }
 ?>

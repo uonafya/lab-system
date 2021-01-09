@@ -48,13 +48,13 @@ class TaskController extends Controller
 
     public function index() 
     {
-        if ($this->pendingTasks()) {
+        if (!$this->pendingTasks()) {
             // \App\Common::send_lab_tracker($this->previousYear, $this->previousMonth);
             session(['pendingTasks'=> false]);
             return redirect()->route('home');
         }
         // return redirect('/home');
-        if (env('APP_LAB') != 23 && auth()->user()->eidvl_consumption_allowed) {
+        if ($this->eligibleForEidVlConsumptions()) {
             $pendingDeliveries = $this->getDeliveries();
             $data['deliveries'] = $pendingDeliveries;
             if (empty($pendingDeliveries)){
@@ -72,18 +72,20 @@ class TaskController extends Controller
 
         }
   //       $data['requisitions'] = count($this->getRequisitions());
-        if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed){
+        if ($this->eligibleForCovidConsumptions()) {
             $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
-            $data['time'] = $covidconsumption->getMissingConsumptions();   
+            $data['time'] = $covidconsumption->getMissingConsumptions();
+            // dd($data);
         }
         
         $data['currentmonth'] = date('m');
         $data['prevmonth'] = $this->previousMonth;
         $data['year'] = date('Y');
         $data['prevyear'] = $this->previousYear;
-        $data['allowed'] = $this->pendingTasks();
+        $data['allowedEIDVLConsumption'] = $this->eligibleForEidVlConsumptions();
+        $data['allowedCovidConsumption'] = $this->eligibleForCovidConsumptions();
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }
@@ -409,7 +411,7 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
+        dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 

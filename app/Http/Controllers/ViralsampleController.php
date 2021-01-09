@@ -47,15 +47,15 @@ class ViralsampleController extends Controller
 
         $samples = ViralsampleView::with(['facility'])
             ->when($param, function($query){
-                return $query->where(['receivedstatus' => 1]);
-                // return $query->whereRaw("((result IS NULL ) OR (result ='0' ))")->where(['receivedstatus' => 1]);
+                return $query->whereRaw("((result IS NULL ) OR (result ='0' ))")->where(['receivedstatus' => 1]);
             })
             ->whereRaw($string)
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
-            ->paginate(50);
+            ->get();
+            // ->paginate(50);
         // dd($samples);
-        $samples->setPath(url()->current());
+        // $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
@@ -1220,12 +1220,12 @@ class ViralsampleController extends Controller
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        $string = "(viralbatches.facility_id='{$user->facility_id}' OR viralbatches.user_id='{$user->id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
-        $samples = Viralsample::select('viralsamples.id')
-            ->whereRaw("viralsamples.id like '" . $search . "%'")
+        $samples = ViralsampleView::select('id')
+            ->whereRaw("id like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
-                return $query->join('viralbatches', 'viralsamples.batch_id', '=', 'viralbatches.id')->whereRaw($string);
+                return $query->whereRaw($string);
             })
             ->paginate(10);
 

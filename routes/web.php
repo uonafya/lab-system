@@ -575,8 +575,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('/pending', 'TaskController@index')->name('pending');
 		Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
 		Route::post('/performancelog', 'TaskController@performancelog');
-		Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
-		Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		// Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		// Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 		
 
 		Route::prefix('viralpatient')->name('viralpatient.')->group(function () {

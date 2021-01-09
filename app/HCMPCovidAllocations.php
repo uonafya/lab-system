@@ -32,44 +32,52 @@ class HCMPCovidAllocations extends Model
     	try {
     		$response = $client->request('get', 'covid_19', [
 	            'http_errors' => false,
-	            'debug' => false,
+	            'debug' => true,
 	            'verify' => false,
 				'headers' => [
 					'Accept' => 'application/json',
 					'apitoken' => env('HCMP_TOKEN'),
+					'Content-Type' => 'application/json',
 				],
 				'json' => [
 					'type' => 'automated'
 				],
 			]);
 			$body = json_decode($response->getBody());
+			print_r($body);
 			$empty = [];
-			foreach ($body->data as $key => $item) {
-				$data_existing = ['material_number' => $item->material_number, 'allocation_date' => $item->allocation_date, 'allocation_type' => $item->allocation_type, 'lab_id' => $item->lab_id];
-				$existing = HCMPCovidAllocations::existing( $data_existing )->get();
-				if ($existing->isEmpty()) {
-					if (env('APP_LAB') == $item->lab_id) {
-						$lab = Lab::find($item->lab_id);
-						$kit = CovidKit::withTrashed()->where('material_no', $item->material_number)->get();
-						if (!$kit->isEmpty()) {
-							$model = new $this;
-							$model->allocation_date = $item->allocation_date;
-							$model->allocation_type = $item->allocation_type;
-							$model->lab_id = $lab->id;
-							$model->material_number = $kit->first()->material_no;
-							$model->allocated_kits = $item->allocated_kits;
-							$model->comments = $item->comments;
-							$model->save();
-						} else {
-							$empty[] = $item;
+			if (null !== $body->data) {				
+				foreach ($body->data as $key => $item) {
+					$data_existing = ['material_number' => $item->material_number, 'allocation_date' => $item->allocation_date, 'allocation_type' => $item->allocation_type, 'lab_id' => $item->lab_id];
+					$existing = HCMPCovidAllocations::existing( $data_existing )->get();
+					if ($existing->isEmpty()) {
+						if (env('APP_LAB') == $item->lab_id) {
+							$lab = Lab::find($item->lab_id);
+							$kit = CovidKit::withTrashed()->where('material_no', $item->material_number)->get();
+							if (!$kit->isEmpty()) {
+								$model = new $this;
+								$model->allocation_date = $item->allocation_date;
+								$model->allocation_type = $item->allocation_type;
+								$model->lab_id = $lab->id;
+								$model->material_number = $kit->first()->material_no;
+								$model->allocated_kits = $item->allocated_kits;
+								$model->comments = $item->comments;
+								$model->save();
+							} else {
+								$empty[] = $item;
+							}
 						}
 					}
 				}
+			} else {
+				print_r($body);
 			}
-			print_r($empty);
+
+			CovidAllocation::fillAllocations();
 			return true;
     	} catch (Exception $e) {
     		echo "Error{";print_r($e);echo "}";
+    		
     		return false;
     	}
     }
