@@ -117,7 +117,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-	Route::middleware(['consumptionsubmitted'])->group(function(){
+	// Route::middleware(['consumptionsubmitted'])->group(function(){
 		Route::prefix('home')->name('home.')->group(function(){
 			Route::get('/', 'HomeController@index');
 			Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
@@ -575,8 +575,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::get('/pending', 'TaskController@index')->name('pending');
 		Route::get('/performancelog', 'TaskController@performancelog')->name('performancelog');
 		Route::post('/performancelog', 'TaskController@performancelog');
-		Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
-		Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		// Route::get('/kitsdeliveries/{platform?}', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
+		// Route::post('/kitsdeliveries', 'TaskController@addKitDeliveries')->name('kitsdeliveries');
 		
 
 		Route::prefix('viralpatient')->name('viralpatient.')->group(function () {
@@ -847,7 +847,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 			Route::resource('viralworksheet', 'ViralworksheetController');
 		});
-	});
+	// });
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');

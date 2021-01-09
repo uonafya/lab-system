@@ -45,7 +45,7 @@ class Machine extends Model
     public function missingDeliveries($year, $month)
     {
         $data = [];
-        foreach ($this->get() as $key => $machine) {
+        foreach ($this->whereNotIn('id', [0])->get() as $key => $machine) {
             if ($machine->deliveries->where('year', $year, 'month', $month)->isEmpty())
                 $data[] = $machine;
         }

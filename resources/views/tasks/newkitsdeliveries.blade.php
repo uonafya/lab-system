@@ -42,7 +42,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control input-sm" required name="machine[]" id="machine" multiple="true">
                                 @foreach($machines as $machine)
-                                    <option value="{{ $machine->id }}">{{ $machine->machine }}</option>
+                                    <option value="{{ $machine->id }}" selected="true">{{ $machine->machine }}</option>
                                 @endforeach
                                 </select>
                             </div>

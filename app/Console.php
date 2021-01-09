@@ -2,7 +2,13 @@
 
 namespace App;
 
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
+use Mpdf\Mpdf;
 use DB;
+
+use App\Mail\EdarpMachakosFailed;
+use App\Mail\EdarpMachakosDelayed;
 
 class Console
 {
@@ -239,5 +245,152 @@ class Console
 					];
 	}
 
+
+
+
+    public static function machakos_edarp($batch_id=null)
+    {
+        ini_set('memory_limit', "-1");
+        $prophylaxis = \DB::table('viralregimen')->get();
+        $justifications = \DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
+
+        $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->select('viralsamples_view.*')
+                ->where(['repeatt' => 0, 'county_id' => 17])                
+                ->when(true, function($query) use($batch_id, $min_date){
+                    if($batch_id) return $query->where('batch_id', $batch_id);
+                    return $query->where('created_at', '>', $min_date);
+                })
+                ->whereNull('receivedstatus')
+                ->whereRaw("(time_sent_to_edarp IS NULL OR edarp_error like '%400%')")
+                // ->whereNull('time_sent_to_edarp')
+                ->get();
+
+        $client = new Client(['base_uri' => 'http://41.203.216.114:81/nascop/vl/receive']);
+        foreach ($samples as $sample) {
+            $s = Viralsample::find($sample->id);
+            // if($s->time_sent_to_edarp) continue;
+
+            $post_data = [
+                    'lab' => "10",
+                    'specimenlabelID' => '',
+                    'batchno' => $sample->batch_id,
+                    'patient_identifier' => $sample->patient,
+                    'dob' => $sample->dob,
+                    'mflCode' => $sample->facilitycode,
+                    'sex' => substr($sample->gender, 0, 1),
+                    'pmtct' => $sample->pmtct,
+                    'sampletype' => $sample->sampletype,
+                    'datecollected' => $sample->datecollected,
+                    'artinitiationdate' => $sample->initiation_date,
+                    'prophylaxis' => $sample->get_prop_name($prophylaxis, 'prophylaxis', 'code'),
+                    'regimenline' => 1,
+                    'justification' => $sample->get_prop_name($justifications, 'justification', 'rank_id'),
+                    'receivedstatus' => '',
+                    'datedispatched' => null,
+                ];
+
+            try {
+                $response = $client->request('post', '', [
+                    // 'debug' => true,
+                    'timeout' => 3,
+                    'http_errors' => false,
+                    'verify' => false,
+                    'json' => $post_data,
+                ]);   
+                $body = json_decode($response->getBody());
+                $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                $s->edarp_error = $body[0] ?? $body;
+                $s->save();
+                /*if($response->getStatusCode() > 399){
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+                    // print_r($post_data);
+                    // return null;
+                }
+                else if(isset($body[0]->status_code) && in_array($body[0]->status_code, [300])){
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    // $s->edarp_error = $body;
+                    $s->save();
+                }
+                else{
+                    $s->time_sent_to_edarp = date('Y-m-d H:i:s');
+                    $s->edarp_error = $body[0] ?? $body;
+                    $s->save();
+
+                } */         
+            } catch (\Exception $e) {
+                
+            }
+        }
+    }
+
+	public static function send_failed_edarp_samples()
+	{
+        $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->select('viralsamples_view.*')
+                ->where(['repeatt' => 0, 'county_id' => 17])                
+                /*->when(true, function($query) use($batch_id, $min_date){
+                    if($batch_id) return $query->where('batch_id', $batch_id);
+                    return $query->where('created_at', '>', $min_date);
+                })*/
+                ->where('created_at', '>', $min_date)
+                ->whereNotNull('time_sent_to_edarp')
+                ->where('edarp_error', 'like', '%400%')
+                ->get();
+
+        $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
+
+        if(!$samples->count()) return;
+
+        $file_path = storage_path('app/batches/vl/samples-that-failed-sending-to-edarp.pdf');
+
+        $mpdf = new Mpdf();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_edarp_not_sent', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
+
+        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+
+        Mail::to($mail_array)->send(new EdarpMachakosFailed($file_path));
+	}
+
+	public static function send_edarp_delayed()
+	{
+        $min_date = date('Y-m-d', strtotime('-5 weeks'));
+        $max_date = date('Y-m-d', strtotime('-1 weeks'));
+
+        $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->select('viralsamples_view.*')
+                ->where(['repeatt' => 0, 'county_id' => 17])                
+                /*->when(true, function($query) use($batch_id, $min_date){
+                    if($batch_id) return $query->where('batch_id', $batch_id);
+                    return $query->where('created_at', '>', $min_date);
+                })*/
+                ->whereBetween('created_at', [$min_date, $max_date])
+                ->whereNotNull('time_sent_to_edarp')
+                ->whereNull('result')
+                ->get();
+
+        $mail_array = ["David@edarp.org", "Jkarimi@edarp.org", "WilsonNdungu@edarp.org", "Chris@edarp.org", "Administrator@edarp.org", "mutewa@edarp.org", "Muma@edarp.org", "tngugi@clintonhealthaccess.org", "Peter@edarp.org"];
+
+        if(!$samples->count()) return;
+
+        $file_path = storage_path('app/batches/vl/delayed_machakos-samples.pdf');
+
+        $mpdf = new Mpdf();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_edarp_not_sent', $data)->render();
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
+
+        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+
+        Mail::to($mail_array)->send(new EdarpMachakosDelayed($file_path));
+
+	}
 
 }
