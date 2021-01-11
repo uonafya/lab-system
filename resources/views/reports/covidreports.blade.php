@@ -232,7 +232,6 @@
                     $('#yearSelection').show();
                 }
             });
-
             $("#generate_report").click(function(e){
                 // var selValue = $('input[name=category]:checked').val();
                 // if (selValue == 'county') {
