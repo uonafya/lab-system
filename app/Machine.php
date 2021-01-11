@@ -55,6 +55,7 @@ class Machine extends Model
     public function missingConsumptions($year, $month)
     {
         $data = [];
+        
         foreach ($this->get() as $key => $machine) {
             if ($machine->consumptions->where('year', $year, 'month', $month)->isEmpty())
                 $data[] = $machine;

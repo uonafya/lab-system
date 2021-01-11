@@ -867,6 +867,8 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
 		Route::get('reports', 'CovidConsumptionController@reports');
 		Route::post('allocation', 'CovidConsumptionController@submitAllocation');
+		Route::get('/allocation/refresh', 'CovidConsumptionController@refresh_allocations');
+		Route::any('deliveries', 'CovidConsumptionController@deliveries');
 	});
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){

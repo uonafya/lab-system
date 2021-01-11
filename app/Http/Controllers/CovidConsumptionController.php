@@ -271,6 +271,33 @@ class CovidConsumptionController extends Controller
                 ]);
     }
 
+    public function deliveries(Request $request)
+    {
+        $allocations = CovidAllocation::where('lab_id', env('APP_LAB'))->orderBy('allocation_date', 'desc')->limit('4')->get();
+        $newallocation = [];
+        foreach ($allocations as $key => $allocation) {
+            $newallocation[$allocation->allocation_date] = [
+                'allocation_date' => $allocation->allocation_date,
+                'received' => $allocation->received,
+                'date_received' => $allocation->date_received,
+            ];
+            $newallocation[$allocation->allocation_date]['types'][] = $allocation->allocation_type;
+            $newallocation[$allocation->allocation_date]['data'][] = $allocation;
+        }
+        
+        $allocations = (object)$newallocation;
+        
+        return view('tasks.covid.deliveries', ['allocations' => $allocations]);
+    }
+
+    public function refresh_allocations()
+    {
+        $model = new HCMPCovidAllocations;
+        $response = $model->pullAllocations();
+        session(['toast_message' => $response->message, 'toast_error' => $response->status]);
+        return back();
+    }
+
     private function buildConsumptionData($request)
     {
     	$datacolumns = $request->only(["kits_used","begining_balance","received","positive",
