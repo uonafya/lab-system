@@ -52,7 +52,7 @@
                                         </div>
                                         
                                     </div>
-                                    {{--<div id="collapse{{ $allocation_key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ $allocation_key }}">
+                                    <div id="collapse{{ $allocation_key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ $allocation_key }}">
                                     <form action="/covidkits/allocation" method="POST" class="form-horizontal" id="covid_allocation{{ $allocation_key }}" >
                                     @csrf
                                     @foreach($allocation->data as $allocation_data)
@@ -89,7 +89,11 @@
                                                             <td>{{ $kit->kit->product_description }}</td>
                                                             <td>{{ $kit->allocated_kits }}</td>
                                                             <td>
-                                                                <input class="form-control received" type="number" name="received[{{$kit->id}}]" id="received[{{$kit->id}}]" value="{{ $kit->allocated_kits ?? o }}" min="0" required>
+                                                                @if($allocation->received == "YES")
+                                                                    {{ $kit->received_kits }}
+                                                                @else
+                                                                    <input class="form-control received" type="number" name="received[{{$kit->id}}]" id="received[{{$kit->id}}]" value="{{ $kit->allocated_kits ?? 0 }}" min="0" required>
+                                                                @endif
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -98,32 +102,34 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
-                                        <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                                            <div class="col-sm-12">
-                                                <center>
-                                                    <div class="form-group">
-                                                        <label class="col-md-6"> Date Received</label>
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                                <input type="date"  class="form-control" name="datereceived[{{ $allocation_key }}]" id="datereceived-{{ $allocation_key }}">
+                                    @if($allocation->received != "YES")
+                                        <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
+                                            <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
+                                                <div class="col-sm-12">
+                                                    <center>
+                                                        <div class="form-group">
+                                                            <label class="col-md-6"> Date Received</label>
+                                                            <div class="col-md-6">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                                    <input type="date"  class="form-control" name="datereceived[{{ $allocation_key }}]" id="datereceived-{{ $allocation_key }}">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="col-md-6"> Have you received this allocation </label>
-                                                        <div class="col-md-6">
-                                                            <button class="btn btn-success" type="submit" name="response" value="YES" onclick="">YES</button>
-                                                            <button class="btn btn-primary" type="submit" name="response" value="NO">NO</button>
+                                                        <div class="form-group">
+                                                            <label class="col-md-6"> Have you received this allocation </label>
+                                                            <div class="col-md-6">
+                                                                <button class="btn btn-success" type="submit" name="response" value="YES" onclick="">YES</button>
+                                                                <button class="btn btn-primary" type="submit" name="response" value="NO">NO</button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </center>
+                                                    </center>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </div>                        
+                                    @endif                                    
                                     </form>
-                                    </div>--}}
+                                    </div>
                                 </div>
                             @endforeach
                             </div>

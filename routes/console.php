@@ -298,6 +298,12 @@ Artisan::command('synch:allocationsupdates', function(){
     $this->insteadOf($str);
 })->describe('Synch Allocation updates');
 
+Artisan::command('synch:covidallocations', function(){
+	$model = new \App\HCMPCovidAllocations;
+	$str = $model->pullAllocations();
+	$this->info($str);
+})->describe('Synch COVID Allocations from KEMSA');
+
 Artisan::command('synch:consumptions', function(){
     $str = \App\Synch::synch_consumptions();
     $this->info($str);

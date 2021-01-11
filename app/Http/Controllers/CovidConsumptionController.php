@@ -325,28 +325,16 @@ class CovidConsumptionController extends Controller
 
     private function checkCovidAllocations($end_of_week)
     {
-        // $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
-        
         // Check there is an allocation made that has been received in the previous week
         $allowable_min_date = date('Y-m-d', strtotime("-1 Month", strtotime($end_of_week)));
         $allowable_date_range = [$allowable_min_date, date('Y-m-d', strtotime($end_of_week))];
-        // dd($allowable_date_range);
+        
         $allocations = CovidAllocation::/*with('kit.machine')->*/
                             where('received', 'NO')
                             ->whereBetween('allocation_date', $allowable_date_range)
                             ->whereIn('responded', ['NO', 'POSTPONED'])
                             // ->where('date_responded', '<', $end_of_week)
                             ->get();
-
-        // echo "<pre>";print_r($allocations->toArray());
-        // die();
-        // if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
-        //     $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
-        //                     ->whereDate('allocation_date', $allocation_date)
-        //                     ->where('responded', 'POSTPONED')
-        //                     ->where('date_responded', '<', $end_of_week)
-        //                     ->get();
-        // }
         
         $newallocation = [];
         foreach ($allocations as $key => $allocation) {
