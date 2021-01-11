@@ -55,6 +55,15 @@ class CovidSampleView extends BaseModel
         else{ return ""; }
     }
 
+
+    public function getNphlJustificationAttribute()
+    {
+        if(in_array($this->justification, [3, 7])) return 1;
+        if(in_array($this->justification, [16])) return 2;
+        if(in_array($this->justification, [10])) return 3;
+        return 4;
+    }
+
     /**
      * Get the patient's gender
      *

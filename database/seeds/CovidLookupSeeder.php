@@ -41,6 +41,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 13, 'name' => 'Travel to Country/County with presumed widespread COVID-19'],
 			['id' => 14, 'name' => 'Meets case definition'],
 			['id' => 15, 'name' => 'Acute severe respiratory illness'],
+			['id' => 16, 'name' => 'Air Travel'],
 		]);
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
@@ -71,10 +72,10 @@ class CovidLookupSeeder extends Seeder
 			['id' => 16, 'name' => 'Chinese'],
 		]);
 
-		// return;
+		return;
 
     	
-		DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
+		/*DB::statement("DROP TABLE IF EXISTS `quarantine_sites`;");
 		DB::statement("CREATE TABLE `quarantine_sites` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				`name` varchar(100) DEFAULT NULL,
@@ -213,7 +214,7 @@ class CovidLookupSeeder extends Seeder
 			['id' => 149, 'synched' => 1, 'name' => 'Enoomatasiani', 'email' => null],
 			['id' => 150, 'synched' => 1, 'name' => 'Ole Kasasi', 'email' => null],
 			// ['id' => , 'synched' => 1, 'name' => '', 'email' => null],
-		]);
+		]);*/
 
 		// osbp/bus - busia - id 99
 		// bus/tn - malaba - 100

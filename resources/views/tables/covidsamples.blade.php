@@ -24,6 +24,14 @@
             <a href="{{ $myurl2 }}/4">
                 Samples Pending Testing
             </a>
+            @if(env('APP_LAB') == 23)
+            |<a href="{{ $myurl2 }}/11">
+                Pending 3rd Approval
+            </a>
+            |<a href="{{ $myurl2 }}/12">
+                Gone Through 3rd Approval
+            </a>
+            @endif
         </div>
     </div>
 
@@ -311,6 +319,11 @@
                             </select>
                         @endif
 
+                        @if(isset($type) && $type == 11)
+                        <form  method="post" action="{{ url('covid_sample/approve_for_email/') }}" onsubmit="return confirm('Are you sure you want to approve the selected samples for emailing out the results?');">
+                            @csrf
+                        @endif
+
                         <table class="table table-striped table-bordered table-hover @empty($quarantine_sites) data-table @endempty " >
                             <thead>
                                 <tr class="colhead">
@@ -339,7 +352,7 @@
                                         <th rowspan="2">Print Multiple</th>
                                     @elseif(isset($type) && $type == 0)
                                         <th rowspan="2">Receive Multiple</th>
-                                    @elseif(isset($type) && $type == 3)
+                                    @elseif(isset($type) && in_array($type, [3,11]))
                                         <th rowspan="2">Select Sample</th>
                                     @else
                                         <th rowspan="2">Delete</th>
@@ -411,7 +424,7 @@
                                                 @endif
                                             @endif                                         
                                         </td>
-                                        @if(isset($type) && in_array($type, [0, 2, 3]))
+                                        @if(isset($type) && in_array($type, [0, 2, 3, 11]))
                                             <td> 
                                                 <div align="center">
                                                     <input name="sample_ids[]" type="checkbox" class="checks" value="{{ $sample->id }}"  />
@@ -440,7 +453,12 @@
                         </form>
                         @endif
 
-                        @if(isset($current_sample) && in_array(env('APP_LAB'), [4]))
+                        @if(isset($type) && $type == 11)
+                        <button type="submit" class="btn btn-primary">Approve For Going out as an Email</button>
+                        </form>
+                        @endif
+
+                        @if(isset($current_sample) && in_array(env('APP_LAB'), [1, 4]))
                             @if($current_sample->worksheet_id)
                                 <a href="{{ url('covid_sample/worksheet/' . $current_sample->id) }}"> 
                                     <button class="btn btn-warning">
@@ -461,7 +479,6 @@
                                 <br />
 
                             @endforeach
-
                         @endif
 
                     </div>

@@ -8,6 +8,7 @@ use App\Lookup;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use Mpdf\Mpdf;
 
 class Random
 {
@@ -3795,6 +3796,90 @@ class Random
         }
         $file = 'busia-study';
         Common::csv_download($rows, $file, false, true);
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
+    public static function bungoma_samples()
+    {
+        $file = public_path('bungoma_dec.csv');
+        $handle = fopen($file, "r");
+        $identifiers = $national_ids = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[3] == 'NAME') continue;
+
+            if($data[2]) $identifiers[] = $data[2];
+            if($data[5]) $national_ids[] = $data[5];
+        }
+
+        $samples_list = CovidSampleView::where(function($query) use($identifiers, $national_ids) {
+            return $query->whereIn('national_id', $national_ids)->orWhereIn('identifier', $identifiers);
+        })->where(['repeatt' => 0])->where('datetested', '>', '2020-12-01')->get();
+
+        $samples = CovidSample::whereIn('id', $samples_list->pluck('id')->toArray())->get();
+        $path = storage_path('app/batches/covid/bungoma_samples.pdf');
+
+        $mpdf = new Mpdf();
+        $data = Lookup::covid_form();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "500000000");
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([$path]));
+
+    }
+
+
+    public static function knh_switch_list()
+    {
+        ini_set('memory_limit', '-1');
+        $file = public_path('knh_switch_list.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Index'){
+                $rows[] = $data;
+                continue;
+            }
+
+            $patient = Viralpatient::where(['patient' => $data[3]])->first();
+
+            if(!$patient){
+                $patient = Viralpatient::where(['patient' => $data[1]])->first();
+                if(!$patient && $data[2]) $patient = Viralpatient::where(['patient' => $data[2]])->first();
+                if(!$patient){
+                    $data[4] = 'Patient Not Found';
+                    continue;
+                }
+                $patient->patient = $data[3];
+                $patient->pre_update();
+            }
+
+            $data[4] = $patient->id;
+
+            $other_patients_array = [$data[1]];
+            if($data[2]) $other_patients_array[] = [$data[2]];
+
+            $other_patients = Viralpatient::whereIn('patient', $other_patients_array)->get();
+
+            $data[5] = json_encode($other_patients->pluck('id')->toArray());
+            $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray());
+
+            foreach ($other_samples as $key => $other_sample) {
+                $other_sample->patient_id = $patient->id;
+                $other_sample->pre_update();
+            }
+
+            $rows[] = $data;
+
+            if(($data[0] % 20) == 0) echo "At row {$data[0]} at ".date('Y-m-d H:i:s')." \n";
+        }
+        $file = 'knh-switch';
+        Common::csv_download($rows, $file, false, true);
+        // Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
         Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
     }
 

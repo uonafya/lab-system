@@ -544,6 +544,9 @@ class CovidWorksheetController extends Controller
             Excel::import($c, $path);
         }
 
+        $doubles = session()->pull('doubles');
+        if($doubles) return MiscCovid::csv_download($doubles, 'duplicated-rows');
+
 
         return redirect($worksheet->route_name . '/approve/' . $worksheet->id);
     }
