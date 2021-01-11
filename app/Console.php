@@ -353,7 +353,7 @@ class Console
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
 
-        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+        // $mail_array = ['joel.kithinji@dataposit.co.ke', 'joelkith@gmail.com'];
 
         Mail::to($mail_array)->send(new EdarpMachakosFailed($file_path));
 	}
@@ -388,10 +388,9 @@ class Console
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
 
-        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+        // $mail_array = ['joel.kithinji@dataposit.co.ke', 'joelkith@gmail.com'];
 
         Mail::to($mail_array)->send(new EdarpMachakosDelayed($file_path));
-
 	}
 
 }
