@@ -207,8 +207,16 @@ class WorksheetController extends Controller
 
     public function labels(Worksheet $worksheet)
     {
-        $samples = SampleView::where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get();
-        return view('worksheets.labels', ['samples' => $samples]);
+        $samples = SampleView::where('worksheet_id', $worksheet->id)
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    })
+                    ->orderBy('samples_view.id', 'asc')
+                    ->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples, 'i' => 2]);
     }
 
     public function find(Worksheet $worksheet)
@@ -424,174 +432,7 @@ class WorksheetController extends Controller
 
         $c = new WorksheetImport($worksheet, $request);
         Excel::import($c, $path);
-
-        /*$cancelled = false;
-        if($worksheet->status_id == 4) $cancelled =  true;
-
-        $worksheet->fill($request->except(['_token', 'upload']));
-
-        $today = $datetested = date("Y-m-d");
-        $positive_control = $negative_control = null;
-
-        $sample_array = $doubles = [];*/
-        /*
-        if($worksheet->machine_type == 2)
-        {
-            $date_tested = $request->input('daterun');
-            $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
-
-            // config(['excel.import.heading' => false]);
-            $data = Excel::load($file, function($reader){
-                $reader->toArray();
-            })->get();
-
-            $check = array();
-
-            $bool = false;
-            $positive_control = $negative_control = "Passed";
-
-            foreach ($data as $key => $value) {
-                if($value[5] == "RESULT"){
-                    $bool = true;
-                    continue;
-                }
-
-                if($bool){
-                    $sample_id = $value[1];
-                    $interpretation = $value[5];
-                    $error = $value[10];
-
-
-                    Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
-
-                    $data_array = Misc::sample_result($interpretation, $error);
-
-                    if($sample_id == "HIV_NEG") $negative_control = $data_array;
-                    if($sample_id == "HIV_HIPOS") $positive_control = $data_array;
-
-                    $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $today]);
-                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    // Sample::where($search)->update($data_array);
-
-                    $sample_id = (int) $sample_id;
-                    $sample = Sample::find($sample_id);
-                    if(!$sample) continue;
-
-                    $sample->fill($data_array);
-                    if($cancelled) $sample->worksheet_id = $worksheet->id;
-                    else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
-
-                    $sample->save();
-                }
-
-                if($bool && $value[5] == "RESULT") break;
-            }
-        }
-        else if($worksheet->machine_type == 1)
-        {
-            $handle = fopen($file, "r");
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
-            {
-                $interpretation = rtrim($data[8]);
-                $control = rtrim($data[5]);
-
-                $error = $data[10];
-
-                $date_tested=date("Y-m-d", strtotime($data[3]));
-
-                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
-
-                $data_array = Misc::sample_result($interpretation, $error);
-
-                if($control == "NC") $negative_control = $data_array;
-
-                if($control == "LPC" || $control == "PC") $positive_control = $data_array;
-
-                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
-
-                $sample_id = (int) trim($data[4]);  
-
-                Misc::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
-
-                // $sample_id = substr($sample_id, 0, -1);
-                $sample = Sample::find($sample_id);
-                if(!$sample) continue;
-
-                $sample->fill($data_array);
-                if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
-                    
-                $sample->save();
-            }
-            fclose($handle);
-        }
-        else if($worksheet->machine_type == 3)
-        {
-            $handle = fopen($file, "r");
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
-            {
-                if(!isset($data[5])) break;
-
-                $sample_id = (int) trim($data[1]); 
-                $interpretation = rtrim($data[5]); 
-                $control = rtrim($data[4]);
-                $date_tested=date("Y-m-d", strtotime($data[12]));
-                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
-
-                $data_array = Misc::sample_result($interpretation);
-
-                if(\Str::contains($control, '+')){
-                    $positive_control = $data_array;
-                    continue;
-                }
-                else if(\Str::contains($control, '-')){
-                    $negative_control = $data_array;
-                    continue;
-                }
-
-                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
-                $sample = Sample::find($sample_id);
-                if(!$sample) continue;
-
-                $sample->fill($data_array);
-                if($cancelled) $sample->worksheet_id = $worksheet->id;
-                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
-                    
-                $sample->save();
-            }
-            fclose($handle);
-        }
-        */
-
-        /*if($doubles){
-            session(['toast_error' => 1, 'toast_message' => "Worksheet {$worksheet->id} upload contains duplicate rows. Please fix and then upload again."]);
-            $file = "Samples_Appearing_More_Than_Once_In_Worksheet_" . $worksheet->id;
         
-            Excel::create($file, function($excel) use($doubles){
-                $excel->sheet('Sheetname', function($sheet) use($doubles) {
-                    $sheet->fromArray($doubles);
-                });
-            })->download('csv');
-        }*/
-
-        // $sample_array = SampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        /*
-        Sample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
-        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('repeatt')->update(['repeatt' => 0]);
-        Sample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
-
-        $worksheet->neg_control_interpretation = $negative_control['interpretation'];
-        $worksheet->neg_control_result = $negative_control['result'];
-
-        $worksheet->pos_control_interpretation = $positive_control['interpretation'];
-        $worksheet->pos_control_result = $positive_control['result'];
-        $worksheet->daterun = $datetested;
-        $worksheet->uploadedby = auth()->user()->id;
-        $worksheet->save();
-
-        Misc::requeue($worksheet->id, $worksheet->daterun);
-        session(['toast_message' => "The worksheet has been updated with the results."]);
-        */
         return redirect('worksheet/approve/' . $worksheet->id);
     }
 
@@ -822,7 +663,9 @@ class WorksheetController extends Controller
         else if($status == 4 || $status == 5)
         {
             $d = "<a href='" . url('worksheet/' . $worksheet_id) . "' title='Click to View Cancelled Worksheet Details' target='_blank'>Details</a> ";
-
+        }
+        else{
+            $d = '';
         }
         return $d;
     }

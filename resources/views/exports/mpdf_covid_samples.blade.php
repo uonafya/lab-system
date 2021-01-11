@@ -331,7 +331,7 @@ p.breakhere {page-break-before: always}
 							<img src="{{ $sample->worksheet->runner->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
-				</tr>				
+				</tr>			
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>
@@ -342,7 +342,30 @@ p.breakhere {page-break-before: always}
 							<img src="{{ $sample->final_approver->user_signature ?? $sample->approver->user_signature ?? null }}" height="30" width="60" alt="SIGNATURE">
 						</center>					
 					</td>
-				</tr>				
+				</tr>
+
+				@elseif(env('APP_LAB') == 600)			
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Tested By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->worksheet->uploader->full_name ?? '' }} </strong> 
+						</center>					
+					</td>
+				</tr>
+				<tr>
+					<td colspan="7" class="style4 style1 comment">
+						<center>
+							<strong>Reviewed By: </strong>
+							&nbsp;&nbsp;
+							<strong> {{ $sample->final_approver->full_name ??  $sample->approver->full_name ?? '' }}</strong> 
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<strong>Signature: </strong>
+							&nbsp;&nbsp;
+						</center>					
+					</td>
+				</tr>	
 				@else
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
@@ -379,7 +402,7 @@ p.breakhere {page-break-before: always}
 
 			@endif
 
-			@if(env('APP_LAB') == 6)
+			@if(env('APP_LAB') == 600)
 
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
@@ -394,8 +417,8 @@ p.breakhere {page-break-before: always}
 			@if($sample->national_sample_id && $sample->result == 1)
 				<tr>
 					<td colspan="5" class="style4 style1 comment">
-		                <b> Attestation Certificate Number: </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
-		                {!! QrCode::size(100)->generate($sample->national_sample_id) !!}
+		                <b> Attestation Certificate Number (Scan with any QR Code Scanner to Verify): </b> &nbsp;&nbsp;&nbsp; {{ $sample->national_sample_id }} <br />
+		                {!! QrCode::size(100)->generate('National ID / Passport - ' . $sample->patient->national_id . ', Name - ' . $sample->patient->patient_name . ', Result - ' . $sample->result_name . ', Attestation Number - ' . $sample->national_sample_id) !!}
 					</td>
 					<td colspan="2" class="style4 style1 comment">
 					</td>

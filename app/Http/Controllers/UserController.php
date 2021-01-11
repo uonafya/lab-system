@@ -106,6 +106,8 @@ class UserController extends Controller
             }
 
             $user->fill($request->only(['user_type_id', 'lab_id', 'surname', 'oname', 'email', 'password', 'facility_id', 'telephone', 'covid_allowed']));
+            $user->password = $request->input('password');
+
             if(!$user->lab_id) $user->lab_id = auth()->user()->lab_id;
             $user->save();
             session(['toast_message'=>'User created succesfully']);

@@ -52,10 +52,9 @@
 
 			@else
 				<div class="row" align="center">
-					@if(in_array(env('APP_LAB'), [5]))								
+					@if(in_array(env('APP_LAB'), [2,5,9]))								
 						<span style="font-size: 12px;">
-							Date Ordered: {{ $sample->datecollected }} <br />
-							Patient ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
+							P ID: {{ $sample->patient->identifier ?? $sample->patient }} <br />
 						</span>
 					@endif
 					<img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($sample->barcode, 'C128') }}" alt="barcode" 
@@ -66,7 +65,7 @@
 					@endif
 				   />
 					<br />
-					<span style="font-size: 12px;"> Lab ID: {{ $sample->id }} </span>
+					<span style="font-size: 12px;">L. ID: {{ $sample->id }} @if(in_array(env('APP_LAB'), [2,9])) ({{ ++$i }})  @endif </span>
 				</div>
 
 				@if(!$loop->last)

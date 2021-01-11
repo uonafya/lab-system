@@ -41,6 +41,10 @@ class CovidSampleObserver
             $covidSample->approvedby = $covidSample->approvedby2 = null;
         }
 
+        if($covidSample->receivedstatus == 2){
+            $covidSample->worksheet_id = null;
+        }
+
         /*if($covidSample->county && !$covidSample->county_id){
             $covidSample->county_id = DB::table('countys')->where('name', $covidSample->county)->first()->id ?? null;
         }*/

@@ -57,12 +57,15 @@ class DrWorksheetController extends Controller
         $samples = DrSampleView::whereNull('worksheet_id')
                         ->where(['receivedstatus' => 1, 'control' => 0, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
-                        ->when($extraction_worksheet, function($query) use ($extraction_worksheet_id){
+                        ->when($extraction_worksheet_id, function($query) use ($extraction_worksheet_id){
                             return $query->where('extraction_worksheet_id', $extraction_worksheet_id);
                         })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
-                        ->limit(16)
+                        ->when(true, function($query){
+                            if(env('APP_LAB') == 1) return $query; 
+                            return $query->limit(16);
+                        })
                         ->get();
 
         $data = Lookup::get_dr();
@@ -85,11 +88,18 @@ class DrWorksheetController extends Controller
         $limit = 16;
         $c = $request->input('control_samples');
         $extraction_worksheet_id = $request->input('extraction_worksheet_id');
+        $selected_samples = $request->input('samples');
         if($c) $limit = 14;
 
         $samples = DrSampleView::whereNull('worksheet_id')
-                        ->where(['receivedstatus' => 1, 'control' => 0, 'extraction_worksheet_id' => $extraction_worksheet_id, 'passed_gel_documentation' => 1])
+                        ->where(['receivedstatus' => 1, 'control' => 0, 'passed_gel_documentation' => 1])
                         // ->orderBy('control', 'desc')
+                        ->when($selected_samples, function($query) use($selected_samples){
+                            return $query->whereIn('id', $selected_samples); 
+                        })
+                        ->when($extraction_worksheet_id, function($query) use ($extraction_worksheet_id){
+                            return $query->where('extraction_worksheet_id', $extraction_worksheet_id);
+                        })
                         ->orderBy('run', 'desc')
                         ->orderBy('id', 'asc')
                         ->limit($limit)
@@ -117,7 +127,8 @@ class DrWorksheetController extends Controller
         }
 
         $ext = DrExtractionWorksheet::find($extraction_worksheet_id);
-        if(!$ext->sequencing){
+        if(!$ext) $ext = $samples->first()->extraction_worksheet;
+        if($ext && !$ext->sequencing){
             $ext->status_id = 3;
             $ext->save();
         }
@@ -201,6 +212,7 @@ class DrWorksheetController extends Controller
         foreach ($samples as $key => $sample) {
             $data[] = [
                 'NAT ID' => $sample->patient->nat,
+                'Sample Number' => $sample->mid,
                 'Patient CCC' => $sample->patient->patient,
                 'Project Name' => Lookup::retrieve_val('dr_projects', $sample->project),
                 'Full Name' => $sample->patient->patient_name,
@@ -225,6 +237,37 @@ class DrWorksheetController extends Controller
         return MiscDr::csv_download($data, $filename);
     }
 
+    public function abfiles(DrWorksheet $worksheet)
+    {
+        $samples = DrSample::with(['patient'])->where(['worksheet_id' => $worksheet->id])->get();
+        $primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
+        $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        $data = [];
+        $row_key = 0;
+        $column = 1;
+        $created_at = $worksheet->my_date_format('created_at', "Y-m-d");
+
+        foreach ($samples as $sample_key => $sample) {
+            if(!isset($rows[$row_key])){
+                $row_key = 0;
+                $column++;
+            }
+
+            foreach ($primers as $key => $primer) {
+                $data[] = [
+                    'Lab ID' => $sample->id,
+                    'Sample Number' => $sample->mid,
+                    'Patient CCC' => $sample->patient->patient,
+                    'Primer Label' => $sample->mid . '-Seq' . $primer . '_' . $rows[$row_key] . $column . '_' . $created_at,
+                ];
+            }
+            $row_key++;
+        }
+        $filename = 'ab1_file_names_' . $worksheet->id;
+
+        return MiscDr::csv_download($data, $filename);
+    }
+
 
     public function upload(DrWorksheet $worksheet)
     {
@@ -244,7 +287,6 @@ class DrWorksheetController extends Controller
         $path = storage_path('app/public/results/dr/' . $worksheet->id . '/');
         if(is_dir($path)) MiscDr::delete_folder($path);
         mkdir($path, 0777, true);
-
 
         $p = $request->upload->store('public/results/dr/' . $worksheet->id );
 
@@ -323,8 +365,6 @@ class DrWorksheetController extends Controller
         return view('tables.confirm_dr_results', $data);
     }
 
-
-
     public function approve(Request $request, DrWorksheet $worksheet)
     {
         $double_approval = Lookup::$double_approval;
@@ -371,10 +411,10 @@ class DrWorksheetController extends Controller
         if($approved && is_array($approved)) DrSample::whereIn('id', $approved)->where(['worksheet_id' => $worksheet_id])->update($data);
         if($cns && is_array($cns)) DrSample::whereIn('id', $cns)->where(['worksheet_id' => $worksheet_id])->update($cns_data);
 
-        $samples = DrSample::whereIn('id', $rerun)->get();
         unset($data['datedispatched']);
 
-        if($samples){
+        if($rerun && is_array($rerun)){
+            $samples = DrSample::whereIn('id', $rerun)->get();
             foreach ($samples as $key => $sample){
                 $sample->create_rerun($data);
             }
@@ -392,7 +432,7 @@ class DrWorksheetController extends Controller
             $worksheet->save();
 
             $w = $worksheet->extraction_worksheet;
-            if(!$w->sequencing && !$w->pending_worksheet){
+            if($w && !$w->sequencing && !$w->pending_worksheet){
                 $w->status_id = 3;
                 $w->save();
             }
@@ -404,15 +444,15 @@ class DrWorksheetController extends Controller
     public function create_plate(DrWorksheet $worksheet)
     {
         MiscDr::create_plate($worksheet);
-        // session(['toast_message' => 'The samples have been uploaded to exatype and will be ready later.']);
+        session(['toast_message' => 'The samples have been uploaded to exatype and will be ready later.']);
         return back();
     }
 
     public function get_plate_result(DrWorksheet $worksheet)
     {
         $result = MiscDr::get_plate_result($worksheet);
-        dd($result);
-        // session(['toast_message' => 'The results have been retrieved.']);
+        // dd($result);
+        session(['toast_message' => 'The results have been retrieved.']);
         return back();
     }
 

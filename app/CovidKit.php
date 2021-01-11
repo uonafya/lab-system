@@ -19,6 +19,11 @@ class CovidKit extends BaseModel
         return $this->hasMany(CovidConsumptionDetail::class, 'kit_id', 'id');
     }
 
+    public function allocation()
+    {
+        return $this->hasMany(CovidAllocationDetail::class, 'material_number', 'material_no');
+    }
+
     public function computekitsUsed($tests)
     {
     	if ($tests == 0 || $this->calculated_pack_size == NULL)

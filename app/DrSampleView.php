@@ -9,6 +9,23 @@ class DrSampleView extends ViewModel
 	protected $table = 'dr_samples_view';
 	
 
+    // Parent sample
+    public function parent()
+    {
+        return $this->belongsTo('App\DrSampleView', 'parentid');
+    }
+
+    // Child samples
+    public function child()
+    {
+        return $this->hasMany('App\DrSampleView', 'parentid');
+    }
+
+    public function getVlSampleAttribute()
+    {
+        $sample = Viralsample::where($this->only(['patient_id', 'datecollected']))->first();
+        return $sample;
+    }
 
     /**
      * Get the patient's gender
@@ -34,11 +51,34 @@ class DrSampleView extends ViewModel
         return $full_link;
     }
 
+    
+
+    /**
+     * Get if rerun has been created
+     *
+     * @return string
+     */
+    public function getHasRerunAttribute()
+    {
+        if($this->parentid == 0){
+            $child_count = $this->child->count();
+            if($child_count) return true;
+        }
+        else{
+            $run = $this->run + 1;
+            $child = \App\DrSample::where(['parentid' => $this->parentid, 'run' => $run])->first();
+            if($child) return true;
+        }
+        return false;
+    }
+
 
     // mid being my id
     // Used when sending samples to sanger
     public function getMidAttribute()
     {
+        if(env('APP_LAB') == 100) return $this->patient;
+        if(env('APP_LAB') == 1 && $this->run > 1) return env('DR_PREFIX') . $this->parentid;
         return env('DR_PREFIX') . $this->id;
     }
 

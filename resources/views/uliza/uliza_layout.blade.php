@@ -116,6 +116,20 @@
 	        @endif
 
         });
+        
+	    function set_message(message)
+	    {
+	        setTimeout(function(){
+	            toastr.options = {
+	                closeButton: true,
+	                progressBar: true,
+	                showMethod: 'slideDown',
+	                timeOut: 15000,
+	                preventDuplicates: true
+	            };
+	            toastr.warning(message); 
+	        });
+	    }
     </script>
 
     @include('layouts.searches')

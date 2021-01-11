@@ -8,6 +8,7 @@ use App\Lookup;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use Mpdf\Mpdf;
 
 class Random
 {
@@ -452,6 +453,8 @@ class Random
 
         Mail::to(['joelkith@gmail.com'])->send(new TestMail($files));
     }
+
+
 
     public static function to_ampath()
     {
@@ -2060,12 +2063,15 @@ class Random
         \App\Viralbatch::whereIn('id', $batches)->update(['batch_complete' => 1, 'datedispatched' => '2019-01-22']);
 	}
 
-	public static function __getLablogsData($year, $month = null) {
+	public static function __getLablogsData($year, $month = null, $check_email_sent = true) {
 		
 		$performance = LabPerformanceTracker::where('year', $year)
 							->when($month, function($query) use($month){
 								return $query->where('month', $month);
-							})->whereNull('dateemailsent')->get();
+							})->when($check_email_sent, function($query) {
+                                return $query->whereNull('dateemailsent');  
+                            })->get();
+        
         $eidcount = Sample::selectRaw("count(*) as tests")->whereYear('datetested', $year)
 							->when($month, function($query) use ($month){
 								return $query->whereMonth('datetested', $month);
@@ -2095,7 +2101,9 @@ class Random
 		$equipment = LabEquipmentTracker::where('year', $year)
 							->when($month, function($query) use ($month){
 								return $query->where('month', $month);
-							})->whereNull('dateemailsent')->get();
+							})->when($check_email_sent, function($query) {
+                                return $query->whereNull('dateemailsent');  
+                            })->get();
         if ($performance->isEmpty() && $equipment->isEmpty())
             return false;
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
@@ -3663,13 +3671,53 @@ class Random
             $s = Viralsample::find($data[0]);
             if(!$s) continue;
 
-            if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
-            else if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
+            // if(\Str::startsWith($data[3], 'N')) $s->pmtct = 3;
+            if(\Str::startsWith($data[3], 'P')) $s->pmtct = 1;
             else if(\Str::startsWith($data[3], 'B')) $s->pmtct = 2;
+            else{
+                $s->pmtct = 2;
+            }
             $s->pre_update();
         }
     }
 
+
+    public static function wrp_covid_correction()
+    {
+        $file = public_path('original_wrp_samples.csv');
+        $handle = fopen($file, "r");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Lab ID') continue;
+            $s = CovidSampleView::find($data[0]);
+            if(!$s) continue;
+
+            if($s->patient_name != $data[3]){
+                $patient = CovidPatient::find($s->patient_id);
+                $count = $patient->sample()->where(['repeatt' => 0])->count();
+                if($count > 1){
+                    $patient = $patient->replicate(['national_patient_id', 'synched', 'datesynced']);                    
+                }
+                $patient->fill([
+                    'patient_name' => $data[3],
+                    'identifier' => $data[1],
+                    'phone_no' => $data[4],
+                    'county' => $data[5],
+                    'subcounty' => $data[6],
+                    'sex' => $data[8],
+                ]);
+                $patient->pre_update();
+
+                $sample = CovidSample::find($s->id);
+                $sample->fill([
+                    'patient_id' => $patient->id,
+                    'age' => $data[7],
+                ]);
+            }
+        }
+    }
+
+    
     public static function knh_samples()
     {
         // ALTER TABLE `covid_samples` ADD `justification` tinyint(4) NULL AFTER `test_type`;
@@ -3692,6 +3740,147 @@ class Random
                 'datecollected' => $data[11],
             ]);
         }
+    }
+
+    
+
+    public static function busia_study()
+    {
+        $file = public_path('busia.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'study_id'){
+                $rows[] = $data;
+                continue;
+            }
+            $national_id = rtrim($data[4]);
+            $identifier = rtrim($data[1]);
+            $phone_no = rtrim($data[5]);
+            /*$p = CovidPatient::where('national_id', $national_id)->first();
+            if(!$p){
+                $data[8] = 'Patient Not Found';
+                $rows[] = $data;
+                continue;
+            }*/
+            $datecollected = date('Y-m-d', strtotime($data[7]));
+
+            $sample = CovidSampleView::where(['repeatt' => 0])
+                ->where('national_id', 'like', "%{$national_id}%")
+                ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                ->first();
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('identifier', 'like', "%{$identifier}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+            if(!$sample){
+                $sample = CovidSampleView::where(['repeatt' => 0])
+                    ->where('phone_no', 'like', "%{$phone_no}%")
+                    ->whereBetween('datecollected', [date('Y-m-d', strtotime($datecollected . ' -3days')), date('Y-m-d', strtotime($datecollected . ' +3days'))])
+                    ->first();
+            }
+
+
+            if(!$sample){
+                $data[8] = 'Sample Not Found';
+                $rows[] = $data;
+                continue;
+            }
+            $data[8] = $sample->result_name;
+            $rows[] = $data;
+        }
+        $file = 'busia-study';
+        Common::csv_download($rows, $file, false, true);
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
+    public static function bungoma_samples()
+    {
+        $file = public_path('bungoma_dec.csv');
+        $handle = fopen($file, "r");
+        $identifiers = $national_ids = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[3] == 'NAME') continue;
+
+            if($data[2]) $identifiers[] = $data[2];
+            if($data[5]) $national_ids[] = $data[5];
+        }
+
+        $samples_list = CovidSampleView::where(function($query) use($identifiers, $national_ids) {
+            return $query->whereIn('national_id', $national_ids)->orWhereIn('identifier', $identifiers);
+        })->where(['repeatt' => 0])->where('datetested', '>', '2020-12-01')->get();
+
+        $samples = CovidSample::whereIn('id', $samples_list->pluck('id')->toArray())->get();
+        $path = storage_path('app/batches/covid/bungoma_samples.pdf');
+
+        $mpdf = new Mpdf();
+        $data = Lookup::covid_form();
+        $data['samples'] = $samples;
+        $view_data = view('exports.mpdf_covid_samples', $data)->render();
+        ini_set("pcre.backtrack_limit", "500000000");
+        $mpdf->WriteHTML($view_data);
+        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([$path]));
+
+    }
+
+
+    public static function knh_switch_list()
+    {
+        ini_set('memory_limit', '-1');
+        $file = public_path('knh_switch_list.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Index'){
+                $rows[] = $data;
+                continue;
+            }
+
+            $patient = Viralpatient::where(['patient' => $data[3]])->first();
+
+            if(!$patient){
+                $patient = Viralpatient::where(['patient' => $data[1]])->first();
+                if(!$patient && $data[2]) $patient = Viralpatient::where(['patient' => $data[2]])->first();
+                if(!$patient){
+                    $data[4] = 'Patient Not Found';
+                    continue;
+                }
+                $patient->patient = $data[3];
+                $patient->pre_update();
+            }
+
+            $data[4] = $patient->id;
+
+            $other_patients_array = [$data[1]];
+            if($data[2]) $other_patients_array[] = [$data[2]];
+
+            $other_patients = Viralpatient::whereIn('patient', $other_patients_array)->get();
+
+            $data[5] = json_encode($other_patients->pluck('id')->toArray());
+            $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray());
+
+            foreach ($other_samples as $key => $other_sample) {
+                $other_sample->patient_id = $patient->id;
+                $other_sample->pre_update();
+            }
+
+            $rows[] = $data;
+
+            if(($data[0] % 20) == 0) echo "At row {$data[0]} at ".date('Y-m-d H:i:s')." \n";
+        }
+        $file = 'knh-switch';
+        Common::csv_download($rows, $file, false, true);
+        // Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+        Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
     }
 
     public static function old_id_column()

@@ -1,19 +1,34 @@
 <p>
+	@if($quarantine_site)
 
-	Hello {{ $quarantine_site->name ?? '' }},
+		Hello {{ $quarantine_site->name ?? '' }},
 
-	<br />
-	<br />
+		<br />
+		<br />
 
-	Please find attached individual results for covid-19. 
-	
-	<br />
-	<br />
+		Please find attached individual results for covid-19. 
+		
+		<br />
+		<br />
 
-	Any pending results are still being processed and will be sent to you once they are ready.
+		Any pending results are still being processed and will be sent to you once they are ready.
 
-	<br />
-	<br />
+		<br />
+		<br />
+
+	@else	
+
+		Hello {{ $samples[0]->patient->patient_name ?? '' }},
+
+		<br />
+		<br />
+
+		Please find attached individual results for covid-19. 
+		
+		<br />
+		<br />
+
+	@endif
 
 	------------------------------------------------------------------------------------------
 

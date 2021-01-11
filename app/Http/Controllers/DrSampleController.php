@@ -223,6 +223,7 @@ class DrSampleController extends Controller
         }
         // $drSample->facility_id = $request->input('facility_id');
         $drSample->save();
+        $drSample->create_vl_sample();
 
         session(['toast_message' => 'The sample has been created.']);
         return back();
@@ -365,14 +366,16 @@ class DrSampleController extends Controller
 
     public function email(DrSample $drSample)
     {
-        $facility = $drSample->facility; 
+        /*$facility = $drSample->facility; 
         $mail_array = array('joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com');
         if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
         if(!$mail_array) return null;
 
         $new_mail = new DrugResistanceResult($drSample);
         Mail::to($mail_array)->bcc(['joel.kithinji@dataposit.co.ke', 'joshua.bakasa@dataposit.co.ke'])
-            ->send($new_mail);
+            ->send($new_mail);*/
+
+        MiscDr::send_email($drSample);
 
         session(['toast_message' => "The results have been sent to the facility."]);
         return back();

@@ -20,6 +20,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        $row_array = $row->toArray();
         $row = json_decode(json_encode($row->toArray()));
         $column = 'quarantine_site_id';
         if($row->facility_name > 1000) $column = 'facility_id';
@@ -47,6 +48,15 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
             $j = 3;
         }
 
+
+
+        if(!$row->identifier ){
+            $rows = session('skipped_rows', []);
+            $rows[] = $row_array;  
+            session(['skipped_rows' => $rows]);          
+            return;
+        }
+
         $p->fill([
             'identifier' => $row->identifier,
             'facility_id' => $fac->id ?? null,
@@ -71,7 +81,7 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
 
         $datecollected = ($row->date_collected ?? null) ? date('Y-m-d', strtotime($row->date_collected)) : date('Y-m-d');
         $datereceived = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_received)) : date('Y-m-d');
-        $datetested = ($row->date_received ?? null) ? date('Y-m-d', strtotime($row->date_tested)) : date('Y-m-d');
+        $datetested = ($row->date_tested ?? null) ? date('Y-m-d', strtotime($row->date_tested)) : date('Y-m-d');
 
         if($datecollected == '1970-01-01') $datecollected = date('Y-m-d');
         if($datereceived == '1970-01-01') $datereceived = date('Y-m-d');

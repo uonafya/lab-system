@@ -21,4 +21,11 @@ class UlizaTwg extends BaseModel
     {
         return $this->hasMany('App\User', 'twg_id');
     }
+
+    public function getEmailArrayAttribute()
+    {
+        $admin_emails = User::where(['user_type_id' => 102, 'receive_emails' => true])->get()->pluck('email')->toArray();
+        $secretariats = $this->user()->where(['user_type_id' => 103, 'receive_emails' => true])->get()->pluck('email')->toArray();
+        return array_merge($admin_emails, $secretariats, ['joelkith@gmail.com']);
+    }
 }

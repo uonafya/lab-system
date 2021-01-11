@@ -35,6 +35,7 @@ class Synch
 	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
+	public static $covid_inaccessible = [5,25];
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -248,6 +249,7 @@ class Synch
 	{
 		Cache::store('file')->forget('covid_api_token');
 		$client = new Client(['base_uri' => self::$cov_base]);
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 
 		$response = $client->request('post', 'auth/login', [
             'http_errors' => false,
@@ -530,7 +532,8 @@ class Synch
 	public static function synch_updates($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && !in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		if (in_array($type, ['eid', 'vl'])) {
@@ -586,7 +589,7 @@ class Synch
 				}
 
 				$token = self::get_token();
-				if($type == 'covid' && env('APP_LAB') != 25) $token = self::get_covid_token();
+				if($type == 'covid') $token = self::get_covid_token();
 
 				// dd($value['update_url']);
 				$response = $client->request('post', $value['update_url'], [
@@ -646,7 +649,7 @@ class Synch
 	public static function synch_deletes($type)
 	{
 		$client = new Client(['base_uri' => self::$base]);
-		if($type == 'covid' && env('APP_LAB') != 25) $client = new Client(['base_uri' => self::$cov_base]);
+		if($type == 'covid' && in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		$updates = self::$update_arrays[$type];
@@ -1098,7 +1101,7 @@ class Synch
 	public static function synch_covid()
 	{
 		$client = new Client(['base_uri' => self::$cov_base]);
-		if(env('APP_LAB') == 25) $client = new Client(['base_uri' => self::$base]);
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $client = new Client(['base_uri' => self::$p3_base]);
 		$today = date('Y-m-d');
 
 		$double_approval = Lookup::$double_approval; 
@@ -1117,16 +1120,19 @@ class Synch
 			if($sample->parentid) $sample = $sample->parent;
 			$sample->datedispatched = $sample->datedispatched ?? $today;
 			$sample->set_tat();
-			$sample->save();
+			$sample->pre_update();
 
 			foreach ($sample->child as $key => $child) {
 				$child->datedispatched = $child->datedispatched ?? $today;
 				$child->set_tat();
-				$child->save();
+				$child->pre_update();
 			}
 		}
 
 		$samples = CovidSample::whereRaw($where_query)->whereRaw("(synched=0)")->limit(60)->get();
+
+		$post_path = 'covid_sample';
+		if(in_array(env('APP_LAB'), self::$covid_inaccessible)) $post_path = 'nat_covid_sample';
 
 		foreach ($samples as $key => $sample) {
 			/*if($sample->parentid) $sample = $sample->parent;
@@ -1142,20 +1148,15 @@ class Synch
 			unset($sample->child);*/
 			$sample->load(['patient.travel', 'child']);
 
-			if(env('APP_LAB') == 25) $token = self::get_token();
-			else{
-				$token = self::get_covid_token();				
-			}
+			$token = self::get_covid_token();				
 
-			$response = $client->request('post', 'covid_sample', [
+			$response = $client->request('post', $post_path, [
 				'headers' => [
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . $token,
-					// 'Authorization' => 'Bearer ' . self::get_covid_token(),
-					// 'Authorization' => 'Bearer ' . self::get_token(),
 				],
 	            'http_errors' => false,
-				// 'verify' => false,
+				'verify' => false,
 				'json' => [
 					'sample' => $sample->toJson(),
 					'lab_id' => env('APP_LAB', null),

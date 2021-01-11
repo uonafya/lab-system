@@ -25,12 +25,14 @@
         <form method="POST" action="{{ url($url . '/upload') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
             @csrf
 
+
+
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <div class="hpanel">
                     <div class="panel-body">
 
-                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [3,4,5,6]))
+                        @if(Str::contains($url, ['covid']) && in_array(auth()->user()->lab_id, [4,5,6]))
 
                         <div class="alert alert-warning">
                             <center>
@@ -56,7 +58,28 @@
                                 &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
                                 &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
                                 &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
                                 Test Type (1 for Initial, 2 for 1st repeat, 3 for 2nd repeatt ...)<br />
+                                Symptoms (A comma separated list of all symptom codes)
+                                &nbsp;&nbsp;&nbsp; 1 => Fever / Chills  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Shortness of Breath  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Muscular Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => General Weakness  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Diarrhoea  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Chest Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Cough  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Nausea / vomiting  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Abdominal Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Sore Throat  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Headache  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Joint Pain  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Runny Nose  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Irritability / Confusion  <br />
+
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
@@ -79,14 +102,31 @@
                                 <b> Required Columns </b> <br />
                                 MFL Code <br />
                                 Quarantine Site ID <br />
-                                Patient ID<br />
+                                Patient ID (This is the identifier. If it is blank, the system will fill the identifier with the patient's name)<br />
                                 Name<br />
                                 Sex<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
-                                Justification<br />
-                                Telehone Number<br />
                                 National ID<br />
+                                Justification (default is 3 for surveillance)<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
+                                Nationality<br />
+                                Telehone Number<br />
                                 Occupation<br />
                                 County of Residence<br />
                                 Sub-county<br />
@@ -111,6 +151,23 @@
                                 Gender<br />
                                 Age<br />
                                 <b> Optional Columns </b> <br />
+                                Justification (default is 3 for surveillance)<br />
+                                &nbsp;&nbsp;&nbsp; 1 => Contact with confirmed case  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Presented at health facility  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Surveillance  <br />
+                                &nbsp;&nbsp;&nbsp; 4 => Point of entry detection  <br />
+                                &nbsp;&nbsp;&nbsp; 5 => Repatriation  <br />
+                                &nbsp;&nbsp;&nbsp; 6 => Other  <br />
+                                &nbsp;&nbsp;&nbsp; 7 => Surveillance and Quarantine  <br />
+                                &nbsp;&nbsp;&nbsp; 8 => Recent travel  <br />
+                                &nbsp;&nbsp;&nbsp; 9 => Health Care Worker  <br />
+                                &nbsp;&nbsp;&nbsp; 10 => Truck Driver  <br />
+                                &nbsp;&nbsp;&nbsp; 11 => Food Handlers  <br />
+                                &nbsp;&nbsp;&nbsp; 12 => Before medical/surgical procedure  <br />
+                                &nbsp;&nbsp;&nbsp; 13 => Travel to Country/County with presumed widespread COVID-19  <br />
+                                &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
+                                &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
+                                &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
                                 Phone Number<br />
                                 Type of Case &nbsp; <i> (Whether it's initial or repeat. Defaults to Initial) </i> <br />
                                 National ID<br />
@@ -141,6 +198,22 @@
                             </center>
                         </div>
 
+                        @endif
+                        <br />
+
+                        @if(in_array(env('APP_LAB'), [3]))   
+                            @include('partial.select', ['model' => null, 'default_val' => null, 'prop' => 'quarantine_site_id', 'label' => 'Quarantine Site', 'items' => $quarantine_sites])
+                          <div class="form-group">
+                              <label class="col-sm-4 control-label">Facility</label>
+                              <div class="col-sm-8">
+                                <select class="form-control requirable" name="facility_id" id="facility_id">
+                                    @isset($sample)
+                                        <option value="{{ $sample->batch->facility->id }}" selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                    @endisset
+
+                                </select>
+                              </div>
+                          </div>
                         @endif
                         <br />
 
@@ -193,6 +266,7 @@
         @slot('js_scripts')
             <script src="{{ asset('js/jasny/jasny-bootstrap.min.js') }}"></script>
         @endslot
+        set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
     @endcomponent
 
 

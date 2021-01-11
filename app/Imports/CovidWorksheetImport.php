@@ -21,7 +21,8 @@ class CovidWorksheetImport implements ToCollection
         $worksheet->fill($request->except(['_token', 'upload']));
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
-        $this->daterun = $request->input('daterun');
+        $this->daterun = $request->input('daterun', date("Y-m-d"));
+        if(!$this->daterun) $this->daterun = date("Y-m-d");
 	}
 
     /**
@@ -33,7 +34,7 @@ class CovidWorksheetImport implements ToCollection
     	$cancelled = $this->cancelled;
 
 
-        $today = $datemodified = $datetested = date("Y-m-d");
+        $today = $datemodified = $datetested = $this->daterun;
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = $wrong_worksheet = [];
@@ -52,6 +53,8 @@ class CovidWorksheetImport implements ToCollection
                 $flag = $value[3];
 
                 $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
+
+                MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
@@ -89,6 +92,9 @@ class CovidWorksheetImport implements ToCollection
                     $error = $value[10];
 
                     $data_array = MiscCovid::sample_result($interpretation, $error);
+
+
+                    MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                     // if($sample_id == "COV-2_NEG") $negative_control = $data_array;
                     // if($sample_id == "COV-2_POS") $positive_control = $data_array;
@@ -184,8 +190,10 @@ class CovidWorksheetImport implements ToCollection
         $worksheet->pos_control_interpretation = $positive_control['interpretation'] ?? null;
         $worksheet->pos_control_result = $positive_control['result'] ?? null;
         $worksheet->daterun = $datetested;
-        $worksheet->uploadedby = auth()->user()->id;
+        $worksheet->uploadedby = auth()->user()->id ?? null;
         $worksheet->save();
+
+        session(compact('doubles'));
 
         session(['toast_message' => "The worksheet has been updated with the results."]);
     }

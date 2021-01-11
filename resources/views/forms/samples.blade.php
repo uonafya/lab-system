@@ -914,11 +914,9 @@
                },
                url: "{{ url('/sample/new_patient') }}",
 
-
                success: function(data){
 
                     console.log(data);
-
                     $("#new_patient").val(data[0]);
 
                     if(data[0] == 0){
@@ -980,7 +978,6 @@
 
                         $('.patient_details').remove();
                     }
-
                 }
             });
 

@@ -33,9 +33,10 @@ class Datatable
 				if($table_name) $column_name = $table_name . '.';
 				$column_name .= $column_array['db'];
 
-				if ( $requestColumn['orderable'] && $requestColumn['orderable'] == 'true' ) {
+				if ( isset($requestColumn['orderable']) && ($requestColumn['orderable'] == 'false' && !$requestColumn['orderable']) ) {
+				}else{
 					$dir = $value['dir'] === 'asc' ? 'ASC' : 'DESC';
-					$model->orderBy($column_array['db'], $dir);
+					$model->orderBy($column_array['db'], $dir);					
 				}
 			}
 		}

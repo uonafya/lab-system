@@ -1,9 +1,11 @@
-@if(env('APP_LAB') == 7)
 <a href="{{ url('dr_worksheet/download/' . $worksheet->id) }}" title="Click to View Download Bulk Template">
 	Download Bulk Template
 </a> | 
 <br />
-@endif
+<a href="{{ url('dr_worksheet/abfiles/' . $worksheet->id) }}" title="Click to Download AB File Names">
+	Download AB Filenames
+</a> | 
+<br />
 
 @if($worksheet->status_id == 1)
 
@@ -26,9 +28,9 @@
 		Cancel Upload
 	</a> | 
 
-	{{-- <a href="{{ url('dr_worksheet/create_plate/' . $worksheet->id) }}" title="Click to Send Worksheet to Exatype">		
-		 		Send to Exatype
-		 	</a> | --}} 
+	<a href="{{ url('dr_worksheet/create_plate/' . $worksheet->id) }}" title="Click to Send Worksheet to Exatype">		
+ 		Send to Exatype
+ 	</a> |
 
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
@@ -52,9 +54,9 @@
 
 @elseif($worksheet->status_id == 5)
 
-	{{-- <a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
-		 		Retrieve Results
-		 	</a> | --}} 
+	<a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
+ 		Retrieve Results
+ 	</a> |
 
 	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
 		Print
@@ -62,12 +64,16 @@
 
 @elseif($worksheet->status_id == 6)
 
-<a href="{{ url('dr_worksheet/approve/' . $worksheet->id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
-	Approve Worksheet Results
-</a> | 
-<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
-	Print
-</a>
+	<a href="{{ url('dr_worksheet/get_plate_result/' . $worksheet->id) }}" title="Click to Get Worksheet From Exatype">		
+ 		Retrieve Results
+ 	</a> |
+
+	<a href="{{ url('dr_worksheet/approve/' . $worksheet->id) }}" title="Click to Approve Samples Results in worksheet for Rerun or Dispatch" target='_blank'>
+		Approve Worksheet Results
+	</a> | 
+	<a href="{{ url('dr_worksheet/print/' . $worksheet->id) }}" title="Click to Download Worksheet" target='_blank'>
+		Print
+	</a>
 
 @else
 @endif

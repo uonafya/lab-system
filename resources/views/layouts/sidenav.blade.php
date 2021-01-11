@@ -45,7 +45,7 @@
                         <li><a href="{{ url('batch') }}">View</a></li>
                     </ul>
                 </li> -->
-                @if(in_array(env('APP_LAB'), [1, 8, 9]))
+                @if(in_array(env('APP_LAB'), [1, 2, 8, 9]))
                     <li><a href="{{ url('sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
@@ -115,7 +115,7 @@
                         <li><a href="{{ url('viralbatch') }}">View</a></li>
                     </ul>
                 </li> -->
-                @if(in_array(env('APP_LAB'), [1, 8, 9]))
+                @if(in_array(env('APP_LAB'), [1, 2, 8, 9]))
                     <li><a href="{{ url('viralsample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif
@@ -166,10 +166,10 @@
                 <hr />
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
-                @if(!in_array(env('APP_LAB'), [6, 8, 9]))
+                @if(!in_array(env('APP_LAB'), [6, 8]))
                     <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                     <hr />
-                    <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
+                    <li><a href="{{ url('viralworksheet/set_sampletype/4/0/94') }}">Create Pantha Worksheet(100 - 3-ctrl 3-cal)</a></li>
                     <hr />
                 @endif
                 <!-- <li>
@@ -197,7 +197,7 @@
                 @endif
             
             @elseif (session('testingSystem') == 'Covid')
-                @if(in_array(auth()->user()->lab_id, [1,3,4,5,6,9,18,16,25]))
+                @if(in_array(auth()->user()->lab_id, [1,2,3,4,5,6,9,18,16,25]))
                     <li><a href="{{ url('covid_sample/lab/upload') }}">Upload Covid Samples</a></li>
                     <hr />               
                 @endif
@@ -217,6 +217,10 @@
                     <li>
                         <a href="{{ url('covidkits/pending') }}">Fill Consumption Report</a>
                     </li>
+                    <hr />
+                    <li><a href="{{ url('quarantine_site/create') }}">Add Quarantine Site</a></li>
+                    <hr />
+                    <li><a href="{{ url('quarantine_site') }}">Quarantine Sites</a></li>
                     <hr />
                 @endif
             @elseif (session('testingSystem') == 'DR')
@@ -562,7 +566,7 @@
             <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />
         @endif
-        @if(Auth::user()->user_type_id != 2)
+        @if(Auth::user()->user_type_id != 2 || env('APP_LAB') == 1)
             @if(in_array(Auth::user()->user_type_id, [5,10]))
                 @if(env('APP_LAB') == 7)
                     <!-- DR Searches -->
@@ -589,7 +593,7 @@
                 <li><a href="#"><select class="form-control" id="sidebar_covidpatient_nat_id_search"></select></a></li>
                 <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>            
             @else
-                @if(session('testingSystem') == 'Viralload')
+                @if(session('testingSystem') == 'Viralload' && auth()->user()->user_type_id != 2)
                     <li><a href="https://eiddash.nascop.org/download/vl_req">Download VL Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
@@ -599,7 +603,7 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_viral_order_no_search"></select></a></li>
                     @endif
-                @elseif(session('testingSystem') == 'EID')
+                @elseif(session('testingSystem') == 'EID' && auth()->user()->user_type_id != 2)
                     <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_batch_search"></select></a></li>
@@ -609,7 +613,7 @@
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_order_no_search"></select></a></li>
                     @endif
-                @elseif(session('testingSystem') == 'Covid')
+                @elseif(session('testingSystem') == 'Covid' || auth()->user()->user_type_id == 2)
                     <!-- <li><a href="https://eiddash.nascop.org/download/eid_req">Download EID Form</a></li> -->
                     <!-- <li><a href="#"><select class="form-control" id="sidebar_facility_search"></select></a></li> -->
                     <li><a href="#"><select class="form-control" id="sidebar_covidpatient_search"></select></a></li>

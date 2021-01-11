@@ -76,7 +76,8 @@ class TaskController extends Controller
             $data['covidconsumption'] = CovidConsumption::where('start_of_week', '=', $this->getPreviousWeek()->week_start)
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
-            $data['time'] = $covidconsumption->getMissingConsumptions();   
+            $data['time'] = $covidconsumption->getMissingConsumptions();
+            // dd($data);
         }
         
         $data['currentmonth'] = date('m');
@@ -410,7 +411,7 @@ class TaskController extends Controller
         $data['abbottproc'] = $abbottproc;
 
         $data = (object) $data;
-        // dd($data);
+        dd($data);
         return view('tasks.consumption', compact('data'))->with('pageTitle', 'Lab Consumption::'.date("F", mktime(null, null, null, $previousMonth)).', '.$this->previousYear);
     }
 

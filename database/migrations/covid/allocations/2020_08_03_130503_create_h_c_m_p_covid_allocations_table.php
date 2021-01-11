@@ -22,7 +22,7 @@ class CreateHCMPCovidAllocationsTable extends Migration
             $table->float('allocated_kits');
             $table->float('received_kits')->nullable();
             $table->bigInteger('consumption_detail_id')->nullable();
-            $table->text('comments');
+            $table->text('comments')->nullable();
             $table->enum('received', ['YES', 'NO'])->default('NO');
             $table->timestamps();
         });

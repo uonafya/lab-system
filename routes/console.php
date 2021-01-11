@@ -17,14 +17,27 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('nphl', function () {
+    \App\Covid::synch_to_nphl();
+})->describe('Synch to NPHL');
+
 Artisan::command('mysql8', function () {
     \App\AlterRegimen::mysql8_update();
 })->describe('Mysql 8 update');
+
+Artisan::command('knh:switch', function () {
+    \App\Random::knh_switch_list();
+})->describe('KNH switch list');
 
 Artisan::command('clean:emails', function(){
     $str = \App\Synch::clean_emails();
     $this->info($str);
 })->describe('Clean emails which have an issue.');
+
+Artisan::command('dr:dispatch', function(){
+    $str = \App\MiscDr::send_completed_results();
+    $this->info($str);
+})->describe('Email results to facilities.');
 
 Artisan::command('dr:generate-list', function(){
     $str = \App\MiscViral::generate_dr_list();
@@ -133,6 +146,12 @@ Artisan::command('transfer:delayed-samples', function(){
     $str .= \App\Common::transfer_delayed_samples('vl', false);
     $this->info($str);
 })->describe('Transfer samples delaying batches to new batches.');
+
+Artisan::command('notify:missing-samples', function(){
+    $str = \App\Common::delayed_samples_notification('eid');
+    $str .= \App\Common::delayed_samples_notification('vl');
+    $this->info($str);
+})->describe('Notify lab of batches that have not been received despite a long duration.');
 
 Artisan::command('reject:missing-samples', function(){
     $str = \App\Common::reject_delayed_samples('eid');
@@ -479,9 +498,19 @@ Artisan::command('edarp:delete', function(){
 //Quick fix add EDARP samples to KEMRI
 
 Artisan::command('edarp:machakos  {batch_id?}', function($batch_id=null){
-    $str = \App\MiscViral::machakos_edarp($batch_id);
+    $str = \App\Console::machakos_edarp($batch_id);
     $this->info($str);
-})->describe('Move Machakos samples');
+})->describe('Send Machakos Samples to Edarp');
+
+Artisan::command('edarp:machakos-failed', function(){
+    $str = \App\Console::send_failed_edarp_samples();
+    $this->info($str);
+})->describe('Email Edarp about failed samples.');
+
+Artisan::command('edarp:machakos-delayed', function(){
+    $str = \App\Console::send_edarp_delayed();
+    $this->info($str);
+})->describe('Email Edarp about failed samples.');
 
 Artisan::command('check:maryland', function(){
     $str = \App\Random::getElvis();

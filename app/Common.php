@@ -11,6 +11,7 @@ use App\Mail\VlDispatch;
 use App\Mail\UrgentCommunication;
 use App\Mail\NoDataReport;
 use App\Mail\LabTracker;
+use App\Mail\DelayedBatches;
 use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
@@ -59,6 +60,16 @@ class Common
 		],
 	];
 
+	public static function api_limit()
+	{
+		$h = date('H');
+		if(env('APP_LAB') == 5){
+			if($h < 5 || $h > 19) return 10000;
+		}else{
+			if($h < 5 || $h > 19) return 10000;			
+		}
+		return env('API_LIMIT', 30);
+	}
 
 
 	public static function csv_download($data, $file_name='page-data-export', $first_row=true, $save_file=false)
@@ -569,13 +580,41 @@ class Common
     	}
     }
 
-
-    public static function reject_delayed_samples($type)
+    public static function delayed_samples_notification($type)
     {
     	ini_set('memory_limit', "-1");
 
     	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
     	$sample_class = self::$my_classes[$type]['sample_class'];
+    	$batch_class = self::$my_classes[$type]['batch_class'];
+
+    	if($type == 'eid'){
+    		$days = 7;
+    	}
+    	else{
+    		$days = 21;
+    	}
+    	$start_date = date('Y-m-d', strtotime('-' . ($days-1) . ' days'));
+    	$end_date = date('Y-m-d', strtotime('-' . ($days+1) . ' days'));
+
+    	$batches = $batch_class::with(['facility'])
+    		->whereBetween('created_at', [$start_date, $end_date])
+    		// ->where('created_at', '<', $start_date)
+    		->whereNull('datereceived')
+    		->get();
+
+    	$mail_array = User::where('receive_notification', true)->where('user_type_id', '!=', 5)->get()->pluck('email')->toArray();
+
+    	if($batches->count()){
+    		$new_mail = new DelayedBatches($batches, $type);
+			Mail::to($mail_array)->send($new_mail);
+    	}
+    }
+
+
+    public static function reject_delayed_samples($type)
+    {
+    	ini_set('memory_limit', "-1");
 
     	if($type == 'eid'){
     		$days = 14;
@@ -586,6 +625,7 @@ class Common
     		$rej = 17;
     	}
 
+    	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
     	$sample_class = self::$my_classes[$type]['sample_class'];
     	$sample_table = self::$my_classes[$type]['sample_table'];
 
@@ -899,73 +939,27 @@ class Common
 		if(env('APP_LAB') == 5) \App\Cd4Sample::where(['facility_id' => $old_id])->update(['facility_id' => $new_id]);
     }
 
-    public static function send_lab_tracker($year, $previousMonth) {
+    public static function send_lab_tracker($year, $previousMonth, $check_email_sent = true) {
     	echo "==> Pulling the data \n";
-    	$data = Random::__getLablogsData($year, $previousMonth);
+    	$data = Random::__getLablogsData($year, $previousMonth, $check_email_sent);
+    	// dd($data);
     	if ($data) {
     		echo "==> Getting mailing list\n";
-    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com'];
-	        $mainRecepient = ['bakasajoshua09@gmail.com'];
-	        if(env('APP_ENV') == 'production') {
-	        	// $mainRecepient = MailingList::where('type', '=', 1)->pluck('email')->toArray(); 
-	    		$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
-	        }
+    		$mailinglist = ['joelkith@gmail.com', 'tngugi@gmail.com', 'baksajoshua09@gmail.com']; // For testing
 	        
-	        if(!$mainRecepient) 
-	        	return null;
+	        if(env('APP_ENV') == 'production') 
+	        	$mailinglist = MailingList::where('type', '=', 2)->pluck('email')->toArray();
 
-	        try {
-	        	ini_set("memory_limit", "-1");
-	        	echo "==> Creating Attachment file. \n";
-	        	// $path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
-		        // if(!is_dir(storage_path('app/lablogs'))) mkdir(storage_path('app/lablogs'), 0777, true);
-		        // if(file_exists($path)) unlink($path);
-		        
-		        // $mpdf = new Mpdf();
-		        $lab = \App\Lab::find(env('APP_LAB'));
-		        // $pageData = ['data' => $data, 'lab' => $lab, 'download' => false];
-		        // $view_data = view('exports.mpdf_labtracker', $pageData)->render();
-		        // $mpdf->WriteHTML($view_data);
-		        // $mpdf->Output($this->path, \Mpdf\Output\Destination::FILE);
-		        // $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
-
-	        	echo "==> Finding storage path\n";
-	        	$path = storage_path('app/lablogs/monthlabtracker ' . $data->year .  $data->month .'.pdf');
-	        	if(!is_dir(storage_path("app/lablogs/"))) mkdir(storage_path("app/lablogs/"), 0777, true);
-	        	echo "==> Creating attachment \n";
-		        $mpdf = new Mpdf([
-							    'mode' => 'utf-8',
-							    'format' => 'A4-L',
-							    'orientation' => 'L'
-							]);
-		        $view_data = view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => false])->render();
-		        $mpdf->WriteHTML($view_data);
-		        $mpdf->Output($path, \Mpdf\Output\Destination::FILE);
-		        echo "==> Finished creating attachment file. \n";
-	        	echo "==> Sending Email \n";
-	        	// Mail::to(['baksajoshua09@gmail.com'])->send(new TestMail);
-	        	// dd($mailinglist);
-	        	// Mail::to($mainRecepient)->cc($mailinglist)->bcc(['joshua.bakasa@dataposit.co.ke', 'joel.kithinji@dataposit.co.ke','bakasajoshua09@gmail.com'])
-	        	// ->send(new LabTracker($data));
-	        	// $allemails = array_merge($mainRecepient, $mailinglist);
-	        	// echo "==> Updating recipients last received emials \n";
-	        	// MailingList::whereIn('email', $allemails)->update(['datesent' => date('Y-m-d')]);
-	        	// echo "==> Updating records last received emials \n";
-	        	// foreach ($data->performance as $key => $performance) {
-	        	// 	// $performance->dateemailsent = date('Y-m-d');
-	        	// 	$performance->save();
-	        	// }
-	        	// foreach ($data->equipments as $key => $equipment) {
-	        	// 	// $equipment->dateemailsent = date('Y-m-d');
-	        	// 	$equipment->save();
-	        	// }
-	        	echo "==> Lab tracker notifications complete \n";
+	        try {				
+				$comm = new LabTracker($data);
+				Mail::to($mailinglist)->cc(['bakasajoshua09@gmail.com'])->send($comm);
+	        	LabPerformanceTracker::resetemail($year, $previousMonth);
+	        	LabEquipmentTracker::resetemail($year, $previousMonth);
 	        	return true;
-	        } catch (Exception $exception) {
-	        	\Log::error($exception);
-	        	print_r($exception);
-	        	return false;
-	        }
+			} catch (Exception $e) {
+				print_r($e->getMessage());
+				return false;
+			}
     	}
     	echo "==> No pending lab tracker notification found \n";
     	return false;
@@ -1264,8 +1258,8 @@ class Common
 
     public static function resend_lab_tracker()
     {
-		$start_date = '2020-01-01';
-		$end_date = '2020-03-01';
+		$start_date = '2020-09-01';
+		$end_date = '2020-11-01';
 		while (strtotime($start_date) <= strtotime($end_date)) {
 			self::send_lab_tracker(date('Y', strtotime($start_date)), date('m', strtotime($start_date)));
 			$start_date = date('Y-m-d', strtotime('+1 month', strtotime($start_date)));
