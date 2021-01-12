@@ -330,4 +330,55 @@ class MiscCovid extends Common
         return Common::csv_download($rows, $file);
     }
 
+
+
+    public function download_excel()
+    {
+        ini_set("memory_limit", "-1");
+        // ini_set("max_execution_time", "720");
+
+        $samples = CovidSampleView::select('covid_sample_view.*', 'machines.machine')
+            ->where(['repeatt' => 0])
+            ->leftJoin('covid_worksheets', 'covid_worksheets.id', '=', 'covid_sample_view.worksheet_id')
+            ->leftJoin('machines', 'machines.id', '=', 'covid_worksheets.machine_type')
+            ->whereNotNull('datedispatched')
+            ->get();
+
+        extract(Lookup::covid_form());
+
+        $data = [];
+
+        foreach ($samples as $key => $sample) {
+            $row = [
+                'Lab ID' => $sample->id,
+                'Identifier' => $sample->identifier,
+                'National ID' => $sample->national_id,
+                'Patient Name' => $sample->patient_name,
+                'Phone Number' => $sample->phone_no,
+                'County' => $sample->countyname ?? $sample->county,
+                'Subcounty' => $sample->sub_county ?? $sample->subcountyname ?? $sample->subcounty ?? '',
+                'Age' => $sample->age,
+                'Gender' => $sample->get_prop_name($gender, 'sex', 'gender_description'),
+                'Quarantine Site / Facility' => $sample->quarantine_site ?? $sample->facilityname,
+                'Justification' => $sample->get_prop_name($covid_justifications, 'justification'),
+                'Test Type' => $sample->get_prop_name($covid_test_types, 'test_type'),
+                'Worksheet Number' => $sample->worksheet_id,
+                'Machine' => $sample->machine,
+                'Date Collected' => $sample->my_date_format('datecollected'),
+                'Date Received' => $sample->my_date_format('datereceived'),
+                'Date Tested' => $sample->my_date_format('datetested'),
+                'TAT (Receipt to Testing)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInDays($sample->datereceived) : '',
+                'TAT (Receipt to Testing, Weekdays Only)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInWeekdays($sample->datereceived) : '',
+                'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
+                'Result' => $sample->get_prop_name($results, 'result'),
+                'Entered By' => $sample->creator->full_name ?? null,
+                'Date Entered' => $sample->my_date_format('created_at'),
+            ];
+            if(env('APP_LAB') == 1) $row['Kemri ID'] = $sample->kemri_id;
+            if(env('APP_LAB') == 25) $row['AMREF ID'] = $sample->kemri_id;
+            $data[] = $row;
+        }
+        return MiscCovid::csv_download($data, 'all-covid-samples', true, true);
+    }
+
 }
