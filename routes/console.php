@@ -301,7 +301,7 @@ Artisan::command('synch:allocationsupdates', function(){
 Artisan::command('synch:covidallocations', function(){
 	$model = new \App\HCMPCovidAllocations;
 	$str = $model->pullAllocations();
-	$this->info($str);
+	$this->info($str->message);
 })->describe('Synch COVID Allocations from KEMSA');
 
 Artisan::command('synch:consumptions', function(){
