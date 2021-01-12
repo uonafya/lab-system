@@ -61,6 +61,7 @@
                             <center>
                                 Please fill the form correctly. <br />
                                 Fields with an asterisk(*) are mandatory. <br />
+                                For samples for Air Travel, indicate it on the justification. <br />
                                 The system will automatically pick the county and subcounty of the facility. If the patient does not hail from the subcounty or county of the facility, select a subcounty and county. 
                                 @if(!auth()->user()->is_covid_lab_user())
                                     <br />
@@ -160,11 +161,9 @@
 
                         @include('partial.select', ['model' => $m, 'default_val' => $sample->patient->subcounty_id ?? null, 'prop' => 'subcounty_id', 'label' => 'Subcounty', 'items' => $districts])
 
-                        <div @if(env('APP_LAB') == 3) style="display: none;"  @endif >
 
                         @include('partial.input', ['model' => $m, 'prop' => 'email_address', 'default_val' => $sample->patient->email_address ?? null, 'label' => 'Email Address'])
 
-                        </div>
 
                         @if(env('APP_LAB') == 2)
                             @include('partial.input', ['model' => $m, 'prop' => 'phone_no', 'default_val' => $sample->patient->phone_no ?? null, 'label' => 'Phone Number', 'required' => true])
@@ -487,6 +486,26 @@
                     }
                 });
             @endif
+
+            $("#justification").change(function(){
+                var val = $(this).val();
+                if(val == 16){
+                    $("#national_id").attr("required", "required");
+                    $("#age").attr("required", "required");
+                    $("#phone_no").attr("required", "required");
+                    $("#occupation").attr("required", "required");
+                    $("#email_address").attr("required", "required");
+                    $("#residence").attr("required", "required");
+                }
+                else{
+                    $("#national_id").removeAttr("required");
+                    $("#age").removeAttr("required");
+                    $("#phone_no").removeAttr("required");
+                    $("#occupation").removeAttr("required");
+                    $("#email_address").removeAttr("required");
+                    $("#residence").removeAttr("required");
+                }
+            });
 
 
             $("#facility_id").change(function(){

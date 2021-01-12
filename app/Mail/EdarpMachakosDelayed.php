@@ -31,6 +31,6 @@ class EdarpMachakosDelayed extends Mailable
     public function build()
     {
         $this->attach($this->file_path);
-        return $this->subject($str)->view('emails.edarp_delayed_samples');
+        return $this->view('emails.edarp_delayed_samples');
     }
 }
