@@ -2104,8 +2104,10 @@ class Random
 							})->when($check_email_sent, function($query) {
                                 return $query->whereNull('dateemailsent');  
                             })->get();
-        if ($performance->isEmpty() && $equipment->isEmpty())
-            return false;
+
+        // dd($equipment);
+        // if ($performance->isEmpty() && $equipment->isEmpty())
+        //     return false;
 		return (object)['performance' => $performance, 'equipments' => $equipment, 'year' => $year, 'month' => $month, 'eidcount' => $eidcount, 'vlplasmacount' => $vlplasmacount, 'vldbscount' => $vldbscount, 'eidrejected' => $eidrejected, 'vlplasmarejected' => $vlplasmarejected, 'vldbsrejected' => $vldbsrejected];
 	}
 

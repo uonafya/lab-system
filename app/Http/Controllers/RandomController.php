@@ -101,7 +101,8 @@ class RandomController extends Controller
 	}
 
 
-	public function lablogs(Request $request, $year = null, $month = null){
+	public function lablogs(Request $request, $year = null, $month = null)
+	{
 		if ($request->method() == 'POST') {
 			$year = $request->input('year');
 			$month = $request->input('month');
@@ -121,6 +122,7 @@ class RandomController extends Controller
 		} else {
 			$set = session(['lablogmonth' => $month]);
 		}
+		
 		if ($year == null || $year=='null') {
 			if(null !== session('lablogyear')) {
 				$year = session('lablogyear');
@@ -136,7 +138,7 @@ class RandomController extends Controller
 		}
 		
 		$year = session('lablogyear');
-		// $month = session('lablogmonth');
+		$month = session('lablogmonth');
 		$data = Random::__getLablogsData($year, $month);
 
 		if ($request->method() == 'POST') {
