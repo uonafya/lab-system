@@ -332,7 +332,7 @@ class MiscCovid extends Common
 
 
 
-    public function download_excel()
+    public static function download_excel()
     {
         ini_set("memory_limit", "-1");
         // ini_set("max_execution_time", "720");
