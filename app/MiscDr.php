@@ -889,12 +889,12 @@ class MiscDr extends Common
 					// if(Str::contains($file, ['phd.1', 'scf', 'seq'])) continue;
 					if(!Str::contains($seq_file, $primers)) continue;
 
-					$identifier = explode('-', strtolower($seq_file));
+					$identifier = explode('-', $seq_file);
 					$identifier = $identifier[0];
 
 					if(in_array($identifier, $identifiers)) continue;
 
-					$id = str_replace('ccc', '', $identifier);
+					$id = str_replace('ccc', '', strtolower($identifier));
 					$id = str_replace('nat', '', $id);
 					$id = str_replace('cnt', '', $id);
 
@@ -962,7 +962,7 @@ class MiscDr extends Common
 
 	public static function find_ab_file_two($path, $identifier, $primer)
 	{
-		dd($identifier);
+		// dd($identifier);
 		$files = scandir($path);
 		if(!$files) return null;
 
