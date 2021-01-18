@@ -892,17 +892,19 @@ class MiscDr extends Common
 					$identifier = explode('-', $seq_file);
 					$identifier = $identifier[0];
 
+					$lowered_identifier = strtolower($identifier);
+
 					if(in_array($identifier, $identifiers)) continue;
 
-					$id = str_replace('ccc', '', strtolower($identifier));
+					$id = str_replace('ccc', '', $lowered_identifier);
 					$id = str_replace('nat', '', $id);
 					$id = str_replace('cnt', '', $id);
 
 					$patient=null;
 
-					if(Str::contains($identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
-					else if(Str::contains($identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
-					else if(Str::contains($identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->orWhere('patient', 'like', "%{$id}%")->first();
+					if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					else if(Str::contains($lowered_identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->orWhere('patient', 'like', "%{$id}%")->first();
 
 
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
