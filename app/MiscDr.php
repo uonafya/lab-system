@@ -926,7 +926,7 @@ class MiscDr extends Common
 					$abs = [];
 
 					foreach ($primers as $primer) {
-						$ab = self::find_ab_file($seq_path, $identifier, $primer);
+						$ab = self::find_ab_file_two($seq_path, $identifier, $primer);
 						if($ab) $abs[] = $ab;
 						else{
 							$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
