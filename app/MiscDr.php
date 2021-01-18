@@ -916,13 +916,13 @@ class MiscDr extends Common
 					if(!$patient) continue;
 					// if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
-					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();
+					if(!$sample) continue;	
 					// $sample = $patient->dr_sample()->first();	
 					$sample->extraction_worksheet_id = $drExtractionWorksheet->id;
 					$sample->worksheet_id = $drWorksheet->id;
 					$sample->save();			
 
-					if(!$sample) continue;
 					// if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$s = [
