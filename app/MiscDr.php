@@ -866,19 +866,24 @@ class MiscDr extends Common
 
 		$errors = [];
 
+		// Iterating through the root folder
+		// E.g. Worksheet 1
 		foreach ($exFiles as $exFile) {
 			if(in_array($exFile, ['.', '..', 'dr'])) continue;
 
 			$extractionWorksheetPath = $path . '/' . $exFile;
 			$seqFolders = scandir($extractionWorksheetPath);
 
+			$drExtractionWorksheet = DrExtractionWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'createdby' => $user->id, 'date_gel_documentation' => date('Y-m-d')]);
+
+			// Iterating through sequencing folders
 			foreach ($seqFolders as $seqFolder) {
 				if(in_array($seqFolder, ['.', '..', ])) continue;
 
 				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
 				$seq_files = scandir($seq_path);
 
-				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id]);
+				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id, 'extraction_worksheet_id' => $drExtractionWorksheet->id]);
 
 				$identifiers = $sample_data = [];
 
@@ -915,6 +920,7 @@ class MiscDr extends Common
 
 					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->first();	
+					$sample->extraction_worksheet_id = $drExtractionWorksheet->id;
 					$sample->worksheet_id = $drWorksheet->id;
 					$sample->save();			
 
@@ -953,7 +959,7 @@ class MiscDr extends Common
 				// dd($errors);
 				// dd($sample_data);
 
-				if($drWorksheet->sample->count()) continue;
+				if(!$drWorksheet->sample->count()) continue;
 
 				$postData = [
 					'data' => [
@@ -979,8 +985,9 @@ class MiscDr extends Common
 
 				self::processResponse($worksheet, $response);
 			}
-
+			// End of Iterating through sequencing folders
 		}
+		// End of iterating through root folder
 		return false;
 	}
 
