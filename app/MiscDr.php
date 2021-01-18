@@ -9,6 +9,7 @@ use App\Mail\DrugResistance;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
+use Str;
 
 class MiscDr extends Common
 {
@@ -856,8 +857,11 @@ class MiscDr extends Common
 	{
 		$path = storage_path('app/public/results');
 		$exFiles = scandir($path);
+		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
 
 		$user = User::where('email', 'like', 'joel%')->first();
+
+		$errors = [];
 
 		foreach ($exFiles as $exFile) {
 			if(in_array($exFile, ['.', '..', 'dr'])) continue;
@@ -867,12 +871,84 @@ class MiscDr extends Common
 
 			// $extraction_worksheet = DrExtractionWorksheet::create(['createdby' => $user->id, 'lab_id' => env('APP_LAB')]);
 
-			foreach ($seqFolders as $key => $seqFolder) {
+			foreach ($seqFolders as $seqFolder) {
 				if(in_array($seqFolder, ['.', '..', ])) continue;
 
 				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
 				$seq_files = scandir($seq_path);
-				dd($seq_files);
+
+				// $drWorksheet = DrWorksheet::create(['status_id' => 1, 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id]);
+
+				$identifiers = $sample_data = [];
+
+				// Iterate over Sequencing Worksheet files (ab1)
+				foreach ($seq_files as $seq_file) {
+					if(in_array($seq_file, ['.', '..', ])) continue;
+
+					// if(Str::contains($file, ['phd.1', 'scf', 'seq'])) continue;
+					if(!Str::contains($seq_file, $primers)) continue;
+
+					$identifier = explode('-', strtolower($seq_file));
+
+					if(in_array($identifier, $identifiers)) continue;
+
+					$id = str_replace('ccc', '', $identifier);
+					$id = str_replace('nat', '', $id);
+					$id = str_replace('cnt', '', $id);
+
+
+					if(Str::contains($identifier, ['ccc'])) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					else if(Str::contains($identifier, ['nat'])) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					else if(Str::contains($identifier, ['cnt'])) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+
+
+					if(!$patient) echo 'Patient ' . $seq_file . ' not found'; die();
+
+					$sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();					
+
+					if(!$sample) echo 'Sample ' . $seq_file . ' not found'; die();
+
+					$s = [
+						'type' => 'sample_create',
+						'attributes' => [
+							'sample_name' => "{$sample->mid}",
+							// 'sample_name' => "{$sample->nat}",
+							'pathogen' => 'hiv',
+							'assay' => 'thermo_PR_RT',
+							// 'assay' => 'cdc-hiv',
+							'enforce_recall' => false,
+							'sample_type' => 'data',
+						],
+					];
+
+					$abs = [];
+
+					foreach ($primers as $primer) {
+						$ab = self::find_ab_file($seq_path, $identifier, $primer);
+						if($ab) $abs[] = $ab;
+						else{
+							$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+						}
+					}
+					if(!$abs) continue;
+					$s['attributes']['ab1s'] = $abs;
+					$sample_data[] = $s;
+				}
+				// End of Iterating over directory with ab1 files 
+
+				dd($errors);
+
+				$postData = [
+					'data' => [
+						'type' => 'plate_create',
+						'attributes' => [
+							// 'plate_name' => "{$drWorksheet->id}",
+							'plate_name' => "Na",
+						],
+					],
+					'included' => $sample_data,
+				];
+				// dd($seq_files);
 			}
 
 
@@ -880,7 +956,7 @@ class MiscDr extends Common
 		return false;
 	}
 
-	public static function find_ab_file_two($path, $sample, $primer)
+	public static function find_ab_file_two($path, $identifier, $primer)
 	{
 		$files = scandir($path);
 		if(!$files) return null;
@@ -890,15 +966,13 @@ class MiscDr extends Common
 
 			$new_path = $path . '/' . $file;
 			if(is_dir($new_path)){
-				$a = self::find_ab_file($new_path, $sample, $primer);
+				$a = self::find_ab_file($new_path, $identifier, $primer);
 
 				if(!$a) continue;
 				return $a;
 			}
 			else{
-				// if(\Str::startsWith($file, $sample->mid . $primer)){
-				if(\Str::startsWith($file, [$sample->mid . '-', $sample->mid . '_']) && \Str::contains($file, $primer))
-				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
+				if(\Str::startsWith($file, [$identifier]) && \Str::contains($file, $primer))
 				{
 					$a = [
 						'file_name' => $file,
