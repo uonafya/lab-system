@@ -156,8 +156,6 @@ class MiscDr extends Common
 
 		// self::dump_log($postData);
 
-		// die();
-
 		$response = $client->request('POST', 'sanger/plate', [
             'http_errors' => false,
             // 'debug' => true,
@@ -169,6 +167,11 @@ class MiscDr extends Common
 			'json' => $postData,
 		]);
 
+		return self::processResponse($worksheet, $response);
+	}
+
+	public static function processResponse($worksheet, $response)
+	{
 		$body = json_decode($response->getBody());
 
 		if($response->getStatusCode() < 400)
@@ -213,9 +216,6 @@ class MiscDr extends Common
 			return false;
 		}
 
-		// echo "\n The status code is " . $response->getStatusCode() . "\n";
-
-		// dd($body);
 	}
 
 
@@ -872,8 +872,6 @@ class MiscDr extends Common
 			$extractionWorksheetPath = $path . '/' . $exFile;
 			$seqFolders = scandir($extractionWorksheetPath);
 
-			// $extraction_worksheet = DrExtractionWorksheet::create(['createdby' => $user->id, 'lab_id' => env('APP_LAB')]);
-
 			foreach ($seqFolders as $seqFolder) {
 				if(in_array($seqFolder, ['.', '..', ])) continue;
 
@@ -912,17 +910,16 @@ class MiscDr extends Common
 						if(!$patient) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					}
 
-
+					if(!$patient) continue;
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
-					// $sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->first();	
-					// $sample->worksheet_id = $drWorksheet->id;
-					// $sample->save();			
+					$sample->worksheet_id = $drWorksheet->id;
+					$sample->save();			
 
-					if(!$sample) dd($patient);
-					// if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
+					if(!$sample) continue;
+					if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$s = [
 						'type' => 'sample_create',
@@ -952,19 +949,36 @@ class MiscDr extends Common
 				}
 				// End of Iterating over directory with ab1 files 
 
-				dd($errors);
+				dd($sample_data);
+				// dd($errors);
+				// dd($sample_data);
+
+				if($drWorksheet->sample->count()) continue;
 
 				$postData = [
 					'data' => [
 						'type' => 'plate_create',
 						'attributes' => [
-							// 'plate_name' => "{$drWorksheet->id}",
-							'plate_name' => "Na",
+							'plate_name' => "{$drWorksheet->id}",
+							// 'plate_name' => "Na",
 						],
 					],
 					'included' => $sample_data,
 				];
-				// dd($seq_files);
+
+
+				$response = $client->request('POST', 'sanger/plate', [
+		            'http_errors' => false,
+		            // 'debug' => true,
+					'headers' => [
+						// 'Accept' => 'application/json',
+						// 'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
+						'X-Hyrax-Apikey' => self::get_hyrax_key(),
+					],
+					'json' => $postData,
+				]);
+
+				self::processResponse($worksheet, $response);
 			}
 
 		}
