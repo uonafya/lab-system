@@ -856,7 +856,7 @@ class MiscDr extends Common
 	public static function nhrl_worksheets()
 	{
 		ini_set('memory_limit', '-1');
-		
+
 		$path = storage_path('app/public/results');
 		$exFiles = scandir($path);
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
@@ -897,6 +897,7 @@ class MiscDr extends Common
 					$lowered_identifier = strtolower($identifier);
 
 					if(in_array($identifier, $identifiers)) continue;
+					$identifiers[] = $identifier;
 
 					$id = str_replace('ccc', '', $lowered_identifier);
 					$id = str_replace('nat', '', $id);
