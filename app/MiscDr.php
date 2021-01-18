@@ -852,23 +852,32 @@ class MiscDr extends Common
 		}
 	}
 
-
 	public static function nhrl_worksheets()
 	{
 		$path = storage_path('app/public/results');
-		$files = scandir($path);
-		if(!$files) return null;
+		$exFiles = scandir($path);
 
-		foreach ($files as $file) {
-			if(in_array($file, ['.', '..', 'dr'])) continue;
+		$user = User::where('email', 'like', 'joel%')->first();
 
-			$new_path = $path . '/' . $file;
-			$sequencing = scandir($new_path);
-			dd($sequencing);
-			
+		foreach ($exFiles as $exFile) {
+			if(in_array($exFile, ['.', '..', 'dr'])) continue;
+
+			$extractionWorksheetPath = $path . '/' . $exFile;
+			$seqFolders = scandir($extractionWorksheetPath);
+
+			// $extraction_worksheet = DrExtractionWorksheet::create(['createdby' => $user->id, 'lab_id' => env('APP_LAB')]);
+
+			foreach ($seqFolders as $key => $seqFolder) {
+				if(in_array($seqFolder, ['.', '..', ])) continue;
+
+				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
+				$seq_files = scandir($seq_path);
+				dd($seq_files);
+			}
+
+
 		}
 		return false;
-
 	}
 
 	public static function find_ab_file_two($path, $sample, $primer)
