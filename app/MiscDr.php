@@ -898,6 +898,7 @@ class MiscDr extends Common
 					$id = str_replace('nat', '', $id);
 					$id = str_replace('cnt', '', $id);
 
+					$patient=null;
 
 					if(Str::contains($identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
