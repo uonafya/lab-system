@@ -858,6 +858,7 @@ class MiscDr extends Common
 		$path = storage_path('app/public/results');
 		$exFiles = scandir($path);
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
+		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$user = User::where('email', 'like', 'joel%')->first();
 
@@ -897,9 +898,9 @@ class MiscDr extends Common
 					$id = str_replace('cnt', '', $id);
 
 
-					if(Str::contains($identifier, ['ccc'])) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
-					else if(Str::contains($identifier, ['nat'])) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
-					else if(Str::contains($identifier, ['cnt'])) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					if(Str::contains($identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					else if(Str::contains($identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					else if(Str::contains($identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 
 
 					if(!$patient) echo 'Patient ' . $seq_file . ' not found'; die();
