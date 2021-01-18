@@ -981,7 +981,7 @@ class MiscDr extends Common
 					'json' => $postData,
 				]);
 
-				self::processResponse($worksheet, $response);
+				self::processResponse($drWorksheet, $response);
 			}
 			// End of Iterating through sequencing folders
 		}
