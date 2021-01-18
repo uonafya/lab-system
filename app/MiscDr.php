@@ -901,12 +901,14 @@ class MiscDr extends Common
 
 					if(Str::contains($identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
-					else if(Str::contains($identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					else if(Str::contains($identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->orWhere('patient', 'like', "%{$id}%")->first();
 
 
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
-					$sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();					
+					$sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();	
+					$sample->worksheet_id = $drWorksheet->id;
+					$sample->save();			
 
 					if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
 
