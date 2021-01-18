@@ -912,8 +912,9 @@ class MiscDr extends Common
 
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();	
-					$sample = $patient->dr_sample()->first();	
+					// $sample = $patient->dr_sample()->first();	
 					// $sample->worksheet_id = $drWorksheet->id;
 					// $sample->save();			
 
@@ -935,7 +936,7 @@ class MiscDr extends Common
 					$abs = [];
 
 					foreach ($primers as $primer) {
-						$ab = self::find_ab_file_two($seq_path, $identifier, $primer);
+						$ab = self::find_ab_file_two($extractionWorksheetPath, $identifier, $primer);
 						if($ab) $abs[] = $ab;
 						else{
 							$errors[] = "Sample {$sample->id} ({$seq_file}) Primer {$primer} could not be found.";
