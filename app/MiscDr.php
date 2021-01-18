@@ -890,6 +890,7 @@ class MiscDr extends Common
 					if(!Str::contains($seq_file, $primers)) continue;
 
 					$identifier = explode('-', strtolower($seq_file));
+					$identifier = $identifier[0];
 
 					if(in_array($identifier, $identifiers)) continue;
 
