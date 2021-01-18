@@ -878,7 +878,7 @@ class MiscDr extends Common
 				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
 				$seq_files = scandir($seq_path);
 
-				// $drWorksheet = DrWorksheet::create(['status_id' => 1, 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id]);
+				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id]);
 
 				$identifiers = $sample_data = [];
 
@@ -911,15 +911,15 @@ class MiscDr extends Common
 					}
 
 					if(!$patient) continue;
-					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
+					// if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->first();	
-					// $sample->worksheet_id = $drWorksheet->id;
-					// $sample->save();			
+					$sample->worksheet_id = $drWorksheet->id;
+					$sample->save();			
 
 					if(!$sample) continue;
-					if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
+					// if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$s = [
 						'type' => 'sample_create',
@@ -949,7 +949,7 @@ class MiscDr extends Common
 				}
 				// End of Iterating over directory with ab1 files 
 
-				dd($sample_data);
+				// dd($sample_data);
 				// dd($errors);
 				// dd($sample_data);
 
