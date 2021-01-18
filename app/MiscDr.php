@@ -855,6 +855,8 @@ class MiscDr extends Common
 
 	public static function nhrl_worksheets()
 	{
+		ini_set('memory_limit', '-1');
+		
 		$path = storage_path('app/public/results');
 		$exFiles = scandir($path);
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
