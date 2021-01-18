@@ -907,7 +907,10 @@ class MiscDr extends Common
 
 					if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
-					else if(Str::contains($lowered_identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->orWhere('patient', 'like', "%{$id}%")->first();
+					else if(Str::contains($lowered_identifier, 'cnt')){
+						$patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+						if(!$patient) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					}
 
 
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
