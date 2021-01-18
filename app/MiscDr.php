@@ -978,7 +978,7 @@ class MiscDr extends Common
 
 			$new_path = $path . '/' . $file;
 			if(is_dir($new_path)){
-				$a = self::find_ab_file($new_path, $identifier, $primer);
+				$a = self::find_ab_file_two($new_path, $identifier, $primer);
 
 				if(!$a) continue;
 				return $a;
