@@ -915,8 +915,8 @@ class MiscDr extends Common
 
 					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->first();	
-					$sample->worksheet_id = $drWorksheet->id;
-					$sample->save();			
+					// $sample->worksheet_id = $drWorksheet->id;
+					// $sample->save();			
 
 					if(!$sample) continue;
 					if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
@@ -960,7 +960,6 @@ class MiscDr extends Common
 						'type' => 'plate_create',
 						'attributes' => [
 							'plate_name' => "{$drWorksheet->id}",
-							// 'plate_name' => "Na",
 						],
 					],
 					'included' => $sample_data,
