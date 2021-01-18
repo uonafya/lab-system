@@ -864,8 +864,6 @@ class MiscDr extends Common
 
 		$user = User::where('email', 'like', 'joel%')->first();
 
-		$errors = [];
-
 		// Iterating through the root folder
 		// E.g. Worksheet 1
 		foreach ($exFiles as $exFile) {
@@ -885,7 +883,7 @@ class MiscDr extends Common
 
 				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id, 'extraction_worksheet_id' => $drExtractionWorksheet->id]);
 
-				$identifiers = $sample_data = [];
+				$identifiers = $sample_data = $errors = [];
 
 				// Iterate over Sequencing Worksheet files (ab1)
 				foreach ($seq_files as $seq_file) {
