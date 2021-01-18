@@ -962,6 +962,7 @@ class MiscDr extends Common
 
 	public static function find_ab_file_two($path, $identifier, $primer)
 	{
+		dd($identifier);
 		$files = scandir($path);
 		if(!$files) return null;
 
