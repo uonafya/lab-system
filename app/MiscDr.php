@@ -918,7 +918,8 @@ class MiscDr extends Common
 					// $sample->worksheet_id = $drWorksheet->id;
 					// $sample->save();			
 
-					if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
+					if(!$sample) dd($patient);
+					// if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
 
 					$s = [
 						'type' => 'sample_create',
