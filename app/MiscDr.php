@@ -912,9 +912,9 @@ class MiscDr extends Common
 
 					if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
-					// $sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();	
 					// $sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();	
-					$sample = $patient->dr_sample()->first();	
+					// $sample = $patient->dr_sample()->first();	
 					// $sample->worksheet_id = $drWorksheet->id;
 					// $sample->save();			
 
