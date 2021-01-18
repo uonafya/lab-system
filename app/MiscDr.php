@@ -904,11 +904,11 @@ class MiscDr extends Common
 					else if(Str::contains($identifier, 'cnt')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 
 
-					if(!$patient) echo 'Patient ' . $seq_file . ' not found'; die();
+					if(!$patient) dd('Patient ' . $seq_file . ' not found');
 
 					$sample = $patient->dr_sample()->whereNotNull('extraction_worksheet_id')->first();					
 
-					if(!$sample) echo 'Sample ' . $seq_file . ' not found'; die();
+					if(!$sample) dd('Sample ' . $seq_file . ' not found');
 
 					$s = [
 						'type' => 'sample_create',
