@@ -851,4 +851,55 @@ class MiscDr extends Common
 			}
 		}
 	}
+
+
+	public static function nhrl_worksheets()
+	{
+		$path = storage_path('app/public/results');
+		$files = scandir($path);
+		if(!$files) return null;
+
+		foreach ($files as $file) {
+			if(in_array($file, ['.', '..', 'dr'])) continue;
+
+			$new_path = $path . '/' . $file;
+			$sequencing = scandir($new_path);
+			dd($sequencing);
+			
+		}
+		return false;
+
+	}
+
+	public static function find_ab_file_two($path, $sample, $primer)
+	{
+		$files = scandir($path);
+		if(!$files) return null;
+
+		foreach ($files as $file) {
+			if($file == '.' || $file == '..') continue;
+
+			$new_path = $path . '/' . $file;
+			if(is_dir($new_path)){
+				$a = self::find_ab_file($new_path, $sample, $primer);
+
+				if(!$a) continue;
+				return $a;
+			}
+			else{
+				// if(\Str::startsWith($file, $sample->mid . $primer)){
+				if(\Str::startsWith($file, [$sample->mid . '-', $sample->mid . '_']) && \Str::contains($file, $primer))
+				// if(\Str::startsWith($file, $sample->nat . '-') && \Str::contains($file, $primer))
+				{
+					$a = [
+						'file_name' => $file,
+						'data' => base64_encode(file_get_contents($new_path)),
+					];
+					return $a;
+				}
+				continue;
+			}
+		}
+		return false;
+	}
 }
