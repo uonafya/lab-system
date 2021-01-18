@@ -888,7 +888,7 @@ class MiscDr extends Common
 				foreach ($seq_files as $seq_file) {
 					if(in_array($seq_file, ['.', '..', ])) continue;
 
-					if(Str::contains($file, ['phd.1', 'scf', 'seq'])) continue;
+					if(Str::contains($seq_file, ['phd.1', 'scf', 'seq'])) continue;
 					if(!Str::contains($seq_file, $primers)) continue;
 
 					$identifier = explode('-', $seq_file);
