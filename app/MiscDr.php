@@ -862,7 +862,7 @@ class MiscDr extends Common
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
-		$user = User::where('email', 'like', 'joel%')->first();
+		$user = User::where('email', 'like', 'joelkith%')->first();
 
 		// Iterating through the root folder
 		// E.g. Worksheet 1
