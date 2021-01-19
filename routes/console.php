@@ -59,6 +59,11 @@ Artisan::command('dr:current-drug', function(){
     $this->info($str);
 })->describe('Set current drug.');
 
+Artisan::command('dr:nhrl', function(){
+    $str = \App\MiscDr::nhrl_worksheets();
+    $this->info($str);
+})->describe('Set current drug.');
+
 Artisan::command('compute:tat5', function(){
     \App\Common::save_tat5('eid');
     \App\Common::save_tat5('vl');
