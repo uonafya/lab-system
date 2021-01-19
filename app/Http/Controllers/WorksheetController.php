@@ -145,7 +145,7 @@ class WorksheetController extends Controller
     public function set_sampletype(Request $request)
     {
         $machine_type = $request->input('machine_type');
-        $limit = $request->input('limit', 0);
+        $limit = $request->input('limit');
         $entered_by = $request->input('entered_by');
         // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
 
