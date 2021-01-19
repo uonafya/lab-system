@@ -123,12 +123,41 @@ class WorksheetController extends Controller
         return $worksheets;
     }
 
+    public function set_sampletype_form($machine_type, $limit=false)
+    {
+        $data = Lookup::worksheet_lookups();
+        $data['machine_type'] = $machine_type;
+        $data['limit'] = $limit;
+        $data['users'] = User::whereIn('user_type_id', [0, 1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')
+            ->whereRaw(" (
+                id IN 
+                (SELECT DISTINCT received_by FROM samples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 ) 
+                OR id IN
+                (SELECT DISTINCT sample_received_by FROM samples_view WHERE site_entry != 2 AND receivedstatus = 1 and result IS NULL AND worksheet_id IS NULL AND datedispatched IS NULL AND parentid=0 AND sample_received_by IS NOT NULL) 
+                )
+                ")
+            ->withTrashed()
+            ->get();
+
+        return view('forms.set_worksheet_sampletype', $data)->with('pageTitle', 'Set Sample Type');
+    }
+
+    public function set_sampletype(Request $request)
+    {
+        $machine_type = $request->input('machine_type');
+        $limit = $request->input('limit', 0);
+        $entered_by = $request->input('entered_by');
+        // return redirect("/viralworksheet/create/{$sampletype}/{$machine_type}/{$calibration}/{$limit}/{$entered_by}");
+
+        return $this->create($machine_type, $limit, $entered_by);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2, $limit=null)
+    public function create($machine_type=2, $limit=null, $entered_by)
     {
         $data = Misc::get_worksheet_samples($machine_type, $limit);
         if(!$data){
