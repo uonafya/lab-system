@@ -159,6 +159,7 @@ class WorksheetController extends Controller
      */
     public function create($machine_type=2, $limit=null, $entered_by=null)
     {
+        dd($entered_by);
         $data = Misc::get_worksheet_samples($machine_type, $limit, $entered_by);
         if(!$data){
             session(['toast_message' => 'An error has occurred.', 'toast_error' => 1]);
