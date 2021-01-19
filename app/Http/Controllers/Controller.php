@@ -85,6 +85,7 @@ class Controller extends BaseController
         
         if ($this->eligibleForCovidConsumptions()) {
             $time = $this->getPreviousWeek();
+            dd(CovidConsumption::whereDate('start_of_week', $time->week_start)->where('lab_id', env('APP_LAB'))->get());
             if (CovidConsumption::whereDate('start_of_week', $time->week_start)->where('lab_id', env('APP_LAB'))->get()->isEmpty()) {
                 return true;
             }
