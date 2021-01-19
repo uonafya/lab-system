@@ -157,7 +157,7 @@ class WorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($machine_type=2, $limit=null, $entered_by)
+    public function create($machine_type=2, $limit=null, $entered_by=null)
     {
         $data = Misc::get_worksheet_samples($machine_type, $limit, $entered_by);
         if(!$data){
