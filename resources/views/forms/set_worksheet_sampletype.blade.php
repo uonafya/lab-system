@@ -9,7 +9,7 @@
         <div class="hpanel">
             <div class="panel-body">
                 <h2 class="font-light m-b-xs">
-                    Select Sample Type
+                    Select Received By
                 </h2>
             </div>
         </div>
