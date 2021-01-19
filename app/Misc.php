@@ -432,6 +432,7 @@ class Misc extends Common
             })
             ->when($entered_by, function($query) use ($entered_by){
                 // return $query->where('received_by', $user->id)->where('parentid', 0);
+                dd($query);
                 if(is_array($entered_by)){
                     $str = '(';
                     foreach ($entered_by as $key => $value) {
