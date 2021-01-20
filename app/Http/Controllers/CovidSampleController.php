@@ -243,7 +243,7 @@ class CovidSampleController extends Controller
                 'TAT (Receipt to Testing)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInDays($sample->datereceived) : '',
                 'TAT (Receipt to Testing, Weekdays Only)' => ($sample->datetested && $sample->datereceived) ? $sample->datetested->diffInWeekdays($sample->datereceived) : '',
                 'Received Status' => $sample->get_prop_name($receivedstatus, 'receivedstatus'),
-                'Rejected Reason' => $sample->get_prop_name($viralrejectedreasons, 'rejectedreason'),
+                'Rejected Reason' => ($sample->receivedstatus == 2) ? $sample->get_prop_name($viralrejectedreasons, 'rejectedreason') : '',
                 'Result' => $sample->get_prop_name($results, 'result'),
                 'Entered By' => $sample->creator->full_name ?? null,
                 'Date Entered' => $sample->my_date_format('created_at'),
