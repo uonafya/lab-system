@@ -129,7 +129,7 @@ class RandomController extends Controller
 		$year = (int) session('lablogyear');
 		$month = (int) session('lablogmonth');
 		
-		$data = Random::__getLablogsData($year, $month);
+		$data = Random::__getLablogsData($year, $month, false);
 		
 		if ($request->method() == 'POST') {
 			$lab = \App\Lab::find(env('APP_LAB'));
