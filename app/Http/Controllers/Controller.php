@@ -45,7 +45,7 @@ class Controller extends BaseController
         if (!in_array(env('APP_LAB'), [23, 25])) {
             if (auth()->user()->eidvl_consumption_allowed)
                 return true;
-            if (auth()->user()->user_type_id == 1 && date('d') > 30)
+            if (auth()->user()->user_type_id == 1 && date('d') > 27)
                 return true;
         }
         return false;
