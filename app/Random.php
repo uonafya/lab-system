@@ -2525,21 +2525,21 @@ class Random
         echo "==> Done back-dating";
     }
 
-	public static function adjust_procurement($plartform, $id, $ending, $wasted, $issued, $request, $pos) {
-		$procClass = self::getProcurementClass($plartform);
-		$consumptions = $procClass->consumption::findOrFail($id);
+	public static function adjust_procurement($id, $ending = null, $wasted = null, $issued = null, $request = null, $pos = null) {
+		// $procClass = self::getProcurementClass($plartform);
+		$consumption = Consumption::findOrFail($id);
 		if ((int)$ending > 0) 
-			self::adjust_procurement_numbers($consumptions, $ending, $procClass->kits, 'ending');
-		if ((int)$wasted > 0)
-			self::adjust_procurement_numbers($consumptions, $wasted, $procClass->kits, 'wasted');
-		if ((int)$issued > 0) 
-			self::adjust_procurement_numbers($consumptions, $issued, $procClass->kits, 'issued');
-		if ((int)$request > 0)
-			self::adjust_procurement_numbers($consumptions, $request, $procClass->kits, 'request');
-		if ((int)$pos > 0)
-			self::adjust_procurement_numbers($consumptions, $pos, $procClass->kits, 'pos');
-		if($consumptions->isDirty());
-			$consumptions->pre_update();
+			self::adjust_procurement_numbers($consumption, $ending, 'ending_balance');
+		// if ((int)$wasted > 0)
+		// 	self::adjust_procurement_numbers($consumptions, $wasted, $procClass->kits, 'wasted');
+		// if ((int)$issued > 0) 
+		// 	self::adjust_procurement_numbers($consumptions, $issued, $procClass->kits, 'issued');
+		// if ((int)$request > 0)
+		// 	self::adjust_procurement_numbers($consumptions, $request, $procClass->kits, 'request');
+		// if ((int)$pos > 0)
+		// 	self::adjust_procurement_numbers($consumptions, $pos, $procClass->kits, 'pos');
+		// if($consumptions->isDirty());
+		// 	$consumptions->pre_update();
 	}
 
     protected static function getProcurementClass($plartform) {
@@ -2555,22 +2555,29 @@ class Random
         return (object)['consumption' => $consumption, 'deliveries' => $deliveries, 'kits' => $kits,];
     }
 
-	protected static function adjust_procurement_numbers(&$model, $qualquantity, $kits, $type) {
-		$qualkitvalue = 0;
-		foreach($kits as $kit) {
-			$kit = (object)$kit;
-			$column = $type.$kit->alias;
-			if ($kit->alias == 'qualkit')
-				$qualkitvalue = $qualquantity;
+	protected static function adjust_procurement_numbers($model, $qualquantity, $type)
+    {
+        // $kits = $model->platform->kits;
+        foreach ($model->details as $key => $detail) {
+            $detail->$type = $qualquantity * $detail->kit->factor;
+            $detail->save();
+        }
+		// $qualkitvalue = 0;
+		// foreach($kits as $kit) {
+		// 	$kit = (object)$kit;
+		// 	$column = $type.$kit->alias;
+		// 	if ($kit->alias == 'qualkit')
+		// 		$qualkitvalue = $qualquantity;
 
-			$factor = $kit->factor;
-			$classname = get_class($model);
-			if ($classname == "App\Abbotprocurement"){
-				if (!($factor = $kit->factor['EID']))
-					$factor = $kit->factor['VL'];
-			}
-			$model->$column = $qualkitvalue * $factor;
-		}
+		// 	$factor = $kit->factor;
+		// 	$classname = get_class($model);
+		// 	if ($classname == "App\Abbotprocurement"){
+		// 		if (!($factor = $kit->factor['EID']))
+		// 			$factor = $kit->factor['VL'];
+		// 	}
+		// 	$model->$column = $qualkitvalue * $factor;
+		// }
+        return true;
 	}
 
 

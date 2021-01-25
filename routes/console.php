@@ -459,8 +459,8 @@ Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', funct
 })->describe('Adjust deliveries');
 // Quick fix for deliveries
 // Quick fix for consumptions
-Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued} {request} {pos}', function($platform, $id, $ending, $wasted, $issued, $request, $pos) {
-    $str = \App\Random::adjust_procurement($platform, $id, $ending, $wasted, $issued, $request, $pos);
+Artisan::command('adjust:consumptions {id} {ending?} {wasted?} {issued?} {request?} {pos?}', function($platform, $id, $ending = null, $wasted = null, $issued = null, $request = null, $pos = null) {
+    $str = \App\Random::adjust_procurement($id, $ending, $wasted, $issued, $request, $pos);
     $this->info($str);
 })->describe('Adjust Consumptions');
 
