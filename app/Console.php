@@ -254,7 +254,8 @@ class Console
         $prophylaxis = \DB::table('viralregimen')->get();
         $justifications = \DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
 
-        $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        // $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        $min_date = date('Y-m-d', strtotime('-9 months'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])                
@@ -328,7 +329,7 @@ class Console
 
 	public static function send_failed_edarp_samples()
 	{
-        $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        $min_date = date('Y-m-d', strtotime('-5 months'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])                
@@ -353,14 +354,15 @@ class Console
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
 
-        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+        // $mail_array = ['joel.kithinji@dataposit.co.ke', 'joelkith@gmail.com'];
 
         Mail::to($mail_array)->send(new EdarpMachakosFailed($file_path));
 	}
 
 	public static function send_edarp_delayed()
 	{
-        $min_date = date('Y-m-d', strtotime('-5 weeks'));
+        $min_date = date('Y-m-d', strtotime('-5 months'));
+        // $min_date = date('Y-m-d', strtotime('-5 weeks'));
         $max_date = date('Y-m-d', strtotime('-1 weeks'));
 
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
@@ -387,10 +389,9 @@ class Console
         $mpdf->WriteHTML($view_data);
         $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
 
-        $mail_array = ['joel.kithinji@dataposit.co.ke'];
+        // $mail_array = ['joel.kithinji@dataposit.co.ke', 'joelkith@gmail.com'];
 
         Mail::to($mail_array)->send(new EdarpMachakosDelayed($file_path));
-
 	}
 
 }

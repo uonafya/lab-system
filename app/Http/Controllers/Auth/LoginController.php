@@ -147,7 +147,7 @@ class LoginController extends Controller
 
         // Checking for pending tasks if user is Lab user before redirecting to the respective page
         session(['testingSystem' => 'EID']);
-        /*if (env('APP_LAB') == 4) {
+        if (env('APP_LAB') == 4) {
             if(!($facility || $user->user_type_id == 4)){
                 if ($this->pendingTasks()) {
                     session(['pendingTasks' => true]);
@@ -162,7 +162,7 @@ class LoginController extends Controller
                     return '/pending';
                 }
             }
-        }*/
+        }
 
         /*
          * Section Added for the Allocation Pilot

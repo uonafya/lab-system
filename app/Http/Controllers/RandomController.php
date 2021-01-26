@@ -101,44 +101,36 @@ class RandomController extends Controller
 	}
 
 
-	public function lablogs(Request $request, $year = null, $month = null){
+	public function lablogs(Request $request, $year = null, $month = null)
+	{
 		if ($request->method() == 'POST') {
 			$year = $request->input('year');
 			$month = $request->input('month');
 		}
+		$year = strtolower($year);
+		$month = strtolower($month);
 
-		if ($month == null || $month=='null') {
-			if (null !== session('lablogmonth')) {
-				$month = session('lablogmonth');
-			} else {
-				$month = null;
-				$currentMonth = date('m');
-				$prevMonth = $currentMonth - 1;
-				if ($currentMonth == 1)
-					$prevMonth = 12;
-				// $set = session(['lablogmonth' => $prevMonth]);
-			}
-		} else {
-			$set = session(['lablogmonth' => $month]);
-		}
 		if ($year == null || $year=='null') {
-			if(null !== session('lablogyear')) {
-				$year = session('lablogyear');
-			} else {
-				if ($prevMonth == 12)
-					$year = date('Y') - 1;
-				else
-					$year = date('Y');
-				$set = session(['lablogyear' => $year]);
-			}
+			$year = (int) session('lablogyear');
+			if ($year == null) 
+				session(['lablogyear' => (int) date('Y', strtotime("-1 Month", strtotime(date('Y'))))]);
 		} else {
-			$set = session(['lablogyear' => $year]);
+			session(['lablogyear' => $year]);
 		}
 		
-		$year = session('lablogyear');
-		// $month = session('lablogmonth');
-		$data = Random::__getLablogsData($year, $month);
-
+		if ($month == null || $month=='null') {
+			$month = (int) session('lablogmonth');
+			if ($month == null) 
+				session(['lablogmonth' => (int) date('m', strtotime("-1 Month", strtotime(date('m'))))]);
+		} else {
+			session(['lablogmonth' => $month]);
+		}
+		
+		$year = (int) session('lablogyear');
+		$month = (int) session('lablogmonth');
+		
+		$data = Random::__getLablogsData($year, $month, false);
+		
 		if ($request->method() == 'POST') {
 			$lab = \App\Lab::find(env('APP_LAB'));
 	    	$download = true;

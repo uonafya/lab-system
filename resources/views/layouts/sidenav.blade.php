@@ -549,19 +549,24 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
-                    <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+                    <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
                 @endif
             @elseif(!(Auth::user()->quarantine_site || Auth::user()->other_lab))
-                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
             @endif
             </li>
             <hr />
+        @elseif(in_array(Session('testingSystem'), ['Covid']))
+            <li>
+                <a href="{{ url('covidkits/deliveries') }}"> <span class="nav-label">Add COVID Kit Deliveries</span></a>
+            </li>
+            <hr />
         @endif
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 1]))
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) && in_array(Auth::user()->user_type_id, [0, 1]))
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />

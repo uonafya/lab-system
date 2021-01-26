@@ -59,6 +59,11 @@ Artisan::command('dr:current-drug', function(){
     $this->info($str);
 })->describe('Set current drug.');
 
+Artisan::command('dr:nhrl', function(){
+    $str = \App\MiscDr::nhrl_worksheets();
+    $this->info($str);
+})->describe('Set current drug.');
+
 Artisan::command('compute:tat5', function(){
     \App\Common::save_tat5('eid');
     \App\Common::save_tat5('vl');
@@ -298,6 +303,12 @@ Artisan::command('synch:allocationsupdates', function(){
     $this->insteadOf($str);
 })->describe('Synch Allocation updates');
 
+Artisan::command('synch:covidallocations', function(){
+	$model = new \App\HCMPCovidAllocations;
+	$str = $model->pullAllocations();
+	$this->info($str->message);
+})->describe('Synch COVID Allocations from KEMSA');
+
 Artisan::command('synch:consumptions', function(){
     $str = \App\Synch::synch_consumptions();
     $this->info($str);
@@ -448,8 +459,8 @@ Artisan::command('adjust:deliveries {platform} {id} {quantity} {damaged}', funct
 })->describe('Adjust deliveries');
 // Quick fix for deliveries
 // Quick fix for consumptions
-Artisan::command('adjust:consumptions {platform} {id} {ending} {wasted} {issued} {request} {pos}', function($platform, $id, $ending, $wasted, $issued, $request, $pos) {
-    $str = \App\Random::adjust_procurement($platform, $id, $ending, $wasted, $issued, $request, $pos);
+Artisan::command('adjust:consumptions {id} {ending?} {wasted?} {issued?} {request?} {pos?}', function($platform, $id, $ending = null, $wasted = null, $issued = null, $request = null, $pos = null) {
+    $str = \App\Random::adjust_procurement($id, $ending, $wasted, $issued, $request, $pos);
     $this->info($str);
 })->describe('Adjust Consumptions');
 

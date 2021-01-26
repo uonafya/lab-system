@@ -9,6 +9,7 @@ use App\Mail\DrugResistance;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use DB;
+use Str;
 
 class MiscDr extends Common
 {
@@ -155,8 +156,6 @@ class MiscDr extends Common
 
 		// self::dump_log($postData);
 
-		// die();
-
 		$response = $client->request('POST', 'sanger/plate', [
             'http_errors' => false,
             // 'debug' => true,
@@ -168,6 +167,11 @@ class MiscDr extends Common
 			'json' => $postData,
 		]);
 
+		return self::processResponse($worksheet, $response);
+	}
+
+	public static function processResponse($worksheet, $response)
+	{
 		$body = json_decode($response->getBody());
 
 		if($response->getStatusCode() < 400)
@@ -212,9 +216,6 @@ class MiscDr extends Common
 			return false;
 		}
 
-		// echo "\n The status code is " . $response->getStatusCode() . "\n";
-
-		// dd($body);
 	}
 
 
@@ -850,5 +851,172 @@ class MiscDr extends Common
 				DrSampleMutation::firstOrCreate(['sample_id' => $dr_call->sample_id, 'mutation_id' => $dr_mutation->id]);
 			}
 		}
+	}
+
+	public static function nhrl_worksheets()
+	{
+		ini_set('memory_limit', '-1');
+
+		$path = storage_path('app/public/results');
+		$exFiles = scandir($path);
+		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
+		$client = new Client(['base_uri' => self::$hyrax_url]);
+
+		$user = User::where('email', 'like', 'joelkith%')->first();
+
+		// Iterating through the root folder
+		// E.g. Worksheet 1
+		foreach ($exFiles as $exFile) {
+			if(in_array($exFile, ['.', '..', 'dr'])) continue;
+
+			$extractionWorksheetPath = $path . '/' . $exFile;
+			$seqFolders = scandir($extractionWorksheetPath);
+
+			$drExtractionWorksheet = DrExtractionWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'createdby' => $user->id, 'date_gel_documentation' => date('Y-m-d')]);
+
+			// Iterating through sequencing folders
+			foreach ($seqFolders as $seqFolder) {
+				if(in_array($seqFolder, ['.', '..', ])) continue;
+
+				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
+				$seq_files = scandir($seq_path);
+
+				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id, 'extraction_worksheet_id' => $drExtractionWorksheet->id]);
+
+				$identifiers = $sample_data = $errors = [];
+
+				// Iterate over Sequencing Worksheet files (ab1)
+				foreach ($seq_files as $seq_file) {
+					if(in_array($seq_file, ['.', '..', ])) continue;
+
+					if(Str::contains($seq_file, ['phd.1', 'scf', 'seq'])) continue;
+					if(!Str::contains($seq_file, $primers)) continue;
+
+					$identifier = explode('-', $seq_file);
+					$identifier = $identifier[0];
+
+					$lowered_identifier = strtolower($identifier);
+
+					if(in_array($identifier, $identifiers)) continue;
+					$identifiers[] = $identifier;
+
+					$id = str_replace('ccc', '', $lowered_identifier);
+					$id = str_replace('nat', '', $id);
+					$id = str_replace('cnt', '', $id);
+
+					$patient=null;
+
+					if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					else if(Str::contains($lowered_identifier, 'cnt')){
+						$patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+						if(!$patient) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
+					}
+
+					if(!$patient) continue;
+					// if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
+
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();
+					if(!$sample) continue;	
+					// $sample = $patient->dr_sample()->first();	
+					$sample->extraction_worksheet_id = $drExtractionWorksheet->id;
+					$sample->worksheet_id = $drWorksheet->id;
+					$sample->save();			
+
+					// if(!$sample) dd('Sample ' . $seq_file . ' ID ' . $id . ' not found');
+
+					$s = [
+						'type' => 'sample_create',
+						'attributes' => [
+							'sample_name' => "{$sample->mid}",
+							// 'sample_name' => "{$sample->nat}",
+							'pathogen' => 'hiv',
+							'assay' => 'thermo_PR_RT',
+							// 'assay' => 'cdc-hiv',
+							'enforce_recall' => false,
+							'sample_type' => 'data',
+						],
+					];
+
+					$abs = [];
+
+					foreach ($primers as $primer) {
+						$ab = self::find_ab_file_two($extractionWorksheetPath, $identifier, $primer);
+						if($ab) $abs[] = $ab;
+						else{
+							$errors[] = "Sample {$sample->id} ({$seq_file}) Primer {$primer} could not be found.";
+						}
+					}
+					if(!$abs) continue;
+					$s['attributes']['ab1s'] = $abs;
+					$sample_data[] = $s;
+				}
+				// End of Iterating over directory with ab1 files 
+
+				// dd($sample_data);
+				// dd($errors);
+				// dd($sample_data);
+
+				if(!$drWorksheet->sample->count()) continue;
+
+				$postData = [
+					'data' => [
+						'type' => 'plate_create',
+						'attributes' => [
+							'plate_name' => "{$drWorksheet->id}",
+						],
+					],
+					'included' => $sample_data,
+				];
+
+
+				$response = $client->request('POST', 'sanger/plate', [
+		            'http_errors' => false,
+		            // 'debug' => true,
+					'headers' => [
+						// 'Accept' => 'application/json',
+						// 'x-hyrax-daemon-apikey' => self::get_hyrax_key(),
+						'X-Hyrax-Apikey' => self::get_hyrax_key(),
+					],
+					'json' => $postData,
+				]);
+
+				self::processResponse($drWorksheet, $response);
+			}
+			// End of Iterating through sequencing folders
+		}
+		// End of iterating through root folder
+		return false;
+	}
+
+	public static function find_ab_file_two($path, $identifier, $primer)
+	{
+		// dd($identifier);
+		$files = scandir($path);
+		if(!$files) return null;
+
+		foreach ($files as $file) {
+			if($file == '.' || $file == '..') continue;
+
+			$new_path = $path . '/' . $file;
+			if(is_dir($new_path)){
+				$a = self::find_ab_file_two($new_path, $identifier, $primer);
+
+				if(!$a) continue;
+				return $a;
+			}
+			else{
+				if(\Str::startsWith($file, [$identifier]) && \Str::contains($file, $primer))
+				{
+					$a = [
+						'file_name' => $file,
+						'data' => base64_encode(file_get_contents($new_path)),
+					];
+					return $a;
+				}
+				continue;
+			}
+		}
+		return false;
 	}
 }
