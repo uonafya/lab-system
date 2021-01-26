@@ -62,6 +62,7 @@ class ReportController extends Controller
             $this->__getExcel($data, $dateString, $request);
         }
         
+        session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
     	return back();
     }
     
