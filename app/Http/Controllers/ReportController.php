@@ -579,6 +579,8 @@ class ReportController extends Controller
         } else {
             $model = $model->where("$table.lab_id", '=', env('APP_LAB'));
         }
+
+        if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
