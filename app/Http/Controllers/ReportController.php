@@ -59,7 +59,7 @@ class ReportController extends Controller
         }
         else {
             $data = self::__getDateData($request, $dateString)->get();
-            $this->__getExcel($data, $dateString, $request);
+            return $this->__getExcel($data, $dateString, $request);
         }
         
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
@@ -653,7 +653,7 @@ class ReportController extends Controller
     public function __getTATExcel($data, $title) {
         $title = strtoupper($title);
         $dataArray[] = ['MFL Code', 'Facility Name', 'Number of Samples', 'TAT1', 'TAT2', 'TAT3', 'TAT4', 'TAT5 (Lab TAT)'];
-        $this->generate_excel($data, $dataArray, $title);
+        return $this->generate_excel($data, $dataArray, $title);
     }
 
     public function generate_excel($data, $dataArray, $title){
@@ -667,7 +667,8 @@ class ReportController extends Controller
             
             return Common::csv_download($dataArray, $title, false);
         } else {
-            session(['toast_message' => 'No data available for the criteria provided']);
+            session(['toast_error' => 1, 'toast_message' => 'No data available for the criteria provided']);
+            return back();
         }
     }
 
