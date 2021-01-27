@@ -229,7 +229,7 @@ class ReportController extends Controller
                 //     return DB::getQueryLog();
                 // }
                 $data = self::__getDateData($request,$dateString)->get();
-                $this->__getExcel($data, $dateString, $request);
+                return $this->__getExcel($data, $dateString, $request);
             }
         }
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
