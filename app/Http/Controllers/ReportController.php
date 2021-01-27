@@ -561,7 +561,7 @@ class ReportController extends Controller
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
-                                    return $query->whereIn('result', [5])->where('repeatt', '=', 1);
+                                    return $query->whereIn('result', [3])->where('repeatt', '=', 1);
                                 if ($testtype == 'VL')
                                     return $query->where('repeatt', '=', 1)->whereIn('result', ['Failed']);
                             });
