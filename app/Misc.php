@@ -531,6 +531,7 @@ class Misc extends Common
 
     public static function eid_worksheets($year = null)
     {
+
         if(!$year) $year = date('Y');
         $data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
             ->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
@@ -542,6 +543,10 @@ class Misc extends Common
             ->orderBy('month', 'asc')
             ->orderBy('machine_type', 'asc')
             ->orderBy('result', 'asc')
+            ->get();
+        $worksheets = Worksheet::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as worksheets ")
+            ->whereYear('daterun', $year)
+            ->groupBy('year', 'month', 'machine_type')
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
@@ -561,6 +566,8 @@ class Misc extends Common
                 }
 
                 $row['Total'] = $total;
+                $row['No. Of Worksheets'] = $worksheets->where('machine_type', $mkey)->where('month', $i)->first()->worksheets ?? 0;
+
                 $rows[] = $row;
             }
             if($year == date('Y') && $i == date('m')) break;
