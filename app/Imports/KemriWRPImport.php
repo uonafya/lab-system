@@ -13,8 +13,9 @@ use \App\CovidSample;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class KemriWRPImport implements OnEachRow, WithHeadingRow
+class KemriWRPImport implements OnEachRow, WithHeadingRow, WithChunkReading
 {
 
     
@@ -113,5 +114,10 @@ class KemriWRPImport implements OnEachRow, WithHeadingRow
         }
         $sample->pre_update();
 
+    }
+
+    public function chunkSize(): int
+    {
+        return 50;
     }
 }
