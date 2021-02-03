@@ -68,9 +68,9 @@ class Console
 		foreach ($users as $user) {
 
 			$message = 
-			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$weekstartdisplay} - {$currentdaydisplay}\n{$labname}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
+			" Hi {$user->name}\nWEEKLY EID/VL REPORT - {$weekstartdisplay} - {$currentdaydisplay}\n{$labname}\nEID\nSamples Received - {$eid['numsamplesreceived']}\nTotal Tests Done - {$eid['tested']}\nTaqman Tests - {$eid['roche_tested']}\nAbbott Tests - {$eid['abbott_tested']}\nC8800 Tests - {$eid['c8800_tested']}\nIn Process Samples - {$eid['inprocess']}\nWaiting (Testing) Samples - {$eid['pendingresults']}\nResults Dispatched - {$eid['dispatched']}\nLAB TAT => {$eid['tat']}\nOldest Sample In Queue - {$eid['oldestinqueuesample']}\n";
 			$message .=
-			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPanther Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
+			"VL\nSamples Received - {$vl['numsamplesreceived']}\nTotal Tests Done - {$vl['tested']}\nTaqman Tests - {$vl['roche_tested']}\nAbbott Tests - {$vl['abbott_tested']}\nC8800 Tests - {$vl['c8800_tested']}\nPantha Tests - {$vl['pantha_tested']}\nIn Process Samples - {$vl['inprocess']}\nWaiting (Testing) Samples - {$vl['pendingresults']}\nResults Dispatched - {$vl['dispatched']}\nLAB TAT => {$vl['tat']}\nOldest Sample In Queue - {$vl['oldestinqueuesample']}";
 
 			\App\Common::sms($user->mobile, $message);
 		}
@@ -139,7 +139,7 @@ class Console
 						->whereBetween('datetested', [$weekstartdate, $today])
 						->first()->totals;
 
-		$data['tested'] = $data['roche_tested'] + $data['abbott_tested'] + $data['pantha_tested'];
+		$data['tested'] = $data['roche_tested'] + $data['abbott_tested'] + $data['c8800_tested'] + $data['pantha_tested'];
 
 		$data['inprocess'] = $sampleview_class::selectRaw("count({$view_table}.id) as totals")
 						->join($worksheets_table, "{$view_table}.worksheet_id", '=', "{$worksheets_table}.id")

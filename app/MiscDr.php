@@ -957,7 +957,10 @@ class MiscDr extends Common
 				// dd($errors);
 				// dd($sample_data);
 
-				if(!$drWorksheet->sample->count()) continue;
+				if(!$drWorksheet->sample->count()){
+					$drWorksheet->delete();
+					continue;
+				}
 
 				$postData = [
 					'data' => [
