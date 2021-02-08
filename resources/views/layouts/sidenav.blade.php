@@ -494,11 +494,11 @@
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/worksheet/set_sampletype/38') }}"><span class="nav-label">Create Worksheet (38)</span></a>
+                <a href="{{ url('cd4/worksheet/create/38') }}"><span class="nav-label">Create Worksheet (38)</span></a>
             </li>
             <hr />
             <li>
-                <a href="{{ url('cd4/worksheet/set_sampletype/40') }}"><span class="nav-label">Create Worksheet (40)</span></a>
+                <a href="{{ url('cd4/worksheet/create/40') }}"><span class="nav-label">Create Worksheet (40)</span></a>
             </li>
             <hr />
             <li>
