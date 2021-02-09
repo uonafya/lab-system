@@ -998,10 +998,14 @@ class ViralsampleController extends Controller
 
         $existing_rows = [];
 
+        $line = fgets(fopen($file, 'r'));
+        $delimiter = ',';
+        if(\Str::contains($line, ';')) $delimiter = ';';
+
         $handle = fopen($file, "r");
 
         if(env('APP_LAB') == 8){
-            while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
                 $facility = Facility::locate($row[4])->get()->first();
                 if(!$facility || !is_numeric($row[4])) continue;
 
@@ -1074,7 +1078,7 @@ class ViralsampleController extends Controller
             }
         }
         else{
-            while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
 
                 $sample = $patient = $batch = null;
 
