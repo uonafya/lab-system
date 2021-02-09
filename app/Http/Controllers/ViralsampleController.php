@@ -1162,8 +1162,8 @@ class ViralsampleController extends Controller
                 $sample->datecollected = $datecollected;
                 $sample->age = $row[6];
                 if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
-                // $sample->prophylaxis = Lookup::viral_regimen($row[10]);
-                $sample->prophylaxis = $row[10];
+                $sample->prophylaxis = Lookup::viral_prophylaxis($row[10]);
+                // $sample->prophylaxis = $row[10];
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
