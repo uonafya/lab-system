@@ -622,7 +622,13 @@ class Common
     	}
     	else{
     		$days = 28;
-    		$rej = 17;
+    		// $rej = 17;
+    		$rej = 23;
+    		$rejectedreason = DB::table('viralrejectedreasons')->where('id', $rej)->first();
+    		if(!$rejectedreason){
+    			$name = 'Delayed Sample Shipment';
+    			DB::table('viralrejectedreasons')->insert(['id' => $rej, 'name' => $name, 'alias' => $name]);
+    		}
     	}
 
     	$sampleview_class = self::$my_classes[$type]['sampleview_class'];
