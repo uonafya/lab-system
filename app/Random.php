@@ -3916,7 +3916,7 @@ class Random
             else if(!$patients->count()){
                 $data[2] = 'Patient not found.';
             }
-            else($patients->count() > 1){
+            else if($patients->count() > 1){
                 $data[2] = $patients->count() . ' patients were found.';
             }
 
