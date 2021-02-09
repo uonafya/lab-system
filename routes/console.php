@@ -26,7 +26,8 @@ Artisan::command('mysql8', function () {
 })->describe('Mysql 8 update');
 
 Artisan::command('knh:switch', function () {
-    \App\Random::knh_switch_list();
+    // \App\Random::knh_switch_list();
+    \App\Random::knh_update_ccc();
 })->describe('KNH switch list');
 
 Artisan::command('clean:emails', function(){
