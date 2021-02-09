@@ -1103,6 +1103,9 @@ class ViralsampleController extends Controller
                     $sample = Viralsample::find($existing->id);
                     $patient = $sample->patient;
                     $batch = $sample->batch;
+                    $batch->datereceived = date('Y-m-d');
+                    $batch->received_by = auth()->user()->id;
+                    $batch->save();
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
