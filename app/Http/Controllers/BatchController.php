@@ -336,9 +336,9 @@ class BatchController extends Controller
 
         foreach ($sample_ids as $key => $id) {
             $sample = Sample::find($id);
-            /*if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
+            if($submit_type == "new_batch" && ($sample->receivedstatus == 2 || ($sample->repeatt == 0 && $sample->result ))){
                 continue;
-            }else{*/
+            }else{
                 $parent = $sample->parent;
                 if($parent){
                     $parent->batch_id = $new_id;
@@ -352,8 +352,8 @@ class BatchController extends Controller
                         }                        
                     }
                 }
-            // }
-            // if($sample->result && $submit_type == "new_batch") continue;
+            }
+            if($sample->result && $submit_type == "new_batch") continue;
             if($sample->receivedstatus) $has_received_status = true;
             $sample->batch_id = $new_id;
             $sample->pre_update();
