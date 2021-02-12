@@ -80,6 +80,7 @@
                                 &nbsp;&nbsp;&nbsp; 13 => Runny Nose  <br />
                                 &nbsp;&nbsp;&nbsp; 14 => Irritability / Confusion  <br />
 
+                                Email Address<br />
                                 Phone Number<br />
                                 National ID<br />
                                 Occupation<br />
