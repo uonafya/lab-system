@@ -13,7 +13,7 @@ class ApiToken extends Model
 
     public static function createToken(){
     	$t = new ApiToken;
-    	$t->fill(['organisation' => 'Ampath POC', 'token' => env('API_KEY')]);
+    	$t->fill(['organisation' => 'Ampath POC', 'token' => 'fhMpadW3q6NM5u7x5H91s3yf1PlqksyPJd1HZdE0']);
     	$t->save();
     }
 }

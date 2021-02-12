@@ -17,6 +17,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('create:token', function () {
+    \App\ApiToken::createToken();
+})->describe('Synch to NPHL');
+
 Artisan::command('nphl', function () {
     \App\Covid::synch_to_nphl();
 })->describe('Synch to NPHL');
