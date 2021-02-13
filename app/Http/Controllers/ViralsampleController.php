@@ -433,6 +433,11 @@ class ViralsampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is overage but pmtct is set.']);
             return back();
         }
+        if($viralsample->age < 16 && $viralsample->justification == 12){
+            $viralsample->receivedstatus = 2;
+            $viralsample->rejectedreason = 14;
+            $viralsample->labcomment = 'Underage for recency testing.';
+        }
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
