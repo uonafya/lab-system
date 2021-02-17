@@ -81,11 +81,7 @@ class UserController extends Controller
         })->get();*/
         $accounts = UserType::whereNull('deleted_at')->where('id', '<>', 5)->get();
         $partners = DB::table('partners')->get();
-<<<<<<< HEAD
-	$quarantine_sites = [];
-=======
         $quarantine_sites = [];
->>>>>>> f554582661fb4ad80c676619bd02683dcf8b1bb7
         if(env('APP_LAB') != 8) $quarantine_sites = DB::table('quarantine_sites')->get();
         $labs = DB::table('labs')->get();
 
