@@ -117,7 +117,7 @@ Route::middleware(['signed'])->group(function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-	// Route::middleware(['consumptionsubmitted'])->group(function(){
+	Route::middleware(['consumptionsubmitted'])->group(function(){
 		Route::prefix('home')->name('home.')->group(function(){
 			Route::get('/', 'HomeController@index');
 			Route::get('overdue/{level?}', 'HomeController@overdue')->name('overdue');
@@ -787,6 +787,10 @@ Route::middleware(['auth'])->group(function(){
 			Route::prefix('worksheet')->name('worksheet.')->group(function () {
 
 				Route::get('index/{state?}/{date_start?}/{date_end?}', 'WorksheetController@index')->name('list');
+
+				Route::get('set_sampletype/{machine_type}/{limit?}', 'WorksheetController@set_sampletype_form')->name('set_sampletype_form');
+				Route::post('set_sampletype', 'WorksheetController@set_sampletype')->name('set_sampletype');
+
 				Route::get('create/{machine_type}/{limit?}', 'WorksheetController@create')->name('create_any');
 				Route::get('find/{worksheet}', 'WorksheetController@find')->name('find');
 				Route::get('print/{worksheet}', 'WorksheetController@print')->name('print');
@@ -847,7 +851,10 @@ Route::middleware(['auth'])->group(function(){
 			});
 			Route::resource('viralworksheet', 'ViralworksheetController');
 		});
-	// });
+
+
+		Route::any('covidkits/deliveries', 'CovidConsumptionController@deliveries');
+	});
 
 	Route::get('allocation', 'TaskController@allocation')->name('allocation');
 	Route::post('allocation', 'TaskController@allocation')->name('post.allocation');
@@ -868,6 +875,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('consumption', 'CovidConsumptionController@submitConsumption');
 		Route::get('reports', 'CovidConsumptionController@reports');
 		Route::post('allocation', 'CovidConsumptionController@submitAllocation');
+		Route::get('/allocation/refresh', 'CovidConsumptionController@refresh_allocations');
 	});
 
 	Route::prefix('cd4')->name('cd4.')->group(function(){

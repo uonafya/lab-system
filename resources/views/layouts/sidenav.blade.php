@@ -59,29 +59,29 @@
                     <a href="#"><span class="nav-label">Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
                         <li><a href=" {{ url('worksheet') }}">Worksheets</a></li>
-                        <li><a href="{{ url('worksheet/create/1') }}">Create Taqman(24)</a></li>
-                        <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                        <li><a href="{{ url('worksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
+                        <li><a href="{{ url('worksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                     </ul>
                 </li> -->
-                <li><a href="{{ url('worksheet/create/1') }}">Create Taqman Worksheet(24)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/1') }}">Create Taqman Worksheet(24)</a></li>
                 <hr />
                 @if(in_array(env('APP_LAB'), [8, 9, 2, 3]))
-                    <li><a href="{{ url('worksheet/create/2/22') }}">Create Abbott Worksheet(24)</a></li>
+                    <li><a href="{{ url('worksheet/set_sampletype/2/22') }}">Create Abbott Worksheet(24)</a></li>
                     <hr />
-                    <li><a href="{{ url('worksheet/create/2/46') }}">Create Abbott Worksheet(48)</a></li>
+                    <li><a href="{{ url('worksheet/set_sampletype/2/46') }}">Create Abbott Worksheet(48)</a></li>
                     <hr />
-                    <li><a href="{{ url('worksheet/create/2/70') }}">Create Abbott Worksheet(72)</a></li>
+                    <li><a href="{{ url('worksheet/set_sampletype/2/70') }}">Create Abbott Worksheet(72)</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('worksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/create/3/22') }}">Create C8800 Worksheet(24)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3/22') }}">Create C8800 Worksheet(24)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/create/3/46') }}">Create C8800 Worksheet(48)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3/46') }}">Create C8800 Worksheet(48)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/create/3/70') }}">Create C8800 Worksheet(72)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3/70') }}">Create C8800 Worksheet(72)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
@@ -144,10 +144,10 @@
                     <a href="#"><span class="nav-label">Viralload Worksheets</span><span class="fa arrow"></span> </a>
                     <ul class="nav nav-second-level">
                         <li><a href=" {{ url('viralworksheet') }}">Worksheets</a></li>
-                        <li><a href="{{ url('viralworksheet/create/1') }}">Create Taqman(24)</a></li>
-                        <li><a href="{{ url('viralworksheet/create/2') }}">Create Abbott Worksheet(96)</a></li>
-                        <li><a href="{{ url('viralworksheet/create/3') }}">Create C8800 Worksheet(96)</a></li>
-                        <li><a href="{{ url('viralworksheet/create/4') }}">Create Panther Worksheet(96)</a></li>
+                        <li><a href="{{ url('viralworksheet/set_sampletype/1') }}">Create Taqman(24)</a></li>
+                        <li><a href="{{ url('viralworksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
+                        <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
+                        <li><a href="{{ url('viralworksheet/set_sampletype/4') }}">Create Panther Worksheet(96)</a></li>
                     </ul>
                 </li> -->
                 @if(env('APP_LAB') != 8)
@@ -235,19 +235,19 @@
                 @if(env('APP_LAB') != 7)
                     <li><a href="{{ url('viralsample/potential_dr') }}">Potential DR Patients List</a></li>
                     <hr />
-                    <li><a href="{{ url('dr_extraction_worksheet/create/24') }}">Create Extraction Worksheet (24)</a></li>
+                    <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/24') }}">Create Extraction Worksheet (24)</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
-                <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/96') }}">Create Extraction Worksheet (96)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
                 <hr />
                 <li><a href="{{ url('dr_worksheet') }}">Sequencing Worksheet (Bulk Template) List</a></li>
                 <hr />
                 @if(env('APP_LAB') != 7)
-                    <li><a href="{{ url('dr_worksheet/create') }}">Create Sequencing Worksheet</a></li>
+                    <li><a href="{{ url('dr_worksheet/set_sampletype') }}">Create Sequencing Worksheet</a></li>
                     <hr />
                 @endif
                 
@@ -549,19 +549,24 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
             <li>
             @if(env('APP_LAB') == 4)
                 @if(Auth::user()->user_type_id != 4)
-                    <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+                    <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
                 @endif
             @elseif(!(Auth::user()->quarantine_site || Auth::user()->other_lab))
-                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add Quarterly Kit Deliveries</span></a>
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
             @endif
             </li>
             <hr />
+        @elseif(in_array(Session('testingSystem'), ['Covid']))
+            <li>
+                <a href="{{ url('covidkits/deliveries') }}"> <span class="nav-label">Add COVID Kit Deliveries</span></a>
+            </li>
+            <hr />
         @endif
-        @if(!in_array(Session('testingSystem'), ['CD4', 'DR']) && in_array(Auth::user()->user_type_id, [0, 1]))
+        @if(!in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) && in_array(Auth::user()->user_type_id, [0, 1]))
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />

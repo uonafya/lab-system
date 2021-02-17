@@ -137,7 +137,7 @@ class SampleController extends Controller
 
         $existing = SampleView::existing( $data_existing )->get()->first();
         if($existing && !$request->input('reentry')){
-            session(['toast_error' => 1, 'toast_message' => 'The sample already exists in batch {$existing->batch_id} and has therefore not been saved again']);
+            session(['toast_error' => 1, 'toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             return back();            
         }
         

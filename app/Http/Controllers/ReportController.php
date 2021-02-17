@@ -59,9 +59,10 @@ class ReportController extends Controller
         }
         else {
             $data = self::__getDateData($request, $dateString)->get();
-            $this->__getExcel($data, $dateString, $request);
+            return $this->__getExcel($data, $dateString, $request);
         }
         
+        session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
     	return back();
     }
     
@@ -228,9 +229,10 @@ class ReportController extends Controller
                 //     return DB::getQueryLog();
                 // }
                 $data = self::__getDateData($request,$dateString)->get();
-                $this->__getExcel($data, $dateString, $request);
+                return $this->__getExcel($data, $dateString, $request);
             }
         }
+        session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
         return back();
     }
 
@@ -466,6 +468,8 @@ class ReportController extends Controller
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
             $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+
+            if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
             $model = ViralsampleView::selectRaw($columns)
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
@@ -489,6 +493,7 @@ class ReportController extends Controller
             if($request->input('types') == 'manifest')
                 $columns .= " $table.datedispatchedfromfacility,";
             $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, samples_view.mother_age, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, users.surname, users.oname";
+            if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
     		$model = SampleView::selectRaw($columns)
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
@@ -559,9 +564,12 @@ class ReportController extends Controller
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                                 if ($testtype == 'EID')
-                                    return $query->whereIn('result', [3])->where('repeatt', '=', 0);
-                                if ($testtype == 'VL')
-                                    return $query->where('repeatt', '=', 0)->whereIn('result', ['Failed']);
+                                    // return $query->whereIn('result', [3])->where('repeatt', '=', 1);
+                                    return $query->whereRaw("(result IS NULL OR result IN (3)) ")->where('repeatt', '=', 1);
+                                if ($testtype == 'Viralload')
+                                    return $query->where('repeatt', '=', 1)
+                                    ->whereRaw("(result IS NULL OR result IN ('Failed')) ");
+                                    // ->whereIn('result', ['Failed', '']);
                             });
         }
 
@@ -575,10 +583,12 @@ class ReportController extends Controller
         } else {
             $model = $model->where("$table.lab_id", '=', env('APP_LAB'));
         }
+
+        if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
         
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
-        return $model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0);
+        return $model->orderBy('datereceived', 'asc');
     }
 
     public static function __getExcel($data, $title, $request = null)
@@ -651,7 +661,7 @@ class ReportController extends Controller
     public function __getTATExcel($data, $title) {
         $title = strtoupper($title);
         $dataArray[] = ['MFL Code', 'Facility Name', 'Number of Samples', 'TAT1', 'TAT2', 'TAT3', 'TAT4', 'TAT5 (Lab TAT)'];
-        $this->generate_excel($data, $dataArray, $title);
+        return $this->generate_excel($data, $dataArray, $title);
     }
 
     public function generate_excel($data, $dataArray, $title){
@@ -665,7 +675,8 @@ class ReportController extends Controller
             
             return Common::csv_download($dataArray, $title, false);
         } else {
-            session(['toast_message' => 'No data available for the criteria provided']);
+            session(['toast_error' => 1, 'toast_message' => 'No data available for the criteria provided']);
+            return back();
         }
     }
 

@@ -161,62 +161,67 @@ class CovidConsumptionController extends Controller
                 session(['toast_error' => true, 'toast_message' => 'Bad request. The posted details are incomplete. Ensure date received is set']);
                 return back();
             }
+
+
             $allocations = CovidAllocation::whereDate('allocation_date', date('Y-m-d', strtotime($key)))->get();
-            $already_submitted_consumption = CovidConsumption::where('start_of_week', '<', $datereceived)
-                                                            ->where('end_of_week', '>', $datereceived)
-                                                            ->get();
+            if ($request->input('response') == 'YES') {
+                $already_submitted_consumption = CovidConsumption::where('start_of_week', '<', $datereceived)
+                                                                ->where('end_of_week', '>', $datereceived)
+                                                                ->get();
 
-            if (!$already_submitted_consumption->isEmpty()) {
-                if ($request->has('consumption_confirmation')) {
-                    $consumption = $already_submitted_consumption->first();
-                    if ($request->input('amend')) {
-                        $details = $consumption->details;
-                        foreach ($request->input('received') as $key => $value) {
-                            $allocation_detail = CovidAllocationDetail::find($key);
-                            $detail = $details->where('kit_id', $allocation_detail->kit->id);
-                            if (!$detail->isEmpty()) {
-                                $detail = $detail->first();
-                                $orig_received = $detail->received;
-                                $orig_end = $detail->ending;
-                                $new_received = $value ?? 0;
-                                $new_end = (($orig_end - $orig_received) + $new_received);
-                                if ($new_end < 0)
-                                    $new_end = 0;
-                                $detail->received = $new_received;
-                                $detail->ending = $new_end;
-                                $detail->save();
+                if (!$already_submitted_consumption->isEmpty()) {
+                    if ($request->has('consumption_confirmation')) {
+                        $consumption = $already_submitted_consumption->first();
+                        if ($request->input('amend')) {
+                            $details = $consumption->details;
+                            foreach ($request->input('received') as $key => $value) {
+                                $allocation_detail = CovidAllocationDetail::find($key);
+                                $detail = $details->where('kit_id', $allocation_detail->kit->id);
+                                if (!$detail->isEmpty()) {
+                                    $detail = $detail->first();
+                                    $orig_received = $detail->received;
+                                    $orig_end = $detail->ending;
+                                    $new_received = $value ?? 0;
+                                    $new_end = (($orig_end - $orig_received) + $new_received);
+                                    if ($new_end < 0)
+                                        $new_end = 0;
+                                    $detail->received = $new_received;
+                                    $detail->ending = $new_end;
+                                    $detail->save();
+                                }
                             }
+                            $consumption->amendSuccessors();
                         }
-                        $consumption->amendSuccessors();
-                    }
-                } else {
-                    $user = auth()->user();
-                    $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
-                                            if ($user->user_type_id == 12)
-                                                return $query->where('type', '<>', 'Kit');
-                                            else
-                                                return $query->where('type', '<>', 'Manual');
-                                        })->orderBy('machine', 'desc')->get();
-                    if ($user->user_type_id == 12)
-                        $kits = $kits->groupby('type')->sortKeysDesc();
-                    else
-                        $kits = $kits->groupby('machine');
-                    session(['toast_message' => 'A Consumption report was already submitted for the week of this allocation. Check below the changes that will be effected.']);
+                    } else {
+                        $user = auth()->user();
+                        $kits = CovidKit::with('machine')->when($user, function($query) use ($user){
+                                                if ($user->user_type_id == 12)
+                                                    return $query->where('type', '<>', 'Kit');
+                                                else
+                                                    return $query->where('type', '<>', 'Manual');
+                                            })->orderBy('machine', 'desc')->get();
+                        if ($user->user_type_id == 12)
+                            $kits = $kits->groupby('type')->sortKeysDesc();
+                        else
+                            $kits = $kits->groupby('machine');
+                        session(['toast_message' => 'A Consumption report was already submitted for the week of this allocation. Check below the changes that will be effected.']);
 
-                    $detail_kits = [];
-                    foreach ($request->input('received') as $key => $value) {
-                        $detail = CovidAllocationDetail::find($key);
-                        $detail_kits[$detail->kit->id] = $value;
-                    }
-                    
-                    return view('tasks.covid.allocationconfirmation',  [
-                                        'covidkits' => $kits,
-                                        'consumption' => $already_submitted_consumption->first(),
-                                        'allocation' => $request->except('_token'),
-                                        'detail_kits' => $detail_kits,
-                                    ]); 
-                }                
+                        $detail_kits = [];
+                        foreach ($request->input('received') as $key => $value) {
+                            $detail = CovidAllocationDetail::find($key);
+                            $detail_kits[$detail->kit->id] = $value;
+                        }
+                        
+                        return view('tasks.covid.allocationconfirmation',  [
+                                            'covidkits' => $kits,
+                                            'consumption' => $already_submitted_consumption->first(),
+                                            'allocation' => $request->except('_token'),
+                                            'detail_kits' => $detail_kits,
+                                        ]); 
+                    }                
+                }
             }
+            
             
             foreach ($allocations as $key => $allocation) {
                 $allocation->received = $request->input('response');
@@ -271,6 +276,33 @@ class CovidConsumptionController extends Controller
                 ]);
     }
 
+    public function deliveries(Request $request)
+    {
+        $allocations = CovidAllocation::where('lab_id', env('APP_LAB'))->orderBy('allocation_date', 'desc')->limit('4')->get();
+        $newallocation = [];
+        foreach ($allocations as $key => $allocation) {
+            $newallocation[$allocation->allocation_date] = [
+                'allocation_date' => $allocation->allocation_date,
+                'received' => $allocation->received,
+                'date_received' => $allocation->date_received,
+            ];
+            $newallocation[$allocation->allocation_date]['types'][] = $allocation->allocation_type;
+            $newallocation[$allocation->allocation_date]['data'][] = $allocation;
+        }
+        
+        $allocations = (object)$newallocation;
+        
+        return view('tasks.covid.deliveries', ['allocations' => $allocations]);
+    }
+
+    public function refresh_allocations()
+    {
+        $model = new HCMPCovidAllocations;
+        $response = $model->pullAllocations();
+        session(['toast_message' => $response->message, 'toast_error' => $response->status]);
+        return back();
+    }
+
     private function buildConsumptionData($request)
     {
     	$datacolumns = $request->only(["kits_used","begining_balance","received","positive",
@@ -298,28 +330,16 @@ class CovidConsumptionController extends Controller
 
     private function checkCovidAllocations($end_of_week)
     {
-        // $allocation_date = HCMPCovidAllocations::where('allocation_date', '<', $end_of_week)->get()->max('allocation_date');
-        
         // Check there is an allocation made that has been received in the previous week
         $allowable_min_date = date('Y-m-d', strtotime("-1 Month", strtotime($end_of_week)));
         $allowable_date_range = [$allowable_min_date, date('Y-m-d', strtotime($end_of_week))];
-        // dd($allowable_date_range);
+        
         $allocations = CovidAllocation::/*with('kit.machine')->*/
                             where('received', 'NO')
                             ->whereBetween('allocation_date', $allowable_date_range)
                             ->whereIn('responded', ['NO', 'POSTPONED'])
                             // ->where('date_responded', '<', $end_of_week)
                             ->get();
-
-        // echo "<pre>";print_r($allocations->toArray());
-        // die();
-        // if ($allocations->isEmpty()) { // Check if there was any allocation made earlier than last week but has not been received.
-        //     $allocations = HCMPCovidAllocations::with('kit.machine')->where('received', 'NO')
-        //                     ->whereDate('allocation_date', $allocation_date)
-        //                     ->where('responded', 'POSTPONED')
-        //                     ->where('date_responded', '<', $end_of_week)
-        //                     ->get();
-        // }
         
         $newallocation = [];
         foreach ($allocations as $key => $allocation) {

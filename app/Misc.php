@@ -386,7 +386,7 @@ class Misc extends Common
         self::sms('254702266217', 'This is a successful test.');
     }
 
-    public static function get_worksheet_samples($machine_type, $temp_limit=null)
+    public static function get_worksheet_samples($machine_type, $temp_limit=null, $entered_by=null)
     {
         $machines = Lookup::get_machines();
         $machine = $machines->where('id', $machine_type)->first();
@@ -429,6 +429,21 @@ class Misc extends Common
                 // return $query->where('received_by', $user->id)->where('parentid', 0);
                 return $query->where('parentid', 0)
                 	->whereRaw("((received_by={$user->id} && sample_received_by IS NULL) OR  sample_received_by={$user->id})");
+            })
+            ->when($entered_by, function($query) use ($entered_by){
+                // return $query->where('received_by', $user->id)->where('parentid', 0);
+                // dd($query);
+                if(is_array($entered_by)){
+                    $str = '(';
+                    foreach ($entered_by as $key => $value) {
+                        $str .= $value . ', ';
+                    }
+                    $str = substr($str, 0, -2) . ')';
+                    return $query->where('parentid', 0)
+                    ->whereRaw("((received_by IN {$str} && sample_received_by IS NULL) OR  sample_received_by IN {$str})");
+                }
+                return $query->where('parentid', 0)
+                    ->whereRaw("((received_by={$entered_by} && sample_received_by IS NULL) OR  sample_received_by={$entered_by})");
             })
             ->where('site_entry', '!=', 2)
             ->whereNull('datedispatched')
@@ -531,6 +546,7 @@ class Misc extends Common
 
     public static function eid_worksheets($year = null)
     {
+
         if(!$year) $year = date('Y');
         $data = SampleView::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, result, count(*) as tests ")
             ->join('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
@@ -542,6 +558,10 @@ class Misc extends Common
             ->orderBy('month', 'asc')
             ->orderBy('machine_type', 'asc')
             ->orderBy('result', 'asc')
+            ->get();
+        $worksheets = Worksheet::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as worksheets ")
+            ->whereYear('daterun', $year)
+            ->groupBy('year', 'month', 'machine_type')
             ->get();
 
         $results = [1 => 'Negative', 2 => 'Positive', 3 => 'Failed', 4 => 'Unknown', 5 => 'Collect New Sample'];
@@ -561,6 +581,8 @@ class Misc extends Common
                 }
 
                 $row['Total'] = $total;
+                $row['No. Of Worksheets'] = $worksheets->where('machine_type', $mkey)->where('month', $i)->first()->worksheets ?? 0;
+
                 $rows[] = $row;
             }
             if($year == date('Y') && $i == date('m')) break;

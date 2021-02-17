@@ -35,7 +35,7 @@ class Synch
 	public static $cov_base = 'https://covid-19-kenya.org/api/';
 	// public static $base = 'http://national.test/api/';
 	private static $allocationReactionCounts, $users, $lab, $from, $to;
-	public static $covid_inaccessible = [5,25];
+	public static $covid_inaccessible = [5,23,25];
 
 	public static $synch_arrays = [
 		'eid' => [
@@ -69,6 +69,7 @@ class Synch
 			'with_array' => ['patient.travel'],
 		],
 	];
+
 
 	public static $update_arrays = [
 		'eid' => [

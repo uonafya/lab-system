@@ -306,6 +306,7 @@ class CovidReportsController extends Controller
 		$lab = Lab::find(env('APP_LAB'))->labdesc;
 		$samples = CovidSampleView::where('repeatt', 0)
 						->whereIn('result', [1,2])
+						->where('justification', 16)
 						->where('datedispatched', $date)
 						->get();
 						// ->when($user, function ($query) use ($user, $lab_id) {

@@ -1088,6 +1088,10 @@ class MiscViral extends Common
             ->orderBy('month', 'asc')
             ->orderBy('machine_type', 'asc')
             ->get();
+        $worksheets = Viralworksheet::selectRaw("year(daterun) as year, month(daterun) as month, machine_type, count(*) as worksheets ")
+            ->whereYear('daterun', $year)
+            ->groupBy('year', 'month', 'machine_type')
+            ->get();
 
         $results = [1 => 'LDL & <=400', 2 => '>400 & <= 1000', 3 => '> 1000 & <= 4000', 4 => '> 4000', 5 => 'Collect New Sample', 0 => 'Not Yet Dispatched'];
         $machines = [1 => 'Roche', 2 => 'Abbott', 3 => 'C8800', 4 => 'Panther'];
@@ -1109,6 +1113,7 @@ class MiscViral extends Common
                 $total += $row['Failed'];
 
                 $row['Total'] = $total;
+                $row['No. Of Worksheets'] = $worksheets->where('machine_type', $mkey)->where('month', $i)->first()->worksheets ?? 0;
                 $rows[] = $row;
             }
             if($year == date('Y') && $i == date('m')) break;

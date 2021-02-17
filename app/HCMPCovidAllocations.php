@@ -32,7 +32,7 @@ class HCMPCovidAllocations extends Model
     	try {
     		$response = $client->request('get', 'covid_19', [
 	            'http_errors' => false,
-	            'debug' => true,
+	            'debug' => false,
 	            'verify' => false,
 				'headers' => [
 					'Accept' => 'application/json',
@@ -44,7 +44,7 @@ class HCMPCovidAllocations extends Model
 				],
 			]);
 			$body = json_decode($response->getBody());
-			print_r($body);
+			// print_r($body);
 			$empty = [];
 			if (null !== $body->data) {				
 				foreach ($body->data as $key => $item) {
@@ -67,18 +67,26 @@ class HCMPCovidAllocations extends Model
 								$empty[] = $item;
 							}
 						}
+						$message = 'Allocations successfully synchronized';
+					} else {
+						$message = 'No new allocation was found';
 					}
 				}
 			} else {
-				print_r($body);
+				$message = 'An error was encountered while checking for new KEMSA allocations.';
 			}
 
 			CovidAllocation::fillAllocations();
-			return true;
+			return (object)[
+				'status' => true,
+				'message' => $message,
+			];
     	} catch (Exception $e) {
     		echo "Error{";print_r($e);echo "}";
-    		
-    		return false;
+    		return (object)[
+				'status' => false,
+				'message' => 'An error was encountered while checking for new KEMSA allocations.',
+			];
     	}
     }
 }
