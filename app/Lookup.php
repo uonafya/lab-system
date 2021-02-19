@@ -502,7 +502,8 @@ class Lookup
     public static function viral_prophylaxis($val)
     {
         self::cacher();       
-        $my_array = Cache::get('prophylaxis');       
+        $my_array = Cache::get('prophylaxis'); 
+        $val = substr($val, 0, 4);      
         return $my_array->where('code', $val)->first()->id ?? NULL;
     }    
 

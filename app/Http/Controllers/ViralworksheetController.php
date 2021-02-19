@@ -443,6 +443,11 @@ class ViralworksheetController extends Controller
 
         $c = new ViralworksheetImport($worksheet, $request);
         Excel::import($c, $path);
+
+        if(session('doubles')){
+            $doubles = session()->pull('doubles');
+            return MiscViral::csv_download($doubles, 'duplicate-samples');
+        }
         
         return redirect('viralworksheet/approve/' . $worksheet->id);
     }

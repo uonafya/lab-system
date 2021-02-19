@@ -3875,7 +3875,7 @@ class Random
             $other_patients = Viralpatient::whereIn('patient', $other_patients_array)->get();
 
             $data[5] = json_encode($other_patients->pluck('id')->toArray());
-            $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray());
+            $other_samples = Viralsample::whereIn('patient_id', $other_patients->pluck('id')->toArray())->get();
 
             foreach ($other_samples as $key => $other_sample) {
                 $other_sample->patient_id = $patient->id;
@@ -3890,6 +3890,57 @@ class Random
         Common::csv_download($rows, $file, false, true);
         // Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
         Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+    }
+
+    public static function knh_update_ccc()
+    {
+        ini_set('memory_limit', '-1');
+        $file = public_path('knh_ccc_list.csv');
+        $handle = fopen($file, "r");
+        $rows = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+        {
+            if($data[0] == 'Patient CCC No'){
+                $rows[] = $data;
+                continue;
+            }
+
+            $patients = Viralpatient::where(['patient' => $data[0]])->get();
+
+            if($patients->count() == 1){
+                $patient = $patients->first();
+                $patient->patient = $data[1];
+                $patient->pre_update();
+                continue;
+            }
+            /*else if(!$patients->count()){
+                $data[2] = 'Patient not found.';
+            }*/
+            else if($patients->count() > 1){
+                $patient = $patients->where('facility_id', 3475)->first();
+                $patient->patient = $data[1];
+                $patient->pre_update();
+
+                /*$other_patient = $patients->where('facility_id', 50001)->first();
+
+                foreach ($other_patient->sample as $key => $other_sample) {
+                    $other_sample->patient_id = $patient->id;
+                    $other_sample->pre_update();
+                }*/
+
+
+                // $data[2] = $patients->count() . ' patients were found.';
+            }
+
+            $rows[] = $data;
+
+        }
+        if($rows){
+            $file = 'knh-ccc-list';
+            Common::csv_download($rows, $file, false, true);
+            // Mail::to(['joelkith@gmail.com'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+            Mail::to(['joel.kithinji@dataposit.co.ke'])->send(new TestMail([storage_path("exports/" . $file . ".csv")]));
+        }
     }
 
     public static function old_id_column()

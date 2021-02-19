@@ -528,7 +528,7 @@
                                     <li class=""><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
                                     <li class=""><a class="dropdown-item" href="
                                     @if(session('testingSystem') == 'Viralload')
-                                        {{ 'https://viralload.nascop.org/labs' }}
+                                        {{ 'https://viralload.nascop.org/lab' }}
                                     @else
                                         {{ 'https://eid.nascop.org/labPerformance' }}
                                     @endif">Nascop Dashboard</a></li>

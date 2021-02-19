@@ -433,6 +433,11 @@ class ViralsampleController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The sample was not saved. This is because the patient is overage but pmtct is set.']);
             return back();
         }
+        if($viralsample->age < 16 && $viralsample->justification == 12){
+            $viralsample->receivedstatus = 2;
+            $viralsample->rejectedreason = 14;
+            $viralsample->labcomment = 'Underage for recency testing.';
+        }
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
 
@@ -998,10 +1003,14 @@ class ViralsampleController extends Controller
 
         $existing_rows = [];
 
+        $line = fgets(fopen($file, 'r'));
+        $delimiter = ',';
+        if(\Str::contains($line, ';')) $delimiter = ';';
+
         $handle = fopen($file, "r");
 
         if(env('APP_LAB') == 8){
-            while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
                 $facility = Facility::locate($row[4])->get()->first();
                 if(!$facility || !is_numeric($row[4])) continue;
 
@@ -1074,7 +1083,7 @@ class ViralsampleController extends Controller
             }
         }
         else{
-            while (($row = fgetcsv($handle, 1000, ",")) !== FALSE){
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
 
                 $sample = $patient = $batch = null;
 
@@ -1099,6 +1108,9 @@ class ViralsampleController extends Controller
                     $sample = Viralsample::find($existing->id);
                     $patient = $sample->patient;
                     $batch = $sample->batch;
+                    $batch->datereceived = date('Y-m-d');
+                    $batch->received_by = auth()->user()->id;
+                    $batch->save();
                 }
 
                 $site_entry = Lookup::get_site_entry($row[14]);
@@ -1155,8 +1167,8 @@ class ViralsampleController extends Controller
                 $sample->datecollected = $datecollected;
                 $sample->age = $row[6];
                 if(!$sample->age) $sample->age = Lookup::calculate_viralage($datecollected, $patient->dob);
-                // $sample->prophylaxis = Lookup::viral_regimen($row[10]);
-                $sample->prophylaxis = $row[10];
+                $sample->prophylaxis = Lookup::viral_prophylaxis($row[10]);
+                // $sample->prophylaxis = $row[10];
                 $sample->dateinitiatedonregimen = Lookup::other_date($row[11]);
                 $sample->justification = Lookup::justification($row[12]);
                 $sample->sampletype = (int) $row[7];
