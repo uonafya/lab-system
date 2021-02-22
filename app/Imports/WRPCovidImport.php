@@ -10,6 +10,7 @@ use \App\CovidSample;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
 class WRPCovidImport implements OnEachRow, WithHeadingRow
 {
@@ -84,7 +85,8 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? $row->sub_county ?? null,   
             'occupation' => $row->occupation ?? null,  
-            'justification' => $row->justification ?? 3,       
+            'justification' => $row->justification ?? 3,    
+            'email_address' => $row->email_address ?? null,   
         ]);
         $p->save();
 
@@ -113,5 +115,10 @@ class WRPCovidImport implements OnEachRow, WithHeadingRow
         ]);
         $sample->pre_update();
 
+    }
+
+    public function chunkSize(): int
+    {
+        return 50;
     }
 }

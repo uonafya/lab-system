@@ -17,6 +17,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
+Artisan::command('create:token', function () {
+    \App\ApiToken::createToken();
+})->describe('Synch to NPHL');
+
 Artisan::command('nphl', function () {
     \App\Covid::synch_to_nphl();
 })->describe('Synch to NPHL');
@@ -26,7 +30,8 @@ Artisan::command('mysql8', function () {
 })->describe('Mysql 8 update');
 
 Artisan::command('knh:switch', function () {
-    \App\Random::knh_switch_list();
+    // \App\Random::knh_switch_list();
+    \App\Random::knh_update_ccc();
 })->describe('KNH switch list');
 
 Artisan::command('clean:emails', function(){

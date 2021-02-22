@@ -50,7 +50,8 @@
 
                         <div class="alert alert-info">
                             <center>
-                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b>
+                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b> <br />
+                                Recency testing is for those aged over 15. If the system detects the patient's age is 15 or under, the system will automatically reject the sample.
                             </center>
                         </div>
                         <br />
@@ -539,7 +540,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Recency Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
                             </div>
                         </div>
 
@@ -897,6 +898,16 @@
                     $("#rejection").hide();
                     $("#rejectedreason").attr("disabled", "disabled");
                     $('.requirable').attr("required", "required");
+                }
+            });
+
+            $("#justification").change(function(){
+                var val = $(this).val();
+                if(val == 12){
+                    $("#recency_number").attr("required", "required");
+                }
+                else{
+                    $("#recency_number").removeAttr("required");
                 }
             });
 

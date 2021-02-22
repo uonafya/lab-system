@@ -71,7 +71,7 @@ class ViralworksheetImport implements ToCollection
                 $interpretation = $value[6];
                 $result_array = MiscViral::sample_result($interpretation);
 
-                // MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
+                MiscViral::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
@@ -373,6 +373,8 @@ class ViralworksheetImport implements ToCollection
                 });
             })->download('csv');
         }*/
+
+        if($doubles) session(['doubles' => $doubles]);
 
 
         Viralsample::where(['worksheet_id' => $worksheet->id])->where('run', 0)->update(['run' => 1]);
