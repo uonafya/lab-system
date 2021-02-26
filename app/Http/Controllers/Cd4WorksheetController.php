@@ -246,7 +246,7 @@ class Cd4WorksheetController extends Controller
         $AVGCD3CD4AbsCnt = $formData["AVGCD3CD4AbsCnt"];
         $CD45AbsCnt = $formData["CD45AbsCnt"];
         $repeatt = $formData["repeatt"];
-        $checkbox = $formData["checkbox"];
+        $checkbox = $formData["checkbox"] ?? [];
 
         foreach ($checkbox as $key => $value) {
             $sample = Cd4Sample::find($id[$value]);
