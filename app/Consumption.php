@@ -86,4 +86,27 @@ class Consumption extends Model
         }
       return true;
     }
+
+    public function amendSuccessors()
+    {
+        $current_consummption = $this;
+        $successors = Consumption::where('id', '>', $this->id)
+                            ->orderBy('id', 'asc')->get();
+        foreach ($successors as $key => $successor) {
+            foreach ($successor->details as $key => $detail) {
+                $predessesor = $detail->predessesor();
+                $current_ending = $detail->ending_balance;
+                $predessesor_ending = $predessesor->ending_balance ?? 0;
+                $replaced = $detail->begining_balance;
+                $ending = (($current_ending - $replaced) + $predessesor_ending);
+                
+                $detail->begining_balance = $predessesor_ending;
+                $detail->ending_balance = ($ending);
+                $detail->save();
+            }
+            $successor->synched = 2;
+            $successor->save();
+        }
+        return true;
+    }
 }

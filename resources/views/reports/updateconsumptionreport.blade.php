@@ -1,4 +1,4 @@
-@extends('layouts.tasks')
+@extends('layouts.master')
 
 @section('css_scripts')
     
@@ -16,24 +16,13 @@
 @endsection
 
 @section('content')
-@php
-    $currentmonth = date('m');
-    $prevmonth = date('m')-1;
-    $year = date('Y');
-    $prevyear = $year;
-    if ($currentmonth == 1) {
-        $prevmonth = 12;
-        $prevyear -= 1;
-    }
-    $toedit = ['wasted','pos','issued'];
-    $plats = ['taqman','abbott'];
-@endphp
 <div class="row">
     <div class="col-md-12">
         <div class="hpanel" style="margin-top: 1em;margin-right: 6%;">
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <form action="/saveconsumption" method="POST" class="form-horizontal" >
                     @csrf
+                    @put()
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><center>Consumed in the month</center></label>
                         <div class="col-sm-8">
@@ -42,35 +31,36 @@
                             </label>
                         </div>
                     </div>
-                    @foreach($machines as $machine)
+                    <div class="alert alert-danger">
+                        <center><i class="fa fa-bolt"></i> Please enter {{ $machine->machine }} {{ $type->name }} values below. <strong>(Tests:{{ number_format($machine->tests_done($type->name, $period->year, $period->month)) }})</strong></center>
+                        <input type="hidden" name="consumption" value="{{ $consumption->id }}">
                         <input type="hidden" name="machine[]" value="{{ $machine->id }}">
-                        @foreach($types as $type)
-                            <div class="alert alert-danger">
-                                <center><i class="fa fa-bolt"></i> Please enter {{ $machine->machine }} {{ $type->name }} values below. <strong>(Tests:{{ number_format($machine->tests_done($type->name, $period->year, $period->month)) }})</strong></center>
-                                <input type="hidden" name="tests[{{$machine->machine}}][{{$type->name}}]" value="{{ $machine->tests_done($type->name, $period->year, $period->month) }}">
-                            </div>
-                            <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
-                                <thead>               
-                                    <tr>
-                                        <th rowspan="2">NAME OF COMMODITY</th>
-                                        <th rowspan="2">UNIT OF ISSUE</th>
-                                        <th rowspan="2">BEGINNING BALANCE</th>
-                                        <th colspan="2">QUANTITY RECEIVED FROM CENTRAL WAREHOUSE(KEMSA/SCMS/RDC)</th>
-                                        <th rowspan="2">QUANTITY USED</th>
-                                        <th rowspan="2">LOSSES / WASTAGE</th>
-                                        <th colspan="2">ADJUSTMENTS</th>
-                                        <th rowspan="2">ENDING BALANCE (PHYSICAL COUNT)</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Quantity</th>
-                                        <th>Lot No.</th>
-                                        <th>Positive<br />(Received other source)</th>
-                                        <th>Negative<br />(Issued Out)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                    @foreach ($machine->kits as $kit)
+                        <input type="hidden" name="tests[{{$machine->machine}}][{{$type->name}}]" value="{{ $machine->tests_done($type->name, $period->year, $period->month) }}">
+                        <input type="hidden" name="year" value="{{ $period->year }}">
+                        <input type="hidden" name="month" value="{{ $period->month }}">
+                        <input type="hidden" name="type" value="{{ $type->name }}">
+                    </div>
+                    <table class="table table-striped table-bordered table-hover data-table" style="font-size: 10px;margin-top: 1em;">
+                        <thead>               
+                            <tr>
+                                <th rowspan="2">NAME OF COMMODITY</th>
+                                <th rowspan="2">UNIT OF ISSUE</th>
+                                <th rowspan="2">BEGINNING BALANCE</th>
+                                <th colspan="2">QUANTITY RECEIVED FROM CENTRAL WAREHOUSE(KEMSA/SCMS/RDC)</th>
+                                <th rowspan="2">QUANTITY USED</th>
+                                <th rowspan="2">LOSSES / WASTAGE</th>
+                                <th colspan="2">ADJUSTMENTS</th>
+                                <th rowspan="2">ENDING BALANCE (PHYSICAL COUNT)</th>
+                            </tr>
+                            <tr>
+                                <th>Quantity</th>
+                                <th>Lot No.</th>
+                                <th>Positive<br />(Received other source)</th>
+                                <th>Negative<br />(Issued Out)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	@foreach ($machine->kits as $kit)
                                     
                                     @php
                                         $delivery = $kit->getDeliveries($type->id, $period->year, $period->month);
@@ -104,28 +94,8 @@
                                         </td>
                                     </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-6 control-label"><center>Comments concerning Negative adjustments (e.g. where were the kits issued out/donated to and why)</center></label>
-                                        <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" name="issuedcomment[{{$machine->machine}}][{{$type->name}}]" cols="300"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-6 control-label"><center>Comments concerning Positive adjustments (e.g. where were the kits received from)</center></label>
-                                        <div class="col-sm-6">
-                                            <textarea class="form-control input-sm input-edit" name="receivedcomment[{{$machine->machine}}][{{$type->name}}]" cols="300"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endforeach
+                        </tbody>
+                    </table>
                     <div class="col-sm-12">
                         <center>
                         <button class="btn btn-success" type="submit" name="saveTaqman" value="saveTaqman">Submit Kit Consumption</button>
