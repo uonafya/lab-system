@@ -34,7 +34,7 @@
         <div class="col-lg-12">
             <div class="hpanel">
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
-                    @if(Auth::user()->eidvl_consumption_allowed)
+                    {{-- @if(Auth::user()->eidvl_consumption_allowed) --}}
                     <form method="post" action="{{ url('reports/kitsconsumption/update') }}">
                         @csrf
                         @foreach($request as $key => $value)
@@ -44,7 +44,7 @@
                             <button class="btn btn-primary" type="submit">Update Consumption Details</button>
                         </div>
                     </form>
-                    @endif
+                    {{-- @endif --}}
                 	<table class="table table-striped table-bordered table-hover" style="font-size: 10px;margin-top: 1em;">
                 		<thead>
                 			<tr>
