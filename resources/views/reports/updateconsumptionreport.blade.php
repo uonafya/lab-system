@@ -22,7 +22,6 @@
             <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                 <form action="/saveconsumption" method="POST" class="form-horizontal" >
                     @csrf
-                    @put()
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><center>Consumed in the month</center></label>
                         <div class="col-sm-8">
