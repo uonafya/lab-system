@@ -89,7 +89,7 @@ class ConsumptionController extends Controller
             }
             $consumption->synched = 2;
             $consumption->save();
-            $consumption->amendSuccessors();
+            // $consumption->amendSuccessors();
             return redirect('reports/kits');
         } else {
             $fields = ['begining_balance', 'received', 'used', 'positive_adjustment', 'negative_adjustment', 'wasted', 'ending_balance', 'issuedcomment', 'receivedcomment'];

@@ -63,12 +63,14 @@
                                     
                                     @php
                                         $delivery = $kit->getDeliveries($type->id, $period->year, $period->month);
+                                        /* dd($delivery);
+                                        dd($consumption->details->where('kit_id', $kit->id)); */
                                     @endphp
                                     <tr>
                                         <td>{{ $kit->name }}</td>
                                         <td>{{ $kit->unit }}</td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="begining_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->begining_balance($type->id, $period->year, $period->month) }}" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'begining_balance')">
+                                            <input class="form-control input-edit" type="number" name="begining_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->begining_balance ?? 0 }}" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'begining_balance')">
                                         </td>
                                         <td>
                                             {{ round($delivery->quantity, 2) }}
@@ -76,20 +78,20 @@
                                         </td>
                                         <td>{{ $delivery->lotno }}</td>
                                         <td>
-                                            {{ round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2) }}
-                                            <input type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)) }}">
+                                            {{ round($consumption->details->where('kit_id', $kit->id)->first()->used ?? 0, 2) }}
+                                            <input type="hidden" name="used[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->used ?? 0 }}">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'wasted')">
+                                            <input class="form-control input-edit" type="number" name="wasted[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->wasted ?? 0 }}" required="true" onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'wasted')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="positive_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'positive_adjustment')">
+                                            <input class="form-control input-edit" type="number" name="positive_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" min="0" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->positive_adjustment ?? 0 }}" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'positive_adjustment')">
                                         </td>
                                         <td>
-                                            <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="0"  min="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'negative_adjustment')">
+                                            <input class="form-control input-edit" type="number" name="negative_adjustment[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->negative_adjustment ?? 0 }}"  min="0" required onchange="computevaluesforotherkits('{{ $type->id }}', '{{ $kit->alias }}', '{{ $kit->id }}', '{{ $machine->machine }}', this, 'negative_adjustment')">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="{{ ($kit->begining_balance($type->id, $period->year, $period->month)+$delivery->quantity-round($kit->getQuantityUsed($type->name, $machine->tests_done($type->name, $period->year, $period->month)), 2)) }}">
+                                            <input type="number" class="form-control input-edit" name="ending_balance[{{$machine->machine}}][{{$type->name}}][{{$kit->id}}]"  min="0" value="{{ $consumption->details->where('kit_id', $kit->id)->first()->ending_balance ?? 0 }}">
                                         </td>
                                     </tr>
                                     @endforeach

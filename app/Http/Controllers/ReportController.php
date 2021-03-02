@@ -464,7 +464,7 @@ class ReportController extends Controller
                 'machine' => Machine::find($request->input('platform')),
                 'type' => TestType::find($request->input('types')),
             ];
-        // dd($data);
+        // dd($consumption);
         return view('reports.updateconsumptionreport', $data);
     }
 
