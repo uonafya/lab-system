@@ -62,23 +62,36 @@ class Controller extends BaseController
         return false;
     }
 
+    public function eligibleForEquipmentUtilization()
+    {
+        if (!in_array(env('APP_LAB'), [23, 25])) {
+            if (auth()->user()->equipment_allowed)
+                return true;
+            if (auth()->user()->user_type_id == 1 && date('d') > 15)
+                return true;
+        }
+        return false;
+    }
+
     public function pendingTasks()
     {
-        if ($this->eligibleForEidVlConsumptions()) {
-            $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
-            $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
-            
-            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                return true;
+        $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
+        $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
 
-            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                return true;
-            
+        if ($this->eligibleForEidVlConsumptions()) {
             $model = new Deliveries;
             if (!collect($model->getMissingDeliveries())->isEmpty())  
                 return true;
 
             if (Consumption::where('year', $prevyear)->where('month', $prevmonth)->get()->isEmpty())  
+                return true;
+        }
+
+        if ($this->eligibleForEquipmentUtilization()) {
+            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return true;
+
+            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
                 return true;
         }
 
