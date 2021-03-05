@@ -544,6 +544,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('reports/dateselect', 'ReportController@dateselect')->name('dateselect');
 		Route::post('reports', 'ReportController@generate')->name('reports');
 		Route::post('reports/kitsconsumption', 'ReportController@consumption');
+		Route::post('reports/kitsconsumption/update', 'ReportController@update_consumption');
 		Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
 
 		Route::get('reports/kits', 'KitsController@kits')->name('report.kits');

@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Common;
-use App\Sample;
-use App\SampleView;
-use App\Viralsample;
-use App\ViralsampleView;
-use App\Cd4SampleView;
 use App\Abbotdeliveries;
-use App\Taqmandeliveries;
+use App\Abbotprocurement;
+use App\Batch;
+use App\Cd4SampleView;
+use App\Common;
 use App\Consumption;
 use App\Deliveries;
-use App\Abbotprocurement;
-use App\Taqmanprocurement;
-use Excel;
-use DB;
-use Mpdf\Mpdf;
-use App\ViewFacility;
-use App\Lab;
-use App\Batch;
-use App\Viralbatch;
 use App\Kits;
+use App\Lab;
+use App\Machine;
+use App\Sample;
+use App\SampleView;
+use App\TestType;
+use App\Taqmandeliveries;
+use App\Taqmanprocurement;
+use App\ViewFacility;
+use App\Viralbatch;
+use App\Viralsample;
+use App\ViralsampleView;
+use DB;
+use Excel;
+use Illuminate\Http\Request;
+use Mpdf\Mpdf;
 
 class ReportController extends Controller
 {
@@ -422,8 +424,8 @@ class ReportController extends Controller
     {
         $year = $request->input('year');
         $month = $request->input('month');
-        $previousYear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
-        $previousMonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        // $previousYear = date('Y', strtotime("-1 Month", strtotime($year . '-' . $month)));
+        // $previousMonth = date('m', strtotime("-1 Month", strtotime($year . '-' . $month)));
         $consumption = Consumption::with(['testtype', 'platform'])
                         ->where('year', $year)
                         ->where('machine', $request->input('platform'))
@@ -441,10 +443,29 @@ class ReportController extends Controller
         $consumption = $consumption->first();
         $data = [
             'consumption' => $consumption,
-            'deliveries' => $deliveries
+            'deliveries' => $deliveries,
+            'request' => $request->except(['_token']),
         ];
+        
         return view('reports.consumptionreport', $data)->with('pageTitle', 'Consumption Report');  
         
+    }
+
+    public function update_consumption(Request $request)
+    {
+        $consumption = Consumption::with(['testtype', 'platform', 'details'])
+                        ->where('year', $request->input('year'))
+                        ->where('machine', $request->input('platform'))
+                        ->where('type', $request->input('types'))
+                        ->where('month', $request->input('month'))->first();
+        $data = [
+                'consumption' => $consumption,
+                'period' => (object)$request->only(['year', 'month']),
+                'machine' => Machine::find($request->input('platform')),
+                'type' => TestType::find($request->input('types')),
+            ];
+        // dd($consumption);
+        return view('reports.updateconsumptionreport', $data);
     }
 
     public static function __getDateData($request, &$dateString)

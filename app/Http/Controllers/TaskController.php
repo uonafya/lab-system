@@ -62,14 +62,18 @@ class TaskController extends Controller
                 $data['consumptions'] = $pendingConsumptions;
             }
           		
-    		$month = $this->previousMonth;
-            $year = $this->previousYear;
+    		
             $range = '';
             $quarter = parent::_getMonthQuarter(date('m'),$range);
             session(['range'=>$range, 'quarter'=>$quarter]);
+
+        }
+
+        if ($this->eligibleForEquipmentUtilization()) {
+            $month = $this->previousMonth;
+            $year = $this->previousYear;
             $data['equipment'] = LabEquipmentTracker::where('year', $year)->where('month', $month)->count();
             $data['performance'] = LabPerformanceTracker::where('year', $year)->where('month', $month)->count();
-
         }
   //       $data['requisitions'] = count($this->getRequisitions());
         if ($this->eligibleForCovidConsumptions()) {
@@ -86,6 +90,7 @@ class TaskController extends Controller
         $data['prevyear'] = $this->previousYear;
         $data['allowedEIDVLConsumption'] = $this->eligibleForEidVlConsumptions();
         $data['allowedCovidConsumption'] = $this->eligibleForCovidConsumptions();
+        $data['allowedEquipmentUtilization'] = $this->eligibleForEquipmentUtilization();
         
         return view('tasks.home', $data)->with('pageTitle', 'Pending Tasks');
     }
