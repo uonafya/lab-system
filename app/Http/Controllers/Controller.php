@@ -56,7 +56,7 @@ class Controller extends BaseController
         if (!in_array(env('APP_LAB'), [8])) {
             if (auth()->user()->covid_consumption_allowed)
                 return true;
-            if (auth()->user()->user_type_id == 1 && in_array(date('l', strtotime(date('Y-m-d'))), ['Thursday','Friday', 'Saturday', 'Sunday']))
+            if (auth()->user()->user_type_id == 1 && in_array(date('l', strtotime(date('Y-m-d'))), [/*'Thursday',*/'Friday', 'Saturday', 'Sunday']))
                 return true;
         }
         return false;
