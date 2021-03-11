@@ -17,7 +17,7 @@ class ConsumptionController extends Controller
     public function consumption (Request $request, $guide=null)
     {
         if ($guide != null)
-            return redirect('http://lab-2.test.nascop.org/download/consumption');
+            return redirect('https://eiddash.nascop.org/download/consumption');
 
         $model = new Consumption;
         $period = collect($model->getMissingConsumptions())->first();
