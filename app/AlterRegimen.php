@@ -2,7 +2,8 @@
 
 namespace App;
 
-use DB;
+// use DB;
+use Illuminate\Support\Facades\DB;
 use App\Viralsample;
 use App\ViralsampleView;
 
@@ -50,8 +51,8 @@ class AlterRegimen
 
 	public static function alter_justification()
 	{
-		DB::table('viraljustifications')->insert(['id' => 11, 'rank' => 6, 'name' => 'Confirmation of Persistent Low Level Viremia (PLLV)']);
-		DB::table('viraljustifications')->where('id', 7)->update(['rank' => 8]);		
+		DB::table('viraljustifications')->insert(['id' => 11, 'rank_id' => 6, 'name' => 'Confirmation of Persistent Low Level Viremia (PLLV)']);
+		DB::table('viraljustifications')->where('id', 7)->update(['rank_id' => 8]);		
 	}
 
 	public static function alter_facilitys()
