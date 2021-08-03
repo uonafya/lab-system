@@ -263,6 +263,7 @@ class CovidReportsController extends Controller
 			}
 			$current_lab = null;
 			if($sample->lab_id != env('APP_LAB')) $current_lab = Lab::find(env('APP_LAB'))->labdesc;
+			if($sample->lab_id != env('APP_LAB')) $current_labloc = Lab::find(env('APP_LAB'))->lablocation;
 
 			$data[] = [
 				$current_lab ?? $lab,
@@ -281,7 +282,8 @@ class CovidReportsController extends Controller
 				$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
 				$sample->residence,
 				'',
-				$sample->countyname ?? $sample->county,
+				// $sample->countyname ?? $sample->county,
+				$current_labloc,
 				$travelled,
 				$history,
 				'',
@@ -356,6 +358,7 @@ class CovidReportsController extends Controller
 			}
 			$current_lab = null;
 			if($sample->lab_id != env('APP_LAB')) $current_lab = Lab::find(env('APP_LAB'))->labdesc;
+			if($sample->lab_id != env('APP_LAB')) $current_labloc = Lab::find(env('APP_LAB'))->lablocation;
 
 			$data[] = [
 				// $current_lab ?? $lab,
@@ -375,7 +378,8 @@ class CovidReportsController extends Controller
 				$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
 				$sample->residence,
 				'',
-				$sample->countyname ?? $sample->county,
+				// $sample->countyname ?? $sample->county,
+				$current_labloc,
 				$travelled,
 				$history,
 				'',
@@ -435,6 +439,7 @@ class CovidReportsController extends Controller
 					}
 				}
 			}
+			if($sample->lab_id != env('APP_LAB')) $current_labloc = Lab::find(env('APP_LAB'))->lablocation;
 
 			$post_data = [
 				'TESTING_LAB' => $sample->lab->code,
@@ -475,7 +480,8 @@ class CovidReportsController extends Controller
 				'SYMPTOMATIC' => $has_symptoms,
 				'SYMPTOMS' => $symptoms,
 				'SYMPTOMS_ONSET_DATE' => $sample->date_symptoms,
-				'COUNTY_OF_DIAGNOSIS' => $sample->countyname ?? $sample->county,
+				// 'COUNTY_OF_DIAGNOSIS' => $sample->countyname ?? $sample->county,
+				'COUNTY_OF_DIAGNOSIS' => $current_labloc,
 
 				'QUARANTINED_FACILITY' => $sample->quarantine_site ?? $sample->facilityname ?? null,
 				'HOSPITALIZED' => $sample->date_admission ? 'Yes' : 'Unknown',
