@@ -61,13 +61,14 @@
 		<td>{{ $worksheet->hiqcap_no }}</td>
 		<td><strong>Date Run</strong> </td>
 		<td>{{ $worksheet->my_date_format('daterun')  }}</td>
+		<td><strong>Run By</strong> </td>
+		<td>{{ $worksheet->runner->full_name  }}</td>
 
 		@if($dual_approval)
 			<td><strong>Date Reviewed (2<sup>nd</sup>) </strong></td>
 			<td>{{ $worksheet->my_date_format('datereviewed2')  }}</td>
 		@else
-			<td></td>
-			<td></td>
+			
 		@endif
 	</tr>
 	<tr>
