@@ -455,7 +455,7 @@ class ViralworksheetController extends Controller
 
     public function approve_results(Viralworksheet $worksheet)
     {
-        $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
+        $worksheet->load(['reviewer',  'creator', 'runner', 'sorter', 'bulker']);
         
         // $samples = Viralsample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
         
