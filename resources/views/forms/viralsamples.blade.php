@@ -218,11 +218,27 @@
                         @endif
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient / Sample ID
+                            <label class="col-sm-4 control-label">Patient Facility MFL
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                <div class="col-sm-4">
+                                    <select class="form-control requirable" required name="patient_facility_id" id="patient_facility_id">
+                                        @isset($viralsample)
+                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-sm-4 control-label">Patient serial No.
+                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
 
@@ -816,6 +832,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
@@ -823,7 +840,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-
+            let concat_patient_id;
 
             @if(in_array(env('APP_LAB'), [3, 1]) && auth()->user()->is_lab_user() && !isset($viralsample))
                 $("#samples_form input,select").change(function(){
@@ -847,10 +864,14 @@
                     $("#pmtct").attr("disabled", "disabled");
                 @endif
             @else
-                $("#patient").blur(function(){
+                $("#patient").change(function(){
                     var patient = $(this).val();
                     var facility = $("#facility_id").val();
-                    check_new_patient(patient, facility);
+                    concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+                    document.getElementById("patient").value = concat_patient_id;
+                    // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+                    // console.log(concat_patient_id)
+                    check_new_patient(concat_patient_id, facility);
                 });
             @endif
 
@@ -864,6 +885,21 @@
                     $('.requirable').attr("required", "required");
                 }
             });  
+            $("#patient_facility_id").change(function(){
+                
+                document.getElementById("patient").value = "";
+            }); 
+            $("#patient").blur(function(){
+                    var patient = $(this).val();
+                    var facility = $("#facility_id").val();
+                    if (patient == null){
+                    concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+                    document.getElementById("patient").value = concat_patient_id;
+                    // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+                    console.log(concat_patient_id)
+                    check_new_patient(concat_patient_id, facility);
+                }
+            }); 
 
             $("#sampletype").change(function(){
                 var val = $(this).val();
@@ -947,7 +983,7 @@
 
                success: function(data){
 
-                    console.log(data);
+                    // console.log(data);
 
                     $("#new_patient").val(data[0]);
 
