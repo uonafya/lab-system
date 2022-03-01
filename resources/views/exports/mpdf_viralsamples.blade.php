@@ -347,11 +347,21 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2">
+				  <span class="style1"><strong>Lab Comments:</strong></span>
+				</td>
+				<td colspan="5" class="comment" >
+					<span class="style5 "><b> {{ $vlmessage }}</b>  {{ $sample->labcomment }}  </span>
+				</td>
+				
+			</tr>
+			<tr>
+				<td colspan="2">
 				  <span class="style1"><strong>Comments:</strong></span>
 				</td>
 				<td colspan="5" class="comment" >
-					<span class="style5 "><b> {{ $vlmessage }}</b>  {{ $sample->labcomment }} </span>
+					<span class="style5 "><b> {{ $vlmessage }}</b> {{$sample->comments}}  </span>
 				</td>
+				
 			</tr>
 
 			@if(env('APP_LAB') != 1)

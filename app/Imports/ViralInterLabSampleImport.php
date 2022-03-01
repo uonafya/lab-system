@@ -50,7 +50,14 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
        	foreach ($collection as $samplekey => $samplevalue) {
             // Formatting the dates from the excel data
+            // printf($samplevalue);
+            // printf(isset($samplevalue['dob']));
+            if (isset($samplevalue['dob']) != 1){
+                printf('empty object');
+                continue;
+            }
        		$dob = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['dob']))->format('Y-m-d');
+            
         	$initiation_date = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['art_init_date']))->format('Y-m-d');
         	$datecollected = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['datecollected']))->format('Y-m-d');
         	$datereceived = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($samplevalue['datereceived']))->format('Y-m-d');
@@ -74,7 +81,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $patient->facility_id = $facility->id;
                 $patient->sex = $lookups['genders']->where('gender', strtoupper($samplevalue['sex']))->first()->id;
                 $patient->dob = $dob;
-                // $patient->initiation_date = $initiation_date;
+                $patient->initiation_date = $initiation_date;
                 $patient->save();
             }
 
@@ -84,7 +91,6 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
             if($existingSample) continue;
             $worksheet_counter++;
-        
             $sample = new Viralsample();
             $sample->batch_id = $batch->id;
             $sample->receivedstatus = $samplevalue['receivedstatus'];
@@ -96,7 +102,10 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             $sample->regimenline = $samplevalue['regimenline'];
             $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
             $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
-            $sample->sampletype = $samplevalue['sampletype'];   
+            $sample->sampletype = $samplevalue['sampletype'];
+            $sample->recency_number = $samplevalue['recencyno']; 
+             
+
             if($worksheet_counter < 94) $sample->worksheet_id = $worksheet->id;             
             $sample->save();
 

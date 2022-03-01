@@ -208,7 +208,7 @@ class ViralsampleController extends Controller
             //         $sample->datecollected = $samplevalue[11];
             //         $sample->regimenline = $samplevalue[13];
             //         $sample->prophylaxis = $lookups['prophylaxis']->where('category', $samplevalue[12])->first()->id ?? 15;
-            //         $sample->justification = $lookups['justifications']->where('rank', $samplevalue[15])->first()->id ?? 8;
+            //         $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue[15])->first()->id ?? 8;
             //         $sample->sampletype = $samplevalue[10];
             //         $sample->save();
 

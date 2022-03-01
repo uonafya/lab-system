@@ -73,15 +73,15 @@
                     <li><a href="{{ url('worksheet/set_sampletype/2/70') }}">Create Abbott Worksheet(72)</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('worksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
+                {{-- <li><a href="{{ url('worksheet/set_sampletype/2') }}">Create Abbott Worksheet(96)</a></li>
+                <hr /> --}}
+                <li><a href="{{ url('worksheet/set_sampletype/3/22') }}">Create C6800/C8800 Worksheet(24)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/set_sampletype/3/22') }}">Create C8800 Worksheet(24)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3/46') }}">Create C6800/C8800 Worksheet(48)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/set_sampletype/3/46') }}">Create C8800 Worksheet(48)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3/70') }}">Create C6800/C8800 Worksheet(72)</a></li>
                 <hr />
-                <li><a href="{{ url('worksheet/set_sampletype/3/70') }}">Create C8800 Worksheet(72)</a></li>
-                <hr />
-                <li><a href="{{ url('worksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
+                <li><a href="{{ url('worksheet/set_sampletype/3') }}">Create C6800/C8800 Worksheet(96)</a></li>
                 <hr />
                 <!-- <li>
                     <a href="#"><span class="nav-label">Batches</span><span class="fa arrow"></span> </a>
@@ -167,7 +167,7 @@
                 <li><a href="{{ url('viralworksheet/set_sampletype/2/1') }}">Create Abbott Calibration Worksheet</a></li>
                 <hr />
                 @if(!in_array(env('APP_LAB'), [6, 8]))
-                    <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C8800 Worksheet(96)</a></li>
+                    <li><a href="{{ url('viralworksheet/set_sampletype/3') }}">Create C6800/C8800 Worksheet(96)</a></li>
                     <hr />
                     <li><a href="{{ url('viralworksheet/set_sampletype/4/0/94') }}">Create Pantha Worksheet(100 - 3-ctrl 3-cal)</a></li>
                     <hr />

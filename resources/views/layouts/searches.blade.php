@@ -197,7 +197,55 @@
 							} else {
 								return {
 									text	: row.facilitycode + ' - ' + row.name + ' (' + row.county + ')', 
-									id		: row.id		
+									id		: row.id
+								};
+							}
+						}),
+						pagination	: {
+							more: data.to < data.total
+						}
+					};
+				}
+			}
+		});
+
+		if(send_url != false)
+			set_change_listener(div_name, send_url, false);
+	}
+	function set_select_facility_mfl(div_name, url, minimum_length, placeholder, send_url=false) {
+		if(!div_name.includes('#') && !div_name.includes('.')) div_name = '#' + div_name;
+		// console.log(div_name);
+
+		$(div_name).select2({
+			minimumInputLength: minimum_length,
+			placeholder: placeholder,
+			allowClear: true,
+			ajax: {
+				delay	: 100,
+				type	: "POST",
+				dataType: 'json',
+				data	: function(params){
+					return {
+						search : params.term,
+						div_id : div_name
+					}
+				},
+				url		: function(params){
+					params.page = params.page || 1;
+					return  url + "?page=" + params.page;
+				},
+				processResults: function(data, params){
+					return {
+						results 	: $.map(data.data, function (row){
+							if (row.facilitycode == undefined) {
+								return {
+									text	: row.name,
+									id		: row.id
+								};
+							} else {
+								return {
+									text	: row.facilitycode + ' - ' + row.name + ' (' + row.county + ')',
+									id		: row.facilitycode
 								};
 							}
 						}),

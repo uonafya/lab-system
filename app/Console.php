@@ -5,10 +5,11 @@ namespace App;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Mpdf;
-use DB;
+// use DB;
 
 use App\Mail\EdarpMachakosFailed;
 use App\Mail\EdarpMachakosDelayed;
+use Illuminate\Support\Facades\DB;
 
 class Console
 {
@@ -251,8 +252,8 @@ class Console
     public static function machakos_edarp($batch_id=null)
     {
         ini_set('memory_limit', "-1");
-        $prophylaxis = \DB::table('viralregimen')->get();
-        $justifications = \DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
+        $prophylaxis = DB::table('viralregimen')->get();
+        $justifications = DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
 
         // $min_date = date('Y-m-d', strtotime('-3 weeks'));
         $min_date = date('Y-m-d', strtotime('-9 months'));
