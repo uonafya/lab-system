@@ -1,1 +1,0 @@
-<p>Good Afternoon,</p><p>Kindly find the attached revised sample collection manual for your reference.</p> @include('emails.lab_signature') 
