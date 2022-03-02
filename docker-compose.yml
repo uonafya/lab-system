@@ -1,87 +1,50 @@
-version: "3.2"
+# For more information: https://laravel.com/docs/sail
+version: '3'
 services:
-  app:
-    image: mwendakith/lab:1.6
-    #build:
-    #  context: ./
-    #  dockerfile: Dockerfile
-    volumes:
-      -  type: volume
-         source:  myapp
-         target: /var/www/lab
-    working_dir: /var/www/lab
-    deploy:
-      restart_policy:
-        condition: on-failure
-      #placement:
-      #  constraints: [node.role == worker]
-    networks:
-      - webnet
-
-  web:
-    image: mwendakith/nginx:latest
-    #build:
-    #  context: ./
-    #  dockerfile: web.dockerfile
-    volumes:
-      -  type: volume
-         source:  myapp
-         target: /var/www/lab
-    #working_dir: /var/www/lab
-    deploy:
-      restart_policy:
-        condition: on-failure
-      #placement:
-      #  constraints: [node.role == worker]
-    ports:
-      - 8080:80
-    networks:
-      - webnet
-
-  smtp:
-    image: namshi/smtp:latest
-    ports:
-      - "25:25"
-    deploy:
-      restart_policy:
-        condition: on-failure
-      #placement:
-      #  constraints: [node.role == worker]
-    environment:
-      MAILNAME: 
-    networks:
-      - webnet
-
-  visualizer:
-    image: dockersamples/visualizer:stable
-    ports:
-      - "4000:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints: [node.role == manager]
-    networks:
-      - webnet
-
-  redis:
-    image: redis
-    ports:
-      - "10000:6379"
-    volumes:
-      - "redis_data:/data"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-    command: redis-server --appendonly yes
-    networks:
-      - webnet
-
+    laravel.test:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.1
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: sail-8.1/app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-80}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        depends_on:
+            - mysql
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'sail-mysql:/var/lib/mysql'
+        networks:
+            - sail
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+            retries: 3
+            timeout: 5s
 networks:
-  webnet: 
+    sail:
+        driver: bridge
 volumes:
-  myapp: 
-  #  driver: vsphere:latest
-  redis_data:
+    sail-mysql:
+        driver: local
