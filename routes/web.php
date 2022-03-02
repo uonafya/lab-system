@@ -949,3 +949,9 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 });
+
+
+Route::get('generateCCC/{mfl}/{serial_no}','ClientRegistry@generateCCC_NO');
+Route::get('fetchPatient/','ClientRegistry@getPatients');
+Route::get('fetchCCC_NO/','ClientRegistry@getCCC_No');
+Route::get('put/','ClientRegistry@addPatients');
