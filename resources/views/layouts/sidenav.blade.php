@@ -46,6 +46,8 @@
                     </ul>
                 </li> -->
                 @if(in_array(env('APP_LAB'), [1, 2, 8, 9]))
+                    <li><a href="{{ url('clientregistry') }}">Client Registry</a></li>
+                    <hr />
                     <li><a href="{{ url('sample/upload') }}">Upload Data Entry Samples</a></li>
                     <hr />
                 @endif

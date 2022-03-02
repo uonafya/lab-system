@@ -26,7 +26,8 @@
         "tymon/jwt-auth": "1.0.*",
         "simplesoftwareio/simple-qrcode": "^3.0",
         "laravel/helpers": "^1.1",
-        "dingo/api": "^2"
+        "dingo/api": "^2",
+        "livewire/livewire": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
