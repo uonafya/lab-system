@@ -1,0 +1,24 @@
+{
+    "jsonarray":[
+        {
+            "id": 1,
+            "mfl-code": 15188,
+            "serial-number": 33232
+        },
+        {
+            "id": 2,
+            "mfl-code": 14836,
+            "serial-number": 78621
+        },
+        {
+            "id": 3,
+            "mfl-code": 15200,
+            "serial-number": 89123
+        },
+        {
+            "id": 4,
+            "mfl-code": 89312,
+            "serial-number": 213213
+        }    
+    ]
+}
