@@ -11,8 +11,8 @@ use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
 use App\Random;
+use Illuminate\Support\Facades\DB;
 use Mpdf\Mpdf;
-use DB;
 
 class RandomController extends Controller
 {
@@ -84,8 +84,21 @@ class RandomController extends Controller
 		return view('forms.search')->with('pageTitle', 'Search');
 	}
 
-	
-	public function labcontacts()
+    //view client reg
+    public function clientregistry()
+    {
+        return view('tables.clientregistry');
+    }
+
+    //allpatients
+    public function allpatients()
+    {
+        $users = DB::table('patients')->paginate(20);
+
+        return view('tables.clientregistry', compact('users'));
+
+    }
+        public function labcontacts()
 	{
 		$lab = Lab::find(env('APP_LAB'));
 		return view('forms.lab', ['lab' => $lab]);

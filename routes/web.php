@@ -84,6 +84,11 @@ Route::middleware(['auth'])->group(function(){
 // 	return view('addsample');
 // });
 
+
+Route::get('/clientregistry', 'RandomController@allpatients');
+
+Route::get('/searchnow', 'RandomController@searchnow');
+
 Route::get('/config', 'RandomController@config');
 Route::get('/download_notice', 'RandomController@download_notice');
 
@@ -949,9 +954,3 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 });
-
-
-Route::get('generateCCC/{mfl}/{serial_no}','ClientRegistry@generateCCC_NO');
-Route::get('fetchPatient/','ClientRegistry@getPatients');
-Route::get('fetchCCC_NO/','ClientRegistry@getCCC_No');
-Route::get('put/','ClientRegistry@addPatients');
