@@ -954,3 +954,8 @@ Route::middleware(['auth'])->group(function(){
 	});
 
 });
+
+Route::get('patients','ClientRegistry@getPatients');
+Route::get('ccc_no','ClientRegistry@getPatients');
+
+Route::get('search/{patient}','ClientRegistry@search');

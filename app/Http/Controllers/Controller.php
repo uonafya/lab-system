@@ -29,26 +29,6 @@ class Controller extends BaseController
     // }
     
     
-    /* ------------------------ Using Custom Http Helper ------------------------ */
-    public function getPatient()
-    {
-        $data = Http::get('https://jsonplaceholder.typicode.com/posts');
-        $posts = json_decode($data->getBody()->getContents());
-        dd($posts);
-    }
-
-
-    public function addPatient()
-    {
-        $data = Http::post('https://jsonplaceholder.typicode.com/posts', [
-            'title' => 'foo',
-            'body' => 'bar',
-            'userId' => 1
-        ]);
-        $post = json_decode($data->getBody()->getContents());
-        dd($post);
-    }
-
     public function _columnBuilder($columns = null)
     {
         $column = '<tr>';

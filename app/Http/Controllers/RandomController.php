@@ -87,6 +87,8 @@ class RandomController extends Controller
     //view client reg
     public function clientregistry()
     {
+		
+		
         return view('tables.clientregistry');
     }
 
