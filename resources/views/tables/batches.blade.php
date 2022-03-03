@@ -37,7 +37,10 @@
                         (5 days)
                     @endif
 
-                </a>
+                </a>|
+                <a href="{{ $myurl2 }}/7">
+                    Batches With ReRuns tests
+                </a> |
             </div>
         </div>
 
