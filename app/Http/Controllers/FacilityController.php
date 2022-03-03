@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncFacilityUpdate;
+use App\Jobs\SyncUpdateFacility;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Facility;
 use App\ViewFacility;
 use App\Lookup;
+use Illuminate\Support\Facades\Log;
+use function Sodium\add;
+
 
 class FacilityController extends Controller
 {
@@ -481,4 +486,10 @@ class FacilityController extends Controller
         $facilities->setPath(url()->current());
         return $facilities;
     }
+
+    public function integration_update()
+    {
+        SyncFacilityUpdate::dispatch();
+    }
+
 }
