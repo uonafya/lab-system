@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Jobs;
-
+use Illuminate\Support\Facades\DB;
 use App\Facility;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,15 +13,22 @@ use Illuminate\Support\Facades\Log;
 class SyncFacilityUpdate implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     /**
      * Create a new job instance.
      *
      * @return void
      */
+    private $password;
+    private $username;
+    private $client_id;
+    private $secret_id;
+
     public function __construct()
     {
-        //
+        $this->password=env('KMHFL_PASSWORD');
+        $this->username=env('KMHFL_USER');
+        $this->client_id=env('KMHFL_CLIENT_ID');
+        $this->secret_id=env('KMHFL_CLIENT_SECRET');
     }
 
     /**
@@ -35,14 +42,15 @@ class SyncFacilityUpdate implements ShouldQueue
        Log::error($token_response['access_token']);
        $this->getTotalPage($token_response['access_token']);
 
+
     }
 
     private function generateAccessToken()
     {
-        $password=$_ENV['KMHFL_PASSWORD'];
-        $username=$_ENV['KMHFL_USER'];
-        $client_id=$_ENV['KMHFL_CLIENT_ID'];
-        $secret_id=$_ENV['KMHFL_CLIENT_SECRET'];
+       /* $this->password=$_ENV['KMHFL_PASSWORD'];
+        $this->username=$_ENV['KMHFL_USER'];
+        $this->client_id=$_ENV['KMHFL_CLIENT_ID'];
+        $this->secret_id=$_ENV['KMHFL_CLIENT_SECRET'];*/
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -54,7 +62,7 @@ class SyncFacilityUpdate implements ShouldQueue
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'grant_type=password&username='.$username.'&password='.$password.'&scope=read&client_id='.$client_id.'&client_secret='.$secret_id,
+            CURLOPT_POSTFIELDS => 'grant_type=password&username='.$this->username.'&password='.$this->password.'&scope=read&client_id='.$this->client_id.'&client_secret='.$this->secret_id,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded'
             ),
@@ -92,7 +100,7 @@ class SyncFacilityUpdate implements ShouldQueue
 
     private function updateCreateFacility($totalPages,$access_token)
     {
-        $totalPages = 5;
+        $totalPages = 20;
         $currentPage = 1;
         while ($totalPages >= $currentPage) {
             $curl = curl_init();
@@ -127,13 +135,19 @@ class SyncFacilityUpdate implements ShouldQueue
                             ]
                         );
                     }
+
+                    Facility::where('facilitycode','=',$code)->update(
+                        [
+                            'status'=>'1'
+                        ]
+                    );
                 }
                 else
                 {
                     if($code!=null)
                     {
                         DB::table('facilitys')->insert(
-                            ['facilitycode' => $code, 'name' => $name]
+                            ['facilitycode' => $code, 'name' => $name,'status'=>'1']
                         );
                     }
                 }

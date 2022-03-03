@@ -492,4 +492,56 @@ class FacilityController extends Controller
         SyncFacilityUpdate::dispatch();
     }
 
+    public function getFacilityNotInKhmfl()
+    {
+
+        $facilities = DB::table('facilitys')
+            ->join('districts', 'districts.id', '=', 'facilitys.district')
+            ->join('countys', 'countys.id', '=', 'districts.county')
+            ->join('partners', 'partners.id', '=', 'facilitys.partner')
+            ->where('facilitys.status', '=', '0')
+            ->get();
+
+        return $facilities;
+
+    }
+
+    public function noCode()
+    {
+        $facilities = DB::table('facilitys')->where('facilitys.status', '=', '0')
+            ->get();
+
+        //$facilities = ViewFacility::when((env('APP_LAB') == 7), function($query){
+        //  return $query->with(['facility_user']);
+        //})->get();
+        $table = '';
+        $user = auth()->user();
+        if($user->user_type_id == 5) abort(403);
+        foreach ($facilities as $key => $value) {
+            $table .= '<tr>';
+            $table .= '<td>'.$value->facilitycode.'</td>';
+            $table .= '<td>'.$value->name.'</td>';
+            //$table .= '<td>'.$value->county.'</td>';
+            // $table .= '<td>'.$value->subcounty.'</td>';
+            //$table .= '<td>'.$value->telephone.'</td>';
+            //$table .= '<td>'.$value->telephone2.'</td>';
+            //$table .= '<td>'.$value->email.'</td>';
+            // $table .= '<td>'.$value->covid_email.'</td>';
+            // $table .= '<td>'.$value->sms_printer_phoneno.'</td>';
+            // $table .= '<td>'.$value->contactperson.'</td>';
+            // $table .= '<td>'.$value->contacttelephone.'</td>';
+            // $table .= '<td>'.$value->contacttelephone2.'</td>';
+            // $table .= '<td>'.$value->ContactEmail.'</td>';
+            // $table .= '<td>'.$value->G4Sbranchname.'</td>';
+            $table .= '<td><a href="'.route('facility.show',$value->id).'">View</a>|
+                        <a href="'.route('facility.edit',$value->id).'">Edit</a>';
+            if(env('APP_LAB') == 7 && $user->is_lab_user()) $table .= '|<a target="_blank" href="'.url('user/passwordReset/' . md5($value->facility_user->id)).'">Edit Login</a>';
+            $table .= '</td>';
+            $table .= '</tr>';
+        }
+        $columns = parent::_columnBuilder(['MFL Code','Facility Name','Task']);
+
+        return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities');
+    }
+
 }
