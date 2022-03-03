@@ -32,6 +32,7 @@ class ViralbatchController extends Controller
         $user = auth()->user();
         $facility_user = false;
         $subtotals = $date_modified = $date_tested = null;
+        $dt = date('Y-m-d', strtotime('-30 day'));
         $date_column = "viralbatches.datereceived";
         if(in_array($batch_complete, [1, 6])) $date_column = "viralbatches.datedispatched";
         if($user->user_type_id == 5) $facility_user=true;
@@ -48,7 +49,7 @@ class ViralbatchController extends Controller
 
         $string = "(user_id='{$user->id}' OR viralbatches.facility_id='{$user->facility_id}')";
         // DB::enableQueryLog();
-        if ($batch_complete != 7){
+        if ($batch_complete != 7 and $batch_complete !=8){
         $batches = Viralbatch::select(['viralbatches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
             ->leftJoin('users as u', 'u.id', '=', 'viralbatches.user_id')
@@ -93,7 +94,7 @@ class ViralbatchController extends Controller
             })
             ->paginate();
             // return DB::getQueryLog();
-        }else{
+        }else if($batch_complete == 7){
             // DB::enableQueryLog();
             $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS `samples_count`, facilitys.name, users.surname, users.oname")
             ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
@@ -112,6 +113,29 @@ class ViralbatchController extends Controller
             ->havingRaw('COUNT(viralsamples.id) > 0')
             ->paginate();
             // return DB::getQueryLog();
+        }else if($batch_complete == 8){
+            // DB::enableQueryLog(); 
+            $list_ids =  Viralsample::selectRaw("viralsamples.id,MAX(datetested) AS `datetested`")->whereRaw('(parentid is not null and parentid != 0  )')->where('viralsamples.result','=','Collect New Sample')->groupBy('viralsamples.patient_id')->orderBy('viralsamples.datetested', 'desc')->get()->pluck('id'); 
+           ;
+            $batches = Viralbatch::selectRaw("viralbatches.*, COUNT(viralsamples.id) AS `samples_count`, facilitys.name, users.surname, users.oname")
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'viralbatches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'viralbatches.user_id')
+            ->join('viralsamples', 'viralbatches.id', '=', 'viralsamples.batch_id')
+            ->where(['batch_complete' => 1, 'viralbatches.lab_id' => env('APP_LAB')])
+            ->whereIn('viralsamples.id',$list_ids)
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->where('viralsamples.datetested', '<=', date('Y-m-d', strtotime('-30 days')),'and','viralsamples.datecollected','<=','viralsamples.datetested','and','viralsamples.result','=','Collect New Sample');
+                }
+                return $query->where('viralsamples.datetested', '<', date('Y-m-d', strtotime('-30 days')),'and','viralsamples.datecollected','>','viralsamples.datetested','and','viralsamples.result','=','Collect New Sample');
+            })
+            ->groupBy('viralbatches.id', 'viralsamples.updated_at')
+            ->orderBy('viralsamples.datetested', 'desc')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT(viralsamples.id) > 0')
+            ->paginate();
+            // return DB::getQueryLog();
+            // 
         }
         $this->batches_transformer($batches, $batch_complete);
 
