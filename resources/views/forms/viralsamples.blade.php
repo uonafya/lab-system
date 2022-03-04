@@ -788,7 +788,8 @@
            greaterThan: ["#dob","Date Collected","Date of Birth"],
            },
            initiation_date:{
-           GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
+           GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"],
+           greaterThan: ["#datecollected","ART Inititation Date","Date Collected"],
            },
 {{--                initiation_date:{
                     GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
@@ -1072,3 +1073,27 @@
 
 
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+
+        $("#dob").change(function(){
+            var value = $("#dob").val();
+            var dob = new Date(value);
+            var today = new Date();
+            var age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
+            if(isNaN(age)) {
+
+                // will set 0 when value will be NaN
+                age=0;
+
+            }
+            else{
+                age=age;
+            }
+            $('#age').val(age);
+
+        });
+
+    });
+</script>
