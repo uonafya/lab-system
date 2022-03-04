@@ -530,7 +530,7 @@
                                                 <div class="col-sm-8">
                                                     <input class="form-control" id="mother_age" name="mother_age"
                                                            type="text" value="{{ $sample->mother_age ?? '' }}"
-                                                           number="number" min=10 max=70>
+                                                           number="number" min=10 max=70 required>
                                                 </div>
                                             </div>
 

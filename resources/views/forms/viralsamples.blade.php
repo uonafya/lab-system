@@ -162,14 +162,14 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Specimen Label ID </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id" required>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Area Name </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname" required>
                                 </div>
                             </div>
 
@@ -193,9 +193,10 @@
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}">
+                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" required>
                                 </div>
 
                                 <div class="col-sm-1">Patient's Preferred Language</div>
@@ -207,8 +208,9 @@
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
                                             @endif
-                                            > 
-                                            {{ $value }} 
+                                            required>
+                                            {{ $value }}
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                         </label>
 
                                     @endforeach
@@ -230,8 +232,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="col-sm-4 control-label">Patient serial No.
-                                        <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    <label class="col-sm-4 control-label">Patient serial No.<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     </label>
                                     <div class="col-sm-4">
                                         <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
@@ -279,9 +280,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient Names</label>
+                            <label class="col-sm-4 control-label">Patient Names
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}">
+                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}" required>
                             </div>
                         </div>
 
@@ -296,16 +299,18 @@
                                     @if(auth()->user()->user_type_id == 5)
                                         required
                                     @endif
-                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob" required>
                                 </div>
                             </div>                            
                         </div>
 
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <label class="col-sm-4 control-label">Age (In Years)
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}" required>
                                 </div>
                             </div>
                         @endif
@@ -337,9 +342,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PMTCT(If Female)</label>
+                            <label class="col-sm-4 control-label">PMTCT(If Female)
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" name="pmtct" id="pmtct">
+                                <select class="form-control requirable" name="pmtct" id="pmtct" required>
 
                                     <option></option>
                                     @foreach ($pmtct_types as $pmtct)
@@ -411,7 +418,9 @@
                         </div>                      
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Separation / Centrifugation</label>
+                            <label class="col-sm-4 control-label">Date of Separation / Centrifugation
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -421,7 +430,7 @@
                                             value="{{ $viralsample->my_date_format('dateseparated', 'Y-m-d') }}"
                                         @endif
 
-                                      name="dateseparated">
+                                      name="dateseparated" required>
                                 </div>
                             </div>                            
                         </div> 
@@ -429,7 +438,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Time of Separation / Centrifugation</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="separating_hour" name="separating_hour">
+                                <select class="form-control" id="separating_hour" name="separating_hour" required>
 
                                     <option></option>
                                     @for($i=1; $i<13; $i++)
@@ -475,11 +484,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                            <label class="col-sm-4 control-label">Date Dispatched from Facility
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-dispatched">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
+                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility" required>
                                 </div>
                             </div>                            
                         </div>
@@ -520,11 +531,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Initiated on Current Regimen</label>
+                            <label class="col-sm-4 control-label">Date Initiated on Current Regimen
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen">
+                                    <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen" required>
                                 </div>
                             </div>                            
                         </div>
@@ -554,9 +567,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Recency Number</label>
+                            <label class="col-sm-4 control-label">Recency Number
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}" required>
                             </div>
                         </div>
 
@@ -600,7 +615,7 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}" required>
                             </div>
                         </div>
 
@@ -761,21 +776,33 @@
         @slot('val_rules')
            ,
             rules: {
-                dob: {
-                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
-                    lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
+               dob: {
+                    lessThan: ["#datecollected", "Date Collected", "Date of Birth"],
+                    lessThan: ["#initiation_date","ART Inititation Date","Date of Birth"],
+                    lessThan: ["#dateseparated", "Date of Separation / Centrifugation", "Date of Birth"],
+                    lessThan: ["#datedispatched", "Date Dispatched from Facility", "Date of Birth"],
+                    lessThan: ["#dateinitiatedonregimen", "Date Initiated on Current Regimen", "Date of Birth"],
+                    lessThan: ["#datereceived", "Date Received","Date of Birth"]
                 },
-                initiation_date:{
+           datecollected: {
+           greaterThan: ["#dob","Date Collected","Date of Birth"],
+           },
+           initiation_date:{
+           GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
+           },
+{{--                initiation_date:{
                     GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
                 },
                 datecollected: {
+                    greaterThan: ["#initiation_date", "Date of Initiating ART", "Date Collected"],
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
                     @if(auth()->user()->user_type_id != 5)
                         lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                     @endif
                 },
-                datedispatched: {
-                    lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
+                --}}
+                datereceived: {
+                    greaterThan: ["#datedispatched","Date Received", "Date Dispatched From Facility"],
                 },
                 @if(auth()->user()->user_type_id != 5)
                     age: {
