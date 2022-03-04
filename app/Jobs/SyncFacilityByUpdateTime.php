@@ -1,28 +1,30 @@
 <?php
 
 namespace App\Jobs;
-use Illuminate\Support\Facades\DB;
-use App\Facility;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Void_;
 
-class SyncFacilityUpdate implements ShouldQueue
+class SyncFacilityByUpdateTime implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
+
     private $password;
     private $username;
     private $client_id;
     private $secret_id;
 
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->password=env('KMHFL_PASSWORD');
@@ -38,19 +40,23 @@ class SyncFacilityUpdate implements ShouldQueue
      */
     public function handle()
     {
-       $token_response= json_decode($this->generateAccessToken(),true);
-
-       $this->getTotalPage($token_response['access_token']);
-
-
+        $token_response = json_decode($this->generateAccessToken(), true);
+        $update_at=$this->getMaxDate();
+        $this->getFacilityUpdateAt($token_response['access_token'],$update_at);
     }
+
+    /**
+     * Generate access token.
+     *
+     * @return String token
+     */
 
     private function generateAccessToken()
     {
-       /* $this->password=$_ENV['KMHFL_PASSWORD'];
-        $this->username=$_ENV['KMHFL_USER'];
-        $this->client_id=$_ENV['KMHFL_CLIENT_ID'];
-        $this->secret_id=$_ENV['KMHFL_CLIENT_SECRET'];*/
+        /* $this->password=$_ENV['KMHFL_PASSWORD'];
+         $this->username=$_ENV['KMHFL_USER'];
+         $this->client_id=$_ENV['KMHFL_CLIENT_ID'];
+         $this->secret_id=$_ENV['KMHFL_CLIENT_SECRET'];*/
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -62,7 +68,7 @@ class SyncFacilityUpdate implements ShouldQueue
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'grant_type=password&username='.$this->username.'&password='.$this->password.'&scope=read&client_id='.$this->client_id.'&client_secret='.$this->secret_id,
+            CURLOPT_POSTFIELDS => 'grant_type=password&username=' . $this->username . '&password=' . $this->password . '&scope=read&client_id=' . $this->client_id . '&client_secret=' . $this->secret_id,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded'
             ),
@@ -75,12 +81,19 @@ class SyncFacilityUpdate implements ShouldQueue
 
 
     }
+    /**
+     * Get facility based on updated date and time
+     *
+     * @return Void
+     */
 
-    private function getTotalPage($access_token)
+    private function getFacilityUpdateAt($access_token,$updated_at)
     {
+
         $curl = curl_init();
+
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://api.kmhfltest.health.go.ke/api/facilities/facilities/?format=json',
+            CURLOPT_URL => 'http://api.kmhfltest.health.go.ke/api/facilities/facilities/?updated_after='.$updated_at.'&format=json',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -93,21 +106,38 @@ class SyncFacilityUpdate implements ShouldQueue
             ),
         ));
 
-        $response = json_decode(curl_exec($curl), true);
-        curl_close($curl);
-        $totalPages = $response['total_pages'];
-        $this->updateCreateFacility($totalPages,$access_token);
-    }
+        $response = curl_exec($curl);
 
-    private function updateCreateFacility($totalPages,$access_token)
-    {
-        $currentPage = 1;
-        while ($totalPages >= $currentPage)
+
+        curl_close($curl);
+
+        $response=json_decode($response, true);
+        $total_page=$response['total_pages'];
+        $current_page=1;
+
+        while($total_page>=$current_page)
         {
-            ProcessApiRequest::dispatch($access_token,$currentPage);
-            $currentPage++;
+            Log::info($current_page);
+            ProcessSyncFacilityByUpdateTimeApi::dispatch($access_token,$current_page,$updated_at);
+            $current_page++;
         }
 
+
+
+
+    }
+
+    /**
+     * get recent updated date.
+     *
+     * @return String time
+     */
+
+    private function getMaxDate()
+    {
+        $updated_at=DB::table('facilitys')->max('updated_at');
+        $date_time = date('Y-m-d', strtotime($updated_at)).'T'.date('h:i:s', strtotime($updated_at));
+        return $date_time;
     }
 
 

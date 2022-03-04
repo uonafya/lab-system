@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncFacilityByUpdateTime;
 use App\Jobs\SyncFacilityUpdate;
 use App\Jobs\SyncUpdateFacility;
 use DB;
@@ -486,26 +487,15 @@ class FacilityController extends Controller
         $facilities->setPath(url()->current());
         return $facilities;
     }
-
+           /*Controller to update and create facility from KMHFL*/
     public function integration_update()
     {
-        SyncFacilityUpdate::dispatch();
+
+       // SyncFacilityByUpdateTime::dispatch();
+      //  SyncFacilityUpdate::dispatch();
     }
 
-    public function getFacilityNotInKhmfl()
-    {
-
-        $facilities = DB::table('facilitys')
-            ->join('districts', 'districts.id', '=', 'facilitys.district')
-            ->join('countys', 'countys.id', '=', 'districts.county')
-            ->join('partners', 'partners.id', '=', 'facilitys.partner')
-            ->where('facilitys.status', '=', '0')
-            ->get();
-
-        return $facilities;
-
-    }
-
+              /*Controller to get Flagged facilities without code from KMHFL*/
     public function noCode()
     {
         $facilities = DB::table('facilitys')->where('facilitys.status', '=', '0')
@@ -543,5 +533,7 @@ class FacilityController extends Controller
 
         return view('tables.facilities', ['row' => $table, 'columns' => $columns])->with('pageTitle', 'Facilities');
     }
+
+
 
 }
