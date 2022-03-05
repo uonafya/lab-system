@@ -10,6 +10,7 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 use App\Imports\ViralInterLabSampleImport;
 
@@ -136,6 +137,47 @@ class ViralsampleController extends Controller
             Viralbatch::whereIn('id', $batches)->delete();
             return back();
         }
+    }
+
+    function getPatientDetails(){
+        //search db based on ccc
+
+        $ccc = file_get_contents('php://input');
+
+        $ccc = explode('-', $ccc);
+
+        $facility_id = $ccc[0];
+        $patient_no = $ccc[1];
+
+
+
+        $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility_id])->first();
+
+        
+
+        if(!empty($patient)){
+            $gender = DB::table('gender')->where('id','=', $patient->sex)->first();
+            $patient->gender = $gender->gender_description;
+
+            $dob = date('Y', strtotime($patient->dob));
+            $date = date('Y');
+
+            $patient->age = $date -$dob;
+
+            $response = array(
+                "status"=>'success',
+                "data"=>$patient
+            );
+        }else{
+            $response = array(
+                "status" => "error"
+            );
+        }
+
+        return json_encode($response);
+
+        ///return json   
+
     }
 
     public function excelupload(Request $request) {

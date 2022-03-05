@@ -188,6 +188,31 @@
                         <center>Patient Information</center>
                     </div>
                     <div class="panel-body">
+                        
+                    <div class="form-group">
+                            <label class="col-sm-4 control-label">Patient Facility MFL
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-8">
+                                <div class="col-sm-4">
+                                    <select class="form-control requirable" required name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
+                                        @isset($viralsample)
+                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-sm-4 control-label">Patient serial No.<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control requirable" id="patient" onKeyUp="fetchPatientDetails(this.value)" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
 
                         @if( in_array(env('APP_LAB'), $sms))
 
@@ -203,7 +228,7 @@
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
-                                        <label><input type="radio" class="i-checks" name="preferred_language" value={{ $key }} 
+                                        <label><input type="radio" class="i-checks" id="preferred_language" name="preferred_language" value={{ $key }} 
 
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
@@ -219,30 +244,7 @@
 
                         @endif
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient Facility MFL
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <div class="col-sm-4">
-                                    <select class="form-control requirable" required name="patient_facility_id" id="patient_facility_id">
-                                        @isset($viralsample)
-                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
-                                        @endisset
-                                    </select>
-                                </div>
-                                <div class="col-sm-8">
-                                    <label class="col-sm-4 control-label">Patient serial No.<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                    </label>
-                                    <div class="col-sm-4">
-                                        <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-
+                       
                         @if(env('APP_LAB') == 4)
 
                             <div class="form-group">
@@ -284,7 +286,7 @@
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}" required>
+                                <input class="form-control" id="name" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}" required>
                             </div>
                         </div>
 
@@ -324,7 +326,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="sex" id="sex">
 
-                                    <option></option>
+                                    <option value="3">- Select Option -</option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -891,15 +893,15 @@
                     $("#pmtct").attr("disabled", "disabled");
                 @endif
             @else
-                $("#patient").change(function(){
-                    var patient = $(this).val();
-                    var facility = $("#facility_id").val();
-                    concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
-                    document.getElementById("patient").value = concat_patient_id;
-                    // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
-                    // console.log(concat_patient_id)
-                    check_new_patient(concat_patient_id, facility);
-                });
+                // $("#patient").change(function(){
+                //     var patient = $(this).val();
+                //     var facility = $("#facility_id").val();
+                //     concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+                //     document.getElementById("patient").value = concat_patient_id;
+                //     // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+                //     // console.log(concat_patient_id)
+                //     check_new_patient(concat_patient_id, facility);
+                // });
             @endif
 
             $("#facility_id").change(function(){
@@ -916,17 +918,17 @@
                 
                 document.getElementById("patient").value = "";
             }); 
-            $("#patient").blur(function(){
-                    var patient = $(this).val();
-                    var facility = $("#facility_id").val();
-                    if (patient == null){
-                    concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
-                    document.getElementById("patient").value = concat_patient_id;
-                    // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
-                    console.log(concat_patient_id)
-                    check_new_patient(concat_patient_id, facility);
-                }
-            }); 
+            // $("#patient").blur(function(){
+            //         var patient = $(this).val();
+            //         var facility = $("#facility_id").val();
+            //         if (patient == null){
+            //         concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+            //         document.getElementById("patient").value = concat_patient_id;
+            //         // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+            //         console.log(concat_patient_id)
+            //         check_new_patient(concat_patient_id, facility);
+            //     }
+            // }); 
 
             $("#sampletype").change(function(){
                 var val = $(this).val();
@@ -1000,62 +1002,62 @@
             
         });
 
-        function check_new_patient(patient, facility_id){
-            $.ajax({
-               type: "POST",
-               data: {
-                _token : "{{ csrf_token() }}",
-                patient : patient,
-                facility_id : facility_id
-               },
-               url: "{{ url('/viralsample/new_patient') }}",
+        // function check_new_patient(patient, facility_id){
+        //     $.ajax({
+        //        type: "POST",
+        //        data: {
+        //         _token : "{{ csrf_token() }}",
+        //         patient : patient,
+        //         facility_id : facility_id
+        //        },
+        //        url: "{{ url('/viralsample/new_patient') }}",
 
-               success: function(data){
+        //        success: function(data){
 
-                    // console.log(data);
+        //             // console.log(data);
 
-                    $("#new_patient").val(data[0]);
+        //             $("#new_patient").val(data[0]);
 
-                    if(data[0] == 0){
-                        localStorage.setItem("new_patient", 0);
-                        var patient = data[1];
-                        var prev = data[2];
+        //             if(data[0] == 0){
+        //                 localStorage.setItem("new_patient", 0);
+        //                 var patient = data[1];
+        //                 var prev = data[2];
 
-                        // console.log(patient.dob);
+        //                 // console.log(patient.dob);
 
-                        $("#dob").val(patient.dob);
-                        $("#initiation_date").val(patient.initiation_date);
-                        $("#patient_phone_no").val(patient.patient_phone_no);
-                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
+        //                 $("#dob").val(patient.dob);
+        //                 $("#initiation_date").val(patient.initiation_date);
+        //                 $("#patient_phone_no").val(patient.patient_phone_no);
+        //                 // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
-                        $("#sex").val(patient.sex).change();
+        //                 $("#sex").val(patient.sex).change();
 
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'patient_id',
-                            value: patient.id,
-                            id: 'hidden_patient',
-                            class: 'patient_details'
-                        }).appendTo("#samples_form");
+        //                 $('<input>').attr({
+        //                     type: 'hidden',
+        //                     name: 'patient_id',
+        //                     value: patient.id,
+        //                     id: 'hidden_patient',
+        //                     class: 'patient_details'
+        //                 }).appendTo("#samples_form");
 
-                        if(data[3] != 0)
-                        {
-                            set_message(data[3]);
-                        }
+        //                 if(data[3] != 0)
+        //                 {
+        //                     set_message(data[3]);
+        //                 }
 
-                        // $(".lockable").attr("disabled", "disabled");
-                    }
-                    else{
-                        localStorage.setItem("new_patient", 1);
-                        // $(".lockable").removeAttr("disabled");
-                        // $(".lockable").val('').change();
+        //                 // $(".lockable").attr("disabled", "disabled");
+        //             }
+        //             else{
+        //                 localStorage.setItem("new_patient", 1);
+        //                 // $(".lockable").removeAttr("disabled");
+        //                 // $(".lockable").val('').change();
 
-                        $('.patient_details').remove();
-                    }
+        //                 $('.patient_details').remove();
+        //             }
 
-                }
-            });
-        }
+        //         }
+        //     });
+        // }
 
         function check_similar_samples(json_data){
             json_data['_token'] = "{{ csrf_token() }}";
@@ -1097,4 +1099,77 @@
         });
 
     });
+
+
+    function fetchPatientDetails(ccc){
+        
+        // get the ccc number and fetch the details
+
+        
+//         let json_data = [];
+//         json_data['_token'] = "{{ csrf_token() }}";
+//         json_data['ccc'] = ccc;
+
+
+// console.log('Getting '+json_data);
+
+
+            $.ajax({
+               type: "POST",
+               data: ccc,
+               url: "{{ url('/viralsample/getPatientDetails') }}",
+               success: function(data){
+                    
+                    console.log(data);
+                    let dataArray = JSON.parse(data);
+
+                    if(dataArray.status == 'success'){
+                        document.getElementById('name').value = dataArray.data.patient_name;
+                        document.getElementById('dob').value = dataArray.data.dob;
+                        document.getElementById('age').value = dataArray.data.age;
+                        document.getElementById('initiation_date').value = dataArray.data.dateinitiatedontreatment;
+                        document.getElementById('patient_phone_no').value = dataArray.data.patient_phone_no;
+                        
+                        // document.getElementById('age').value = dataArray.data.age;
+                        // document.getElementById('sex').options.selectedIndex = dataArray.data.sex-1;
+
+                        // var sex = document.getElementById('sex');
+                        // var option;
+                        
+                        // for (var i=0; i<sex.options.length; i++) {
+                        // option = sex.options[i];
+                        
+                        // if (option.value == ''+dataArray.data.sex) {
+                        // // or
+                        // // if (option.text == 'Malaysia') {
+                        //     option.setAttribute('selected', true);
+                        
+                        //     // For a single select, the job's done
+                        //     return; 
+                        //     } 
+                        // }
+                        // alert(dataArray.data.sex);
+                        $('#sex option[value='+ dataArray.data.sex + ']').attr('selected','selected').change();
+                        $('#preffered_language radio[value='+ dataArray.data.preffered_language + ']').attr('checked','checked').change();
+                    }
+                    if(dataArray.status == 'error'){
+                        
+                        document.getElementById('name').value = '';
+                        document.getElementById('dob').value = '';
+                        document.getElementById('age').value = '';
+                        document.getElementById('initiation_date').value = '';
+                        $('#sex option[value=""]').attr('selected','selected').change();
+                        document.getElementById('patient_phone_no').value = '';
+
+                    }
+                }
+            });
+
+
+
+    }
+
+    function showFacilityCode(facilityCode){
+        document.getElementById('patient').value = facilityCode+'-';
+    }
 </script>

@@ -727,7 +727,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {
 
+
+
 				Route::get('create/{sampletype?}', 'ViralsampleController@create');
+
+				Route::post('getPatientDetails', 'ViralsampleController@getPatientDetails');
 
 				Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 				Route::post('nhrl', 'ViralsampleController@approve_nhrl');
