@@ -568,10 +568,9 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Recency Number
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}" required>
+                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
                             </div>
                         </div>
 
