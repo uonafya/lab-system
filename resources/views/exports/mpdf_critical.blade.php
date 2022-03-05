@@ -77,6 +77,7 @@
                 <thead>
                     <tr>
                         <th> No </th>
+                        <th>Facility Name</th>
                         @if($type == 'eid')
                             <th> HEI Number </th>
                         @else
@@ -94,6 +95,7 @@
                     @foreach($samples as $key => $sample)
                         <tr>
                             <td> {{ $key+1 }} </td>
+                            <td> {{ $sample->facility->name }} </td>
                             <td> {{ $sample->patient }} </td>
                             <td> {{ $sample->batch_id }} </td>
                             <td> {{ $sample->my_date_format('datecollected') }} </td>

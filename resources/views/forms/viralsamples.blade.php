@@ -969,9 +969,11 @@
                 var val = $(this).val();
                 if(val == 12){
                     $("#recency_number").attr("required", "required");
+                    $("#recency_number").removeAttr("disabled");
                 }
                 else{
                     $("#recency_number").removeAttr("required");
+                    $("#recency_number").attr("disabled", "disabled");
                 }
             });
 

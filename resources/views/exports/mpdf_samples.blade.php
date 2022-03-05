@@ -279,7 +279,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="2">
-				  <span class="style4 style1 comment"><strong>Comments:</strong></span>
+				  <span class="style4 style1 comment"><strong> Lab Comments:</strong></span>
 				</td>
 				<td colspan="5" class="comment" >
 					<span class="style5 ">{{ $sample->comments }} &nbsp; {{ $sample->labcomment }}

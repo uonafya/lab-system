@@ -37,7 +37,18 @@
                         (5 days)
                     @endif
 
-                </a>
+                </a>|
+                <a href="{{ $myurl2 }}/7">
+                    Batches With ReRuns 
+                </a> |
+                @if($pre == 'viral')
+                <a href="{{ $myurl2 }}/8">
+                    Batches With CNS > 30 days
+                </a> |
+                    @else
+                        
+                    @endif
+                
             </div>
         </div>
 

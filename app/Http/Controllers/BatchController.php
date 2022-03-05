@@ -18,6 +18,7 @@ use Excel;
 use App\Mail\EidDispatch;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use DB;
 
 class BatchController extends Controller
 {
@@ -46,7 +47,7 @@ class BatchController extends Controller
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
-
+        if ($batch_complete != 7){
         $batches = Batch::select(['batches.*', 'facilitys.name', 'u.surname', 'u.oname', 'r.surname as rsurname', 'r.oname as roname'])
             ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
             ->leftJoin('users as u', 'u.id', '=', 'batches.user_id')
@@ -91,7 +92,26 @@ class BatchController extends Controller
             })
             ->where('batches.lab_id', env('APP_LAB'))
             ->paginate();
-
+        }else{
+            // DB::enableQueryLog();
+            $batches = Batch::selectRaw("batches.*, COUNT(samples.id) AS `samples_count`, facilitys.name, users.surname, users.oname")
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('users', 'users.id', '=', 'batches.user_id')
+            ->join('samples', 'batches.id', '=', 'samples.batch_id')
+            ->where(['batch_complete' => 0, 'batches.lab_id' => env('APP_LAB')])
+            ->when(true, function($query){
+                if(in_array(env('APP_LAB'), \App\Lookup::$double_approval)){
+                    return $query->whereRaw("( receivedstatus = 1 and parentid is not null and parentid != 0 and datetested is null)");
+                }
+                return $query->whereRaw("( receivedstatus = 1 and parentid is not null and parentid != 0 and datetested is null )");
+            })
+            ->groupBy('batches.id', 'samples.updated_at')
+            ->orderBy('samples.updated_at', 'desc')
+            // ->having('samples_count', '>', 0)
+            ->havingRaw('COUNT(samples.id) > 0')
+            ->paginate();
+            // return DB::getQueryLog();
+        }
         $this->batches_transformer($batches);
 
         $p = Lookup::get_partners();
