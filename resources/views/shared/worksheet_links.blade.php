@@ -45,6 +45,12 @@
 			Convert to Panther
 		</a> |
 		@endif
+                    <hr />
+		@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 5 && env('APP_LAB') != 6)
+		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/5') }}" title="Convert Worksheet">
+			Convert to Thermofisher
+		</a> |
+		@endif
 
 	@endif
 

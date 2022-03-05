@@ -48,6 +48,8 @@ width:1180px;
 					<center>
 						@if($worksheet->machine_type == 4)
 							PANTHER
+						@elseif($worksheet->machine_type == 5)
+							Thermofisher
 						@else
 							ABBOTT M2000 SPRT TEMPLATE	
 						@endif
