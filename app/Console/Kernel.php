@@ -29,10 +29,10 @@ class Kernel extends ConsoleKernel
     {
 
          $schedule->command('updateCreateFacility:cron') // Update all facility with invalid info or create
-                 ->monthly(); //to be changed to run on monthly  basis
+                 ->monthlyOn(1,'0:0'); //to be changed to run on monthly  basis
 
-         $schedule->command('addFacility:cron') //Create new facility based on updated timestamp
-          ->daily();    //to be run on daily, weekly basis
+       /*  $schedule->command('addFacility:cron') //Create new facility based on updated timestamp
+          ->daily();  */  //to be run on daily, weekly basis
 
     }
 

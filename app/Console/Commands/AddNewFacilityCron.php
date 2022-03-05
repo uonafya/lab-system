@@ -41,5 +41,6 @@ class AddNewFacilityCron extends Command
     {
         Log::info("Running");
         SyncFacilityByUpdateTime::dispatch();
+
     }
 }
