@@ -490,7 +490,6 @@ class FacilityController extends Controller
            /*Controller to update and create facility from KMHFL*/
     public function integration_update()
     {
-
        //SyncFacilityByUpdateTime::dispatch();
        // SyncFacilityUpdate::dispatch();
     }
