@@ -150,8 +150,9 @@ class ViralsampleController extends Controller
         $patient_no = $ccc[1];
 
 
+        $facility = DB::table('facilitys')->where(['facilitycode'=>$facility_id])->first();
 
-        $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility_id])->first();
+        $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility->id])->first();
 
         
 
