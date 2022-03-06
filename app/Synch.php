@@ -1088,7 +1088,7 @@ class Synch
 
 		if($status_code < 400){
 			$ok = $body->ok ?? null;
-           // record_log::save_log($samples->id,$samples->patient_id,$samples->id,'transfer');
+            //record_log::save_log($samples->id,$samples->patient_id,$samples->id,'tran',null);
 
 			if($ok) $sample_model::whereIn('id', $ok)->delete();
 			session(['toast_message' => 'The transfer has been made.']);
