@@ -44,6 +44,7 @@ class PopulateDatabase implements ShouldQueue
             $name=$result['official_name'];
             $date_created=$result['created'];
             $date_updated=$result['updated'];
+            $status=(boolean)$result['is_approved'];
             if(Facility::where('facilitycode','=',$code)->exists())
             {
                 $facility=Facility::where('facilitycode','=',$code)->first();
@@ -52,7 +53,6 @@ class PopulateDatabase implements ShouldQueue
                     Facility::where('facilitycode','=',$code)->update(
                         [
                             'name'=>$name,
-
                         ]
                     );
                 }
@@ -66,12 +66,19 @@ class PopulateDatabase implements ShouldQueue
             }
             else
             {
-                if($code!=null)
+                try
                 {
-                    DB::table('facilitys')->insert(
-                        ['facilitycode' => $code, 'name' => $name,'status'=>'1','created_at'=>$date_created,'updated_at'=>$date_updated ]
-                    );
+                    if($code!=null && $status==true)
+                    {
+                        DB::table('facilitys')->insert(
+                            ['facilitycode' => $code, 'name' => $name,'status'=>'1','created_at'=>$date_created,'updated_at'=>$date_updated ]
+                        );
+                    }
                 }
+               catch (\Exception $exception)
+               {
+                   Log::error($exception->getMessage());
+               }
             }
         }
 

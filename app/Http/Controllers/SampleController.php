@@ -11,7 +11,9 @@ use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\CustomClass\record_log;
 use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
 
@@ -166,6 +168,7 @@ class SampleController extends Controller
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
         $batch->save();
+       // $this->updateLogTrail();
         session(['batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
@@ -266,7 +269,7 @@ class SampleController extends Controller
 
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
-
+        record_log::save_log($sample->id,$sample->patient_id,$batch->id,"create");
         $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
 
         session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
@@ -303,6 +306,28 @@ class SampleController extends Controller
 
         return back();
     }
+
+
+    private function updateLogTrail($user_id,$sample_id,$patient_id,$batch_id,$action)
+    {
+
+        $date=date('Y-m-d h:i:s');
+        DB::table('sample_log_trail')->insert(
+          [
+                'id'=>Str::uuid()->toString(),
+                'sample_id'=>$sample_id,
+                'user_id'=>$user_id,
+                'action'=>$action,
+                'patient_id'=>$patient_id,
+                'batch_id'=>$batch_id,
+                'created_at'=>$date,
+                'updated_at'=>$date
+          ]
+      );
+
+    }
+
+
 
     /**
      * Display the specified resource.
@@ -552,7 +577,11 @@ class SampleController extends Controller
             }            
         }
 
-        $sample->pre_update(); 
+        $sample->pre_update();
+        record_log::save_log($sample->id,$sample->patient_id,$batch->id,'edit');
+
+
+       // $this->updateLogTrail($user->id,$sample->id,"edit");
 
         if(isset($transfer)){
             $url = $batch->transfer_samples([$sample->id], 'new_facility', true);
@@ -656,9 +685,12 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
+        $user = auth()->user();
         if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
             $batch = $sample->batch;
             $sample->delete();
+            record_log::save_log($sample->id,$sample->patient_id,$batch->id,'delete');
+           // $this->updateLogTrail($user->id,$sample->patient_id,$batch->id,'delete');
             $samples = $batch->sample;
             if($samples->isEmpty()) $batch->delete();
             else{
@@ -763,6 +795,7 @@ class SampleController extends Controller
     {
         $sample->sample_received_by = auth()->user()->id;
         $sample->save();
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'transfer');
         session(['toast_message' => "The sample has been tranferred to your account."]);
         return back();
     }
@@ -813,6 +846,7 @@ class SampleController extends Controller
 
         if($batch->batch_complete == 0){
             session(['toast_message' => 'The sample has been returned for testing.']);
+            record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,"returned");
             return back();
         }
         else{
@@ -845,6 +879,8 @@ class SampleController extends Controller
         }
         
         $sample->delete();
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,"redraw");
+
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
@@ -855,6 +891,7 @@ class SampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
+        record_log::save_log($prev_sample->id,$prev_sample->patient_id,$prev_sample->batch_id,"redraw");
         Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();

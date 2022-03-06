@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\CustomClass\record_log;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -1087,9 +1088,11 @@ class Synch
 
 		if($status_code < 400){
 			$ok = $body->ok ?? null;
+           // record_log::save_log($samples->id,$samples->patient_id,$samples->id,'transfer');
 
 			if($ok) $sample_model::whereIn('id', $ok)->delete();
 			session(['toast_message' => 'The transfer has been made.']);
+
 		}
 		else{
 			session(['toast_message' => "An error has occured. Status code {$status_code}.", 'toast_error' => 1]);

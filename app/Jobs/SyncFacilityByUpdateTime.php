@@ -60,7 +60,7 @@ class SyncFacilityByUpdateTime implements ShouldQueue
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://api.kmhfltest.health.go.ke/o/token/',
+            CURLOPT_URL => 'http://api.kmhfl.health.go.ke/o/token/',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -93,7 +93,7 @@ class SyncFacilityByUpdateTime implements ShouldQueue
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://api.kmhfltest.health.go.ke/api/facilities/facilities/?updated_after='.$updated_at.'&format=json',
+            CURLOPT_URL => 'http://api.kmhfl.health.go.ke/api/facilities/facilities/?updated_after='.$updated_at.'&format=json',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,

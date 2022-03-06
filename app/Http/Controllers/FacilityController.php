@@ -491,8 +491,8 @@ class FacilityController extends Controller
     public function integration_update()
     {
 
-       // SyncFacilityByUpdateTime::dispatch();
-      //  SyncFacilityUpdate::dispatch();
+       //SyncFacilityByUpdateTime::dispatch();
+       // SyncFacilityUpdate::dispatch();
     }
 
               /*Controller to get Flagged facilities without code from KMHFL*/

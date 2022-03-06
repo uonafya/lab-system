@@ -40,7 +40,7 @@ class ProcessApiRequest implements ShouldQueue
    {
        $curl = curl_init();
        curl_setopt_array($curl, array(
-           CURLOPT_URL => 'http://api.kmhfltest.health.go.ke/api/facilities/facilities/?format=json&page='.$this->currentPage,
+           CURLOPT_URL => 'http://api.kmhfl.health.go.ke/api/facilities/facilities/?format=json&page='.$this->currentPage,
            CURLOPT_RETURNTRANSFER => true,
            CURLOPT_ENCODING => '',
            CURLOPT_MAXREDIRS => 10,
