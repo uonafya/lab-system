@@ -616,6 +616,9 @@ class ViralsampleController extends Controller
         }
         $batch->pre_update();
 
+        return json_encode($batch);
+        
+
         $data = $request->only($viralsamples_arrays['patient']);
 
         /*$new_patient = $request->input('new_patient');
@@ -731,6 +734,9 @@ class ViralsampleController extends Controller
                 }
             }
         }
+
+        $changes = $viralsample->getChanges();
+        error_log('Changed '.json_encode($changes));
 
         MiscViral::check_batch($batch->id); 
 

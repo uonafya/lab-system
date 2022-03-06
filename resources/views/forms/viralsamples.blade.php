@@ -228,7 +228,7 @@
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
-                                        <label><input type="radio" class="i-checks" id="preferred_language" name="preferred_language" value={{ $key }} 
+                                        <label><input type="radio" class="i-chszecks" id="preferred_language" name="preferred_language" value="{{ $key }}" 
 
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
@@ -1150,7 +1150,15 @@
                         // }
                         // alert(dataArray.data.sex);
                         $('#sex option[value='+ dataArray.data.sex + ']').attr('selected','selected').change();
-                        $('#preffered_language radio[value='+ dataArray.data.preffered_language + ']').attr('checked','checked').change();
+                        
+                        $("input[name=preferred_language][value=" + dataArray.data.preferred_language + "]").prop('checked', true);
+
+
+
+
+
+
+
                     }
                     if(dataArray.status == 'error'){
                         
@@ -1160,6 +1168,8 @@
                         document.getElementById('initiation_date').value = '';
                         $('#sex option[value=""]').attr('selected','selected').change();
                         document.getElementById('patient_phone_no').value = '';
+                        $("input[name=preferred_language][value=1]").prop('unchecked', true);
+                        $("input[name=preferred_language][value=2]").prop('unchecked', true);
 
                     }
                 }
