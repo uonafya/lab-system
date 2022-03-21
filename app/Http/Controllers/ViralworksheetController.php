@@ -11,6 +11,7 @@ use App\Lookup;
 use DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ViralworksheetImport;
+use App\Lab;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -413,7 +414,8 @@ class ViralworksheetController extends Controller
         }
         $worksheet->load(['creator']);
         $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
-        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload'])->with('pageTitle', 'Worksheet Upload');
+        $labs = DB::table('labs')->get();
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users, 'type' => 'viralload', 'labs'=> $labs])->with('pageTitle', 'Worksheet Upload');
     }
 
 

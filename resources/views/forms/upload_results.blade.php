@@ -188,6 +188,19 @@
 
                                 </select></div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Testing Lab</label>
+                                <div class="col-sm-8"><select class="form-control" name="lab" id="lab">
+                                    
+                                    <option value=""> Select One </option>
+                                    @foreach ($labs as $lab)
+                                        <option value="{{ $lab->id }}" @if($lab->id == $worksheet->lab_id) selected @endif >
+                                         {{ $lab->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select></div>
+                            </div>
 
 
                             @if($worksheet->machine_type == 0 && env('APP_LAB') == 250)
