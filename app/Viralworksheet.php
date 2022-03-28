@@ -61,6 +61,10 @@ class Viralworksheet extends BaseModel
     {
         return $this->belongsTo('App\User', 'reviewedby2');
     }
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab');
+    }
 
 
     public function getFailedAttribute()

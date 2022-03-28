@@ -190,7 +190,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Testing Lab</label>
-                                <div class="col-sm-8"><select class="form-control" name="lab" id="lab">
+                                <div class="col-sm-8"><select class="form-control" name="lab_id" id="lab_id">
                                     
                                     <option value=""> Select One </option>
                                     @foreach ($labs as $lab)

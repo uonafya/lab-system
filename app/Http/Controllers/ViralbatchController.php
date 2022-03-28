@@ -869,8 +869,22 @@ class ViralbatchController extends Controller
 
         $data = Lookup::get_viral_lookups();
         $samples = $batch->sample;
-        $samples->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+       
+        $samples->load(['patient','worksheet', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        
+        // dd($batch->sample[0]->worksheet_id);
+
+        $i = 0;
+        foreach ($samples as $key => $sample){
+            // if(!$sample[$i]->worksheet_id) continue;
+            $data['labs'][$i] =  DB::table('viralworksheets')
+            ->where('viralworksheets.id', $sample->worksheet_id )
+            ->get();
+            $i++;
+        }
+ 
         $data['samples'] = $samples;
+        
 
         return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Batch');
     }

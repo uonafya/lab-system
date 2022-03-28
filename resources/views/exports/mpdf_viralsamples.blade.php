@@ -79,7 +79,8 @@ p.breakhere {page-break-before: always}
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="4" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
+					{{-- <strong>Testing Lab: {{ $sample->batch->lab }}</strong> --}}
+					<strong>Testing Lab: {{ $sample->worksheet->lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 

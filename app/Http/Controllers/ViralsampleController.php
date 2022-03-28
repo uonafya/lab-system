@@ -10,6 +10,7 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 use App\User;
+use DB;
 
 use App\Imports\ViralInterLabSampleImport;
 
@@ -863,10 +864,18 @@ class ViralsampleController extends Controller
     public function individual(Viralsample $sample)
     {
         $data = Lookup::get_viral_lookups();
-        $sample->load(['patient', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        $sample->load(['patient', 'worksheet', 'approver', 'batch.lab', 'batch.facility', 'batch.receiver', 'batch.creator']);
+        // DB::enableQueryLog();
+        $lab =  DB::table('viralworksheets')
+                ->where('viralworksheets.id', $sample->worksheet_id )
+                ->get();
+        // return DB::getQueryLog();
+        // // dd($lab);
         $data['samples'] = [$sample];
-
-        return view('exports.mpdf_viralsamples', $data)->with('pageTitle', 'Individual Samples');
+        $data['labs'] = [$lab];
+        
+        
+        return view('exports.mpdf_viralsamples', $data )->with('pageTitle', 'Individual Samples');
     }
 
     public function send_sms(ViralsampleView $sample)
