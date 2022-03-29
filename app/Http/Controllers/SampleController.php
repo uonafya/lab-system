@@ -11,7 +11,9 @@ use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\CustomClass\record_log;
 use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
 
@@ -166,6 +168,7 @@ class SampleController extends Controller
         $data = $request->only($samples_arrays['batch']);
         $batch->fill($data);
         $batch->save();
+       // $this->updateLogTrail();
         session(['batch' => $batch]);
 
         $new_patient = $request->input('new_patient');
@@ -266,7 +269,7 @@ class SampleController extends Controller
 
         $sample->age = Lookup::calculate_age($request->input('datecollected'), $request->input('dob'));
         $sample->save();
-
+        record_log::save_log($sample->id,$sample->patient_id,$batch->id,"create",null);
         $sample_count = Sample::where('batch_id', $batch->id)->get()->count();
 
         session(['toast_message' => "The sample has been created in batch {$batch->id}.", 'batch_total' => $sample_count, 'last_patient' => $patient->patient]);
@@ -303,6 +306,9 @@ class SampleController extends Controller
 
         return back();
     }
+
+
+
 
     /**
      * Display the specified resource.
@@ -454,8 +460,6 @@ class SampleController extends Controller
         $patient->mother_id = $mother->id;
         $patient->pre_update();
 
-        
-
 
         // $new_patient = $request->input('new_patient');
 
@@ -552,13 +556,30 @@ class SampleController extends Controller
             }            
         }
 
-        $sample->pre_update(); 
+        $changes=array();
+        $dirtySample= $sample->getDirty();
+        $trailDescription = '';
+        foreach ($dirtySample as $key =>$value)
+        {
+            $original = $sample->getOriginal($key);
+            $changes[]= [
+                'field' => $key,
+                'old' => $original,
+                'new' => $value,
+            ];
+
+            $trailDescription.=nl2br($key." was changed from ".$original.' to '.$value.''.PHP_EOL);
+        }
+        $sample->pre_update();
+        record_log::save_log($sample->id,$sample->patient_id,$batch->id,'edit',$trailDescription);
+
+       // $this->updateLogTrail($user->id,$sample->id,"edit");
 
         if(isset($transfer)){
             $url = $batch->transfer_samples([$sample->id], 'new_facility', true);
             $sample->refresh();
             $batch = $sample->batch;
-            session(['toast_message' => 'The sample has been tranferred to a new batch because the batch it was in has already been dispatched.']);
+            session(['toast_message' => 'The sample has been transferred to a new batch because the batch it was in has already been dispatched.']);
         }
 
         if(isset($different_patient)){
@@ -603,6 +624,7 @@ class SampleController extends Controller
         $site_entry_approval = session()->pull('site_entry_approval');
 
         if($site_entry_approval){
+            record_log::save_log($sample->id,$sample->patient_id,$batch->id,'approved',null);
             session(['toast_message' => 'The site entry sample has been approved.']);
             return redirect('batch/site_approval/' . $batch->id);
         }
@@ -656,9 +678,12 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
+        $user = auth()->user();
         if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
             $batch = $sample->batch;
             $sample->delete();
+            record_log::save_log($sample->id,$sample->patient_id,$batch->id,'delete',null);
+           // $this->updateLogTrail($user->id,$sample->patient_id,$batch->id,'delete');
             $samples = $batch->sample;
             if($samples->isEmpty()) $batch->delete();
             else{
@@ -674,7 +699,7 @@ class SampleController extends Controller
     }
 
 
-    public function new_patient(Request $request)
+    public function new_patient(Request $request, $data)
     {
         $facility_id = $request->input('facility_id');
         $patient = $request->input('patient');
@@ -761,9 +786,11 @@ class SampleController extends Controller
 
     public function transfer(Sample $sample)
     {
-        $sample->sample_received_by = auth()->user()->id;
+        $id=auth()->user()->id;
+        $sample->sample_received_by =$id;
         $sample->save();
-        session(['toast_message' => "The sample has been tranferred to your account."]);
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'transfer','transferred to'.$id);
+        session(['toast_message' => "The sample has been transferred to your account."]);
         return back();
     }
 
@@ -806,6 +833,7 @@ class SampleController extends Controller
 
         $sample->repeatt = 1;
         $sample->save();
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'returned for testing',null);
         
         $rerun = Misc::save_repeat($sample->id);
 
@@ -813,6 +841,7 @@ class SampleController extends Controller
 
         if($batch->batch_complete == 0){
             session(['toast_message' => 'The sample has been returned for testing.']);
+            record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,"returned");
             return back();
         }
         else{
@@ -845,6 +874,8 @@ class SampleController extends Controller
         }
         
         $sample->delete();
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,"redraw");
+
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
@@ -855,6 +886,7 @@ class SampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
+        record_log::save_log($prev_sample->id,$prev_sample->patient_id,$prev_sample->batch_id,"redraw",null);
         Misc::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
@@ -881,6 +913,7 @@ class SampleController extends Controller
         else{
             $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null]);
             $sample->save();
+            record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'unreceived',null);
             session(['toast_message' => 'The sample has been unreceived.']);
         }
         return back();
@@ -896,9 +929,11 @@ class SampleController extends Controller
 
         if($submit_type == "release"){
             Sample::whereIn('id', $samples)->update(['synched' => 0, 'approvedby' => $user->id]);
+            //record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'approved',null);
         }
         else{
             Sample::whereIn('id', $samples)->delete();
+           // record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'approved',null);
         }
 
         foreach ($batches as $key => $value) {
@@ -1010,9 +1045,11 @@ class SampleController extends Controller
             $sample->receivedstatus = $row[21];
             if(is_numeric($row[22])) $sample->rejectedreason = $row[22];
             $sample->save();
+            record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'create',null);
             $created_rows++;
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
+
         return redirect('/home');        
     }
 

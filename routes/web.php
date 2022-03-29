@@ -535,6 +535,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
 			Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
 			Route::get('facility/lab', 'FacilityController@lab')->name('facility.lab');
+            Route::get('facility/noCode', 'FacilityController@noCode')->name('facility.noCode');
 		});		
 		Route::resource('facility', 'FacilityController');
 
