@@ -46,6 +46,10 @@ class Worksheet extends BaseModel
     {
         return $this->belongsTo('App\User', 'uploadedby');
     }
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab', );
+    }
 
     public function canceller()
     {
