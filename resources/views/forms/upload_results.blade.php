@@ -188,6 +188,7 @@
 
                                 </select></div>
                             </div>
+                        @if($worksheet->route_name != 'covid_worksheet' && $worksheet->route_name != 'worksheet')
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Testing Lab</label>
                                 <div class="col-sm-8"><select class="form-control" name="lab_id" id="lab_id">
@@ -202,7 +203,7 @@
                                 </select></div>
                             </div>
 
-
+                        @endif
                             @if($worksheet->machine_type == 0 && env('APP_LAB') == 250)
                                 <div class="hr-line-dashed"></div>
 
