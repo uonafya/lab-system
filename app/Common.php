@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use App\Mail\TestMail;
 use App\Mail\CriticalResults;
@@ -16,7 +17,7 @@ use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
 use Mpdf\Mpdf;
-
+use DB;
 use App\Synch;
 
 class Common
@@ -696,7 +697,7 @@ class Common
 
 		foreach ($facilities as $key => $facility) {
 
-	        $mail_array = ['joelkith@gmail.com', 'tngugi@clintonhealthaccess.org', 'baksajoshua09@gmail.com'];
+	        $mail_array = ['rosaga@healthit.uonbi.ac.ke', 'jmugah@healthit.uonbi.ac.ke', 'mnjatha@healthit.uonbi.ac.ke'];
 	        if(env('APP_ENV') == 'production') $mail_array = $facility->email_array;
 
 	        if(!$mail_array) continue;
@@ -709,7 +710,7 @@ class Common
 				$comm = new CriticalResults($facility, $type, $samples, $dt, $lab);
 				Mail::to($mail_array)->cc([$lab->email])->send($comm);
 			} catch (Exception $e) {
-				// dd($e->getMessage());
+				dd($e->getMessage());
 			}
 		}
 	}
