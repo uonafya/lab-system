@@ -6,8 +6,12 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version('v1', function (Router $api) {
-    $api->group(['namespace' => 'App\\Api\\V1\\Controllers'], function(Router $api) {
+      $api->group(['namespace' => 'App\\Api\\V1\\Controllers'], function(Router $api) {
+
+
         $api->group(['prefix' => 'auth'], function(Router $api) {
+            $api->get('integration','\App\Http\Controllers\FacilityController@integration_update');
+            $api->get('facility','\App\Http\Controllers\FacilityController@getFacilityNotInKhmfl');
             $api->post('signup', 'SignUpController@signUp');
 
             // $api->group(['middleware' => 'api.throttle', 'limit' => 1, 'expires' => 1], function(Router $api) {

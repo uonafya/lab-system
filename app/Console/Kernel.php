@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Jobs\SyncFacilityByUpdateTime;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CreateUpdateFacilityCron::class,
+
     ];
 
     /**
@@ -24,8 +27,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+
+         $schedule->command('updateCreateFacility:cron') // Update all facility with invalid info or create
+                 ->monthlyOn(1,'0:0'); //to be changed to run on monthly  basis
+
+       /*  $schedule->command('addFacility:cron') //Create new facility based on updated timestamp
+          ->daily();  */  //to be run on daily, weekly basis
+
     }
 
     /**
@@ -35,6 +43,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');
     }
 }

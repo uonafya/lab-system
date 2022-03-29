@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CustomClass\record_log;
 use App\Viralsample;
 use App\ViralsampleView;
 use App\Viralpatient;
@@ -10,7 +11,7 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 use App\User;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 use App\Imports\ViralInterLabSampleImport;
 
@@ -137,6 +138,48 @@ class ViralsampleController extends Controller
             Viralbatch::whereIn('id', $batches)->delete();
             return back();
         }
+    }
+
+    function getPatientDetails(){
+        //search db based on ccc
+
+        $ccc = file_get_contents('php://input');
+
+        $ccc = explode('-', $ccc);
+
+        $facility_id = $ccc[0];
+        $patient_no = $ccc[1];
+
+
+        $facility = DB::table('facilitys')->where(['facilitycode'=>$facility_id])->first();
+
+        $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility->id])->first();
+
+        
+
+        if(!empty($patient)){
+            $gender = DB::table('gender')->where('id','=', $patient->sex)->first();
+            $patient->gender = $gender->gender_description;
+
+            $dob = date('Y', strtotime($patient->dob));
+            $date = date('Y');
+
+            $patient->age = $date -$dob;
+
+            $response = array(
+                "status"=>'success',
+                "data"=>$patient
+            );
+        }else{
+            $response = array(
+                "status" => "error"
+            );
+        }
+
+        return json_encode($response);
+
+        ///return json   
+
     }
 
     public function excelupload(Request $request) {
@@ -441,7 +484,7 @@ class ViralsampleController extends Controller
         }
         $viralsample->batch_id = $batch->id;
         $viralsample->save();
-
+        record_log::save_log($viralsample->id,$viralsample->patient_id,$viralsample->batch_id,"create",null);
 
         $sample_count = Viralsample::where('batch_id', $batch->id)->get()->count();
 
@@ -574,6 +617,9 @@ class ViralsampleController extends Controller
         }
         $batch->pre_update();
 
+        return json_encode($batch);
+        
+
         $data = $request->only($viralsamples_arrays['patient']);
 
         /*$new_patient = $request->input('new_patient');
@@ -659,7 +705,48 @@ class ViralsampleController extends Controller
 
         if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
+       /* parent::boot();
+        $changes=array();
+
+        foreach ($viralsample->getDirty() as $key =>$value)
+        {
+            $original = $viralsample->getOriginal($key);
+            $changes[$key] = [
+                'old' => $original,
+                'new' => $value,
+            ];
+
+        }
+
+        return $changes;*/
+
+        $changes=array();
+        $dirtySample= $viralsample->getDirty();
+        $trailDescription = '';
+        foreach ($dirtySample as $key =>$value)
+        {
+            $original = $viralsample->getOriginal($key);
+            $changes[]= [
+                'field' => $key,
+                'old' => $original,
+                'new' => $value,
+            ];
+
+            $trailDescription.=nl2br($key." was changed from ".$original.' to '.$value.''.PHP_EOL);
+           
+
+        }
+
+
+
         $viralsample->pre_update();
+     //   return strcmp(['old'],);
+
+       record_log::save_log($viralsample->id,$viralsample->patient_id,$batch->id,'edit',$trailDescription);
+
+
+
+           //return $changes;
 
         if(isset($transfer)){
             $url = $batch->transfer_samples([$viralsample->id], 'new_facility', true);
@@ -689,6 +776,9 @@ class ViralsampleController extends Controller
                 }
             }
         }
+
+        $changes = $viralsample->getChanges();
+        error_log('Changed '.json_encode($changes));
 
         MiscViral::check_batch($batch->id); 
 
@@ -786,6 +876,7 @@ class ViralsampleController extends Controller
         if($viralsample->result == NULL && $viralsample->run < 2 && $viralsample->worksheet_id == NULL && !$viralsample->has_rerun){
             $batch = $viralsample->batch;
             $viralsample->delete();
+            record_log::save_log($viralsample->id,$viralsample->patient_id,$batch->id,'delete',null);
             $samples = $batch->sample;
             if($samples->isEmpty()) $batch->delete();
             else{
@@ -843,6 +934,7 @@ class ViralsampleController extends Controller
     {
         $sample->sample_received_by = auth()->user()->id;
         $sample->save();
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,"transfer",null);
         session(['toast_message' => "The sample has been tranferred to your account."]);
         return back();
     }
@@ -894,7 +986,7 @@ class ViralsampleController extends Controller
 
         $sample->repeatt = 1;
         $sample->save();
-
+        record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'return for testing',null);
         $rerun = MiscViral::save_repeat($sample->id);
 
         $batch = $sample->batch;
@@ -930,8 +1022,10 @@ class ViralsampleController extends Controller
             $run = $sample->run - 1;
             $prev_sample = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->get()->first();
         }
-        
+
+
         $sample->delete();
+        record_log::save_log($sample->id,$sample->patient_id,$batch->id,'delete',null);
 
         $prev_sample->labcomment = "Failed Test";
         $prev_sample->repeatt = 0;
@@ -942,6 +1036,7 @@ class ViralsampleController extends Controller
         $prev_sample->dateapproved2 = date('Y-m-d');
 
         $prev_sample->save();
+        record_log::save_log($prev_sample->id,$prev_sample->patient_id,$batch->id,'redraw',null);
         MiscViral::check_batch($prev_sample->batch_id);
         session(['toast_message' => 'The sample has been released as a redraw.']);
         return back();
@@ -969,6 +1064,7 @@ class ViralsampleController extends Controller
         else{
             $sample->fill(['sample_received_by' => null, 'receivedstatus' => null, 'rejectedreason' => null, 'worksheet_id' => null]);
             $sample->save();
+            record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'unreceived',null);
             session(['toast_message' => 'The sample has been unreceived.']);
         }
         return back();
@@ -1087,6 +1183,8 @@ class ViralsampleController extends Controller
                 $sample->pmtct = 3;
                 $sample->receivedstatus = 1;
                 $sample->save();
+                record_log::save_log($sample->id,$sample->patient_id,$sample->batch_id,'create',null);
+
 
                 $created_rows++;
             }
@@ -1190,6 +1288,7 @@ class ViralsampleController extends Controller
             }
         }
         session(['toast_message' => "{$created_rows} samples have been created."]);
+
 
         if($existing_rows){
             return MiscViral::csv_download($existing_rows, "samples_that_were_already_existing");

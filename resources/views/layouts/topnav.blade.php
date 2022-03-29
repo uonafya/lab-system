@@ -214,6 +214,7 @@
                                 <li>
                                     <a href="{{ url('facility/lab') }}">Lab Facilities</a>
                                 </li>
+                                <li class=""><a class="dropdown-item" href="{{ url('facility/noCode') }}">Facilities without Code</a></li>
                             @elseif(in_array(Auth::user()->user_type_id, [12, 15]))
                                 <li class="">
                                     <a href="{{ url('covid_sample/cif') }}">CIF Samples</a>
@@ -235,6 +236,7 @@
                                         <ul class="dropdown-menu">
                                             <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                             <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                            <li class=""><a class="dropdown-item" href="{{ url('facility/noCode') }}">Facilities without Code</a></li>
                                             @if(env('APP_LAB') == 5)
                                             <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
                                             @endif
@@ -254,10 +256,10 @@
                                             <span class="label label-{{ $widgets['get_badge']($widgets['rejectedAllocations']) }}">
                                             {{ $widgets['rejectedAllocations'] }}
                                             </span>
-                                            </a>       
-                                        @endif    
+                                            </a>
+                                        @endif
                                     </li>
-                                    
+
                                     @if(Auth::user()->user_type_id == 0)
                                         <li>
                                             <a href="{{ url('user') }}">Users</a>
@@ -374,7 +376,7 @@
                     </li>
                     <li class="">
                         <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
-                    </li>    
+                    </li>
                     @if(auth()->user()->is_admin)
                         <li>
                             <a href="{{ url('user') }}">Users</a>
@@ -382,10 +384,10 @@
                         <li>
                             <a href="{{ url('facility') }}">Facilities</a>
                         </li>
-                    @endif 
+                    @endif
                     <li class="">
                         <a href="{{ url('reports') }}">Report</a>
-                    </li>                       
+                    </li>
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
@@ -428,7 +430,7 @@
                                 </ul>
                             </li>
 
-                            
+
                             <li class="">
                                 <a href="{{ url('cancersample') }}">HPV Samples</a>
                             </li>
@@ -510,6 +512,7 @@
                                 <ul class="dropdown-menu">
                                     <li class=""><a class="dropdown-item" href="{{ url('facility') }}">Facilities</a></li>
                                     <li class=""><a class="dropdown-item" href="{{ url('facility/lab') }}">Lab Facilities</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/noCode') }}">Facilities without Code</a></li>
                                     @if(env('APP_LAB') == 5)
                                     <li class=""><a class="dropdown-item" href="{{ url('district') }}">Subcounties</a></li>
                                     @endif

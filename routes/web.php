@@ -535,6 +535,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('facility/withoutG4S', 'FacilityController@withoutG4S')->name('withoutG4S');
 			Route::get('facility/contacts', 'FacilityController@filled_contacts')->name('facility.contacts');
 			Route::get('facility/lab', 'FacilityController@lab')->name('facility.lab');
+            Route::get('facility/noCode', 'FacilityController@noCode')->name('facility.noCode');
 		});		
 		Route::resource('facility', 'FacilityController');
 
@@ -727,7 +728,11 @@ Route::middleware(['auth'])->group(function(){
 		Route::group(['middleware' => ['utype:9']], function () {
 			Route::prefix('viralsample')->name('viralsample.')->group(function () {
 
+
+
 				Route::get('create/{sampletype?}', 'ViralsampleController@create');
+
+				Route::post('getPatientDetails', 'ViralsampleController@getPatientDetails');
 
 				Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 				Route::post('nhrl', 'ViralsampleController@approve_nhrl');
