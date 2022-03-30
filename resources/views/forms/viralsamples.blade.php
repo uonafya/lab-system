@@ -790,7 +790,7 @@
            },
            initiation_date:{
            GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"],
-           greaterThan: ["#datecollected","ART Inititation Date","Date Collected"],
+           lessThan: ["#datecollected","ART Inititation Date","Date Collected"],
            },
 {{--                initiation_date:{
                     GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]

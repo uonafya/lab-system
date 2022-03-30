@@ -465,15 +465,15 @@
 
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">CCC No
-                                                    <strong>
+                                                    {{-- <strong>
                                                         <div style='color: #ff0000; display: inline;'>*</div>
-                                                    </strong>
+                                                    </strong> --}}
                                                 </label>
 
                                                 <div class="col-sm-8">
                                                     <input class="form-control" name="enrollment_ccc_no" type="text"
                                                            value="{{ $sample->patient->enrollment_ccc_no ?? '' }}"
-                                                           id="enrollment_ccc_no" required>
+                                                           id="enrollment_ccc_no" >
                                                 </div>
                                             </div>
 
