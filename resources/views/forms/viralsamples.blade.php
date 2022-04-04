@@ -122,7 +122,7 @@
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                         @endif
                         
-                        @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4]))
+                        {{-- @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4])) --}}
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">High Priority</label>
                                 <div class="col-sm-8">
@@ -134,7 +134,7 @@
                                  />
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
 
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -190,26 +190,30 @@
                     <div class="panel-body">
                         
                     <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient Facility MFL
+                            <label class="col-sm-1 control-label">Patient Facility MFL
                             </label>
-                            <div class="col-sm-8">
-                                <div class="col-sm-4">
+                            {{-- <div class="col-sm-8"> --}}
+                                <div class="col-sm-3">
                                     <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
                                         @isset($viralsample)
                                         <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
                                         @endisset
                                     </select>
                                 </div>
-                                <div class="col-sm-8">
-                                    <label class="col-sm-4 control-label">Patient serial No.
+                                {{-- <div class="col-sm-8"> --}}
+                                    <label class="col-sm-1 control-label">Patient serial No.
                                     </label>
-                                    <div class="col-sm-4">
-                                        <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                    <div class="col-sm-3">
+                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial">
                                     </div>
+                                {{-- </div> --}}
+                                {{-- <div class="col-sm-3 "> --}}
+                                    <label class="col-sm-1 control-label">CCC No.
+                                    </label>  <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    <div class="col-sm-3">
+                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" disabled>
                                 </div>
-
-
-                            </div>
+                            {{-- </div> --}}
                         </div>
 
 
@@ -263,12 +267,12 @@
 
                         @if(!isset($viralsample) && auth()->user()->user_type_id != 5)
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="reentry" value="1" />
                                 </div>
-                            </div>
+                            </div> --}}
 
                         @endif
 
@@ -552,6 +556,7 @@
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
+                                    @if($justification->id != 7)
                                         @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $justification->id }}"
 
@@ -561,6 +566,7 @@
 
                                         > {{ $justification->rank_id . ' ' . $justification->name }}
                                         </option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -1186,5 +1192,9 @@
 
     function showFacilityCode(facilityCode){
         document.getElementById('patient').value = facilityCode+'-';
+    }
+    function showSerial(serialCode){
+        let facilityCode =  document.getElementById('patient_facility_id').value
+        document.getElementById('patient').value =facilityCode+'-'+serialCode
     }
 </script>

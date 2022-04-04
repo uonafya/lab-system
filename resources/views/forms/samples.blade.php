@@ -127,7 +127,7 @@
                                                 <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                                             @endif
 
-                                            @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4)
+                                            {{-- @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4) --}}
                                                 <div class="form-group">
                                                     <label class="col-sm-4 control-label">High Priority</label>
                                                     <div class="col-sm-8">
@@ -140,7 +140,7 @@
                                                         />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            {{-- @endif --}}
 
 
                                             <div class="form-group ampath-div">
@@ -206,20 +206,17 @@
                                                     <label class="col-sm-4 control-label">Phone No (format
                                                         254725******)</strong>
                                                         <strong>
-                                                            <div style='color: #ff0000; display: inline;'>*</div>
-                                                        </strong>
+                                                           
                                                     </label>
                                                     <div class="col-sm-3">
                                                         <input class="form-control" name="patient_phone_no"
                                                                id="patient_phone_no" type="text"
                                                                value="{{ $sample->patient->patient_phone_no ?? '' }}"
-                                                               required>
+                                                               >
                                                     </div>
 
                                                     <div class="col-sm-1">Patient's Preferred Language
-                                                        <strong>
-                                                            <div style='color: #ff0000; display: inline;'>*</div>
-                                                        </strong>
+                                                       
                                                     </div>
 
                                                     <div class="col-sm-4">
@@ -230,7 +227,7 @@
                                                                 @if(isset($sample) && $sample->patient->preferred_language == $key)
                                                                         checked="checked"
                                                                           @endif
-                                                                          required>
+                                                                          >
                                                                 {{ $value }}
                                                             </label>
 
@@ -292,14 +289,14 @@
 
                                             @if(!isset($sample))
 
-                                                <div class="form-group">
+                                                {{-- <div class="form-group">
                                                     <label class="col-sm-4 control-label">Confirm Re-Entry (Sample
                                                         Exists but should not be flagged as a double-entry)</label>
                                                     <div class="col-sm-8">
                                                         <input type="checkbox" class="i-checks" name="reentry"
                                                                value="1"/>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                             @endif
 
@@ -464,16 +461,42 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-4 control-label">CCC No
+                                                    <label class="col-sm-1 control-label">Infant MFL Code
+                                                        {{-- <strong>
+                                                            <div style='color: #ff0000; display: inline;'>*</div>
+                                                        </strong> --}}
+                                                    </label>
+                                                    @if(!$batch)
+                                                    <div class="col-sm-3">
+                                                        <select class="form-control requirable" onChange="showFacilityCode(this.value)"
+                                                                name="patient_facility_id" id="patient_facility_id">
+                                                        
+                                                            @isset($sample)
+                                                                <option value="{{ $sample->batch->facility->id }}"
+                                                                        selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                            @endisset
+
+                                                        </select>
+                                                    </div>
+                                                    @endif
+                                                    
+                                                        <label class="col-sm-1 control-label">Infant serial No.
+                                                        </label>
+                                                        <div class="col-sm-3">
+                                                            <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"   maxlength="5" value="" id="patient_serial">
+                                                        </div>
+                                                   
+                                                
+                                                <label class="col-sm-1 control-label">CCC No
                                                     {{-- <strong>
                                                         <div style='color: #ff0000; display: inline;'>*</div>
                                                     </strong> --}}
                                                 </label>
 
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <input class="form-control" name="enrollment_ccc_no" type="text"
                                                            value="{{ $sample->patient->enrollment_ccc_no ?? '' }}"
-                                                           id="enrollment_ccc_no" >
+                                                           id="enrollment_ccc_no" disabled>
                                                 </div>
                                             </div>
 
@@ -520,6 +543,43 @@
                                         </div>
                                         <div class="panel-body" style="padding-bottom: 6px;">
 
+
+                                            <div class="form-group">
+                                                <label class="col-sm-1 control-label">Mother MFL Code
+                                                    {{-- <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong> --}}
+                                                </label>
+                                                
+                                                <div class="col-sm-3">
+                                                    <select class="form-control requirable" onChange="showFacilityCodeMother(this.value)"
+                                                            name="mother_facility_id" id="mother_facility_id">
+                                                    
+                                                        @isset($sample)
+                                                            <option value="{{ $sample->batch->facility->id }}"
+                                                                    selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                        @endisset
+
+                                                    </select>
+                                                </div>
+                                                {{-- @endif --}}
+                                                
+                                                    <label class="col-sm-1 control-label">Mother serial No.
+                                                    </label>
+                                                    <div class="col-sm-3">
+                                                        <input class="form-control " id="mother_serial"   name="mother_serial" onChange="showSerialMother(this.value)" type="text"   maxlength="5" value="" id="mother_serial">
+                                                    </div>
+                                                <label class="col-sm-1 control-label">CCC No
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+
+                                                <div class="col-sm-3"><input class="form-control" id="ccc_no"
+                                                                             name="ccc_no" type="text"
+                                                                             value="{{ $sample->patient->mother->ccc_no ?? '' }}"
+                                                                             required disabled></div>
+                                            </div>
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">Mother's Age
                                                     <strong>
@@ -533,20 +593,6 @@
                                                            number="number" min=10 max=70 required>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group">
-                                                <label class="col-sm-4 control-label">CCC No
-                                                    <strong>
-                                                        <div style='color: #ff0000; display: inline;'>*</div>
-                                                    </strong>
-                                                </label>
-
-                                                <div class="col-sm-8"><input class="form-control" id="ccc_no"
-                                                                             name="ccc_no" type="text"
-                                                                             value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                                             required></div>
-                                            </div>
-
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">PMTCT Regimen
                                                     <strong>
@@ -1121,6 +1167,20 @@
             }).appendTo('form');*/
 
         }
+    function showFacilityCode(facilityCode){
+        document.getElementById('patient').value = facilityCode+'-';
+    }
+    function showSerial(serialCode){
+        let facilityCode =  document.getElementById('patient_facility_id').value
+        document.getElementById('enrollment_ccc_no').value =facilityCode+'-'+serialCode
+    }
+    function showFacilityCodeMother(facilityCode){
+        document.getElementById('patient').value = facilityCode+'-';
+    }
+    function showSerialMother(serialCode){
+        let facilityCode =  document.getElementById('mother_facility_id').value
+        document.getElementById('ccc_no').value =facilityCode+'-'+serialCode
+    }
     </script>
 
 
