@@ -191,21 +191,20 @@
                         
                     <div class="form-group">
                             <label class="col-sm-4 control-label">Patient Facility MFL
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
                                 <div class="col-sm-4">
-                                    <select class="form-control requirable" required name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
+                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
                                         @isset($viralsample)
                                         <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
                                         @endisset
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="col-sm-4 control-label">Patient serial No.<strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    <label class="col-sm-4 control-label">Patient serial No.
                                     </label>
                                     <div class="col-sm-4">
-                                        <input class="form-control requirable" id="patient" onKeyUp="fetchPatientDetails(this.value)" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
+                                        <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
                                     </div>
                                 </div>
 
@@ -218,10 +217,10 @@
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    <strong><div style='color: #ff0000; display: inline;'></div></strong>
                                 </label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" required>
+                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" >
                                 </div>
 
                                 <div class="col-sm-1">Patient's Preferred Language</div>
@@ -233,9 +232,8 @@
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
                                             @endif
-                                            required>
+                                            >
                                             {{ $value }}
-                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                         </label>
 
                                     @endforeach
@@ -971,10 +969,17 @@
                 if(val == 12){
                     $("#recency_number").attr("required", "required");
                     $("#recency_number").removeAttr("disabled");
+
+                    $("#patient").removeAttr("required");
+                    $("#patient_facility_id").removeAttr("required");
+
                 }
                 else{
                     $("#recency_number").removeAttr("required");
                     $("#recency_number").attr("disabled", "disabled");
+
+                    $("#patient").attr("required","required");
+                    $("#patient_facility_id").attr("required","required");
                 }
             });
 
