@@ -1171,14 +1171,14 @@
 
         }
     function showFacilityCode(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
+       // document.getElementById('patient').value = facilityCode+'-';
     }
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('enrollment_ccc_no').value =facilityCode+'-'+serialCode
     }
     function showFacilityCodeMother(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
+       // document.getElementById('patient').value = facilityCode+'-';
     }
     function showSerialMother(serialCode){
         let facilityCode =  document.getElementById('mother_facility_id').value
