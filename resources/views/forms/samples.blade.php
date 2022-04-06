@@ -258,19 +258,15 @@
                                                     </strong>
                                                 </label>
 
-                                                @if(!$batch)
                                                 <div class="col-sm-2">
-                                                    <select class="form-control requirable" onChange="showFacilityCode(this.value)"
+                                                    <select class="form-control requirable" onChange="showHeiNumberId(this.value)"
                                                             name="heiMfl" id="heiMfl">
 
-                                                        @isset($sample)
                                                         <option value="{{ $sample->batch->facility->id }}"
                                                                 selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
-                                                        @endisset
 
                                                     </select>
                                                 </div>
-                                                @endif
 
                                                 <label class="col-sm-1 control-label">Hei No. Year
                                                     <strong>
@@ -279,7 +275,7 @@
                                                 </label>
                                                 <div class="col-sm-2">
                                                     <input class="form-control requirable" required name="heiNoYear"
-                                                            id="heiNoYear">
+                                                            id="heiNoYear" onchange=showHeiNoYear(this.value)>
                                                 </div>
 
                                                 <label class="col-sm-2 control-label">Hei No. Patient Serial
@@ -288,8 +284,8 @@
                                                     </strong>
                                                 </label>
                                                 <div class="col-sm-3">
-                                                    <input class="form-control requirable" required name="heiNoPatientSerial"
-                                                           type="number" id="heiNoPatientSerial">
+                                                    <input class="form-control requirable"  maxlength="5"  required name="heiNoPatientSerial"
+                                                           type="number"  onchange=showHeiNoPatientSerial(this.value) id="heiNoPatientSerial">
                                                 </div>
 
                                             </div>
@@ -301,9 +297,9 @@
                                                     </strong>
                                                 </label>
                                                 <div class="col-sm-4">
-                                                    <input class="form-control requirable" required name="patient"
-                                                           type="text" disabled value="{{ $sample->patient->patient ?? '' }}"
-                                                           id="patient">
+                                                    <input class="form-control "  name="patient"
+                                                           type="text" value="{{ $sample->patient->patient ?? '' }}"
+                                                           id="patient" readonly >
                                                 </div>
                                             </div>
 
@@ -510,7 +506,7 @@
                                                     </label>
                                                     @if(!$batch)
                                                     <div class="col-sm-3">
-                                                        <select class="form-control requirable" onChange="showFacilityCode(this.value)"
+                                                        <select class="form-control requirable "
                                                                 name="patient_facility_id" id="patient_facility_id">
 
                                                             @isset($sample)
@@ -538,7 +534,7 @@
                                                 <div class="col-sm-3">
                                                     <input class="form-control" name="enrollment_ccc_no" type="text"
                                                            value="{{ $sample->patient->enrollment_ccc_no ?? '' }}"
-                                                           id="enrollment_ccc_no" disabled>
+                                                           id="enrollment_ccc_no" readonly>
                                                 </div>
                                             </div>
 
@@ -594,7 +590,7 @@
                                                 </label>
 
                                                 <div class="col-sm-3">
-                                                    <select class="form-control requirable" onChange="showFacilityCodeMother(this.value)"
+                                                    <select class="form-control requirable"
                                                             name="mother_facility_id" id="mother_facility_id">
 
                                                         @isset($sample)
@@ -620,7 +616,7 @@
                                                 <div class="col-sm-3"><input class="form-control" id="ccc_no"
                                                                              name="ccc_no" type="text"
                                                                              value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                                             required disabled></div>
+                                                                             required readonly></div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">Mother's Age
@@ -1091,6 +1087,7 @@
                 }
             });
 
+
             $("#heiNoYear").datepicker({
                 format: "yyyy",
                 viewMode: "years",
@@ -1219,19 +1216,26 @@
             }).appendTo('form');*/
 
         }
-    function showFacilityCode(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
-    }
+
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('enrollment_ccc_no').value =facilityCode+'-'+serialCode
     }
-    function showFacilityCodeMother(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
-    }
+
     function showSerialMother(serialCode){
         let facilityCode =  document.getElementById('mother_facility_id').value
         document.getElementById('ccc_no').value =facilityCode+'-'+serialCode
+    }
+    function showHeiNumberId(heiMfl){
+            document.getElementById('patient').value = heiMfl + "-";
+    }
+    function showHeiNoYear(heiYear){
+            let heiMfl = document.getElementById('heiMfl').value
+            document.getElementById('patient').value = heiMfl + '-'+ heiYear
+    }
+    function showHeiNoPatientSerial(heiNoPatientSerial){
+            let n = document.getElementById('patient').value
+            document.getElementById('patient').value = n + '-' + heiNoPatientSerial ;
     }
     </script>
 
