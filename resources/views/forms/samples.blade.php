@@ -206,7 +206,7 @@
                                                     <label class="col-sm-4 control-label">Phone No (format
                                                         254725******)</strong>
                                                         <strong>
-                                                           
+
                                                     </label>
                                                     <div class="col-sm-3">
                                                         <input class="form-control" name="patient_phone_no"
@@ -216,7 +216,7 @@
                                                     </div>
 
                                                     <div class="col-sm-1">Patient's Preferred Language
-                                                       
+
                                                     </div>
 
                                                     <div class="col-sm-4">
@@ -251,6 +251,48 @@
                                                            value="{{ $sample->patient->patient_name ?? '' }}" required>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-1 control-label">Hei No. MFL
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+
+                                                @if(!$batch)
+                                                <div class="col-sm-2">
+                                                    <select class="form-control requirable" onChange="showFacilityCode(this.value)"
+                                                            name="heiMfl" id="heiMfl">
+
+                                                        @isset($sample)
+                                                        <option value="{{ $sample->batch->facility->id }}"
+                                                                selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                        @endisset
+
+                                                    </select>
+                                                </div>
+                                                @endif
+
+                                                <label class="col-sm-1 control-label">Hei No. Year
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+                                                <div class="col-sm-2">
+                                                    <input class="form-control requirable" required name="heiNoYear"
+                                                            id="heiNoYear">
+                                                </div>
+
+                                                <label class="col-sm-2 control-label">Hei No. Patient Serial
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+                                                <div class="col-sm-3">
+                                                    <input class="form-control requirable" required name="heiNoPatientSerial"
+                                                           type="number" id="heiNoPatientSerial">
+                                                </div>
+
+                                            </div>
 
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">HEI ID Number
@@ -258,9 +300,9 @@
                                                         <div style='color: #ff0000; display: inline;'>*</div>
                                                     </strong>
                                                 </label>
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-4">
                                                     <input class="form-control requirable" required name="patient"
-                                                           type="text" value="{{ $sample->patient->patient ?? '' }}"
+                                                           type="text" disabled value="{{ $sample->patient->patient ?? '' }}"
                                                            id="patient">
                                                 </div>
                                             </div>
@@ -470,7 +512,7 @@
                                                     <div class="col-sm-3">
                                                         <select class="form-control requirable" onChange="showFacilityCode(this.value)"
                                                                 name="patient_facility_id" id="patient_facility_id">
-                                                        
+
                                                             @isset($sample)
                                                                 <option value="{{ $sample->batch->facility->id }}"
                                                                         selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
@@ -479,14 +521,14 @@
                                                         </select>
                                                     </div>
                                                     @endif
-                                                    
+
                                                         <label class="col-sm-1 control-label">Infant serial No.
                                                         </label>
                                                         <div class="col-sm-3">
                                                             <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"   maxlength="5" value="" id="patient_serial">
                                                         </div>
-                                                   
-                                                
+
+
                                                 <label class="col-sm-1 control-label">CCC No
                                                     {{-- <strong>
                                                         <div style='color: #ff0000; display: inline;'>*</div>
@@ -550,11 +592,11 @@
                                                         <div style='color: #ff0000; display: inline;'>*</div>
                                                     </strong> --}}
                                                 </label>
-                                                
+
                                                 <div class="col-sm-3">
                                                     <select class="form-control requirable" onChange="showFacilityCodeMother(this.value)"
                                                             name="mother_facility_id" id="mother_facility_id">
-                                                    
+
                                                         @isset($sample)
                                                             <option value="{{ $sample->batch->facility->id }}"
                                                                     selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
@@ -563,7 +605,7 @@
                                                     </select>
                                                 </div>
                                                 {{-- @endif --}}
-                                                
+
                                                     <label class="col-sm-1 control-label">Mother serial No.
                                                     </label>
                                                     <div class="col-sm-3">
@@ -1005,6 +1047,7 @@
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("mother_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility_mfl("heiMfl", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
 
@@ -1046,6 +1089,12 @@
                 } else {
                     $('.requirable').attr("required", "required");
                 }
+            });
+
+            $("#heiNoYear").datepicker({
+                format: "yyyy",
+                viewMode: "years",
+                minViewMode: "years"
             });
 
 
