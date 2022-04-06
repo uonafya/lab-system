@@ -640,11 +640,11 @@ class ReportController extends Controller
         $title = '';
     	if ($testtype == 'Viralload') {
             $table = 'viralsamples_view';
-            $columns = "$table.id,$table.batch_id as batch_id,$table.worksheet_id,machines.machine as platform,$table.patient,$table.patient_name,$table.provider_identifier, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+            $columns = "$table.id,$table.batch_id as batch_id,$table.worksheet_id,$table.patient,$table.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
-            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
 
             if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
@@ -654,7 +654,7 @@ class ReportController extends Controller
     				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
                     ->leftJoin('view_facilitys as poc_lab', 'poc_lab.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$table.facility_id")
-                    ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
+                    /*->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')*/
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
     				->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
@@ -663,7 +663,7 @@ class ReportController extends Controller
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct')
                     ->leftJoin('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
-                    ->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type')
+                    /*->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type')*/
                     ->where('justification', '=', 12);
     	} else if ($testtype == 'EID') {
             $table = 'samples_view';
@@ -703,7 +703,7 @@ class ReportController extends Controller
             $receivedOnly=$useDateCollected=false;
             if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
-            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
+            if (in_array($request->input('types'), ['awaitingtesting','recency_report', 'remoteentry'])) $useDateCollected=true;
 
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
@@ -711,7 +711,7 @@ class ReportController extends Controller
         $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
 
         if ($request->input('types') == 'recency_report') {
-            $model = $model->where("$table.receivedstatus", "<>", '2');
+            $model = $model->where("$table.justification", "=", '12');
             $report .= 'Recency report ';
         } else if ($request->input('types') == 'rejected') {
             $model = $model->where("$table.receivedstatus", "=", '2');
@@ -844,7 +844,7 @@ class ReportController extends Controller
 
     public function __getRECENCYExcel($data, $title) {
         $title = strtoupper($title);
-        $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Plaform', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
+        $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
         return $this->generate_excel($data, $dataArray, $title);
     }
 
