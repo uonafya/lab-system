@@ -211,7 +211,7 @@
                                     <label class="col-sm-1 control-label">CCC No.
                                     </label>  <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     <div class="col-sm-3">
-                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" disabled>
+                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" readonly>
                                 </div>
                             {{-- </div> --}}
                         </div>

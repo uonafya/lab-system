@@ -262,8 +262,10 @@
                                                     <select class="form-control requirable" onChange="showHeiNumberId(this.value)"
                                                             name="heiMfl" id="heiMfl">
 
+                                                        @isset($sample)
                                                         <option value="{{ $sample->batch->facility->id }}"
                                                                 selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                        @endisset
 
                                                     </select>
                                                 </div>
@@ -504,7 +506,7 @@
                                                             <div style='color: #ff0000; display: inline;'>*</div>
                                                         </strong> --}}
                                                     </label>
-                                                    @if(!$batch)
+
                                                     <div class="col-sm-3">
                                                         <select class="form-control requirable "
                                                                 name="patient_facility_id" id="patient_facility_id">
@@ -516,7 +518,7 @@
 
                                                         </select>
                                                     </div>
-                                                    @endif
+
 
                                                         <label class="col-sm-1 control-label">Infant serial No.
                                                         </label>
