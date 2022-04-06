@@ -1219,10 +1219,12 @@
 
         }
 
+
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('enrollment_ccc_no').value =facilityCode+'-'+serialCode
     }
+
 
     function showSerialMother(serialCode){
         let facilityCode =  document.getElementById('mother_facility_id').value

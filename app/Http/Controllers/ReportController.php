@@ -224,6 +224,18 @@ class ReportController extends Controller
             } else if ($request->input('types') == 'tat') {
                 $data = $this->__getTATData($request, $dateString)->get();
                 $this->__getTATExcel($data, $dateString);
+            } /*else if ($request->input('types') == 'recency_report') {
+                $data = $this->__getRECENCYData($request, $dateString)->get();
+                $this->__getRECENCYExcel($data, $dateString);
+            }*/
+            else if ($request->input('types') == 'recency_report') {
+                // if($request->input('types') == 'awaitingtesting'){
+                //     DB::enableQueryLog();
+                //     $data = self::__getDateData($request,$dateString)->get();
+                //     return DB::getQueryLog();
+                // }
+                $data = self::__getRECENCYData($request,$dateString)->get();
+                return $this->__getRECENCYExcel($data, $dateString, $request);
             }else {
                 // if($request->input('types') == 'awaitingtesting'){
                 //     DB::enableQueryLog();
@@ -264,6 +276,150 @@ class ReportController extends Controller
         $model = self::__getDateRequested($request, $model, $table, $dateString, false);
 
         return $model;
+    }
+
+    public static function __getDateData($request, &$dateString)
+    {
+        ini_set("memory_limit", "-1");
+        ini_set("max_execution_time", "3000");
+
+        $testtype = session('testingSystem');
+        if (auth()->user()->user_type_id == 5) {
+            if ($request->input('testtype') == 'VL')
+                $testtype = 'Viralload';
+            else if ($request->input('testtype') == 'EID')
+                $testtype = 'EID';
+        }
+
+        $title = '';
+        if ($testtype == 'Viralload') {
+            $table = 'viralsamples_view';
+            $columns = "$table.id,$table.batch_id,$table.worksheet_id,machines.machine as platform,$table.patient,$table.patient_name,$table.provider_identifier, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+
+            if ($request->input('types') == 'manifest')
+                $columns .= "$table.datedispatchedfromfacility,";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+
+            if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
+            // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
+            $model = ViralsampleView::selectRaw($columns)
+                ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
+                ->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
+                ->leftJoin('view_facilitys as poc_lab', 'poc_lab.id', '=', "$table.lab_id")
+                ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$table.facility_id")
+                ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
+                ->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
+                ->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
+                ->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
+                ->leftJoin('viralrejectedreasons', 'viralrejectedreasons.id', '=', 'viralsamples_view.rejectedreason')
+                ->leftJoin('viralregimen', 'viralregimen.id', '=', 'viralsamples_view.prophylaxis')
+                ->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
+                ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct')
+                ->leftJoin('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
+                ->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type');
+        } else if ($testtype == 'EID') {
+            $table = 'samples_view';
+            $columns = "samples_view.id,samples_view.batch_id,$table.worksheet_id,machines.machine as platform,samples_view.patient, samples_view.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
+            if($request->input('types') == 'manifest')
+                $columns .= " $table.datedispatchedfromfacility,";
+            $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, samples_view.mother_age, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, users.surname, users.oname";
+            if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
+            // $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
+            $model = SampleView::selectRaw($columns)
+                ->leftJoin('users', 'users.id', '=', "$table.user_id")
+                // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
+                ->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
+                ->leftJoin('view_facilitys as poc_lab', 'poc_lab.id', '=', "$table.lab_id")
+                ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$table.facility_id")
+                ->leftJoin('gender', 'gender.id', '=', 'samples_view.sex')
+                ->leftJoin('prophylaxis as ip', 'ip.id', '=', 'samples_view.regimen')
+                ->leftJoin('prophylaxis as mp', 'mp.id', '=', 'samples_view.mother_prophylaxis')
+                ->leftJoin('pcrtype', 'pcrtype.id', '=', 'samples_view.pcrtype')
+                ->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'samples_view.receivedstatus')
+                ->leftJoin('rejectedreasons', 'rejectedreasons.id', '=', 'samples_view.rejectedreason')
+                ->leftJoin('feedings', 'feedings.id', '=', 'samples_view.feeding')
+                ->leftJoin('entry_points', 'entry_points.id', '=', 'samples_view.entry_point')
+                ->leftJoin('results as ir', 'ir.id', '=', 'samples_view.result')
+                ->leftJoin('mothers', 'mothers.id', '=', 'samples_view.mother_id')
+                ->leftJoin('results as mr', 'mr.id', '=', 'mothers.hiv_status')
+                ->leftJoin('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
+                ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
+        }
+
+        $model = self::__getBelongingTo($request, $model, $dateString);
+
+        if ($request->input('specificDate')) {
+            $dateString = date('d-M-Y', strtotime($request->input('specificDate')));
+            $model = $model->where("$table.datereceived", '=', $request->input('specificDate'));
+        }else {
+            $receivedOnly=$useDateCollected=false;
+            if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
+
+            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
+
+            $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
+        }
+
+        $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
+
+        if ($request->input('types') == 'tested') {
+            $model = $model->where("$table.receivedstatus", "<>", '2');
+            $report .= 'tested outcomes ';
+        } else if ($request->input('types') == 'rejected') {
+            $model = $model->where("$table.receivedstatus", "=", '2');
+            $report .= 'rejected outcomes ';
+        } else if ($request->input('types') == 'awaitingtesting') {
+            $model = $model->whereRaw("({$table}.receivedstatus is null OR {$table}.receivedstatus != 2)")->whereNull("$table.datetested")->whereNull("$table.datedispatched");
+            $report .= 'awaiting testing ';
+        } else if ($request->input('types') == 'positives') {
+            $model = $model->where("$table.result", "=", 2);
+            $report .= 'positive outcomes';
+        } else if ($request->input('types') == 'cns') {
+            if($testtype == 'Viralload') $model = $model->where("$table.result", "=", "Collect New Sample");
+            else{
+                $model = $model->where("$table.result", "=", 5);
+            }
+            $report .= 'collect new sample';
+        } else if ($request->input('types') == 'poc') {
+            $model = $model->where("$table.site_entry", '=', 2);
+            $report .= 'poc tests';
+        } else if ($request->input('types') == 'manifest') {
+            $report .= 'sample manifest ';
+        } else {
+            $report .= 'samples log ';
+        }
+
+        if ($request->input('types') == 'remoteentry')
+            $model = $model->where('site_entry', '=', 1)->whereNull('datereceived');
+        if ($request->input('types') == 'failed'){
+            $model = $model->when($testtype, function($query) use ($testtype){
+                if ($testtype == 'EID')
+                    // return $query->whereIn('result', [3])->where('repeatt', '=', 1);
+                    return $query->whereRaw("(result IS NULL OR result IN (3)) ")->where('repeatt', '=', 1);
+                if ($testtype == 'Viralload')
+                    return $query->where('repeatt', '=', 1)
+                        ->whereRaw("(result IS NULL OR result IN ('Failed')) ");
+                // ->whereIn('result', ['Failed', '']);
+            });
+        }
+
+        if(auth()->user()->user_type_id == 5) {
+            $facility_id = auth()->user()->facility_id;
+            $user_id = auth()->user()->id;
+            if ($request->input('types') == 'manifest')
+                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->orderBy('created_at', 'asc');
+            else
+                $model = $model->whereRaw("(($table.facility_id = {$facility_id}) OR ($table.lab_id = {$facility_id}) OR ($table.user_id = {$user_id}))");
+        } else {
+            $model = $model->where("$table.lab_id", '=', env('APP_LAB'));
+        }
+
+        if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
+
+        $dateString = strtoupper($report . $title . ' ' . $dateString);
+        // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
+        return $model->orderBy('datereceived', 'asc');
     }
 
     public static function __getSiteEntryData($request, &$dateString) {
@@ -468,7 +624,7 @@ class ReportController extends Controller
         return view('reports.updateconsumptionreport', $data);
     }
 
-    public static function __getDateData($request, &$dateString)
+    public static function __getRECENCYData($request, &$dateString)
     {
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
@@ -480,15 +636,16 @@ class ReportController extends Controller
             else if ($request->input('testtype') == 'EID')
                 $testtype = 'EID';
         }
-        
+
         $title = '';
     	if ($testtype == 'Viralload') {
             $table = 'viralsamples_view';
-            $columns = "$table.id,$table.batch_id,$table.worksheet_id,machines.machine as platform,$table.patient,$table.patient_name,$table.provider_identifier, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number, amrslocations.name as amrs_location, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+            $columns = "$table.id,$table.batch_id as batch_id,$table.worksheet_id,$table.patient,$table.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
-            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
 
             if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
@@ -498,7 +655,7 @@ class ReportController extends Controller
     				->leftJoin('labs', 'labs.id', '=', "$table.lab_id")
                     ->leftJoin('view_facilitys as poc_lab', 'poc_lab.id', '=', "$table.lab_id")
     				->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$table.facility_id")
-                    ->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')
+                    /*->leftJoin('amrslocations', 'amrslocations.id', '=', 'viralsamples_view.amrs_location')*/
     				->leftJoin('gender', 'gender.id', '=', 'viralsamples_view.sex')
     				->leftJoin('viralsampletype', 'viralsampletype.id', '=', 'viralsamples_view.sampletype')
     				->leftJoin('receivedstatus', 'receivedstatus.id', '=', 'viralsamples_view.receivedstatus')
@@ -507,7 +664,8 @@ class ReportController extends Controller
     				->leftJoin('viraljustifications', 'viraljustifications.id', '=', 'viralsamples_view.justification')
                     ->leftJoin('viralpmtcttype', 'viralpmtcttype.id', '=', 'viralsamples_view.pmtct')
                     ->leftJoin('viralworksheets', 'viralworksheets.id', '=', 'viralsamples_view.worksheet_id')
-                    ->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type');
+                    /*->leftJoin('machines', 'machines.id', '=', 'viralworksheets.machine_type')*/
+                    ->where('justification', '=', 12);
     	} else if ($testtype == 'EID') {
             $table = 'samples_view';
             $columns = "samples_view.id,samples_view.batch_id,$table.worksheet_id,machines.machine as platform,samples_view.patient, samples_view.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, order_no as order_number,";
@@ -519,7 +677,7 @@ class ReportController extends Controller
     		$model = SampleView::selectRaw($columns)
                     ->leftJoin('users', 'users.id', '=', "$table.user_id")
                     // ->leftJoin('users as rec', 'rec.id', '=', "$table.received_by")
-    				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')    				
+    				->leftJoin('labs', 'labs.id', '=', 'samples_view.lab_id')
                     ->leftJoin('view_facilitys as poc_lab', 'poc_lab.id', '=', "$table.lab_id")
                     ->leftJoin('view_facilitys', 'view_facilitys.id', '=', "$table.facility_id")
     				->leftJoin('gender', 'gender.id', '=', 'samples_view.sex')
@@ -536,7 +694,7 @@ class ReportController extends Controller
                     ->leftJoin('worksheets', 'worksheets.id', '=', 'samples_view.worksheet_id')
                     ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
     	}
-        
+
         $model = self::__getBelongingTo($request, $model, $dateString);
 
     	if ($request->input('specificDate')) {
@@ -546,16 +704,16 @@ class ReportController extends Controller
             $receivedOnly=$useDateCollected=false;
             if (in_array($request->input('types'), ['rejected', 'manifest']) || $request->input('samples_log') == 1) $receivedOnly=true;
 
-            if (in_array($request->input('types'), ['awaitingtesting', 'remoteentry'])) $useDateCollected=true;
-            
+            if (in_array($request->input('types'), ['awaitingtesting','recency_report', 'remoteentry'])) $useDateCollected=true;
+
             $model = self::__getDateRequested($request, $model, $table, $dateString, $receivedOnly, $useDateCollected);
     	}
 
         $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
 
-        if ($request->input('types') == 'tested') {
-            $model = $model->where("$table.receivedstatus", "<>", '2');
-            $report .= 'tested outcomes ';
+        if ($request->input('types') == 'recency_report') {
+            $model = $model->where("$table.justification", "=", '12');
+            $report .= 'Recency report ';
         } else if ($request->input('types') == 'rejected') {
             $model = $model->where("$table.receivedstatus", "=", '2');
             $report .= 'rejected outcomes ';
@@ -577,7 +735,7 @@ class ReportController extends Controller
         } else if ($request->input('types') == 'manifest') {
             $report .= 'sample manifest ';
         } else {
-            $report .= 'samples log ';    
+            $report .= 'samples log ';
         }
 
         if ($request->input('types') == 'remoteentry')
@@ -606,7 +764,7 @@ class ReportController extends Controller
         }
 
         if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
-        
+
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
         return $model->orderBy('datereceived', 'asc');
@@ -682,6 +840,13 @@ class ReportController extends Controller
     public function __getTATExcel($data, $title) {
         $title = strtoupper($title);
         $dataArray[] = ['MFL Code', 'Facility Name', 'Number of Samples', 'TAT1', 'TAT2', 'TAT3', 'TAT4', 'TAT5 (Lab TAT)'];
+        return $this->generate_excel($data, $dataArray, $title);
+    }
+
+    public function __getRECENCYExcel($data, $title) {
+        $title = strtoupper($title);
+        $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
+
         return $this->generate_excel($data, $dataArray, $title);
     }
 

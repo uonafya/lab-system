@@ -25,6 +25,9 @@
 		@endif
 		{{ $sample->patient->patient ?? $sample->patient->identifier ?? '' }}
 		@if(env('APP_LAB') != 5 and env('APP_LAB') != 3) 
+			@isset( $sample->recency_number)
+			<br /> Rec_No - {{ $sample->recency_number ?? '' }} 	
+			@endisset			
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
 		@endif 
 		@if(env('APP_LAB') == 3 ) 

@@ -269,6 +269,7 @@
                                     </label>
                                 @else
                                 <label> <input type="radio" name="types" value="tested" required> All Samples Tested </label>
+                                <label><input type="radio" name="types" value="recency_report" required> Recency Report</label>
                                 <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
                                 @if(Auth::user()->user_type_id != 5)
                                 @if(Session('testingSystem') == 'EID')

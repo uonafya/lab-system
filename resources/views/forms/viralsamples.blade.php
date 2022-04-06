@@ -423,7 +423,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Separation / Centrifugation
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                {{-- <strong><div style='color: #ff0000; display: inline;'>*</div></strong> --}}
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-normal">
@@ -434,7 +434,7 @@
                                             value="{{ $viralsample->my_date_format('dateseparated', 'Y-m-d') }}"
                                         @endif
 
-                                      name="dateseparated" required>
+                                      name="dateseparated" >
                                 </div>
                             </div>                            
                         </div> 
@@ -442,7 +442,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Time of Separation / Centrifugation</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="separating_hour" name="separating_hour" required>
+                                <select class="form-control" id="separating_hour" name="separating_hour" >
 
                                     <option></option>
                                     @for($i=1; $i<13; $i++)
@@ -576,7 +576,7 @@
                             <label class="col-sm-4 control-label">Recency Number
                             </label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}" disabled >
                             </div>
                         </div>
 
