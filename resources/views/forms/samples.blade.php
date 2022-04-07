@@ -855,6 +855,7 @@
 
                                                             <option></option>
                                                             @foreach ($rejectedreasons as $rejectedreason)
+                                                            @if($rejectedreason->name != "Other" )
                                                                 <option value="{{ $rejectedreason->id }}"
 
                                                                         @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
@@ -863,6 +864,7 @@
 
                                                                 > {{ $rejectedreason->name }}
                                                                 </option>
+                                                            @endif
                                                             @endforeach
 
                                                         </select>
