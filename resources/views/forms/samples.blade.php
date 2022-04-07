@@ -253,6 +253,47 @@
                                             </div>
 
                                             <div class="form-group">
+                                                <label class="col-sm-1 control-label">Hei No. MFL
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+
+                                                <div class="col-sm-2">
+                                                    <select class="form-control " onChange="showHeiNumberId(this.value)"
+                                                            name="heiMfl" id="heiMfl">
+
+                                                        @isset($sample)
+                                                        <option value="{{ $sample->batch->facility->id }}"
+                                                                selected></option>
+                                                        @endisset
+
+                                                    </select>
+                                                </div>
+
+                                                <label class="col-sm-1 control-label">Hei No. Year
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+                                                <div class="col-sm-2">
+                                                    <input class="form-control " required name="heiNoYear"
+                                                            id="heiNoYear" onchange=showHeiNoYear(this.value)>
+                                                </div>
+
+                                                <label class="col-sm-2 control-label">Hei No. Patient Serial
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+                                                <div class="col-sm-3">
+                                                    <input class="form-control "  maxlength="5"  required name="heiNoPatientSerial"
+                                                           type="number"  onchange=showHeiNoPatientSerial(this.value) id="heiNoPatientSerial">
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group">
                                                 <label class="col-sm-4 control-label">HEI ID Number
                                                     <strong>
                                                         <div style='color: #ff0000; display: inline;'>*</div>
@@ -261,7 +302,9 @@
                                                 <div class="col-sm-8">
                                                     <input class="form-control requirable" required name="patient"
                                                            type="text" value="{{ $sample->patient->patient ?? '' }}"
-                                                           id="patient">
+
+                                                           id="patient" readonly required >
+
                                                 </div>
                                             </div>
 
@@ -468,12 +511,14 @@
                                                     </label>
                                                     @if(!$batch)
                                                     <div class="col-sm-3">
-                                                        <select class="form-control requirable" onChange="showFacilityCode(this.value)"
+
+                                                        <select class="form-control "
+
                                                                 name="patient_facility_id" id="patient_facility_id">
                                                         
                                                             @isset($sample)
                                                                 <option value="{{ $sample->batch->facility->id }}"
-                                                                        selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                                        selected></option>
                                                             @endisset
 
                                                         </select>
@@ -496,7 +541,9 @@
                                                 <div class="col-sm-3">
                                                     <input class="form-control" name="enrollment_ccc_no" type="text"
                                                            value="{{ $sample->patient->enrollment_ccc_no ?? '' }}"
-                                                           id="enrollment_ccc_no" disabled>
+
+                                                           id="enrollment_ccc_no" readonly >
+
                                                 </div>
                                             </div>
 
@@ -557,7 +604,7 @@
                                                     
                                                         @isset($sample)
                                                             <option value="{{ $sample->batch->facility->id }}"
-                                                                    selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                                    selected></option>
                                                         @endisset
 
                                                     </select>
@@ -578,7 +625,9 @@
                                                 <div class="col-sm-3"><input class="form-control" id="ccc_no"
                                                                              name="ccc_no" type="text"
                                                                              value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                                             required disabled></div>
+
+                                                                             required readonly required></div>
+
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">Mother's Age
@@ -632,11 +681,11 @@
                                                            @if(isset($sample) && is_numeric($sample->mother_last_result))
                                                            value="{{ $sample->mother_last_result ?? '' }}"
                                                            @endif
-                                                           required>
+                                                           >
                                                 </div>
 
                                                 <div class="col-sm-3">
-                                                    <label> <input type="checkbox" class="i-checks" name="last_result"
+                                                    <label> <input type="checkbox" class="i-checks" name="last_result" id = "last_result"
                                                                    value="< LDL copies/ml"
                                                                    @if(isset($sample) && $sample->mother_last_rcategory == 1)
                                                                    checked
@@ -815,6 +864,7 @@
 
                                                             <option></option>
                                                             @foreach ($rejectedreasons as $rejectedreason)
+                                                            @if($rejectedreason->name != "Other" )
                                                                 <option value="{{ $rejectedreason->id }}"
 
                                                                         @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
@@ -823,6 +873,7 @@
 
                                                                 > {{ $rejectedreason->name }}
                                                                 </option>
+                                                            @endif
                                                             @endforeach
 
                                                         </select>
@@ -1047,6 +1098,13 @@
                     $('.requirable').attr("required", "required");
                 }
             });
+            $("#last_result").change(function () {
+            if (document.getElementById('last_result').checked){
+                $('mother_last_result').removeAttr("required");
+            }else{
+                $('mother_last_result').attr("required", "required");
+            } 
+            })
 
 
             $("#receivedstatus").change(function () {

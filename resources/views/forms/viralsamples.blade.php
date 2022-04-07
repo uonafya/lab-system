@@ -196,7 +196,7 @@
                                 <div class="col-sm-3">
                                     <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
                                         @isset($viralsample)
-                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
+                                        <option value="{{ $viralsample->batch->facility->id }}" selected></option>
                                         @endisset
                                     </select>
                                 </div>
@@ -211,7 +211,9 @@
                                     <label class="col-sm-1 control-label">CCC No.
                                     </label>  <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     <div class="col-sm-3">
-                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" disabled>
+
+                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" readonly required>
+
                                 </div>
                             {{-- </div> --}}
                         </div>
@@ -673,6 +675,7 @@
 
                                         <option></option>
                                         @foreach ($rejectedreasons as $rejectedreason)
+                                        @if($rejectedreason->name != "Other" )
                                             <option value="{{ $rejectedreason->id }}"
 
                                             @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
@@ -681,6 +684,7 @@
 
                                             > {{ $rejectedreason->name }}
                                             </option>
+                                        @endif
                                         @endforeach
 
                                     </select>
@@ -947,12 +951,17 @@
             $("#sex").change(function(){
                 var val = $(this).val();
                 if(val == 2){
+                    // $("#pmtct").empty();
                     $("#pmtct").removeAttr("disabled");
                     $("#pmtct").attr("required", "required");
+                    
                 }
                 else{
+                    // $("#pmtct")[0].selectedIndex = 0;
+                    document.getElementById("pmtct").value = '';
                     $("#pmtct").attr("disabled", "disabled");
                     $("#pmtct").removeAttr("required");
+                    
                 }
             });
 
