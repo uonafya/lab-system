@@ -259,12 +259,12 @@
                                                 </label>
 
                                                 <div class="col-sm-2">
-                                                    <select class="form-control requirable" onChange="showHeiNumberId(this.value)"
+                                                    <select class="form-control " onChange="showHeiNumberId(this.value)"
                                                             name="heiMfl" id="heiMfl">
 
                                                         @isset($sample)
                                                         <option value="{{ $sample->batch->facility->id }}"
-                                                                selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                                selected></option>
                                                         @endisset
 
                                                     </select>
@@ -276,7 +276,7 @@
                                                     </strong>
                                                 </label>
                                                 <div class="col-sm-2">
-                                                    <input class="form-control requirable" required name="heiNoYear"
+                                                    <input class="form-control " required name="heiNoYear"
                                                             id="heiNoYear" onchange=showHeiNoYear(this.value)>
                                                 </div>
 
@@ -286,7 +286,7 @@
                                                     </strong>
                                                 </label>
                                                 <div class="col-sm-3">
-                                                    <input class="form-control requirable"  maxlength="5"  required name="heiNoPatientSerial"
+                                                    <input class="form-control "  maxlength="5"  required name="heiNoPatientSerial"
                                                            type="number"  onchange=showHeiNoPatientSerial(this.value) id="heiNoPatientSerial">
                                                 </div>
 
@@ -301,7 +301,7 @@
                                                 <div class="col-sm-4">
                                                     <input class="form-control "  name="patient"
                                                            type="text" value="{{ $sample->patient->patient ?? '' }}"
-                                                           id="patient" readonly >
+                                                           id="patient" readonly required >
                                                 </div>
                                             </div>
 
@@ -513,7 +513,7 @@
 
                                                             @isset($sample)
                                                                 <option value="{{ $sample->batch->facility->id }}"
-                                                                        selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                                        selected></option>
                                                             @endisset
 
                                                         </select>
@@ -536,7 +536,7 @@
                                                 <div class="col-sm-3">
                                                     <input class="form-control" name="enrollment_ccc_no" type="text"
                                                            value="{{ $sample->patient->enrollment_ccc_no ?? '' }}"
-                                                           id="enrollment_ccc_no" readonly>
+                                                           id="enrollment_ccc_no" readonly >
                                                 </div>
                                             </div>
 
@@ -597,7 +597,7 @@
 
                                                         @isset($sample)
                                                             <option value="{{ $sample->batch->facility->id }}"
-                                                                    selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                                    selected></option>
                                                         @endisset
 
                                                     </select>
@@ -618,7 +618,7 @@
                                                 <div class="col-sm-3"><input class="form-control" id="ccc_no"
                                                                              name="ccc_no" type="text"
                                                                              value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                                             required readonly></div>
+                                                                             required readonly required></div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label">Mother's Age
