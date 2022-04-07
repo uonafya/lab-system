@@ -356,7 +356,7 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            endDate: "-3m",
+            endDate: "-1w",
             format: "yyyy-mm-dd"
         });
 
