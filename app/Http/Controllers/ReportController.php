@@ -641,6 +641,7 @@ class ReportController extends Controller
     	if ($testtype == 'Viralload') {
             $table = 'viralsamples_view';
             $columns = "$table.id,$table.batch_id as batch_id,$table.worksheet_id,$table.patient,$table.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode, recency_number, gender.gender_description, $table.dob, $table.age, viralpmtcttype.name as pmtct, viralsampletype.name as sampletype, $table.datecollected,";
+
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
@@ -845,6 +846,7 @@ class ReportController extends Controller
     public function __getRECENCYExcel($data, $title) {
         $title = strtoupper($title);
         $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load'];
+
         return $this->generate_excel($data, $dataArray, $title);
     }
 
