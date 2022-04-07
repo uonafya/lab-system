@@ -508,7 +508,7 @@
                                                     </label>
 
                                                     <div class="col-sm-3">
-                                                        <select class="form-control requirable "
+                                                        <select class="form-control "
                                                                 name="patient_facility_id" id="patient_facility_id">
 
                                                             @isset($sample)
@@ -672,11 +672,11 @@
                                                            @if(isset($sample) && is_numeric($sample->mother_last_result))
                                                            value="{{ $sample->mother_last_result ?? '' }}"
                                                            @endif
-                                                           required>
+                                                           >
                                                 </div>
 
                                                 <div class="col-sm-3">
-                                                    <label> <input type="checkbox" class="i-checks" name="last_result"
+                                                    <label> <input type="checkbox" class="i-checks" name="last_result" id = "last_result"
                                                                    value="< LDL copies/ml"
                                                                    @if(isset($sample) && $sample->mother_last_rcategory == 1)
                                                                    checked
@@ -1088,6 +1088,13 @@
                     $('.requirable').attr("required", "required");
                 }
             });
+            $("#last_result").change(function () {
+            if (document.getElementById('last_result').checked){
+                $('mother_last_result').removeAttr("required");
+            }else{
+                $('mother_last_result').attr("required", "required");
+            } 
+            })
 
 
             $("#heiNoYear").datepicker({
