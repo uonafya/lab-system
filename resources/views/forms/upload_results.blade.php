@@ -188,7 +188,7 @@
 
                                 </select></div>
                             </div>
-                        @if($worksheet->route_name != 'covid_worksheet' && $worksheet->route_name != 'worksheet')
+                        @if($worksheet->route_name != 'covid_worksheet' && $worksheet->route_name != 'worksheet' && $worksheet->route_name != 'cancerworksheet')
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Testing Lab</label>
                                 <div class="col-sm-8"><select class="form-control" name="lab_id" id="lab_id">
