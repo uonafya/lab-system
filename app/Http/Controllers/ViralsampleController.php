@@ -617,7 +617,6 @@ class ViralsampleController extends Controller
         }
         $batch->pre_update();
 
-        return json_encode($batch);
         
 
         $data = $request->only($viralsamples_arrays['patient']);
