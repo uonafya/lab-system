@@ -839,7 +839,7 @@
             forceParse: true,
             autoclose: true,
             startDate: '-100y',
-            endDate: "-1m",
+            endDate: "-3m",
             format: "yyyy-mm-dd"
         });
 
