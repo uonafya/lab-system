@@ -224,7 +224,7 @@
                                     <strong><div style='color: #ff0000; display: inline;'></div></strong>
                                 </label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" >
+                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" maxlength="12" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" >
                                 </div>
 
                                 <div class="col-sm-1">Patient's Preferred Language</div>

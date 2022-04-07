@@ -210,7 +210,7 @@
                                                     </label>
                                                     <div class="col-sm-3">
                                                         <input class="form-control" name="patient_phone_no"
-                                                               id="patient_phone_no" type="text"
+                                                               id="patient_phone_no" type="text" maxlength="12"
                                                                value="{{ $sample->patient->patient_phone_no ?? '' }}"
                                                                >
                                                     </div>
