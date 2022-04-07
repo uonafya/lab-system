@@ -127,7 +127,7 @@
                                                 <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
                                             @endif
 
-                                            {{-- @if(auth()->user()->user_type_id != 5 && env('APP_LAB') == 4) --}}
+                                            @if(auth()->user()->user_type_id != 5 )
                                                 <div class="form-group">
                                                     <label class="col-sm-4 control-label">High Priority</label>
                                                     <div class="col-sm-8">
@@ -140,7 +140,7 @@
                                                         />
                                                     </div>
                                                 </div>
-                                            {{-- @endif --}}
+                                            @endif
 
 
                                             <div class="form-group ampath-div">
