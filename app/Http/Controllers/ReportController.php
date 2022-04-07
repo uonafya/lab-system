@@ -645,7 +645,8 @@ class ReportController extends Controller
             
             if ($request->input('types') == 'manifest')
                 $columns .= "$table.datedispatchedfromfacility,";
-            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, users.surname, users.oname";
+            $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result";
+
 
             if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= "receivedstatus.name as receivedstatus, viralrejectedreasons.name as rejectedreason, viralregimen.name as regimen, $table.initiation_date, viraljustifications.name as justification, $table.datereceived, $table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.result,  $table.entered_by, rec.surname as receiver";
@@ -845,8 +846,7 @@ class ReportController extends Controller
 
     public function __getRECENCYExcel($data, $title) {
         $title = strtoupper($title);
-        $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
-
+        $dataArray[] = ['Lab ID', 'Batch #', 'Worksheet #', 'Patient CCC No', 'Patient Names', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load'];
         return $this->generate_excel($data, $dataArray, $title);
     }
 
