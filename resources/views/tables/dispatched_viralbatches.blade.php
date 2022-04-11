@@ -183,7 +183,8 @@
                                         <th rowspan="1">TAT</th>
                                         <th rowspan="2">Email</th> 
                                         <th rowspan="2">Individual Printed</th>
-                                        <th rowspan="2">Summary Printed</th>                                       
+                                        <th rowspan="2">Summary Printed</th>
+                                        <th rowspan="2">Date Viewed</th>
                                         <th rowspan="2">Task</th>
                                     </tr>
                                     <tr>
@@ -244,7 +245,13 @@
                                                 <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('datebatchprinted') }}</strong> </td>
                                             @else
                                                 <td><strong><div style='color: #ff0000;'>N</div></strong></td>
-                                            @endif 
+                                            @endif
+
+                                            @if($batch->dateviewed)
+                                                <td><strong><div style='color: #00ff00;'>Y</div> {{ $batch->my_date_format('dateviewed') }}</strong> </td>
+                                            @else
+                                                <td><strong><div style='color: #ff0000;'>N</div></strong></td>
+                                            @endif
 
                                             <td> 
                                                 <a href="{{ url($pre . 'batch/' . $batch->id) }}">View</a>
