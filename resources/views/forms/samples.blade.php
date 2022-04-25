@@ -585,6 +585,28 @@
 
 
                                             <div class="form-group">
+                                                <div>
+                                                <label class="col-sm-1 control-label">Child Caregiver
+                                                    <strong>
+                                                        <div style='color: #ff0000; display: inline;'>*</div>
+                                                    </strong>
+                                                </label>
+                                                </div>
+                                                <div class="row">
+                                                    <div  class="col-sm-3">
+                                                        <select class="form-control "
+                                                                id="child">
+                                                            {{--<select name="type" id="type" style="margin-left:57px; width:153px;">--}}
+                                                                <option >Select One</option>
+                                                                <option name="caregiver" value="caregiver">Caregiver</option>
+                                                                <option name="mother" value="mother">Mother</option>
+
+                                                        </select>
+                                                    </div>
+                                                <div id="caregiver">
+                                                    <div class="form-group">
+                                                </div>
+                                                 <div class="row">
                                                 <label class="col-sm-1 control-label">Mother MFL Code
                                                     {{-- <strong>
                                                         <div style='color: #ff0000; display: inline;'>*</div>
@@ -615,7 +637,7 @@
                                                     </strong>
                                                 </label>
 
-                                                <div class="col-sm-3"><input class="form-control" id="ccc_no"
+                                                <div class="col-sm-2"><input class="form-control" id="ccc_no"
                                                                              name="ccc_no" type="text"
                                                                              value="{{ $sample->patient->mother->ccc_no ?? '' }}"
                                                                              required readonly required></div>
@@ -627,7 +649,7 @@
                                                     </strong>
 
                                                 </label>
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-3">
                                                     <input class="form-control" id="mother_age" name="mother_age"
                                                            type="text" value="{{ $sample->mother_age ?? '' }}"
                                                            number="number" min=10 max=70 required>
@@ -639,7 +661,7 @@
                                                         <div style='color: #ff0000; display: inline;'>*</div>
                                                     </strong>
                                                 </label>
-                                                <div class="col-sm-8"><select class="form-control requirable" required
+                                                <div class="col-sm-5"><select class="form-control requirable" required
                                                                               name="mother_prophylaxis">
 
                                                         <option></option>
@@ -684,6 +706,8 @@
 
                                                         />Tick if result is <b> &lt; LDL cp/ml</b> </label>
                                                 </div>
+                                            </div>
+                                            </div>
                                             </div>
 
                                             {{--<!-- <div class="form-group">
@@ -973,8 +997,10 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </form>
 
+                </form>
         </div>
     </div>
 
@@ -1250,8 +1276,16 @@
             let n = document.getElementById('patient').value
             document.getElementById('patient').value = n + '-' + heiNoPatientSerial ;
     }
+        $(function () {
+            $('#caregiver').hide();
+            $('#child').change(function () {
+                $('#caregiver').hide();
+                if($(this).val()=="mother") {
+                    $('#caregiver').show();
+                }
+            });
+        });
+
     </script>
-
-
 
 @endsection

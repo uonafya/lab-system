@@ -324,6 +324,11 @@ class ViralbatchController extends Controller
         $data['batch'] = $viralbatch;
         $data['samples'] = $viralsamples;
 
+        if (!$viralbatch->dateviewed){
+            $viralbatch->dateviewed = date('Y-m-d');
+            $viralbatch->pre_update();
+        }
+
         return view('tables.viralbatch_details', $data)->with('pageTitle', 'Batches');
     }
 
