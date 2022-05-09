@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\utils\HttpsRequest;
 use App\Viralpatient;
 use App\Viralsample;
 use App\DrSample;
@@ -237,4 +238,16 @@ class ViralpatientController extends Controller
         $patients->setPath(url()->current());
         return $patients;
     }
+
+    public function upi_number(Request $request)
+    {
+        $identifierType = $request->input('$identifierType');
+        $identifierValue =  $request->input('search');
+        $accessToken = HttpsRequest::generateAccessToken();
+
+        return HttpsRequest::getRegistryClient($accessToken, $identifierType, $identifierValue );
+    }
+
+
+
 }
