@@ -5,9 +5,16 @@ namespace App\utils;
 
 
 use Illuminate\Http\Request;
+use function MongoDB\BSON\toJSON;
 
 class HttpsRequest
 {
+    public static function search_client_upi()
+
+    {
+        $token = json_decode(self::generateAccessToken(), true);
+       dd(self::getRegistryClient($token['access_token'], 'MOH202205001'));
+    }
 
     public static function generateAccessToken()
     {
@@ -15,6 +22,7 @@ class HttpsRequest
 //        $scope = $_ENV['REGISTRY_SCOPE'];
 //        $client_id = $_ENV['REGISTRY_CLIENT_ID'];
 //        $client_secret = $_ENV['REGISTRY_CLIENT_SECRET'];
+//        $token_url = $_ENV['REGISTRY_CLIENT_TOKEN_URL'];
 
         $client_id = 'partner.test.client';
         $client_secret = 'partnerTestPwd';
@@ -29,7 +37,7 @@ class HttpsRequest
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
             CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_URL => 'token_endpoint_url',
+            CURLOPT_URL => '',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -45,19 +53,20 @@ class HttpsRequest
 
 
         $response = curl_exec($curl);
-
         curl_close($curl);
-        echo "Result = " . $response;
+
         return $response;
 
     }
 
 //identifierType and upn value to validate
-    public static function getRegistryClient($access_token, $identifierType, $identifierValue)
+    public static function getRegistryClient($access_token, $client_upi)
     {
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'endpoint_url' . $identifierType . '/' . $identifierValue . '?format=json',
+            CURLOPT_SSL_VERIFYHOST => FALSE,
+            CURLOPT_SSL_VERIFYPEER => FALSE,
+            CURLOPT_URL => '' . $client_upi . '?format=json',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -66,14 +75,13 @@ class HttpsRequest
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer ' . $access_token
-            ),
+                'Authorization: Bearer ' . $access_token),
         ));
 
-        $response = json_decode(curl_exec($curl), true);
-        curl_close($curl);
-        $results = $response['results'];
+        $response = curl_exec($curl);
+        $response = json_decode($response, true);
 
-        //return results  with patient upi number
+        return $response['client'];
+
     }
 }
