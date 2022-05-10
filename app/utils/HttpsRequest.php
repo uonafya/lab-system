@@ -9,11 +9,12 @@ use function MongoDB\BSON\toJSON;
 
 class HttpsRequest
 {
-    public static function search_client_upi()
+    public static function search_client_upi($client_upi)
 
     {
         $token = json_decode(self::generateAccessToken(), true);
-       dd(self::getRegistryClient($token['access_token'], 'MOH202205001'));
+        //dd (self::getRegistryClient($token['access_token'], 'MOH202205001'));
+        return self::getRegistryClient($token['access_token'], $client_upi);
     }
 
     public static function generateAccessToken()
