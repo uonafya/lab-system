@@ -134,6 +134,13 @@
                                  />
                                 </div>
                             </div>
+                            <div class="form-group">
+                                    <label class="col-sm-4 control-label">Recency Test ?</label>
+                                    <div class="col-sm-8">
+                                    <input type="checkbox" class="i-checks" name="isRecencyCheck" id="isRecencyCheck" value="=1"/>
+                                    </div>
+                            </div>
+
                         @endif
 
                         <div class="form-group ampath-div">
@@ -189,7 +196,7 @@
                     </div>
                     <div class="panel-body">
                         
-                    <div class="form-group">
+                    <div class="form-group non-recency-field" id="patient-ccc-div">
                             <label class="col-sm-1 control-label">Patient Facility MFL
                             </label>
                             {{-- <div class="col-sm-8"> --}}
@@ -219,7 +226,7 @@
 
                         @if( in_array(env('APP_LAB'), $sms))
 
-                            <div class="form-group">
+                            <div class="form-group" id="phone-no-div">
                                 <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
                                     <strong><div style='color: #ff0000; display: inline;'></div></strong>
                                 </label>
@@ -471,7 +478,7 @@
                             </div>
                         </div> 
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field" >
                             <label class="col-sm-4 control-label">Date Started on ART
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -482,7 +489,7 @@
                                     @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
                                         required 
                                     @endif
-                                    class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    class="form-control  value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>
@@ -552,7 +559,7 @@
                             <label class="col-sm-4 control-label">Justification
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-8" id="justification-div">
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
@@ -977,36 +984,59 @@
                 }
             });
 
-            $("#justification").change(function(){
-                var val = $(this).val();
-                if(val == 12){
-                    $("#recency_number").attr("required", "required");
-                    $("#recency_number").removeAttr("disabled");
 
-                    $("#patient").removeAttr("required");
-                    $("#patient_facility_id").removeAttr("required");
-
-                }
-                else{
-                    $("#recency_number").removeAttr("required");
-                    $("#recency_number").attr("disabled", "disabled");
-
-                    $("#patient").attr("required","required");
-                    $("#patient_facility_id").attr("required","required");
+            $('#isRecencyCheck').on('ifChanged', function (event) {
+                //Check if checkbox is checked or not
+                var checkboxChecked = $(this).is(':checked');
+                if (checkboxChecked) {
+                    $(".non-recency-field").hide();
+                    $("div#justification-div select").val(12).trigger("change");
+                } else {
+                    $("div#justification-div select").val('').trigger("change");
                 }
             });
 
-            /*$("#dob").change(function(){
-                var val = $(this).val();
-                var dt1 = new Date();
-                var dt2 = new Date(val);
-                var age = diff_in_years(dt2, dt1);
-                if(age > 18){
-                    set_message('Age is ' + age);
-                    $('.regimen_age_2').hide();
-                    $('.regimen_age_2').attr("disabled", "disabled");
+            $("#justification").change(function () {
+                var val = $("#justification").val();
+
+                if (val == 12) {
+                    enable_recency_field();
+                } else {
+                    disable_recency_field();
                 }
-            });*/
+            });
+
+            function enable_recency_field() {
+                $("#recency_number").attr("required", "required");
+                $("#recency_number").removeAttr("disabled");
+                $("#patient").removeAttr("required");
+                $("#patient_facility_id").removeAttr("required");
+                $("#initiation_date").removeAttr("required");
+                $("#phone-no-div").hide();
+                $(".non-recency-field").hide();
+            }
+
+            function disable_recency_field() {
+                $("#phone-no-div").show()
+                $(".non-recency-field").show();
+                $("#recency_number").removeAttr("required");
+                $("#recency_number").attr("disabled", "disabled");
+                $("#patient").attr("required", "required");
+                $("#patient_facility_id").attr("required", "required");
+                $("#initiation_date").attr("required", "required");
+            }
+
+                /*$("#dob").change(function(){
+                    var val = $(this).val();
+                    var dt1 = new Date();
+                    var dt2 = new Date(val);
+                    var age = diff_in_years(dt2, dt1);
+                    if(age > 18){
+                        set_message('Age is ' + age);
+                        $('.regimen_age_2').hide();
+                        $('.regimen_age_2').attr("disabled", "disabled");
+                    }
+                });*/
 
 
             @if(!in_array(env('APP_LAB'), $amrs))
