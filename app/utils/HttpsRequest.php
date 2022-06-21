@@ -82,7 +82,7 @@ class HttpsRequest
         $response = curl_exec($curl);
         $response = json_decode($response, true);
 
-        return $response['client'];
+        return ($response['client']) ? $response['client'] : "client does not exist on client registry";
 
     }
 }
