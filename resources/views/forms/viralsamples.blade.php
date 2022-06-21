@@ -137,7 +137,11 @@
                             <div class="form-group">
                                     <label class="col-sm-4 control-label">Recency Test ?</label>
                                     <div class="col-sm-8">
-                                    <input type="checkbox" class="i-checks" name="isRecencyCheck" id="isRecencyCheck" value="=1"/>
+                                    <input type="checkbox" class="i-checks" name="isRecencyCheck" id="isRecencyCheck" value="=1"
+                                           @if(isset($viralsample) && $viralsample->justification ==12)
+                                           checked
+                                            @endif
+                                    />
                                     </div>
                             </div>
 
@@ -920,7 +924,10 @@
 
 
             $("#rejection").hide();
-            disable_recency_field();
+            if($("#isRecencyCheck").is(':checked')){
+                enable_recency_field();
+            }
+
 
             @if(isset($viralsample))                
                 @if($viralsample->receivedstatus == 2)
