@@ -230,8 +230,8 @@
                                   {{--
                                   <div class="col-sm-8"> --}}
                                       <div class="col-sm-3">
-                                          <select class="form-control " name="rec_facility_id"
-                                                  onChange="showFacilityCode(this.value)" id="rec_facility_id">
+                                          <select class="form-control " id="rec_facility_id" name="rec_facility_id"
+                                                  onChange="showFacilCode(this.value)" id="rec_facility_id">
                                               @isset($viralsample)
                                               <option value="{{ $viralsample->batch->facility->id }}" selected></option>
                                               @endisset
@@ -243,7 +243,7 @@
                                           </label>
                                           <div class="col-sm-3">
                                               <input class="form-control " id="rec_serial" name="rec_serial"
-                                                     onChange="showSerial(this.value)" type="text" maxlength="5" value=""
+                                                     onChange="showRecSerial(this.value)" type="text" maxlength="5" value=""
                                                      id="patient_serial">
                                           </div>
                                           {{--
@@ -253,8 +253,8 @@
                                           <label class="col-sm-1 control-label">Recency Number
                                           </label>
                                           <div class="col-sm-3">
-                                              <input class="form-control" id="recency_number" name="recency_number" type="text"
-                                                     value="{{ $viralsample->recency_number ?? '' }}" disabled>
+                                              <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text"
+                                                     value="{{ $viralsample->recency_number ?? '' }}" id="recency_number" readonly >
                                           </div>
                                       </div>
                                   </div>
@@ -902,6 +902,7 @@
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility_mfl("rec_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
 
@@ -956,7 +957,11 @@
             $("#patient_facility_id").change(function(){
                 
                 document.getElementById("patient").value = "";
-            }); 
+            });
+            $("#rec_facility_id").change(function(){
+
+                document.getElementById("recency_number").value = "";
+            });
             // $("#patient").blur(function(){
             //         var patient = $(this).val();
             //         var facility = $("#facility_id").val();
@@ -1261,5 +1266,12 @@
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('patient').value =facilityCode+'-'+serialCode
+    }
+    function showFacilCode(facilityCode){
+        document.getElementById('recency_number').value = facilityCode;
+    }
+    function showRecSerial(serialCode){
+        let facilityCode =  document.getElementById('rec_facility_id').value
+        document.getElementById('recency_number').value ='REC'+facilityCode+serialCode
     }
 </script>
