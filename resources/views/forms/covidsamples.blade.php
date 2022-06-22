@@ -54,7 +54,6 @@
 
         <div class="row">
             <div class="col-lg-12">
-                
                 <div class="hpanel">
                     <div class="panel-body" style="padding-bottom: 6px;">
 
