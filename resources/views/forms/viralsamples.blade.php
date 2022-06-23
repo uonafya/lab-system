@@ -199,7 +199,7 @@
                         <center>Patient Information</center>
                     </div>
                     <div class="panel-body">
-                        
+
                     <div class="form-group" id="patient-ccc-div">
                           <fieldset class="panel-info">
                               <label class="col-sm-1 control-label">CCC  MFL
@@ -269,7 +269,7 @@
 
 
                         @if( in_array(env('APP_LAB'), $sms))
-
+                    <div class="panel">
                             <div class="form-group non-recency-field" id="phone-no-div">
                                 <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
                                     <strong><div style='color: #ff0000; display: inline;'></div></strong>
@@ -282,7 +282,7 @@
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
-                                        <label><input type="radio" class="i-chszecks" id="preferred_language" name="preferred_language" value="{{ $key }}" 
+                                        <label><input type="radio" class="i-chszecks" id="preferred_language" name="preferred_language" value="{{ $key }}"
 
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
@@ -297,7 +297,7 @@
 
                         @endif
 
-                       
+
                         @if(env('APP_LAB') == 4)
 
                             <div class="form-group">
@@ -359,7 +359,7 @@
                                     @endif
                                      value="{{ $viralsample->patient->dob ?? '' }}" name="dob" required>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
 
                         @if(auth()->user()->user_type_id != 5)
@@ -422,8 +422,13 @@
                                 </select>
                             </div>
                         </div>
-
+                    </div>
                         <div class="hr-line-dashed"></div>
+                    <div class="hpanel">
+                        <!-- <div class="panel-heading">
+                            <center>Sample Information</center>
+                        </div> -->
+                        <div class="panel-body">
 
                         @if(isset($form_sample_type) && $form_sample_type)
 
@@ -457,11 +462,11 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div> 
+                            </div>
 
                         @endif
 
-                        <div class="hr-line-dashed"></div>                      
+                        <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Collection
@@ -472,8 +477,8 @@
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datecollected" required class="form-control requirable" value="{{ $viralsample->datecollected ?? '' }}" name="datecollected">
                                 </div>
-                            </div>                            
-                        </div>                      
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date of Separation / Centrifugation
@@ -490,8 +495,8 @@
 
                                       name="dateseparated" >
                                 </div>
-                            </div>                            
-                        </div> 
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Time of Separation / Centrifugation</label>
@@ -523,7 +528,7 @@
 
                                 </select>
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="form-group non-recency-field" >
                             <label class="col-sm-4 control-label">Date Started on ART
@@ -532,13 +537,13 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" 
+                                    <input type="text" id="initiation_date"
                                     @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
-                                        required 
+                                        required
                                     @endif
                                     class="form-control  value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -550,7 +555,7 @@
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility" required>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
@@ -583,7 +588,7 @@
                                         @endif
 
                                     @endforeach
-                                    
+
                                 </select>
                             </div>
                         </div>
@@ -597,10 +602,10 @@
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen" required>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
 
-                        <div class="hr-line-dashed"></div>  
+                        <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Justification
@@ -625,126 +630,122 @@
                                 </select>
                             </div>
                         </div>
-                </div>
-            </div>
-        </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    @if(isset($poc))
+                                    <input type="hidden" value=2 name="site_entry">
+
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">POC Site Sample Tested at
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control requirable" required name="lab_id" id="lab_id">
+                                                @isset($viralsample)
+                                                <option value="{{ $viralsample->batch->facility_lab->id }}" selected>{{ $viralsample->batch->facility_lab->facilitycode }} {{ $viralsample->batch->facility_lab->name }}</option>
+                                                @endisset
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    @endif
+
+                                    <div class="form-group alupe-div">
+                                        <label class="col-sm-4 control-label">VL Test Request Number</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}" required>
+                                        </div>
+                                    </div>
 
 
+                                    <div class="hr-line-dashed"></div>
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="hpanel">
-                    <!-- <div class="panel-heading">
-                        <center>Sample Information</center>
-                    </div> -->
-                    <div class="panel-body">
+                                    <div></div>
 
-                        @if(isset($poc))
-                            <input type="hidden" value=2 name="site_entry">
+                                    @if(auth()->user()->user_type_id != 5 || isset($poc) || (isset($viralsample) && $viralsample->batch->site_entry == 2))
 
-                            <div class="form-group">
-                              <label class="col-sm-4 control-label">POC Site Sample Tested at
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                              <div class="col-sm-8">
-                                <select class="form-control requirable" required name="lab_id" id="lab_id">
-                                    @isset($viralsample)
-                                        <option value="{{ $viralsample->batch->facility_lab->id }}" selected>{{ $viralsample->batch->facility_lab->facilitycode }} {{ $viralsample->batch->facility_lab->name }}</option>
-                                    @endisset
-                                </select>
-                              </div>
-                            </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Date Received
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group date date-normal">
+                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        @endif
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Received Status
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
 
-                        <div class="form-group alupe-div">
-                            <label class="col-sm-4 control-label">VL Test Request Number</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}" required>
+                                                <option></option>
+                                                @foreach ($receivedstatuses as $receivedstatus)
+                                                <option value="{{ $receivedstatus->id }}"
+
+                                                        @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
+                                                    selected
+                                                    @endif
+
+                                                    > {{ $receivedstatus->name }}
+                                                </option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="rejection" >
+                                        <label class="col-sm-4 control-label">Rejected Reason</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+
+                                                <option></option>
+                                                @foreach ($rejectedreasons as $rejectedreason)
+                                                @if($rejectedreason->name != "Other" )
+                                                <option value="{{ $rejectedreason->id }}"
+
+                                                        @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
+                                                    selected
+                                                    @endif
+
+                                                    > {{ $rejectedreason->name }}
+                                                </option>
+                                                @endif
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    @if(auth()->user()->user_type_id == 5)
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Entered By
+                                            <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                </div>
                             </div>
                         </div>
-
-
-                        <div class="hr-line-dashed"></div> 
-
-                        <div></div>
-
-                        @if(auth()->user()->user_type_id != 5 || isset($poc) || (isset($viralsample) && $viralsample->batch->site_entry == 2))
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Received
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group date date-normal">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        <input type="text" id="datereceived" required class="form-control requirable" value="{{ $viralsample->batch->datereceived ?? $batch->datereceived ?? '' }}" name="datereceived">
-                                    </div>
-                                </div>                            
-                            </div> 
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Received Status
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                        <select class="form-control requirable" required name="receivedstatus" id="receivedstatus">
-
-                                        <option></option>
-                                        @foreach ($receivedstatuses as $receivedstatus)
-                                            <option value="{{ $receivedstatus->id }}"
-
-                                            @if (isset($viralsample) && $viralsample->receivedstatus == $receivedstatus->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $receivedstatus->name }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="rejection" >
-                                <label class="col-sm-4 control-label">Rejected Reason</label>
-                                <div class="col-sm-8">
-                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
-
-                                        <option></option>
-                                        @foreach ($rejectedreasons as $rejectedreason)
-                                        @if($rejectedreason->name != "Other" )
-                                            <option value="{{ $rejectedreason->id }}"
-
-                                            @if (isset($viralsample) && $viralsample->rejectedreason == $rejectedreason->id)
-                                                selected
-                                            @endif
-
-                                            > {{ $rejectedreason->name }}
-                                            </option>
-                                        @endif
-                                        @endforeach
-
-                                    </select>
-                                </div>
-                            </div>
-                        @endif
-                        
-                        @if(auth()->user()->user_type_id == 5)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Entered By
-                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input class="form-control requirable" required name="entered_by" id="entered_by"  type="text" value="{{ $viralsample->batch->entered_by ?? '' }}">
-                                </div>
-                            </div>
-                        @endif
-
                     </div>
+
                 </div>
             </div>
         </div>
+
+
+
+
 
 
         <!-- <div class="row">
@@ -910,8 +911,7 @@
         set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("rec_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
-
-        set_patient_upi_number("patient_upi", "{{ url('/viralpatient/upi_number') }}", 1, "search patient UPI number");
+<!--        set_patient_upi_number("patient_upi", "{{ url('/viralpatient/upi_number') }}", 1, "search patient UPI number");-->
 
     @endcomponent
 
