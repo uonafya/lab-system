@@ -781,6 +781,7 @@ Route::middleware(['auth'])->group(function(){
 				});
 			});
 			Route::resource('viralsample', 'ViralsampleController');
+			Route::get('Viralpatient','ViralpatientController@verify_upi_number')->name('verify_upi_number');
 		});
 
 		Route::prefix('datatable')->name('datatable.')->group(function () {	

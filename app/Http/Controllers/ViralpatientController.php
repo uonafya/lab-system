@@ -239,14 +239,13 @@ class ViralpatientController extends Controller
         return $patients;
     }
 
-    public function upi_number(Request $request)
+    public function verify_upi_number(Request $request = null, $upi_no)
     {
-        $identifierType = $request->input('$identifierType');
-        $identifierValue =  $request->input('search');
-        $accessToken = HttpsRequest::generateAccessToken();
-
-        return HttpsRequest::getRegistryClient($accessToken, $identifierType, $identifierValue );
-    }
+        $client_upi = $upi_no;
+        Loginfo($client_upi);
+//        return HttpsRequest::getRegistryClient($client_upi );
+//        dd("trying out");
+            }
 
 
 
