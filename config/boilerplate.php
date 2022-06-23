@@ -116,7 +116,7 @@ return [
     ],
 
     'form_base' => [
-        'patient' => 'required',
+//        'patient' => 'required',
         'facility_id' => ['required', 'integer'], 
         'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d', 'nullable'],
         'datecollected' => ['required', 'after_or_equal:-6month', 'before_or_equal:today', 'date_format:Y-m-d'],

@@ -125,6 +125,7 @@
                                     <th>#</th>
                                     <th>Lab ID</th>
                                     <th>Patient CCC No</th>
+                                    <th>Patient REC No</th>
                                     <th>Sex</th>
                                     <th>Age</th>
                                     <th>DOB</th>
@@ -150,6 +151,7 @@
                                         <td> {{ $i++ }} </td>
                                         <td> {{ $sample->id }} </td>
                                         <td> {!! $sample->patient->hyperlink !!} </td>
+                                        <td> {{ $sample->recency_number }} </td>
                                         <td> {{ $sample->patient->gender }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
