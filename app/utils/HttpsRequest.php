@@ -19,26 +19,21 @@ class HttpsRequest
 
     public static function generateAccessToken()
     {
-//        $grant_type = $_ENV['REGISTRY_GRANT_TYPE'];
-//        $scope = $_ENV['REGISTRY_SCOPE'];
-//        $client_id = $_ENV['REGISTRY_CLIENT_ID'];
-//        $client_secret = $_ENV['REGISTRY_CLIENT_SECRET'];
-//        $token_url = $_ENV['REGISTRY_CLIENT_TOKEN_URL'];
-
-        $client_id = 'partner.test.client';
-        $client_secret = 'partnerTestPwd';
-        $grant_type = 'client_credentials';
-        $scope = 'DHP.Gateway DHP.Visitation';
+        $grant_type = $_ENV['REGISTRY_GRANT_TYPE'];
+        $scope = $_ENV['REGISTRY_SCOPE'];
+        $client_id = $_ENV['REGISTRY_CLIENT_ID'];
+        $client_secret = $_ENV['REGISTRY_CLIENT_SECRET'];
+        $token_url = $_ENV['REGISTRY_CLIENT_TOKEN_URL'];
 
         $curl = curl_init();
-        // Check if initialization had gone wrong*
+        // TODO Check if initialization had gone wrong*
         if ($curl === false) {
             throw new Exception('failed to initialize');
         }
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
             CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_URL => '',
+            CURLOPT_URL => $token_url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -63,11 +58,12 @@ class HttpsRequest
 //identifierType and upn value to validate
     public static function getRegistryClient($access_token, $client_upi)
     {
+        $api_search_upi_url = $_ENV['REGISTRY_SEARCH_CLIENT_API'];
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
             CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_URL => '' . $client_upi . '?format=json',
+            CURLOPT_URL => $api_search_upi_url . $client_upi . '?format=json',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
