@@ -335,6 +335,17 @@
                         </div>
 
                         <div class="form-group non-recency-field">
+
+    
+                            <label class="col-sm-4 control-label">Patient UPI No.
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="name" name="patient_upi" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
                             <label class="col-sm-4 control-label">Patient Names
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -907,6 +918,9 @@
         set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("rec_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+
+        set_patient_upi_number("patient_upi", "{{ url('/viralpatient/upi_number') }}", 1, "search patient UPI number");
+
 
     @endcomponent
 

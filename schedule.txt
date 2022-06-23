@@ -11,6 +11,8 @@
 0-55/5 * * * * php /usr/share/nginx/html/lab/artisan synch:patients eid 2>&1
 0-55/5 * * * * php /usr/share/nginx/html/lab/artisan synch:patients vl 2>&1
 
+
+
 0-55/5 * * * * php /usr/share/nginx/html/lab/artisan synch:batches eid 2>&1
 0-55/5 * * * * php /usr/share/nginx/html/lab/artisan synch:batches vl 2>&1
 
