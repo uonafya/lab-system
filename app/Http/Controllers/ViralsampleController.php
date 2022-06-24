@@ -11,6 +11,7 @@ use App\Facility;
 use App\Lookup;
 use App\MiscViral;
 use App\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 use App\Imports\ViralInterLabSampleImport;
@@ -61,6 +62,22 @@ class ViralsampleController extends Controller
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
+    }
+    public function list_vl_upi_line_list()
+    {
+        $user = auth()->user();
+        $string = "1";
+        if ($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+        $dt = date('Y-m-d', strtotime('-300 days'));
+        $patients = Viralpatient::where('upi_no','!=', null)
+            ->join('facilitys', 'viralpatients.facility_id', '=', 'facilitys.id')
+            ->get();
+//        dd($patients);
+
+
+        $data['pre'] = 'viral';
+        $data['patients'] = $patients;
+        return view('tables.vl_upi_verification_line_list', $data)->with('pageTitle', 'VL patients verification list');
     }
 
     public function list_sms()
