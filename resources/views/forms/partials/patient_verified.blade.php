@@ -64,17 +64,6 @@
                   </div>
                 </div>
               </div> 
-              
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Marital Status</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="maritalStatus"> Marital Status: </li>
-                  </div>
-                </div>
-              </div>
 
               <div class="container">
                 <div style="width: 45%" class="row">
@@ -83,39 +72,6 @@
                   </div>
                   <div class="col-sm">
                     <li class="list-group-item " id="gender"> Gender: </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Occupation</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="occupation"> occupation: </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Christianity</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="religion"> Religion: </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">EducationLevel</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="educationLevel"> EducationLevel: </li>
                   </div>
                 </div>
               </div>

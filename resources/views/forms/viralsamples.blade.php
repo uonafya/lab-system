@@ -1201,16 +1201,21 @@
 
     });
 
+
+
     
   
 
     function get_upi_verification(){
+       
         var upi_no = $("#upi_no").val();
 
+       if(upi_no){
         $.ajax({
                type: "GET",
                url:"{{ url('patient_cr') }}" + "/" + upi_no,
                success: function(data){
+                
                 console.log(data['middleName']);
                 $("#clientName").text(data['clientNumber']);
                 $("#clientDob").text(data['dateOfBirth']);
@@ -1225,6 +1230,11 @@
                 // Christianity
                }
             });
+       }else{
+            alert("Please provide a upi");
+            return false;
+        
+       }
     }
 
 
