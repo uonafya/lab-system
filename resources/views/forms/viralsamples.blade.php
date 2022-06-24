@@ -336,6 +336,7 @@
 
                         <div class="form-group">
                             @include("forms.partials.upi")
+                            @include("forms.partials.patient_verified")
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Patient Names

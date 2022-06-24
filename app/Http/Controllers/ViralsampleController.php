@@ -106,6 +106,7 @@ class ViralsampleController extends Controller
         $data = Lookup::viralsample_form();
         $data['form_sample_type'] = $sampletype;
         $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
+        // dd("here");
         return view('forms.viralsamples', $data)->with('pageTitle', 'Add Sample');
     }
 
@@ -483,6 +484,7 @@ class ViralsampleController extends Controller
             $viralsample->labcomment = 'Underage for recency testing.';
         }
         $viralsample->batch_id = $batch->id;
+
         $viralsample->save();
         record_log::save_log($viralsample->id,$viralsample->patient_id,$viralsample->batch_id,"create",null);
 
@@ -532,6 +534,8 @@ class ViralsampleController extends Controller
         $stype = $request->input('form_sample_type');
 
         if($stype) return redirect('viralsample/create/' . $stype);
+
+        // dd("here");
 
         return redirect()->route('viralsample.create');
     }
@@ -617,6 +621,7 @@ class ViralsampleController extends Controller
         }
         $batch->pre_update();
 
+        return json_encode($batch);
         
 
         $data = $request->only($viralsamples_arrays['patient']);
@@ -1474,5 +1479,11 @@ class ViralsampleController extends Controller
         } else if ($request->method() == 'GET') {
             return view('forms.viralsamplesexcelextract')->with('pageTitle', 'Get Sample');
         }
+    }
+
+
+    public function patient_verify($upi_no)
+    {
+       return $upi_no;
     }
 }
