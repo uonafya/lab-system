@@ -21,6 +21,11 @@
     // return view('emergency');
 // });
 
+Route::get("viralsample/patient_verification/{upi_no}", "ViralpatientController@patient_verify");
+
+use App\utils\HttpsRequest;
+
+Route::get("patient_cr/{upi_no}", "ViralpatientController@patient_verify");
 
 Route::get('testtracker', function(){
 	$year = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
