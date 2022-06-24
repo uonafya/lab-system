@@ -249,9 +249,10 @@ class ViralpatientController extends Controller
 
     public function patient_verify($upi_no)
     {
-        // HttpsRequest::generateAccessToken();
-        // $patient = HttpsRequest::search_client_upi($upi_no);
-        return HttpsRequest::generateAccessToken();
+        $ac = HttpsRequest::generateAccessToken();
+        $patient = HttpsRequest::search_client_upi($upi_no);
+        return response()->json($patient);
+    
     }
 
 

@@ -1171,8 +1171,15 @@
 
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+
+
 <script>
+
     $(document).ready(function(){
+
+
 
         $("#dob").change(function(){
             var value = $("#dob").val();
@@ -1193,6 +1200,33 @@
         });
 
     });
+
+    
+  
+
+    function get_upi_verification(){
+        var upi_no = $("#upi_no").val();
+
+        $.ajax({
+               type: "GET",
+               url:"{{ url('patient_cr') }}" + "/" + upi_no,
+               success: function(data){
+                console.log(data['middleName']);
+                $("#clientName").text(data['clientNumber']);
+                $("#clientDob").text(data['dateOfBirth']);
+                $("#firstName").text(data['firstName']);
+                $("#middleName").text(data['middleName']);
+                $("#lastName").text(data['lastName']);
+                $("#maritalStatus").text(data['maritalStatus']);
+                $("#gender").text(data['gender']);
+                $("#occupation").text(data['occupation']);
+                $("#religion").text(data['religion']);
+                $("#educationLevel").text(data['educationLevel']);
+                // Christianity
+               }
+            });
+    }
+
 
 
     function fetchPatientDetails(ccc){
