@@ -1204,7 +1204,17 @@
 
 
     
-  
+
+    /**
+     *  hook = upi_modal_hook 
+     * 
+     * 
+     * */
+
+     $("upi_modal_hook").click(function(){
+        alert("The paragraph was clicked.");
+    }); 
+
 
     function get_upi_verification(){
        
@@ -1227,7 +1237,11 @@
                 $("#occupation").text(data['occupation']);
                 $("#religion").text(data['religion']);
                 $("#educationLevel").text(data['educationLevel']);
-                // Christianity
+
+                // invoke patient details modal 
+                // data-toggle="modal" data-target="#exampleModal"
+
+                $("#upiModal").modal('show');
                }
             });
        }else{
