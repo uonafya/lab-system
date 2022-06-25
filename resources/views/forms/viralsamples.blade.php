@@ -1203,52 +1203,63 @@
 
 
 
-    
-
-    /**
-     *  hook = upi_modal_hook 
-     * 
-     * 
-     * */
-
-     $("upi_modal_hook").click(function(){
-        alert("The paragraph was clicked.");
-    }); 
-
 
     function get_upi_verification(){
-       
-        var upi_no = $("#upi_no").val();
 
-       if(upi_no){
-        $.ajax({
+        $("#upiRegistryDetailsModal")
+            .find("input,textarea,select")
+            .val('')
+            .end();
+        $("#onUpiFailView").hide()
+
+
+
+        var upi_no = $("#upi_no").val();
+        if (upi_no) {
+            $.ajax({
                type: "GET",
                url:"{{ url('patient_cr') }}" + "/" + upi_no,
                success: function(data){
-                
-                console.log(data['middleName']);
-                $("#clientName").text(data['clientNumber']);
-                $("#clientDob").text(data['dateOfBirth']);
-                $("#firstName").text(data['firstName']);
-                $("#middleName").text(data['middleName']);
-                $("#lastName").text(data['lastName']);
-                $("#maritalStatus").text(data['maritalStatus']);
-                $("#gender").text(data['gender']);
-                $("#occupation").text(data['occupation']);
-                $("#religion").text(data['religion']);
-                $("#educationLevel").text(data['educationLevel']);
+                   if(data.clientNumber){
+                       $("#clientUpi").val(data['clientNumber']);
+                       $("#clientDob").val($.datepicker.formatDate('dd/mm/yy', new Date(data['dateOfBirth'])));
+                       $("#firstName").val(data['firstName']);
+                       $("#middleName").val(data['middleName']);
+                       $("#lastName").val(data['lastName']);
+                       $("#maritalStatus").val(data['maritalStatus']);
+                       $("#gender").val(data['gender']);
+                       $("#occupation").val(data['occupation']);
+                       $("#religion").val(data['religion']);
+                       $("#educationLevel").val(data['educationLevel']);
 
-                // invoke patient details modal 
-                // data-toggle="modal" data-target="#exampleModal"
+                       $("#upiRegistryDetailsModal").modal('show');
 
-                $("#upiModal").modal('show');
+                       document.getElementById('name').value =data['firstName']+ " " + data['middleName'] + "  " + data['lastName'];
+                       document.getElementById('dob').value = data['dateOfBirth']
+                       var g = data['gender']
+                       if (g){
+                           if (g === 'Female') {
+                               $("#sex").val(2);
+                           }else {
+                               $("#sex").val(1)
+                           }
+                       }
+
+                   }else {
+                       $("#onUpiFailView").show();
+                       $("#upiClientInfoAvailable").hidden;
+
+                       $("#upiRegistryDetailsModal").modal('show');
+
+
+                   }
                }
             });
-       }else{
+        } else {
             alert("Please provide a upi");
             return false;
-        
-       }
+
+        }
     }
 
 

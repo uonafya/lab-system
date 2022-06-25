@@ -770,6 +770,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('create_poc', 'ViralsampleController@create_poc');
 				Route::get('list_poc/{param?}', 'ViralsampleController@list_poc');
+				Route::get('list_vl_upi_line_list', 'ViralsampleController@list_vl_upi_line_list');
 				Route::get('{sample}/edit_result', 'ViralsampleController@edit_poc');
 				Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 

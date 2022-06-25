@@ -605,6 +605,7 @@
             @else
                 @if(session('testingSystem') == 'Viralload' && auth()->user()->user_type_id != 2)
                     <li><a href="https://eiddash.nascop.org/download/vl_req">Download VL Form</a></li>
+                    <li><a href="{{ url('viralsample/list_vl_upi_line_list') }}">Vl Patients line list</a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralfacility_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralbatch_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>

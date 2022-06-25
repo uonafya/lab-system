@@ -1,87 +1,64 @@
 <!-- Modal -->
-<div class="modal fade" id="upiModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-      <div class="modal-content">
-        <div style="background-color: #3F5872" class="modal-header">
-          <h5 style="color: whitesmoke" class="modal-title" id="exampleModalLabel">Patient Details.</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+<div class="modal fade" id="upiRegistryDetailsModal" tabindex="-1"
+     data-controls-modal="upiRegistryDetailsModal" data-backdrop="static"
+     data-keyboard="false" role="dialog" aria-hidden="true"
+     aria-labelledby="upiRegistryDetailsModalTitle">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable " role="document">
+        <div class="modal-content">
+            <div class="modal-header panel-info">
+                <button type="button btn-sm" class="close p-t-12" data-dismiss="modal" aria-label="Close">
+                    <i data-dismiss="modal"
+                       style="padding-right: 10px"><b>X</b></i>
+                </button>
+                <h4 class="modal-title" id="upiRegistryDetailsModalTitle"><i>MOH Registry Patient Details </i></h4>
+            </div>
+            <div class="modal-body">
+                <div id=upiClientInfoAvailable">
+                    <div class="form-group row">
+                        <label for="clientUpi" class="col-sm-4 col-form-label text-right">UPI</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly  class="form-control" id="clientUpi">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="clientDob" class="col-sm-4 col-form-label text-right">D.O.B</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control" id="clientDob">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="firstName" class="col-sm-4 col-form-label text-right">First Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control" id="firstName">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="middleName" class="col-sm-4 col-form-label text-right">Middle Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control" id="middleName">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="lastName" class="col-sm-4 col-form-label text-right">Last Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control" id="lastName">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="gender" class="col-sm-4 col-form-label text-right">Gender</label>
+                        <div class="col-sm-8">
+                            <input type="text"readonly class="form-control" id="gender">
+                        </div>
+                    </div>
+                </div>
+                <div id="onUpiFailView" style="display: none">
+                    <p class="text-danger">Could not retrieve details for UPI provided. Please confirm the format and try again</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary center" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary right" data-dismiss="modal">Use details</button>
+            </div>
         </div>
-        <div class="modal-body">
-            <ul class="list-group list-group-flush">
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Name:</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="clientName"> Name: </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">D.O.B</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="clientDob"> clientDob: </li>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">First Name</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="firstName"> First Name: </li>
-                  </div>
-                </div>
-              </div>
-               
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Middle Name</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="middleName"> Middle Name: </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Last Name</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="lastName"> Last Name: </li>
-                  </div>
-                </div>
-              </div> 
-
-              <div class="container">
-                <div style="width: 45%" class="row">
-                  <div class="col-sm">
-                    <label for="">Gender</label>
-                  </div>
-                  <div class="col-sm">
-                    <li class="list-group-item " id="gender"> Gender: </li>
-                  </div>
-                </div>
-              </div>
-            
-            </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
