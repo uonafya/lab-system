@@ -930,6 +930,7 @@
 
 
             $("#rejection").hide();
+            $("#patient-rec-div").hide();
             if($("#isRecencyCheck").is(':checked')){
                 enable_recency_field();
             }
