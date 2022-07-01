@@ -4,9 +4,6 @@
 namespace App\utils;
 
 
-use Illuminate\Http\Request;
-use function MongoDB\BSON\toJSON;
-
 class HttpsRequest
 {
     public static function search_client_upi($client_upi)
@@ -18,17 +15,11 @@ class HttpsRequest
 
     public static function generateAccessToken()
     {
-        // $grant_type = $_ENV['REGISTRY_GRANT_TYPE'];
-        // $scope = $_ENV['REGISTRY_SCOPE'];
-        // $client_id = $_ENV['REGISTRY_CLIENT_ID'];
-        // $client_secret = $_ENV['REGISTRY_CLIENT_SECRET'];
-        // $token_url = $_ENV['REGISTRY_CLIENT_TOKEN_URL'];
-
-        $token_url = "https://dhpidentitystagingapi.health.go.ke/connect/token";
-        $client_id = 'partner.test.client';
-        $client_secret = 'partnerTestPwd';
-        $grant_type = 'client_credentials';
-        $scope = 'DHP.Gateway DHP.Visitation';
+        $grant_type = env('REGISTRY_GRANT_TYPE');
+        $scope = env('REGISTRY_SCOPE');
+        $client_id = env('REGISTRY_CLIENT_ID');
+        $client_secret = env('REGISTRY_CLIENT_SECRET');
+        $token_url = env('REGISTRY_CLIENT_TOKEN_URL');
 
         $curl = curl_init();
         // TODO Check if initialization had gone wrong*
@@ -64,8 +55,7 @@ class HttpsRequest
     public static function
     getRegistryClient($access_token, $client_upi)
     {
-        // $api_search_upi_url = $_ENV['REGISTRY_SEARCH_CLIENT_API'];
-        $api_search_upi_url = "https://dhpstagingapi.health.go.ke/visit/registry/search/";
+        $api_search_upi_url = env('REGISTRY_SEARCH_CLIENT_API');
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
