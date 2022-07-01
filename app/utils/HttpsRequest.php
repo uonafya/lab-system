@@ -61,7 +61,8 @@ class HttpsRequest
     }
 
 //identifierType and upn value to validate
-    public static function getRegistryClient($access_token, $client_upi)
+    public static function
+    getRegistryClient($access_token, $client_upi)
     {
         // $api_search_upi_url = $_ENV['REGISTRY_SEARCH_CLIENT_API'];
         $api_search_upi_url = "https://dhpstagingapi.health.go.ke/visit/registry/search/";
@@ -83,8 +84,21 @@ class HttpsRequest
 
         $response = curl_exec($curl);
         $response = json_decode($response, true);
+        if ($response['client']) {
+            $u_pat = new \stdClass();
+            $u_pat->clientNumber = $response['client']['clientNumber'];
+            $u_pat->firstName = $response['client']['firstName'];
+            $u_pat->middleName = $response['client']['middleName'];
+            $u_pat->lastName = $response['client']['lastName'];
+            $u_pat->gender = $response['client']['gender'];
+            $u_pat->dateOfBirth = $response['client']['dateOfBirth'];
+            $u_pat->maritalStatus = $response['client']['maritalStatus'];
+            return ($u_pat) ? $u_pat : "client does not exist on client registry";
 
-        return ($response['client']) ? $response['client'] : "client does not exist on client registry";
+        } else {
+            //todo  handle erro codes...
+            return "client does not exist on client registry";
+        }
 
     }
 }
