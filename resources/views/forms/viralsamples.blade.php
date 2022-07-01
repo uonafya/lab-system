@@ -1205,65 +1205,6 @@
 
 
 
-    function get_upi_verification(){
-
-        $("#upiRegistryDetailsModal")
-            .find("input,textarea,select")
-            .val('')
-            .end();
-        $("#onUpiFailView").hide()
-
-
-
-        var upi_no = $("#upi_no").val();
-        if (upi_no) {
-            $.ajax({
-               type: "GET",
-               url:"{{ url('patient_cr') }}" + "/" + upi_no,
-               success: function(data){
-                   if(data.clientNumber){
-                       $("#clientUpi").val(data['clientNumber']);
-                       $("#clientDob").val($.datepicker.formatDate('dd/mm/yy', new Date(data['dateOfBirth'])));
-                       $("#firstName").val(data['firstName']);
-                       $("#middleName").val(data['middleName']);
-                       $("#lastName").val(data['lastName']);
-                       $("#maritalStatus").val(data['maritalStatus']);
-                       $("#gender").val(data['gender']);
-                       $("#occupation").val(data['occupation']);
-                       $("#religion").val(data['religion']);
-                       $("#educationLevel").val(data['educationLevel']);
-
-                       $("#upiRegistryDetailsModal").modal('show');
-
-                       document.getElementById('name').value =data['firstName']+ " " + data['middleName'] + "  " + data['lastName'];
-                       document.getElementById('dob').value = data['dateOfBirth']
-                       var g = data['gender']
-                       if (g){
-                           if (g === 'Female') {
-                               $("#sex").val(2);
-                           }else {
-                               $("#sex").val(1)
-                           }
-                       }
-
-                   }else {
-                       $("#onUpiFailView").show();
-                       $("#upiClientInfoAvailable").hidden;
-
-                       $("#upiRegistryDetailsModal").modal('show');
-
-
-                   }
-               }
-            });
-        } else {
-            alert("Please provide a upi");
-            return false;
-
-        }
-    }
-
-
 
     function fetchPatientDetails(ccc){
         

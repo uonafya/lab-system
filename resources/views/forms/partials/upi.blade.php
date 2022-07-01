@@ -12,3 +12,47 @@
         </svg>
     </a>
 </div>
+
+<script>
+    function get_upi_verification() {
+
+        $("#upiRegistryDetailsModal")
+            .find("input,textarea,select")
+            .val('')
+            .end();
+        $("#onUpiFailView").hide()
+        var upi_no = $("#upi_no").val();
+        if (upi_no) {
+            $.ajax({
+                type: "GET",
+                url: "{{ url('patient_cr') }}" + "/" + upi_no,
+                success: function (data) {
+                    if (data.clientNumber) {
+                        $("#clientUpi").val(data['clientNumber']);
+                        $("#clientDob").val($.datepicker.formatDate('yy-mm-dd', new Date(data['dateOfBirth'])));
+                        $("#firstName").val(data['firstName']);
+                        $("#middleName").val(data['middleName']);
+                        $("#lastName").val(data['lastName']);
+                        $("#maritalStatus").val(data['maritalStatus']);
+                        $("#gender").val(data['gender']);
+                        $("#occupation").val(data['occupation']);
+                        $("#religion").val(data['religion']);
+                        $("#educationLevel").val(data['educationLevel']);
+
+                        $("#upiRegistryDetailsModal").modal('show');
+
+                    } else {
+                        $("#onUpiFailView").show();
+                        $("#upiClientInfoAvailable").hidden;
+
+                        $("#upiRegistryDetailsModal").modal('show');
+                    }
+                }
+            });
+        } else {
+            alert("Please provide a upi");
+            return false;
+
+        }
+    }
+</script>

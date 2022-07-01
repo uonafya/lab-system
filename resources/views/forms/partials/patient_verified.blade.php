@@ -57,8 +57,32 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary center" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary right" data-dismiss="modal">Use details</button>
+                <button type="button" onclick="useDetails()" class="btn btn-primary right">Use details</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    /**
+     * populate the name sex dob age fields on the EID and VL sample addition forms3
+     * */
+    function useDetails() {
+        var dobVal = $("#clientDob").val();
+        if (dobVal) {
+            $("#name").val($("#firstName").val() + " " + $("#lastName").val());
+            $("#dob").val(dobVal).trigger("change");
+            var g = $("#gender").val();
+            if (g) {
+                if (g === 'Female') {
+                    $("#sex").val(2).trigger("change");
+                } else {
+                    $("#sex").val(1).trigger("change")
+                }
+
+            }
+            $("#upiRegistryDetailsModal").modal('hide');
+        } else {
+            alert("Incorrect details, close and check UPI")
+        }
+    }
+</script>
