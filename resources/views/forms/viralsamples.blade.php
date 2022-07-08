@@ -912,7 +912,6 @@
         set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility_mfl("rec_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
-<!--        set_patient_upi_number("patient_upi", "{{ url('/viralpatient/upi_number') }}", 1, "search patient UPI number");-->
 
     @endcomponent
 

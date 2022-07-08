@@ -1,9 +1,9 @@
 <div class="form-group">
     <label class="col-sm-4 control-label">Patient UPI No.
-        <strong><div style='color: #37ff00; display: inline;'>*</div></strong>
+        <strong><div style='color: #37ff00; display: none;'>*</div></strong>
     </label>
     <div class="col-sm-3">
-        <input class="form-control" id="upi_no" name="upi_no" maxlength="13" type="text" required>
+        <input class="form-control" id="upi_no" name="upi_no" maxlength="13" type="text">
     </div>
     <a onclick="get_upi_verification()" class="btn btn-success">VERIFY PATIENT &nbsp;
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
