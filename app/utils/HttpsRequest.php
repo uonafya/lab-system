@@ -4,13 +4,9 @@
 namespace App\utils;
 
 
-use Illuminate\Http\Request;
-use function MongoDB\BSON\toJSON;
-
 class HttpsRequest
 {
     public static function search_client_upi($client_upi)
-
     {
         $token = json_decode(self::generateAccessToken(), true);
         //dd (self::getRegistryClient($token['access_token'], 'MOH202205001'));
@@ -19,26 +15,21 @@ class HttpsRequest
 
     public static function generateAccessToken()
     {
-//        $grant_type = $_ENV['REGISTRY_GRANT_TYPE'];
-//        $scope = $_ENV['REGISTRY_SCOPE'];
-//        $client_id = $_ENV['REGISTRY_CLIENT_ID'];
-//        $client_secret = $_ENV['REGISTRY_CLIENT_SECRET'];
-//        $token_url = $_ENV['REGISTRY_CLIENT_TOKEN_URL'];
-
-        $client_id = 'partner.test.client';
-        $client_secret = 'partnerTestPwd';
-        $grant_type = 'client_credentials';
-        $scope = 'DHP.Gateway DHP.Visitation';
+        $grant_type = env('REGISTRY_GRANT_TYPE');
+        $scope = env('REGISTRY_SCOPE');
+        $client_id = env('REGISTRY_CLIENT_ID');
+        $client_secret = env('REGISTRY_CLIENT_SECRET');
+        $token_url = env('REGISTRY_CLIENT_TOKEN_URL');
 
         $curl = curl_init();
-        // Check if initialization had gone wrong*
+        // TODO Check if initialization had gone wrong*
         if ($curl === false) {
             throw new Exception('failed to initialize');
         }
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
             CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_URL => '',
+            CURLOPT_URL => $token_url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -61,13 +52,15 @@ class HttpsRequest
     }
 
 //identifierType and upn value to validate
-    public static function getRegistryClient($access_token, $client_upi)
+    public static function
+    getRegistryClient($access_token, $client_upi)
     {
+        $api_search_upi_url = env('REGISTRY_SEARCH_CLIENT_API');
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYHOST => FALSE,
             CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_URL => '' . $client_upi . '?format=json',
+            CURLOPT_URL => $api_search_upi_url . $client_upi . '?format=json',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -81,8 +74,21 @@ class HttpsRequest
 
         $response = curl_exec($curl);
         $response = json_decode($response, true);
+        if ($response['client']) {
+            $u_pat = new \stdClass();
+            $u_pat->clientNumber = $response['client']['clientNumber'];
+            $u_pat->firstName = $response['client']['firstName'];
+            $u_pat->middleName = $response['client']['middleName'];
+            $u_pat->lastName = $response['client']['lastName'];
+            $u_pat->gender = $response['client']['gender'];
+            $u_pat->dateOfBirth = $response['client']['dateOfBirth'];
+            $u_pat->maritalStatus = $response['client']['maritalStatus'];
+            return ($u_pat) ? $u_pat : "client does not exist on client registry";
 
-        return ($response['client']) ? $response['client'] : "client does not exist on client registry";
+        } else {
+            //todo  handle erro codes...
+            return "client does not exist on client registry";
+        }
 
     }
 }

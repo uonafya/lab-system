@@ -410,7 +410,7 @@ class Lookup
 
             'mother' => ['hiv_status', 'facility_id', 'ccc_no', 'mother_dob'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'entry_point', 'enrollment_ccc_no', 'patient_status'],
+            'patient' => ['sex', 'patient_name','upi_no','facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'entry_point', 'enrollment_ccc_no', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no'],
 
@@ -570,7 +570,7 @@ class Lookup
         return [
             'batch' => ['datereceived', 'datedispatchedfromfacility', 'highpriority', 'facility_id', 'lab_id', 'site_entry', 'entered_by'],
 
-            'patient' => ['sex', 'patient_name', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
+            'patient' => ['sex', 'patient_name','upi_no', 'facility_id', 'patient_phone_no', 'preferred_language', 'patient', 'dob', 'initiation_date', 'patient_status'],
 
             'sample' => ['comments', 'labcomment', 'datecollected', 'patient_id', 'rejectedreason', 'receivedstatus', 'pmtct', 'sampletype', 'prophylaxis', 'justification', 'provider_identifier', 'amrs_location', 'vl_test_request_no', 'order_no', 'dateinitiatedonregimen', 'dateseparated', 'recency_number'],
 

@@ -21,6 +21,11 @@
     // return view('emergency');
 // });
 
+Route::get("viralsample/patient_verification/{upi_no}", "ViralpatientController@patient_verify");
+
+use App\utils\HttpsRequest;
+
+Route::get("patient_cr/{upi_no}", "ViralpatientController@patient_verify");
 
 Route::get('testtracker', function(){
 	$year = date('Y', strtotime("-1 Month", strtotime(date('Y-m-d'))));
@@ -765,6 +770,7 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::get('create_poc', 'ViralsampleController@create_poc');
 				Route::get('list_poc/{param?}', 'ViralsampleController@list_poc');
+				Route::get('list_vl_upi_line_list', 'ViralsampleController@list_vl_upi_line_list');
 				Route::get('{sample}/edit_result', 'ViralsampleController@edit_poc');
 				Route::put('{sample}/edit_result', 'ViralsampleController@save_poc');
 
@@ -781,6 +787,7 @@ Route::middleware(['auth'])->group(function(){
 				});
 			});
 			Route::resource('viralsample', 'ViralsampleController');
+			Route::get('Viralpatient','ViralpatientController@verify_upi_number')->name('verify_upi_number');
 		});
 
 		Route::prefix('datatable')->name('datatable.')->group(function () {	
