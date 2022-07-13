@@ -611,6 +611,7 @@
                     <li><a href="#"><select class="form-control" id="sidebar_viralpatient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_viralworksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_virallabID_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_viralrecency_search"></select></a></li>
                     @if(env('APP_LAB') == 5)
                         <li><a href="#"><select class="form-control" id="sidebar_viral_order_no_search"></select></a></li>
                     @endif

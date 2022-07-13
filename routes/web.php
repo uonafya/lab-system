@@ -776,8 +776,8 @@ Route::middleware(['auth'])->group(function(){
 
 				Route::post('search', 'ViralsampleController@search');		
 				Route::post('ord_no', 'ViralsampleController@ord_no');
-
-				Route::group(['middleware' => ['utype:0']], function(){
+                Route::post('recency', 'ViralsampleController@recency');
+                Route::group(['middleware' => ['utype:0']], function(){
 					Route::get('excelupload', 'ViralsampleController@excelupload');
 					Route::post('excelupload', 'ViralsampleController@excelupload');
 					Route::get('exceluploaddelete', 'ViralsampleController@deleteexcelupload');
