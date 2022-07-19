@@ -63,12 +63,15 @@
 		$(div_name).select2({
 			minimumInputLength: minimum_length,
 			placeholder: placeholder,
+
 			ajax: {
 				delay	: 100,
 				type	: "POST",
 				dataType: 'json',
 				data	: function(params){
 					return {
+						
+						
 						search : params.term
 					}
 				},

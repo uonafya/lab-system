@@ -11,7 +11,6 @@ use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
-use App\Viralsample;
 
 use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
@@ -327,17 +326,21 @@ class SampleController extends Controller
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
-    public function showRecency($recencyId)
+
+    public function show_recency(SampleView $sample)
     {
-        $sample = Viralsample::where('recency_number', !null)->get();
+        $s = Sample::find($sample->id);
+        $samples = Sample::runs($s)->get();
+
+        $patient = $s->patient;
+
         $data = Lookup::get_lookups();
         $data['sample'] = $sample;
-        $data['samples'] = $recencyId;
-
-        return view('tables.recency_search', $data)->with('pageTitle', 'Recency Summary');
-        // dd($all_patients_with_recency_number);
-        // return view('tables.recency_search', compact($all_patients_with_recency_number));
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
+        return view('tables.recency_search', $data)->with('pageTitle', 'Sample Summary');
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -1073,32 +1076,16 @@ class SampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
-    public function searchRecency(Request $request)
+
+
+    public function searchRecency(viral $request)
     {
-        $user = auth()->user();
-        $search = $request->input('search');
-        $facility_user = false;
 
-        if ($user->user_type_id == 5) $facility_user = true;
-        // $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
-        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
-        // $samples = Sample::select('samples.id')
-        //     ->whereRaw("samples.id like '" . $search . "%'")
-        //     ->when($facility_user, function($query) use ($string){
-        //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
-        //     })
-        //     ->paginate(10);
-        $samples = SampleView::select('id')
-            ->whereRaw("id like '" . $search . "%'")
-            ->when($facility_user, function ($query) use ($string) {
-                return $query->whereRaw($string);
-            })
-            ->paginate(10);
 
-        $samples->setPath(url()->current());
         return $samples;
     }
+
 
     public function ord_no(Request $request)
     {

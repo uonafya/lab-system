@@ -617,12 +617,8 @@
                         </li>
                         <li><a href="#"><select class="form-control" id="sidebar_labID_search"></select></a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <select class="form-control" id="sidebar_recencyNo_search">
-                                </select>
-                            </a>
-                        </li>
+                        <li><a href="#"><select class="form-control"
+                                    id="sidebar_recencyNo_search"></select></a></li>
                         <!-- VL Searches -->
                         <li><a href="#"><select class="form-control"
                                     id="sidebar_viralbatch_search"></select></a></li>

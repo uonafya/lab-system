@@ -711,7 +711,7 @@ Route::middleware(['auth'])->group(function () {
 
 				// Recency Number search
 				Route::post('search', 'SampleController@searchRecency');
-				Route::get('{recency}/', 'SampleController@showRecency');
+				Route::get('{sample}/', 'SampleController@showRecency');
 			});
 			// Route::resource('sample', 'SampleController');
 			Route::get('recency', 'SampleController@showViral');

@@ -701,25 +701,11 @@ Route::middleware(['auth'])->group(function () {
 				Route::put('{sample}/edit_result', 'SampleController@save_poc');
 
 				Route::post('search', 'SampleController@search');
+				Route::post('search_recency_no', 'SampleController@search');
 				Route::post('ord_no', 'SampleController@ord_no');
 			});
 			Route::resource('sample', 'SampleController');
 		});
-
-		Route::group(['middleware' => ['utype:7']], function () {
-			Route::prefix('recency')->name('recency.')->group(function () {
-
-				// Recency Number search
-				Route::post('search', 'SampleController@searchRecency');
-				Route::get('{recency}/', 'SampleController@showRecency');
-			});
-			// Route::resource('sample', 'SampleController');
-			Route::get('recency', 'SampleController@showViral');
-		});
-
-
-
-
 
 		Route::get('user/passwordReset/{user?}', 'UserController@passwordreset')->name('passwordReset');
 		Route::get('user/switch_user/{user?}', 'UserController@switch_user')->name('switch_user');

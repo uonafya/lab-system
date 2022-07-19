@@ -11,7 +11,6 @@ use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
-use App\Viralsample;
 
 use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
@@ -327,16 +326,24 @@ class SampleController extends Controller
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
-    public function showRecency($recencyId)
+    public function rec_show(SampleView $rec_sample)
     {
-        $sample = Viralsample::where('recency_number', !null)->get();
-        $data = Lookup::get_lookups();
-        $data['sample'] = $sample;
-        $data['samples'] = $recencyId;
+        // $samples->load(['patient.mother']);
+        // $batch->load(['facility', 'receiver', 'creator']);
+        // $data = Lookup::get_lookups();
+        // $data['batch'] = $batch;
+        // $data['samples'] = $samples;
 
-        return view('tables.recency_search', $data)->with('pageTitle', 'Recency Summary');
-        // dd($all_patients_with_recency_number);
-        // return view('tables.recency_search', compact($all_patients_with_recency_number));
+        $s = Sample::find($sample->id);
+        $rec_samples = Sample::runs($s)->get();
+
+        $patient = $s->patient;
+
+        $data = Lookup::get_lookups();
+        $data['sample'] = $rec_sample;
+        $data['samples'] = $rec_samples;
+        $data['patient'] = $patient;
+        return view('tables.recency_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
     /**
@@ -1063,17 +1070,19 @@ class SampleController extends Controller
         //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
         //     })
         //     ->paginate(10);
-        $samples = SampleView::select('id')
+        $rec_samples = SampleView::select('id')
             ->whereRaw("id like '" . $search . "%'")
             ->when($facility_user, function ($query) use ($string) {
                 return $query->whereRaw($string);
             })
             ->paginate(10);
 
-        $samples->setPath(url()->current());
-        return $samples;
+        $rec_samples->setPath(url()->current());
+        return $rec_samples;
     }
-    public function searchRecency(Request $request)
+
+
+    public function recency(Request $request)
     {
         $user = auth()->user();
         $search = $request->input('search');

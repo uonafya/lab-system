@@ -41,7 +41,6 @@
 		set_select_facility("sidebar_cd4facility_search", "{{ url('/facility/search') }}", 3, "Search Site Samples", "{{ url('/cd4/sample/facility') }}")
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
-        set_select("sidebar_recencyNo_search", "{{ url('recency/search') }}", 1, "Search by recency_no");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
 
 

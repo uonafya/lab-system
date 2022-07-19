@@ -11,7 +11,6 @@ use App\Facility;
 use App\Viralpatient;
 use App\Lookup;
 use App\Misc;
-use App\Viralsample;
 
 use App\Http\Requests\SampleRequest;
 use Illuminate\Http\Request;
@@ -325,18 +324,6 @@ class SampleController extends Controller
         $data['samples'] = $samples;
         $data['patient'] = $patient;
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
-    }
-
-    public function showRecency($recencyId)
-    {
-        $sample = Viralsample::where('recency_number', !null)->get();
-        $data = Lookup::get_lookups();
-        $data['sample'] = $sample;
-        $data['samples'] = $recencyId;
-
-        return view('tables.recency_search', $data)->with('pageTitle', 'Recency Summary');
-        // dd($all_patients_with_recency_number);
-        // return view('tables.recency_search', compact($all_patients_with_recency_number));
     }
 
     /**
@@ -1073,7 +1060,9 @@ class SampleController extends Controller
         $samples->setPath(url()->current());
         return $samples;
     }
-    public function searchRecency(Request $request)
+
+
+    public function recency(Request $request)
     {
         $user = auth()->user();
         $search = $request->input('search');
@@ -1097,7 +1086,9 @@ class SampleController extends Controller
             ->paginate(10);
 
         $samples->setPath(url()->current());
+        // echo $samples;
         return $samples;
+        // return view('tables.recency_search', compact($samples));
     }
 
     public function ord_no(Request $request)

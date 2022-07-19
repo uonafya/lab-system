@@ -327,16 +327,9 @@ class SampleController extends Controller
         return view('tables.sample_search', $data)->with('pageTitle', 'Sample Summary');
     }
 
-    public function showRecency($recencyId)
+    public function showViral($recencyId)
     {
-        $sample = Viralsample::where('recency_number', !null)->get();
-        $data = Lookup::get_lookups();
-        $data['sample'] = $sample;
-        $data['samples'] = $recencyId;
-
-        return view('tables.recency_search', $data)->with('pageTitle', 'Recency Summary');
-        // dd($all_patients_with_recency_number);
-        // return view('tables.recency_search', compact($all_patients_with_recency_number));
+        return Viralsample::where(['recency_number' => $recencyId])->get();
     }
 
     /**

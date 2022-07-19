@@ -710,11 +710,9 @@ Route::middleware(['auth'])->group(function () {
 			Route::prefix('recency')->name('recency.')->group(function () {
 
 				// Recency Number search
-				Route::post('search', 'SampleController@searchRecency');
-				Route::get('{recency}/', 'SampleController@showRecency');
+				Route::post('search', 'SampleController@search');
 			});
-			// Route::resource('sample', 'SampleController');
-			Route::get('recency', 'SampleController@showViral');
+			Route::resource('sample', 'SampleController');
 		});
 
 

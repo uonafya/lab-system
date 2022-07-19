@@ -329,6 +329,7 @@ class SampleController extends Controller
 
     public function showRecency($recencyId)
     {
+        $recencyId = Sample::runs($s)->get();
         $sample = Viralsample::where('recency_number', !null)->get();
         $data = Lookup::get_lookups();
         $data['sample'] = $sample;
