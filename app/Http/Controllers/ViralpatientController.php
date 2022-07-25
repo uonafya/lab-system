@@ -195,10 +195,15 @@ class ViralpatientController extends Controller
 
         $search = $request->input('search');
         $search = addslashes($search);
-        
+        $query = '';
+        if (str_contains($search, "REC")) {
+            $query = "viralsamples.recency_number like '" . $search . "%'";
+        } else $query = "patient like '" . $search . "%'";
+
         $patients = Viralpatient::select('viralpatients.id', 'viralpatients.patient', 'facilitys.name', 'facilitys.facilitycode')
             ->join('facilitys', 'facilitys.id', '=', 'viralpatients.facility_id')
-            ->whereRaw("patient like '" . $search . "%'")
+            ->join('viralsamples', 'patient_id', '=', 'viralpatients.id')
+            ->whereRaw($query)
             // ->where('viralpatients.synched', '!=', 2)
             ->when($string, function($query) use ($string){
                 return $query->whereRaw($string);

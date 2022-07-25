@@ -15,6 +15,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Patient</th>
+                                    <th>REC No</th>
                                     <th>Facility</th>
                                     <th>Batch No</th>
                                     <th>Received Status</th>
@@ -38,6 +39,7 @@
                                     <tr>
                                         <td> {{ $key+1 }} </td>
                                         <td> {{ $patient->patient ?? '' }} </td>
+                                        <td> {{ $sample->recency_number ?? '' }} </td>
                                         <td> {{ $patient->facility->name ?? '' }} </td>
                                         <td>  {!! $sample->get_link('batch_id') !!} </td>
                                         <td>
