@@ -831,7 +831,6 @@
                     lessThan: ["#dateseparated", "Date of Separation / Centrifugation", "Date of Birth"],
                     lessThan: ["#datedispatched", "Date Dispatched from Facility", "Date of Birth"],
                     lessThan: ["#dateinitiatedonregimen", "Date Initiated on Current Regimen", "Date of Birth"],
-                    lessThan: ["#datereceived", "Date Received","Date of Birth"]
                 },
            datecollected: {
            greaterThan: ["#dob","Date Collected","Date of Birth"],
@@ -853,7 +852,9 @@
                 --}}
                 datereceived: {
                     greaterThan: ["#datedispatched","Date Received", "Date Dispatched From Facility"],
-                },
+                        greaterThan: ["#dob", "Date Received","Date of Birth"]
+
+            },
                 @if(auth()->user()->user_type_id != 5)
                     age: {
                         required: '#dob:blank'
