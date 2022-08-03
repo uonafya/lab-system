@@ -88,7 +88,7 @@ return [
         'feeding' => ['required'],
         'regimen' => ['required', 'integer', 'max:30'],
         // 'mother_prophylaxis' => ['required', 'integer', 'max:30'],
-        'mother_prophylaxis' => ['required'],
+        'mother_prophylaxis' => ['required_if:childcaregiver,==,mother'],
         'mother_age' => ['integer', 'between:10,70', 'nullable'],
         // 'pcrtype' => ['required', 'integer', 'between:1,5'], 
         'pcrtype' => ['integer', 'between:1,5', 'nullable'], 
