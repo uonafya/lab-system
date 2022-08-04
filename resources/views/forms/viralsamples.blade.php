@@ -255,7 +255,7 @@
                                       --}}
                                       <div class="form-group">
                                           <label class="col-sm-1 control-label">Recency Number
-                                          </label>
+                                          </label> <strong><div class="recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                                           <div class="col-sm-3">
                                               <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text"
                                                      value="{{ $viralsample->recency_number ?? '' }}" id="recency_number" readonly >
@@ -565,7 +565,7 @@
                             <label class="col-sm-4 control-label">Current Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-8" id="prophylaxis-div">
                                 <select class="form-control requirable" required name="prophylaxis" id="prophylaxis">
                                     <option></option>
                                     @foreach ($prophylaxis as $key => $proph)
@@ -596,7 +596,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Date Initiated on Current Regimen
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                <strong><div class="non-recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
@@ -1036,8 +1036,10 @@
                 if (checkboxChecked) {
                     $(".non-recency-field").hide();
                     $("div#justification-div select").val(12).trigger("change");
+                    $("div#prophylaxis-div select").val(45).trigger("change");
                 } else {
                     $("div#justification-div select").val('').trigger("change");
+                    $("div#prophylaxis-div select").val('').trigger("change");
                 }
             });
 
@@ -1058,6 +1060,7 @@
                 $("#patient").removeAttr("required");
                 $("#patient_facility_id").removeAttr("required");
                 $("#initiation_date").removeAttr("required");
+                $("#dateinitiatedonregimen").removeAttr("required");
                 $("#phone-no-div").hide();
                 $(".non-recency-field").hide();
             }
@@ -1071,6 +1074,7 @@
                 $("#patient").attr("required", "required");
                 $("#patient_facility_id").attr("required", "required");
                 $("#initiation_date").attr("required", "required");
+                $("#dateinitiatedonregimen").attr("required", "required");
             }
 
             /*$("#dob").change(function(){
