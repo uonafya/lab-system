@@ -50,7 +50,7 @@
 
                         <div class="alert alert-info">
                             <center>
-                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b> <br />
+                                Recency testing is now available. For a recency test, under justifications select option 7 listed as <b>Recency Testing</b> <br />
                                 Recency testing is for those aged over 15. If the system detects the patient's age is 15 or under, the system will automatically reject the sample.
                             </center>
                         </div>
@@ -338,7 +338,7 @@
                             @include("forms.partials.upi")
                             @include("forms.partials.patient_verified")
                         </div>
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Patient Names
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -400,7 +400,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">PMTCT(If Female)
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -561,7 +561,7 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Current Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -594,7 +594,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Date Initiated on Current Regimen
                                 <strong><div class="non-recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -1063,6 +1063,8 @@
                 $("#dateinitiatedonregimen").removeAttr("required");
                 $("#phone-no-div").hide();
                 $(".non-recency-field").hide();
+                $("#name").removeAttr("required");
+                $("#pmtct").removeAttr("required");
             }
 
             function disable_recency_field() {
@@ -1075,6 +1077,8 @@
                 $("#patient_facility_id").attr("required", "required");
                 $("#initiation_date").attr("required", "required");
                 $("#dateinitiatedonregimen").attr("required", "required");
+                $("#name").attr("required", "required");
+                $("#pmtct").attr("required", "required");
             }
 
             /*$("#dob").change(function(){
