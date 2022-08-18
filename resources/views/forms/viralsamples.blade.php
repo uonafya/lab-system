@@ -142,6 +142,7 @@
                                            checked
                                             @endif
                                     />
+                                        <small>&nbsp; Select this option if sample is for recency</small>
                                     </div>
                             </div>
 
@@ -1304,6 +1305,22 @@
     }
     function showRecSerial(serialCode){
         let facilityCode =  document.getElementById('rec_facility_id').value
-        document.getElementById('recency_number').value ='REC'+facilityCode+serialCode
+        var rec_no = 'REC'+facilityCode+serialCode;
+        $.ajax({
+            type: "POST",
+            data: rec_no,
+            url: "{{ url('/viralsample/getRecPatient') }}",
+            success: function(data){
+                let dataArray = JSON.parse(data);
+                if(dataArray.status === 'success'){
+                    alert("Same rec number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
+                    document.getElementById('recency_number').value = "";
+                    document.getElementById('rec_serial').value = "";
+                }
+                if(dataArray.status === 'error'){
+                    document.getElementById('recency_number').value = rec_no
+                }
+            }
+        });
     }
 </script>

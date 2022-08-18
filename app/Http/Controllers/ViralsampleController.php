@@ -200,6 +200,26 @@ class ViralsampleController extends Controller
 
     }
 
+    public function getRecPatient()
+    {
+        $rec = file_get_contents('php://input');
+        $recSample = DB::table('viralsamples')->where(['recency_number' => $rec])->first();
+
+        if (!empty($recSample)) {
+            $response = array(
+                "status" => 'success',
+                "data" => $recSample
+            );
+        } else {
+            $response = array(
+                "status" => 'error',
+            );
+        }
+
+
+        return json_encode($response);
+    }
+
     public function excelupload(Request $request) {
         if ($request->method() == "GET") {
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
