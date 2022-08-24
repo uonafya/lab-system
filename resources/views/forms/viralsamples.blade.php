@@ -1294,12 +1294,29 @@
     }
 
     function showFacilityCode(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
+        document.getElementById('patient').value = facilityCode;
     }
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
-        document.getElementById('patient').value =facilityCode+'-'+serialCode
+        var ccc_no = facilityCode+'-'+serialCode;
+        $.ajax({
+            type: "POST",
+            data: ccc_no,
+            url: "{{ url('/viralsample/getCccNumber') }}",
+            success: function(data){
+                let dataArray = JSON.parse(data);
+                if(dataArray.status === 'success'){
+                    alert("Same ccc number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
+                    document.getElementById('patient').value = "";
+                    document.getElementById('patient_serial').value = "";
+                }
+                if(dataArray.status === 'error'){
+                    document.getElementById('patient').value = ccc_no
+                }
+            }
+        });
     }
+
     function showFacilCode(facilityCode){
         document.getElementById('recency_number').value = facilityCode;
     }

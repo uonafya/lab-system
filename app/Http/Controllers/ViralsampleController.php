@@ -173,7 +173,7 @@ class ViralsampleController extends Controller
 
         $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility->id])->first();
 
-        
+
 
         if(!empty($patient)){
             $gender = DB::table('gender')->where('id','=', $patient->sex)->first();
@@ -198,6 +198,25 @@ class ViralsampleController extends Controller
 
         ///return json   
 
+    }
+    public function getCccNumber()
+    {
+        $ccc = file_get_contents('php://input');
+        $cccSample = DB::table('viralsamples_view')->where(['patient' => $ccc])->first();
+
+        if (!empty($cccSample)) {
+            $response = array(
+                "status" => 'success',
+                "data" => $cccSample
+            );
+        } else {
+            $response = array(
+                "status" => 'error',
+            );
+        }
+
+
+        return json_encode($response);
     }
 
     public function getRecPatient()
