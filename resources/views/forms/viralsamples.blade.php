@@ -1306,9 +1306,20 @@
             success: function(data){
                 let dataArray = JSON.parse(data);
                 if(dataArray.status === 'success'){
-                    alert("Same ccc number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
-                    document.getElementById('patient').value = "";
+                    // alert("Same ccc number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
+                    document.getElementById('patient').value = dataArray.data.patient;
                     document.getElementById('patient_serial').value = "";
+                    document.getElementById('name').value = dataArray.data.patient_name;
+                    document.getElementById('dob').value = dataArray.data.dob;
+                    document.getElementById('age').value = dataArray.data.age;
+                    $('#sex option[value='+ dataArray.data.sex + ']').attr('selected','selected').change();
+                    $('#sampletype option[value='+ dataArray.data.sampletype + ']').attr('selected','selected').change();
+                    $('#justification option[value='+ dataArray.data.justification + ']').attr('selected','selected').change();
+                    $('#prophylaxis option[value='+ dataArray.data.prophylaxis + ']').attr('selected','selected').change();
+                    document.getElementById('recency_number').value = dataArray.data.recency_number;
+                    document.getElementById('dateinitiatedonregimen').value = dataArray.data.dateinitiatedonregimen;
+                    document.getElementById('initiation_date').value = dataArray.data.initiation_date;
+                    document.getElementById('datecollected').value = dataArray.data.datecollected;
                 }
                 if(dataArray.status === 'error'){
                     document.getElementById('patient').value = ccc_no
