@@ -29,6 +29,7 @@ class VlController extends BaseController
     {
         $code = $request->input('mflCode');
         $ccc_number = $request->input('patient_identifier');
+        $upi_no =  $request->input("upi_no");
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $dob = $request->input('dob');
@@ -90,6 +91,7 @@ class VlController extends BaseController
         $patient->fill($request->only($fields['patient']));
         $patient->patient = $ccc_number;
         $patient->facility_id = $facility;
+        $patient->upi_no = $upi_no;
         $patient->save();
 
         $sample = new Viralsample;
@@ -118,6 +120,7 @@ class VlController extends BaseController
         $code = $request->input('mflCode');
         $specimenlabelID = $request->input('specimenlabelID');
         $patient_identifier = $request->input('patient_identifier');
+        $upi_no = $request->input('upi_no');
         $datecollected = $request->input('datecollected');
         $datereceived = $request->input('datereceived');
         $datetested = $request->input('datetested');
@@ -183,6 +186,7 @@ class VlController extends BaseController
 
         $patient->fill($request->only($fields['patient'])); 
         $patient->patient = $patient_identifier;
+        $patient->upi_no = $upi_no;
         $patient->facility_id = $facility;
         $patient->pre_update();
 
