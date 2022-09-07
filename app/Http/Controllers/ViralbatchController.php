@@ -324,7 +324,7 @@ class ViralbatchController extends Controller
         $data['batch'] = $viralbatch;
         $data['samples'] = $viralsamples;
 
-        if (!$viralbatch->dateviewed && auth()->user()->user_type_id == 5) {
+        if (!$viralbatch->dateviewed && auth()->user()->user_type_id == 5 && $viralbatch->datedispatched != null) {
             $viralbatch->dateviewed = date('Y-m-d');
             $viralbatch->pre_update();
         }
