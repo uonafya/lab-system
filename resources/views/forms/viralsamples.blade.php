@@ -248,7 +248,7 @@
                                           </label>
                                           <div class="col-sm-3">
                                               <input class="form-control " id="rec_serial" name="rec_serial"
-                                                     onChange="showRecSerial(this.value)" type="text" maxlength="5" value=""
+                                                     onChange="showRecSerial(this.value)" type="text" minlength="5" maxlength="5" value=""
                                                      id="patient_serial">
                                           </div>
                                           {{--
@@ -258,7 +258,7 @@
                                           <label class="col-sm-1 control-label">Recency Number
                                           </label> <strong><div class="recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                                           <div class="col-sm-3">
-                                              <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text"
+                                              <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text" maxlength="13" minlength="13"
                                                      value="{{ $viralsample->recency_number ?? '' }}" id="recency_number" readonly >
                                           </div>
                                       </div>
