@@ -173,7 +173,7 @@ class ViralsampleController extends Controller
 
         $patient = DB::table('patients')->where(['patient'=> $patient_no,'facility_id'=>$facility->id])->first();
 
-        
+
 
         if(!empty($patient)){
             $gender = DB::table('gender')->where('id','=', $patient->sex)->first();
@@ -198,6 +198,45 @@ class ViralsampleController extends Controller
 
         ///return json   
 
+    }
+    public function getCccNumber()
+    {
+        $ccc = file_get_contents('php://input');
+        $cccSample = DB::table('viralsamples_view')->where(['patient' => $ccc])->first();
+
+        if (!empty($cccSample)) {
+            $response = array(
+                "status" => 'success',
+                "data" => $cccSample
+            );
+        } else {
+            $response = array(
+                "status" => 'error',
+            );
+        }
+
+
+        return json_encode($response);
+    }
+
+    public function getRecPatient()
+    {
+        $rec = file_get_contents('php://input');
+        $recSample = DB::table('viralsamples')->where(['recency_number' => $rec])->first();
+
+        if (!empty($recSample)) {
+            $response = array(
+                "status" => 'success',
+                "data" => $recSample
+            );
+        } else {
+            $response = array(
+                "status" => 'error',
+            );
+        }
+
+
+        return json_encode($response);
     }
 
     public function excelupload(Request $request) {
@@ -379,10 +418,11 @@ class ViralsampleController extends Controller
         }
 
         $data_existing['patient'] = $patient_string;
+        $datecollected = $request->input('datecollected');
 
         $existing = ViralsampleView::existing( $data_existing )->get()->first();
-        if($existing && !$request->input('reentry')){
-            session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
+        if($existing && !$request->input('reentry') && $datecollected == $existing->datecollected ){
+            session(['toast_message' => "The sample collected on {$existing->datecollected} already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
             return back();            
         }

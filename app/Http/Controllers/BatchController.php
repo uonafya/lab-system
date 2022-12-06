@@ -297,7 +297,7 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
-        if (!$batch->dateviewed){
+        if (!$batch->dateviewed && auth()->user()->user_type_id == 5 && $batch->datedispatched != null) {
             $batch->dateviewed = date('Y-m-d');
             $batch->pre_update();
         }

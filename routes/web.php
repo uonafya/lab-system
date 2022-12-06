@@ -738,6 +738,8 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('create/{sampletype?}', 'ViralsampleController@create');
 
 				Route::post('getPatientDetails', 'ViralsampleController@getPatientDetails');
+				Route::post('getRecPatient', 'ViralsampleController@getRecPatient');
+                Route::post('getCccNumber', 'ViralsampleController@getCccNumber');
 
 				Route::get('nhrl', 'ViralsampleController@nhrl_samples')->name('nhrl');
 				Route::post('nhrl', 'ViralsampleController@approve_nhrl');

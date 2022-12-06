@@ -57,7 +57,7 @@ return [
         // 'dob' => ['date_format:Y-m-d', 'required', new BeforeOrEqual($this->input('datecollected'), 'datecollected')],
         'dob' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
         'datecollected' => ['required', 'before_or_equal:today', 'date_format:Y-m-d'],
-        'patient_identifier' => 'required',
+        'patient_identifier' => ['required_unless:justification,12','min:10','max:11'],
         'mflCode' => ['required', 'integer', 'digits:5', 'exists:facilitys,facilitycode'], 
         'sex' => ['required', 'integer', 'max:3'], 
         'lab' => ['integer', 'nullable'],
@@ -102,6 +102,7 @@ return [
         // 'regimenline' => ['required', 'integer', 'max:10'],
         'sampletype' => ['required', 'integer', 'between:1,3'],
         'justification' => ['required', 'integer', 'max:15'],
+        'recency_number' =>['required_if:justification,==,12','unique:viralsamples,recency_number'],
         'pmtct' => ['integer', 'between:1,3', 'required_if:sex,==,2', 'nullable'],
     ],
 
@@ -116,8 +117,8 @@ return [
     ],
 
     'form_base' => [
-//        'patient' => 'required',
-        'facility_id' => ['required', 'integer'], 
+        'patient' => ['required_unless:justification,12'],
+        'facility_id' => ['required', 'integer'],
         'dob' => ['required_without:age', 'before_or_equal:today', 'date_format:Y-m-d', 'nullable'],
         'datecollected' => ['required', 'after_or_equal:-6month', 'before_or_equal:today', 'date_format:Y-m-d'],
         'datedispatchedfromfacility' => ['after_or_equal:-6month', 'before_or_equal:+7days', 'date_format:Y-m-d', 'nullable'],

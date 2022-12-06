@@ -50,7 +50,7 @@
 
                         <div class="alert alert-info">
                             <center>
-                                Recency testing is now available. For a recency test, under justifications select option 9 listed as <b>Recency Testing</b> <br />
+                                Recency testing is now available. For a recency test, under justifications select option 7 listed as <b>Recency Testing</b> <br />
                                 Recency testing is for those aged over 15. If the system detects the patient's age is 15 or under, the system will automatically reject the sample.
                             </center>
                         </div>
@@ -142,6 +142,7 @@
                                            checked
                                             @endif
                                     />
+                                        <small>&nbsp; Select this option if sample is for recency</small>
                                     </div>
                             </div>
 
@@ -247,7 +248,7 @@
                                           </label>
                                           <div class="col-sm-3">
                                               <input class="form-control " id="rec_serial" name="rec_serial"
-                                                     onChange="showRecSerial(this.value)" type="text" maxlength="5" value=""
+                                                     onChange="showRecSerial(this.value)" type="text" minlength="5" maxlength="5" value=""
                                                      id="patient_serial">
                                           </div>
                                           {{--
@@ -257,7 +258,7 @@
                                           <label class="col-sm-1 control-label">Recency Number
                                           </label> <strong><div class="recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                                           <div class="col-sm-3">
-                                              <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text"
+                                              <input class="form-control" id="recency_number" onKeyUp="fetchPatientDetail(this.value)" name="recency_number" type="text" maxlength="13" minlength="13"
                                                      value="{{ $viralsample->recency_number ?? '' }}" id="recency_number" readonly >
                                           </div>
                                       </div>
@@ -338,7 +339,7 @@
                             @include("forms.partials.upi")
                             @include("forms.partials.patient_verified")
                         </div>
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Patient Names
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -400,7 +401,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">PMTCT(If Female)
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -561,7 +562,7 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Current Regimen
                                 <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -594,7 +595,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group non-recency-field">
                             <label class="col-sm-4 control-label">Date Initiated on Current Regimen
                                 <strong><div class="non-recency-field" style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
@@ -1063,6 +1064,8 @@
                 $("#dateinitiatedonregimen").removeAttr("required");
                 $("#phone-no-div").hide();
                 $(".non-recency-field").hide();
+                $("#name").removeAttr("required");
+                $("#pmtct").removeAttr("required");
             }
 
             function disable_recency_field() {
@@ -1075,6 +1078,8 @@
                 $("#patient_facility_id").attr("required", "required");
                 $("#initiation_date").attr("required", "required");
                 $("#dateinitiatedonregimen").attr("required", "required");
+                $("#name").attr("required", "required");
+                $("#pmtct").attr("required", "required");
             }
 
             /*$("#dob").change(function(){
@@ -1289,17 +1294,56 @@
     }
 
     function showFacilityCode(facilityCode){
-        document.getElementById('patient').value = facilityCode+'-';
+        document.getElementById('patient').value = facilityCode;
     }
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
-        document.getElementById('patient').value =facilityCode+'-'+serialCode
+        var ccc_no = facilityCode+'-'+serialCode;
+        $.ajax({
+            type: "POST",
+            data: ccc_no,
+            url: "{{ url('/viralsample/getCccNumber') }}",
+            success: function(data){
+                let dataArray = JSON.parse(data);
+                if(dataArray.status === 'success'){
+                    // alert("Same ccc number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
+                    document.getElementById('patient').value = dataArray.data.patient;
+                    document.getElementById('patient_serial').value = "";
+                    document.getElementById('name').value = dataArray.data.patient_name;
+                    document.getElementById('dob').value = dataArray.data.dob;
+                    document.getElementById('age').value = dataArray.data.age;
+                    $('#sex option[value='+ dataArray.data.sex + ']').attr('selected','selected').change();
+                    document.getElementById('recency_number').value = dataArray.data.recency_number;
+
+                }
+                if(dataArray.status === 'error'){
+                    document.getElementById('patient').value = ccc_no
+                }
+            }
+        });
     }
+
     function showFacilCode(facilityCode){
         document.getElementById('recency_number').value = facilityCode;
     }
     function showRecSerial(serialCode){
         let facilityCode =  document.getElementById('rec_facility_id').value
-        document.getElementById('recency_number').value ='REC'+facilityCode+serialCode
+        var rec_no = 'REC'+facilityCode+serialCode;
+        $.ajax({
+            type: "POST",
+            data: rec_no,
+            url: "{{ url('/viralsample/getRecPatient') }}",
+            success: function(data){
+                let dataArray = JSON.parse(data);
+                if(dataArray.status === 'success'){
+                    alert("Same rec number exist on Batch:" + dataArray.data.batch_id + " . Please checkout.")
+                    document.getElementById('recency_number').value = "";
+                    document.getElementById('rec_serial').value = "";
+                }
+                if(dataArray.status === 'error'){
+                    document.getElementById('recency_number').value = rec_no
+                }
+            }
+        });
     }
 </script>
