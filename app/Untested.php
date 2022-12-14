@@ -87,7 +87,7 @@ class Untested extends Common
         }
         $mail_array = ['fjepkoech@healthit.uonbi.ac.ke','sinjiri@healthit.uonbi.ac.ke'];
         $filename="EID-untested-samples";
-        Untested::csv_download($data, 'all-untested-samples', true, true);
+        Untested::csv_download($data, 'EID-untested-samples', true, true);
 
         $data = [storage_path("exports/" . $filename . ".csv")];
         echo 'sending mail';
