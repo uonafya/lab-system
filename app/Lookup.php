@@ -610,7 +610,20 @@ class Lookup
     }
     public static function untested_form()
     {
-        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'nationalities', 'quarantine_sites', 'districts'];
+        $tables = ['identifier_types','users', 'prophylaxis','rejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'pcrtype', 'feedings', 'entry_points'];
+
+        $data = [];
+
+        foreach ($tables as $key => $value) {
+            $data[$value] = DB::table($value)->get();
+        }
+        $data['amrs'] = self::$amrs;
+        $data['sms'] = self::$sms;
+        return $data;
+    }
+    public static function untested_vl_form()
+    {
+        $tables = ['viralsampletype', 'viraljustifications', 'users', 'viralpmtcttype', 'viralregimen', 'observed_signs', 'underlying_conditions', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys'];
 
         $data = [];
 
