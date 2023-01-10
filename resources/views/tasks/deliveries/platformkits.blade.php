@@ -143,7 +143,6 @@
             keyboardNavigation: false,
             forceParse: true,
             autoclose: true,
-            startDate: new Date(),
             endDate: "+6y",
             format: "yyyy-mm-dd"
         });

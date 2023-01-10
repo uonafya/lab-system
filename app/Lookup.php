@@ -608,6 +608,32 @@ class Lookup
             'patient' => ['identifier_type', 'identifier', 'national_id', 'nationality', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'subcounty_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no', 'quarantine_site_id'],
         ];
     }
+    public static function untested_form()
+    {
+        $tables = ['identifier_types','users', 'prophylaxis','rejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'pcrtype', 'feedings', 'entry_points'];
+
+        $data = [];
+
+        foreach ($tables as $key => $value) {
+            $data[$value] = DB::table($value)->get();
+        }
+        $data['amrs'] = self::$amrs;
+        $data['sms'] = self::$sms;
+        return $data;
+    }
+    public static function untested_vl_form()
+    {
+        $tables = ['viralsampletype', 'viraljustifications', 'users', 'viralpmtcttype', 'viralregimen', 'observed_signs', 'underlying_conditions', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys'];
+
+        $data = [];
+
+        foreach ($tables as $key => $value) {
+            $data[$value] = DB::table($value)->get();
+        }
+        $data['amrs'] = self::$amrs;
+        $data['sms'] = self::$sms;
+        return $data;
+    }
 
 	public static function cacher()
 	{
