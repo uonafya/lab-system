@@ -21,7 +21,7 @@ use App\ViewFacility;
 use App\Viralbatch;
 use App\Viralsample;
 use App\ViralsampleView;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Excel;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
@@ -280,6 +280,7 @@ class ReportController extends Controller
 
     public static function __getDateData($request, &$dateString)
     {
+        DB::connection()->enableQueryLog();
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
 
@@ -419,6 +420,11 @@ class ReportController extends Controller
 
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
+        
+        $query = DB::getQueryLog();
+        
+        dd($query);
+        
         return $model->orderBy('datereceived', 'asc');
     }
 

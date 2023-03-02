@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
+        if(env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('http');
 
         // dd(url('') . ' ' . url()->full() . " " . url()->current() . " " . $_SERVER['HTTP_HOST'] . " " . $_SERVER['REQUEST_URI'] . " " . $_SERVER['SERVER_PORT']);
         // if(env('APP_URL') == url('') && env('APP_SECURE_URL')) \Illuminate\Support\Facades\URL::forceScheme('https');
